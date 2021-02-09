@@ -80,12 +80,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             label: 'Customers',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
+            icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.deepPurpleAccent[400],
         onTap: _onItemTapped,
       ),
     );
