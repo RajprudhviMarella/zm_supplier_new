@@ -16,4 +16,10 @@ class Constants {
   static const String txt_log_out = "Sign Out";
   static const String txt_support = "Support";
   static const String txt_account = "Account";
+  static const String txt_ok = "OK";
+  static const String txt_cancel = "Cancel";
+  static const String txt_confirm_logout = "Are you sure you want to logout?";
+  static const String txt_select_from = "Change profile photo";
+  static const String txt_take_photo = "Take photo";
+  static const String txt_select_library = "Select from Library";
 }

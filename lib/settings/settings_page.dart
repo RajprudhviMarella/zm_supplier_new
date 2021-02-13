@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 
@@ -18,6 +21,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
+  PickedFile _image;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,15 +107,21 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                       ))
                 ],
               )),
-          // Container(
-          //     width: 50.0,
-          //     height: 50.0,
-          //     decoration: BoxDecoration(
-          //         shape: BoxShape.circle,
-          //         image: DecorationImage(
-          //             fit: BoxFit.fill,
-          //             image:
-          //                 AssetImage('assets/images/icon_place_holder.png')))),
+          GestureDetector(
+            child: Container(
+                width: 50.0,
+                height: 50.0,
+                margin: EdgeInsets.only(left: 100.0),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage(
+                            'assets/images/icon_place_holder.png')))),
+            onTap: () {
+              showImagePickerAlert(context);
+            },
+          )
         ],
       ),
     );
@@ -164,19 +176,95 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
 
   onItemSelect(String name, context) {
     if (name == Constants.txt_change_password) {
-
     } else if (name == Constants.txt_help) {
-
     } else if (name == Constants.txt_ask_zeemart) {
-
     } else if (name == Constants.txt_send_feed_back) {
-
     } else if (name == Constants.txt_terms_of_use) {
-
     } else if (name == Constants.txt_privacy_policy) {
-
     } else if (name == Constants.txt_log_out) {
-
+      showAlert(context);
     }
+  }
+
+  void showAlert(context) {
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(Constants.txt_ok),
+      onPressed: () {},
+    );
+    // set up the button
+    Widget btnCancel = FlatButton(
+      child: Text(Constants.txt_cancel),
+      onPressed: () {},
+    );
+
+    // set up the AlertDialog
+    BasicDialogAlert alert = BasicDialogAlert(
+      title: Text(Constants.txt_log_out),
+      content: Text(Constants.txt_confirm_logout),
+      actions: [okButton, btnCancel],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void showImagePickerAlert(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text(Constants.txt_select_library),
+                      onTap: () {
+                        _imgFromGallery();
+
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text(Constants.txt_take_photo),
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  _imgFromCamera() async {
+    final PickedFile file = await _picker.getImage(
+      source: ImageSource.camera,
+      imageQuality: 50,
+    );
+    setState(() {
+      _image = file;
+    });
+  }
+
+  _imgFromGallery() async {
+    final PickedFile file = await _picker.getImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+    );
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.gallery, imageQuality: 50);
+
+    setState(() {
+      _image = file;
+    });
   }
 }
