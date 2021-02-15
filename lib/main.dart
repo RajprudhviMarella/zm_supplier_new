@@ -5,6 +5,8 @@ import 'home/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/models/user.dart';
 
+import 'settings/settings_page.dart';
+
 void main() => runApp(ZmApp());
 
 class ZmApp extends StatelessWidget {
@@ -14,6 +16,7 @@ class ZmApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(),
     HomePage.tag: (context) => HomePage(),
+    SettingsPage.tag: (context) => SettingsPage(),
   };
 
   SharedPref sharedPref = SharedPref();

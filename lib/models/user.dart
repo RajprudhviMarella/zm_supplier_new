@@ -34,39 +34,39 @@ class User {
   String userId;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-    status: json["status"],
-    company:
-    List<Company>.from(json["company"].map((x) => Company.fromJson(x))),
-    outlet:
-    List<Outlet>.from(json["outlet"].map((x) => Outlet.fromJson(x))),
-    supplier: List<Supplier>.from(
-        json["supplier"].map((x) => Supplier.fromJson(x))),
-    roleGroup: json["roleGroup"],
-    roles: List<String>.from(json["roles"].map((x) => x)),
-    supplierRoleGroup: json["supplierRoleGroup"],
-    supplierRoles: List<String>.from(json["supplierRoles"].map((x) => x)),
-    market: json["market"],
-    language: json["language"],
-    outletFeatures: OutletFeatures.fromJson(json["outletFeatures"]),
-    email: json["email"],
-    userId: json["userId"],
-  );
+        status: json["status"],
+        company:
+            List<Company>.from(json["company"].map((x) => Company.fromJson(x))),
+        outlet:
+            List<Outlet>.from(json["outlet"].map((x) => Outlet.fromJson(x))),
+        supplier: List<Supplier>.from(
+            json["supplier"].map((x) => Supplier.fromJson(x))),
+        roleGroup: json["roleGroup"],
+        roles: List<String>.from(json["roles"].map((x) => x)),
+        supplierRoleGroup: json["supplierRoleGroup"],
+        supplierRoles: List<String>.from(json["supplierRoles"].map((x) => x)),
+        market: json["market"],
+        language: json["language"],
+        outletFeatures: OutletFeatures.fromJson(json["outletFeatures"]),
+        email: json["email"],
+        userId: json["userId"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "company": List<dynamic>.from(company.map((x) => x.toJson())),
-    "outlet": List<dynamic>.from(outlet.map((x) => x.toJson())),
-    "supplier": List<dynamic>.from(supplier.map((x) => x.toJson())),
-    "roleGroup": roleGroup,
-    "roles": List<dynamic>.from(roles.map((x) => x)),
-    "supplierRoleGroup": supplierRoleGroup,
-    "supplierRoles": List<dynamic>.from(supplierRoles.map((x) => x)),
-    "market": market,
-    "language": language,
-    "outletFeatures": outletFeatures.toJson(),
-    "email": email,
-    "userId": userId,
-  };
+        "status": status,
+        "company": List<dynamic>.from(company.map((x) => x.toJson())),
+        "outlet": List<dynamic>.from(outlet.map((x) => x.toJson())),
+        "supplier": List<dynamic>.from(supplier.map((x) => x.toJson())),
+        "roleGroup": roleGroup,
+        "roles": List<dynamic>.from(roles.map((x) => x)),
+        "supplierRoleGroup": supplierRoleGroup,
+        "supplierRoles": List<dynamic>.from(supplierRoles.map((x) => x)),
+        "market": market,
+        "language": language,
+        "outletFeatures": outletFeatures.toJson(),
+        "email": email,
+        "userId": userId,
+      };
 }
 
 class LoginResponse {
@@ -89,26 +89,43 @@ class LoginResponse {
   User user;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-    mudra: json["mudra"],
-    supplier: List<Supplier>.from(
-        json["supplier"].map((x) => Supplier.fromJson(x))),
-    language: json["language"],
-    market: json["market"],
-    restrictedAccess:
-    List<String>.from(json["restrictedAccess"].map((x) => x)),
-    status: json["status"],
-    user: User.fromJson(json["user"]),
-  );
+        mudra: json["mudra"],
+        supplier: List<Supplier>.from(
+            json["supplier"].map((x) => Supplier.fromJson(x))),
+        language: json["language"],
+        market: json["market"],
+        restrictedAccess:
+            List<String>.from(json["restrictedAccess"].map((x) => x)),
+        status: json["status"],
+        user: User.fromJson(json["user"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "mudra": mudra,
-    "supplier": List<dynamic>.from(supplier.map((x) => x.toJson())),
-    "language": language,
-    "market": market,
-    "restrictedAccess": List<dynamic>.from(restrictedAccess.map((x) => x)),
-    "status": status,
-    "user": user.toJson(),
-  };
+        "mudra": mudra,
+        "supplier": List<dynamic>.from(supplier.map((x) => x.toJson())),
+        "language": language,
+        "market": market,
+        "restrictedAccess": List<dynamic>.from(restrictedAccess.map((x) => x)),
+        "status": status,
+        "user": user.toJson(),
+      };
+}
+
+class ChangePasswordResponse {
+  ChangePasswordResponse({
+    this.status,
+  });
+
+  String status;
+
+  factory ChangePasswordResponse.fromJson(Map<String, dynamic> json) =>
+      ChangePasswordResponse(
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "status": status,
+      };
 }
 
 class Login {
@@ -128,6 +145,30 @@ class Login {
       'password': password.trim()
     };
   }
+}
+
+class ChangePasswordRequest {
+  String ZeemartId;
+  String password;
+  String newPassword;
+
+  ChangePasswordRequest(
+    this.ZeemartId,
+    this.password,
+    this.newPassword,
+  );
+
+  // Login.fromJson(Map<String, dynamic> json) {
+
+  Map<String, dynamic> tojson() {
+    Map<String, dynamic> map = {
+      'userName': ZeemartId,
+      'password': password,
+      'newPassword': newPassword,
+      'clientType': "SUPPLIER"
+    };
+    return map;
+  }
 // ZeemartId = json['ZeemartId'],
 // password = json['password'];
 }
@@ -139,7 +180,7 @@ class userData {
     this.updatedBy,
     this.supplierId,
     this.supplierName,
-  //  this.address,
+    //  this.address,
     this.alias,
     this.desc,
     this.email,
@@ -161,7 +202,8 @@ class userData {
   UpdatedBy updatedBy;
   String supplierId;
   String supplierName;
- // Address address;
+
+  // Address address;
   String alias;
   String desc;
   String email;
@@ -169,6 +211,7 @@ class userData {
   String market;
   String phone;
   String regNo;
+
   //Settings settings;
   String shortDesc;
   bool showPrice;
@@ -178,48 +221,48 @@ class userData {
   int timePublished;
 
   factory userData.fromJson(Map<String, dynamic> json) => userData(
-    dateUpdated: json["dateUpdated"],
-    timeUpdated: json["timeUpdated"],
-    updatedBy: UpdatedBy.fromJson(json["updatedBy"]),
-    supplierId: json["supplierId"],
-    supplierName: json["supplierName"],
-   // address: Address.fromJson(json["address"]),
-    alias: json["alias"],
-    desc: json["desc"],
-    email: json["email"],
-    logoUrl: json["logoURL"],
-    market: json["market"],
-    phone: json["phone"],
-    regNo: json["regNo"],
-    //settings: Settings.fromJson(json["settings"]),
-    shortDesc: json["shortDesc"],
-    showPrice: json["showPrice"],
-    supplierIntegrationEnabled: json["supplierIntegrationEnabled"],
-    isActive: json["isActive"],
-    status: json["status"],
-    timePublished: json["timePublished"],
-  );
+        dateUpdated: json["dateUpdated"],
+        timeUpdated: json["timeUpdated"],
+        updatedBy: UpdatedBy.fromJson(json["updatedBy"]),
+        supplierId: json["supplierId"],
+        supplierName: json["supplierName"],
+        // address: Address.fromJson(json["address"]),
+        alias: json["alias"],
+        desc: json["desc"],
+        email: json["email"],
+        logoUrl: json["logoURL"],
+        market: json["market"],
+        phone: json["phone"],
+        regNo: json["regNo"],
+        //settings: Settings.fromJson(json["settings"]),
+        shortDesc: json["shortDesc"],
+        showPrice: json["showPrice"],
+        supplierIntegrationEnabled: json["supplierIntegrationEnabled"],
+        isActive: json["isActive"],
+        status: json["status"],
+        timePublished: json["timePublished"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "dateUpdated": dateUpdated,
-    "timeUpdated": timeUpdated,
-    "updatedBy": updatedBy.toJson(),
-    "supplierId": supplierId,
-    "supplierName": supplierName,
-    //"address": address.toJson(),
-    "alias": alias,
-    "desc": desc,
-    "email": email,
-    "logoURL": logoUrl,
-    "market": market,
-    "phone": phone,
-    "regNo": regNo,
-    //"settings": settings.toJson(),
-    "shortDesc": shortDesc,
-    "showPrice": showPrice,
-    "supplierIntegrationEnabled": supplierIntegrationEnabled,
-    "isActive": isActive,
-    "status": status,
-    "timePublished": timePublished,
-  };
+        "dateUpdated": dateUpdated,
+        "timeUpdated": timeUpdated,
+        "updatedBy": updatedBy.toJson(),
+        "supplierId": supplierId,
+        "supplierName": supplierName,
+        //"address": address.toJson(),
+        "alias": alias,
+        "desc": desc,
+        "email": email,
+        "logoURL": logoUrl,
+        "market": market,
+        "phone": phone,
+        "regNo": regNo,
+        //"settings": settings.toJson(),
+        "shortDesc": shortDesc,
+        "showPrice": showPrice,
+        "supplierIntegrationEnabled": supplierIntegrationEnabled,
+        "isActive": isActive,
+        "status": status,
+        "timePublished": timePublished,
+      };
 }

@@ -12,13 +12,6 @@ import '../utils/color.dart';
 import 'package:zm_supplier/services/authenticationApi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-bool _obscureText = true;
-bool _btnEnabled = false;
-String _email, _password;
-
-GlobalKey<FormState> formKeyEmail = GlobalKey<FormState>();
-GlobalKey<FormState> formKeyPassword = GlobalKey<FormState>();
-
 void main() {
   runApp(LoginPage());
 }
@@ -31,6 +24,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _obscureText = true;
+  bool _btnEnabled = false;
+  String _email, _password;
+
+  GlobalKey<FormState> formKeyEmail = GlobalKey<FormState>();
+  GlobalKey<FormState> formKeyPassword = GlobalKey<FormState>();
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
 
@@ -56,23 +55,19 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     getUserDetails() async {
-      try {
-        LoginResponse user = LoginResponse.fromJson(
-            await sharedPref.readData(Constants.login_Info));
-        setState(() {
-          getSpecificUser specificUser = new getSpecificUser();
+      LoginResponse user = LoginResponse.fromJson(
+          await sharedPref.readData(Constants.login_Info));
+      setState(() {
+        getSpecificUser specificUser = new getSpecificUser();
 
-          specificUser
-              .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
-              .then((value) async {
-            sharedPref.saveData(Constants.specific_user_info, value);
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
-          });
+        specificUser
+            .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
+            .then((value) async {
+          sharedPref.saveData(Constants.specific_user_info, value);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
         });
-      } catch (Excepetion) {
-        print('failed to retrive data');
-      }
+      });
     }
 
     void loginApiCalling() {
@@ -82,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
         if (value.status == Constants.status_success) {
           //save login data
           sharedPref.saveData(Constants.login_Info, value);
-
+          sharedPref.saveData(Constants.PASSWORD_ENCRYPTED, _password);
           getUserDetails();
         } else {
           showErrorAlert(context, value);

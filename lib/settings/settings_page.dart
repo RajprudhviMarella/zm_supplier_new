@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -6,14 +7,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:zm_supplier/login/change_password.dart';
+import 'package:zm_supplier/models/response.dart';
+
+import '../login/login_page.dart';
+import '../models/response.dart';
 
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
  */
 
 class SettingsPage extends StatefulWidget {
+  static const String tag = 'settings_page';
+
   @override
   State<StatefulWidget> createState() {
     return SettingsDesign();
@@ -22,7 +34,16 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   PickedFile _image;
+  String _email;
+  String _userID;
+  String _image_Url;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    loadSharedPrefs();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,12 +115,12 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("RajPrudhvi Marella",
+                  Text(_userID,
                       style: TextStyle(
                           fontSize: 20.0,
                           color: Colors.black,
                           fontFamily: 'SourceSansProSemiBold')),
-                  Text("marella@zeemart.asia",
+                  Text(_email,
                       style: TextStyle(
                         fontSize: 16.0,
                         color: greyText,
@@ -115,9 +136,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage(
-                            'assets/images/icon_place_holder.png')))),
+                        fit: BoxFit.fill, image: NetworkImage(_image_Url)))),
             onTap: () {
               showImagePickerAlert(context);
             },
@@ -176,6 +195,8 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
 
   onItemSelect(String name, context) {
     if (name == Constants.txt_change_password) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ChangePassword()));
     } else if (name == Constants.txt_help) {
     } else if (name == Constants.txt_ask_zeemart) {
     } else if (name == Constants.txt_send_feed_back) {
@@ -187,28 +208,42 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   }
 
   void showAlert(context) {
+    BuildContext dialogContext;
     // set up the button
     Widget okButton = FlatButton(
       child: Text(Constants.txt_ok),
-      onPressed: () {},
+      onPressed: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs?.clear();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (dialogContext) {
+            return LoginPage();
+          }),
+        );
+        Navigator.of(dialogContext).pop();
+      },
     );
     // set up the button
     Widget btnCancel = FlatButton(
       child: Text(Constants.txt_cancel),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pop(dialogContext);
+      },
     );
 
     // set up the AlertDialog
     BasicDialogAlert alert = BasicDialogAlert(
       title: Text(Constants.txt_log_out),
       content: Text(Constants.txt_confirm_logout),
-      actions: [okButton, btnCancel],
+      actions: [btnCancel, okButton],
     );
 
     // show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        dialogContext = context;
         return alert;
       },
     );
@@ -252,6 +287,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     );
     setState(() {
       _image = file;
+      // uploadImage();
     });
   }
 
@@ -265,6 +301,62 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
 
     setState(() {
       _image = file;
+      // uploadImage();
     });
   }
+
+  SharedPref sharedPref = SharedPref();
+
+  loadSharedPrefs() async {
+    try {
+      ApiResponse user = ApiResponse.fromJson(
+          await sharedPref.readData(Constants.specific_user_info));
+      setState(() {
+        if (user.data.email != null) {
+          _email = user.data.email;
+        }
+        if (user.data.supplierName != null) {
+          _userID = user.data.supplierName;
+        }
+        if (user.data.logoUrl != null) {
+          _image_Url = user.data.logoUrl;
+        }
+      });
+    } catch (Excepetion) {
+      // do something
+
+    }
+  }
+// void uploadImage() async {
+//   // open a byteStream
+//   var stream = new http.ByteStream(DelegatingStream.typed(_image.openRead()));
+//   // get file length
+//   var length = await _image.length();
+//
+//   // string to uri
+//   var uri = Uri.parse("enter here upload URL");
+//
+//   // create multipart request
+//   var request = new http.MultipartRequest("POST", uri);
+//
+//   // if you need more parameters to parse, add those like this. i added "user_id". here this "user_id" is a key of the API request
+//   request.fields["user_id"] = "text";
+//
+//   // multipart that takes file.. here this "image_file" is a key of the API request
+//   var multipartFile = new http.MultipartFile(
+//       'image_file', stream, length, filename: basename(_image.path));
+//
+//   // add file to multipart
+//   request.files.add(multipartFile);
+//
+//   // send request to upload image
+//   await request.send().then((response) async {
+//     // listen for response
+//     response.stream.transform(utf8.decoder).listen((value) {
+//       print(value);
+//     });
+//   }).catchError((e) {
+//     print(e);
+//   });
+// }
 }
