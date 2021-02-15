@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
  */
@@ -22,4 +25,24 @@ class Constants {
   static const String txt_select_from = "Change profile photo";
   static const String txt_take_photo = "Take photo";
   static const String txt_select_library = "Select from Library";
+
+  static const String txt_login = "Login";
+  static const String txt_alert_message = "please enter valid email/password";
+  static const String loginInfo = "loginInfo";
+
+  static const String status_success = "Success";
+}
+
+
+
+class SharedPref {
+  saveData(String key, value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, json.encode(value));
+  }
+
+  readData(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return json.decode(prefs.getString(key));
+  }
 }
