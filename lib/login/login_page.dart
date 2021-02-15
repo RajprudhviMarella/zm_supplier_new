@@ -3,6 +3,7 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/models/response.dart';
 
 import '../utils/color.dart';
 import '../utils/color.dart';
@@ -54,17 +55,23 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
 
-    loadSharedPrefs() async {
+    getUserDetails() async {
       try {
         LoginResponse user = LoginResponse.fromJson(
-            await sharedPref.readData(Constants.loginInfo));
+            await sharedPref.readData(Constants.login_Info));
         setState(() {
-          print(user.supplier.first.supplierId);
-          print(user.user.userId);
-          print(user.user.email);
+          getSpecificUser specificUser = new getSpecificUser();
+
+          specificUser
+              .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
+              .then((value) async {
+            sharedPref.saveData(Constants.specific_user_info, value);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
+          });
         });
       } catch (Excepetion) {
-        // do something
+        print('failed to retrive data');
       }
     }
 
@@ -73,15 +80,10 @@ class _LoginPageState extends State<LoginPage> {
 
       login.authenticate(_email, _password).then((value) async {
         if (value.status == Constants.status_success) {
-          //SharedPreferences userInfo = await SharedPreferences.getInstance();
+          //save login data
+          sharedPref.saveData(Constants.login_Info, value);
 
-          //save user data
-          sharedPref.saveData(Constants.loginInfo, value);
-
-          loadSharedPrefs();
-
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
+          getUserDetails();
         } else {
           showErrorAlert(context, value);
         }

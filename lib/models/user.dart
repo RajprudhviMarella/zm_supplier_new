@@ -111,18 +111,6 @@ class LoginResponse {
   };
 }
 
-// LoginResponse(
-//       {this.mudra, this.supplier, this.language, this.market, this.restrictedAccess});
-//
-//   LoginResponse.fromJson(Map<String, dynamic> json) {
-//     mudra = json['mudra'];
-//     supplier = json['supplier'];
-//     language = json['language'];
-//     market = json['market'];
-//     restrictedAccess = json['restrictedAccess'];
-//   }
-// }
-
 class Login {
   String ZeemartId;
   String password;
@@ -144,4 +132,94 @@ class Login {
 // password = json['password'];
 }
 
-//}
+class userData {
+  userData({
+    this.dateUpdated,
+    this.timeUpdated,
+    this.updatedBy,
+    this.supplierId,
+    this.supplierName,
+  //  this.address,
+    this.alias,
+    this.desc,
+    this.email,
+    this.logoUrl,
+    this.market,
+    this.phone,
+    this.regNo,
+    //this.settings,
+    this.shortDesc,
+    this.showPrice,
+    this.supplierIntegrationEnabled,
+    this.isActive,
+    this.status,
+    this.timePublished,
+  });
+
+  String dateUpdated;
+  int timeUpdated;
+  UpdatedBy updatedBy;
+  String supplierId;
+  String supplierName;
+ // Address address;
+  String alias;
+  String desc;
+  String email;
+  String logoUrl;
+  String market;
+  String phone;
+  String regNo;
+  //Settings settings;
+  String shortDesc;
+  bool showPrice;
+  bool supplierIntegrationEnabled;
+  bool isActive;
+  String status;
+  int timePublished;
+
+  factory userData.fromJson(Map<String, dynamic> json) => userData(
+    dateUpdated: json["dateUpdated"],
+    timeUpdated: json["timeUpdated"],
+    updatedBy: UpdatedBy.fromJson(json["updatedBy"]),
+    supplierId: json["supplierId"],
+    supplierName: json["supplierName"],
+   // address: Address.fromJson(json["address"]),
+    alias: json["alias"],
+    desc: json["desc"],
+    email: json["email"],
+    logoUrl: json["logoURL"],
+    market: json["market"],
+    phone: json["phone"],
+    regNo: json["regNo"],
+    //settings: Settings.fromJson(json["settings"]),
+    shortDesc: json["shortDesc"],
+    showPrice: json["showPrice"],
+    supplierIntegrationEnabled: json["supplierIntegrationEnabled"],
+    isActive: json["isActive"],
+    status: json["status"],
+    timePublished: json["timePublished"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "dateUpdated": dateUpdated,
+    "timeUpdated": timeUpdated,
+    "updatedBy": updatedBy.toJson(),
+    "supplierId": supplierId,
+    "supplierName": supplierName,
+    //"address": address.toJson(),
+    "alias": alias,
+    "desc": desc,
+    "email": email,
+    "logoURL": logoUrl,
+    "market": market,
+    "phone": phone,
+    "regNo": regNo,
+    //"settings": settings.toJson(),
+    "shortDesc": shortDesc,
+    "showPrice": showPrice,
+    "supplierIntegrationEnabled": supplierIntegrationEnabled,
+    "isActive": isActive,
+    "status": status,
+    "timePublished": timePublished,
+  };
+}

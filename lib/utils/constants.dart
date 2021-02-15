@@ -28,7 +28,8 @@ class Constants {
 
   static const String txt_login = "Login";
   static const String txt_alert_message = "please enter valid email/password";
-  static const String loginInfo = "loginInfo";
+  static const String login_Info = "loginInfo";
+  static const String specific_user_info = "specificUserInfo";
 
   static const String status_success = "Success";
 }

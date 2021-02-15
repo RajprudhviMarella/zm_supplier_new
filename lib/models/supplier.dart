@@ -29,3 +29,35 @@ class Supplier {
     "market": market,
   };
 }
+
+class UpdatedBy {
+  UpdatedBy({
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.imageUrl,
+    this.phone,
+  });
+
+  String id;
+  String firstName;
+  String lastName;
+  String imageUrl;
+  String phone;
+
+  factory UpdatedBy.fromJson(Map<String, dynamic> json) => UpdatedBy(
+    id: json["id"],
+    firstName: json["firstName"],
+    lastName: json["lastName"],
+    imageUrl: json["imageURL"],
+    phone: json["phone"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "firstName": firstName,
+    "lastName": lastName,
+    "imageURL": imageUrl,
+    "phone": phone,
+  };
+}
