@@ -27,7 +27,9 @@ class Constants {
   static const String txt_select_library = "Select from Library";
 
   static const String txt_login = "Login";
+  static const String txt_reset_password = "Reset Password";
   static const String txt_alert_message = "please enter valid email/password";
+  static const String txt_alert_email_message = "please enter valid email";
   static const String login_Info = "loginInfo";
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
   static const String specific_user_info = "specificUserInfo";
@@ -45,6 +47,7 @@ class Constants {
   static const String txt_password_requirements =
       "Min. 8 characters - at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
 
+  static const String is_logged = "isLogged";
   static const String status_success = "Success";
   static const String txt_new_password_didnt_match =
       "New password does not match Confirm password.";

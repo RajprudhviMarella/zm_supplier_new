@@ -14,7 +14,7 @@ class User {
     this.supplierRoles,
     this.market,
     this.language,
-    this.outletFeatures,
+    //this.outletFeatures,
     this.email,
     this.userId,
   });
@@ -29,7 +29,7 @@ class User {
   List<String> supplierRoles;
   String market;
   String language;
-  OutletFeatures outletFeatures;
+  //OutletFeatures outletFeatures;
   String email;
   String userId;
 
@@ -47,7 +47,7 @@ class User {
         supplierRoles: List<String>.from(json["supplierRoles"].map((x) => x)),
         market: json["market"],
         language: json["language"],
-        outletFeatures: OutletFeatures.fromJson(json["outletFeatures"]),
+        //outletFeatures: OutletFeatures.fromJson(json["outletFeatures"]),
         email: json["email"],
         userId: json["userId"],
       );
@@ -63,7 +63,7 @@ class User {
         "supplierRoles": List<dynamic>.from(supplierRoles.map((x) => x)),
         "market": market,
         "language": language,
-        "outletFeatures": outletFeatures.toJson(),
+        //"outletFeatures": outletFeatures.toJson(),
         "email": email,
         "userId": userId,
       };
@@ -265,4 +265,21 @@ class userData {
         "status": status,
         "timePublished": timePublished,
       };
+}
+
+class forgotPasswordResponse {
+  forgotPasswordResponse({
+    this.status,
+  });
+
+  String status;
+
+  factory forgotPasswordResponse.fromJson(Map<String, dynamic> json) =>
+      forgotPasswordResponse(
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+    "status": status,
+  };
 }

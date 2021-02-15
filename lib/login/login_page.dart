@@ -4,6 +4,7 @@ import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/response.dart';
+import 'package:zm_supplier/login/forgot_password.dart';
 
 import '../utils/color.dart';
 import '../utils/color.dart';
@@ -26,6 +27,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   bool _btnEnabled = false;
+  bool isLogged = false;
+
   String _email, _password;
 
   GlobalKey<FormState> formKeyEmail = GlobalKey<FormState>();
@@ -64,8 +67,13 @@ class _LoginPageState extends State<LoginPage> {
             .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
             .then((value) async {
           sharedPref.saveData(Constants.specific_user_info, value);
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          isLogged = true;
+          prefs.setBool(Constants.is_logged, isLogged);
+
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
+              context, MaterialPageRoute(builder: (context) => HomePage(), fullscreenDialog: true));
         });
       });
     }
@@ -74,13 +82,20 @@ class _LoginPageState extends State<LoginPage> {
       Authentication login = new Authentication();
 
       login.authenticate(_email, _password).then((value) async {
+
+        print('login api calling done');
+
+        if (value == null) {
+          showAlert(context);
+        }
+
         if (value.status == Constants.status_success) {
           //save login data
           sharedPref.saveData(Constants.login_Info, value);
           sharedPref.saveData(Constants.PASSWORD_ENCRYPTED, _password);
           getUserDetails();
         } else {
-          showErrorAlert(context, value);
+          showAlert(context);
         }
       });
     }
@@ -269,6 +284,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: GestureDetector(
                   onTap: () {
                     print('forgot tapped');
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ForgotPasswordPage()));
+
                   },
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -335,31 +356,6 @@ void showAlert(context) {
   BasicDialogAlert alert = BasicDialogAlert(
     title: Text(Constants.txt_login),
     content: Text(Constants.txt_alert_message),
-    actions: [okButton],
-  );
-
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
-}
-
-void showErrorAlert(context, LoginResponse value) {
-  // set up the button
-  Widget okButton = FlatButton(
-    child: Text(Constants.txt_ok),
-    onPressed: () {
-      Navigator.pop(context);
-    },
-  );
-
-  // set up the AlertDialog
-  BasicDialogAlert alert = BasicDialogAlert(
-    title: Text(Constants.txt_login),
-    content: Text(value.status),
     actions: [okButton],
   );
 
