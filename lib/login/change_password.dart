@@ -84,10 +84,15 @@ class ChangePasswordDesign extends State<ChangePassword>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
-              height: 18,
-              width: 18,
-              child: icon,
+            GestureDetector(
+              child: Container(
+                height: 18,
+                width: 18,
+                child: icon,
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
             ),
             Expanded(
               flex: 1,

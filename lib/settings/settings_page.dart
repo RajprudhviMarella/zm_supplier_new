@@ -18,6 +18,8 @@ import 'package:zm_supplier/models/response.dart';
 
 import '../login/login_page.dart';
 import '../models/response.dart';
+import 'package:zm_supplier/utils/webview.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
@@ -200,13 +202,29 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     } else if (name == Constants.txt_help) {
     } else if (name == Constants.txt_ask_zeemart) {
     } else if (name == Constants.txt_send_feed_back) {
+      _launchMailClient();
     } else if (name == Constants.txt_terms_of_use) {
+      _handleURLButtonPress(context,
+          Constants.termsUrl,Constants.txt_terms_of_use);
     } else if (name == Constants.txt_privacy_policy) {
+      _handleURLButtonPress(context,
+          Constants.privacyUrl,Constants.txt_privacy_policy);
     } else if (name == Constants.txt_log_out) {
       showAlert(context);
     }
   }
+  void _handleURLButtonPress(BuildContext context, String url, String title) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => WebViewContainer(url,title)));
+  }
 
+  void _launchMailClient() async {
+    const mailUrl = 'mailto:help@zeemart.asia';
+    try {
+      await launch(mailUrl);
+    } catch (e) {
+    }
+  }
   void showAlert(context) {
     BuildContext dialogContext;
     // set up the button
