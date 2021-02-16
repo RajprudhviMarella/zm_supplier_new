@@ -78,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         getSpecificUser specificUser = new getSpecificUser();
 
+       
         specificUser
             .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
             .then((value) async {
@@ -114,9 +115,6 @@ class _LoginPageState extends State<LoginPage> {
           sharedPref.saveData(Constants.PASSWORD_ENCRYPTED, _password);
           getUserDetails();
         } else {
-          // setState(() {
-          //   _showLoader = false;
-          // });
 
           _hideLoader();
           showAlert(context);
@@ -153,14 +151,24 @@ class _LoginPageState extends State<LoginPage> {
 
                   child: Stack(
                     children: <Widget>[
-                      FadeInImage(
-                        placeholder: AssetImage("assets/images/blackdot.png"),
-                        image:
-                            AssetImage("assets/images/img_welcome_salmon.png"),
-                        fit: BoxFit.fill,
-                        height: double.infinity,
-                        width: double.infinity,
+
+                      Padding(
+                        padding: const EdgeInsets.all(0),
+                        child: Image.asset('assets/images/img_welcome_salmon.png',
+                          fit: BoxFit.fill,
+                          height: double.infinity,
+                          width: double.infinity,),
+
                       ),
+
+                      // FadeInImage(
+                      //  // placeholder: AssetImage("assets/images/blackdot.png"),
+                      //   image:
+                      //       AssetImage("assets/images/img_welcome_salmon.png"),
+                      //   fit: BoxFit.fill,
+                      //   height: double.infinity,
+                      //   width: double.infinity,
+                      // ),
                       Padding(
                         padding: const EdgeInsets.only(left: 23, top: 35),
                         child: Image.asset('assets/images/ZM_logo_white.png'),
@@ -378,7 +386,9 @@ void showAlert(context) {
   Widget okButton = FlatButton(
     child: Text(Constants.txt_ok),
     onPressed: () {
-      Navigator.pop(context);
+    //  Navigator.pop(context);
+      Navigator.of(context, rootNavigator: true).pop();
+
     },
   );
 

@@ -215,12 +215,17 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       onPressed: () async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs?.clear();
+
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (dialogContext) {
-            return LoginPage();
-          }),
-        );
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginPage(), fullscreenDialog: true));
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (dialogContext) {
+        //     return LoginPage();
+        //   }),
+        // );
         Navigator.of(dialogContext).pop();
       },
     );
