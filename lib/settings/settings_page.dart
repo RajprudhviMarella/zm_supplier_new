@@ -42,6 +42,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
   String supplierID;
   String mudra;
+  NetworkImage _networkImage;
 
   @override
   void initState() {
@@ -140,7 +141,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                        fit: BoxFit.fill, image: NetworkImage(_image_Url)))),
+                        fit: BoxFit.fill, image: _networkImage))),
             onTap: () {
               showImagePickerAlert(context);
             },
@@ -339,6 +340,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         }
         if (user.data.logoUrl != null) {
           _image_Url = user.data.logoUrl;
+          _networkImage = NetworkImage(_image_Url);
         }
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
@@ -390,10 +392,17 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       };
       var requestUrl = URLEndPoints.get_specific_user_url;
       final msg = jsonEncode({'logoURL': fileUrl});
+
       var response = await http.put(requestUrl, headers: headers, body: msg);
       if (response.statusCode == 200) {
-        
+        UpdateImageView(fileUrl);
       }
     }
+  }
+
+  void UpdateImageView(String fileUrl) {
+    setState(() {
+      _networkImage = new NetworkImage(fileUrl);
+    });
   }
 }
