@@ -51,6 +51,8 @@ class Constants {
   static const String status_success = "Success";
   static const String txt_new_password_didnt_match =
       "New password does not match Confirm password.";
+  static const String txt_resend_otp = "Resend OTP";
+  static const String txt_something_wrong = "Something went wrong. please try again";
 
   static const String termsUrl = "https://www.zeemart.asia/terms";
   static const String privacyUrl = "https://www.zeemart.asia/privacy-policy";
