@@ -1,7 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
-
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -14,12 +13,13 @@ import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:zm_supplier/login/change_password.dart';
-import 'package:zm_supplier/models/response.dart';
-
+import 'package:zm_supplier/models/imageUploadResponse.dart';
 import '../login/login_page.dart';
 import '../models/response.dart';
 import 'package:zm_supplier/utils/webview.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:zm_supplier/utils/urlEndPoints.dart';
 
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
@@ -35,11 +35,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
-  PickedFile _image;
+  File _image;
   String _email;
   String _userID;
   String _image_Url;
   final ImagePicker _picker = ImagePicker();
+  String supplierID;
+  String mudra;
 
   @override
   void initState() {
@@ -204,27 +206,28 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     } else if (name == Constants.txt_send_feed_back) {
       _launchMailClient();
     } else if (name == Constants.txt_terms_of_use) {
-      _handleURLButtonPress(context,
-          Constants.termsUrl,Constants.txt_terms_of_use);
+      _handleURLButtonPress(
+          context, Constants.termsUrl, Constants.txt_terms_of_use);
     } else if (name == Constants.txt_privacy_policy) {
-      _handleURLButtonPress(context,
-          Constants.privacyUrl,Constants.txt_privacy_policy);
+      _handleURLButtonPress(
+          context, Constants.privacyUrl, Constants.txt_privacy_policy);
     } else if (name == Constants.txt_log_out) {
       showAlert(context);
     }
   }
+
   void _handleURLButtonPress(BuildContext context, String url, String title) {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WebViewContainer(url,title)));
+        MaterialPageRoute(builder: (context) => WebViewContainer(url, title)));
   }
 
   void _launchMailClient() async {
     const mailUrl = 'mailto:help@zeemart.asia';
     try {
       await launch(mailUrl);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
+
   void showAlert(context) {
     BuildContext dialogContext;
     // set up the button
@@ -304,27 +307,18 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   }
 
   _imgFromCamera() async {
-    final PickedFile file = await _picker.getImage(
-      source: ImageSource.camera,
-      imageQuality: 50,
-    );
+    final File file = await ImagePicker.pickImage(source: ImageSource.camera);
     setState(() {
       _image = file;
-      // uploadImage();
+      uploadImage();
     });
   }
 
   _imgFromGallery() async {
-    final PickedFile file = await _picker.getImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
-    );
-    // File image = await ImagePicker.pickImage(
-    //     source: ImageSource.gallery, imageQuality: 50);
-
+    final File file = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = file;
-      // uploadImage();
+      uploadImage();
     });
   }
 
@@ -334,6 +328,8 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     try {
       ApiResponse user = ApiResponse.fromJson(
           await sharedPref.readData(Constants.specific_user_info));
+      LoginResponse loginResponse = LoginResponse.fromJson(
+          await sharedPref.readData(Constants.login_Info));
       setState(() {
         if (user.data.email != null) {
           _email = user.data.email;
@@ -344,42 +340,60 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         if (user.data.logoUrl != null) {
           _image_Url = user.data.logoUrl;
         }
+        if (loginResponse.mudra != null) {
+          mudra = loginResponse.mudra;
+        }
+        if (user.data.supplierId != null) {
+          supplierID = user.data.supplierId;
+        }
       });
     } catch (Excepetion) {
       // do something
 
     }
   }
-// void uploadImage() async {
-//   // open a byteStream
-//   var stream = new http.ByteStream(DelegatingStream.typed(_image.openRead()));
-//   // get file length
-//   var length = await _image.length();
-//
-//   // string to uri
-//   var uri = Uri.parse("enter here upload URL");
-//
-//   // create multipart request
-//   var request = new http.MultipartRequest("POST", uri);
-//
-//   // if you need more parameters to parse, add those like this. i added "user_id". here this "user_id" is a key of the API request
-//   request.fields["user_id"] = "text";
-//
-//   // multipart that takes file.. here this "image_file" is a key of the API request
-//   var multipartFile = new http.MultipartFile(
-//       'image_file', stream, length, filename: basename(_image.path));
-//
-//   // add file to multipart
-//   request.files.add(multipartFile);
-//
-//   // send request to upload image
-//   await request.send().then((response) async {
-//     // listen for response
-//     response.stream.transform(utf8.decoder).listen((value) {
-//       print(value);
-//     });
-//   }).catchError((e) {
-//     print(e);
-//   });
-// }
+
+  void uploadImage() async {
+    var uri = Uri.parse(URLEndPoints.img_upload_url);
+    var imageModel = new ImageUploadResponse();
+    http.MultipartRequest request = http.MultipartRequest('POST', uri);
+    Map<String, String> headers = {
+      "authType": "Zeemart",
+      "Content-type": "multipart/form-data",
+      "supplierId": supplierID,
+      "mudra": mudra
+    };
+    request.headers.addAll(headers);
+    request.fields.addAll({"componentType": "PROFILE"});
+
+    request.files.add(await http.MultipartFile(
+      'multipartFiles',
+      _image.readAsBytes().asStream(),
+      _image.lengthSync(),
+      filename: basename(_image.path),
+      contentType: MediaType('image', 'jpeg'),
+    ));
+    print("request: " + request.toString());
+    // var imgUploadResponse = await request.send();
+    http.Response imgUploadResponse =
+        await http.Response.fromStream(await request.send());
+    print("response" + imgUploadResponse.statusCode.toString());
+    imageModel =
+        ImageUploadResponse.fromJson(json.decode(imgUploadResponse.body));
+    String fileUrl = imageModel.data.lstFiles.elementAt(0).fileUrl;
+    if (fileUrl.isNotEmpty) {
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'authType': 'Zeemart',
+        'mudra': mudra,
+        'supplierId': supplierID
+      };
+      var requestUrl = URLEndPoints.get_specific_user_url;
+      final msg = jsonEncode({'logoURL': fileUrl});
+      var response = await http.put(requestUrl, headers: headers, body: msg);
+      if (response.statusCode == 200) {
+        
+      }
+    }
+  }
 }
