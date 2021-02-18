@@ -56,6 +56,8 @@ class Constants {
 
   static const String termsUrl = "https://www.zeemart.asia/terms";
   static const String privacyUrl = "https://www.zeemart.asia/privacy-policy";
+  static const String txt_orders = "Orders";
+  static const String txt_deliveries = "Deliveries";
 }
 
 class SharedPref {
