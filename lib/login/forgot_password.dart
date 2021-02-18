@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:zm_supplier/home/home_page.dart';
+import 'package:zm_supplier/login/verification_code_page.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/response.dart';
@@ -86,6 +87,12 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
         }
         if (value.status == Constants.status_success.toLowerCase()) {
           print('OTP sent to email');
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VerificationCode(_email)));
+
         } else {
           showAlert(context);
         }
@@ -246,7 +253,9 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                         : buttonBlue.withOpacity(0.5),
                     onPressed: isEmailFilled
                         ? () {
-                            validator();
+
+                      validator();
+
                           }
                         : null,
                     child: Text(

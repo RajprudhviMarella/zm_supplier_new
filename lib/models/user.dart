@@ -267,15 +267,15 @@ class userData {
       };
 }
 
-class forgotPasswordResponse {
-  forgotPasswordResponse({
+class statusSuccessResponse {
+  statusSuccessResponse({
     this.status,
   });
 
   String status;
 
-  factory forgotPasswordResponse.fromJson(Map<String, dynamic> json) =>
-      forgotPasswordResponse(
+  factory statusSuccessResponse.fromJson(Map<String, dynamic> json) =>
+      statusSuccessResponse(
         status: json["status"],
       );
 
