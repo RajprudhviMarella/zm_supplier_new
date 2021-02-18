@@ -20,6 +20,7 @@ import 'package:zm_supplier/utils/webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
@@ -39,10 +40,10 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   String _email;
   String _userID;
   String _image_Url;
-  final ImagePicker _picker = ImagePicker();
   String supplierID;
   String mudra;
   NetworkImage _networkImage;
+  bool _isShowLoader = false;
 
   @override
   void initState() {
@@ -50,60 +51,74 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     loadSharedPrefs();
   }
 
+  void _showLoader() {
+    setState(() {
+      _isShowLoader = true;
+    });
+  }
+
+  void _hideLoader() {
+    setState(() {
+      _isShowLoader = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: faintGrey,
-      body: ListView(
-        children: <Widget>[
-          Headers(context, Constants.txt_account, 30.0),
-          profileView(context),
-          menuItem(
-              context,
-              Constants.txt_change_password,
-              Icon(Icons.lock_outline_rounded, color: Colors.grey),
-              1.0,
-              Colors.black),
-          Headers(context, Constants.txt_support, 18.0),
-          menuItem(
-              context,
-              Constants.txt_help,
-              Icon(Icons.help_outline_rounded, color: Colors.grey),
-              1.0,
-              Colors.black),
-          menuItem(
-              context,
-              Constants.txt_ask_zeemart,
-              Icon(Icons.message_outlined, color: Colors.grey),
-              1.0,
-              Colors.black),
-          menuItem(
-              context,
-              Constants.txt_send_feed_back,
-              Icon(Icons.thumb_up_alt_outlined, color: Colors.grey),
-              1.0,
-              Colors.black),
-          menuItem(
-              context,
-              Constants.txt_terms_of_use,
-              Icon(Icons.contact_page_outlined, color: Colors.grey),
-              20.0,
-              Colors.black),
-          menuItem(
-              context,
-              Constants.txt_privacy_policy,
-              Icon(Icons.privacy_tip_outlined, color: Colors.grey),
-              1.0,
-              Colors.black),
-          menuItem(
-              context,
-              Constants.txt_log_out,
-              Icon(Icons.lock_outline_rounded, color: Colors.pinkAccent),
-              20.0,
-              Colors.pinkAccent),
-        ],
-      ),
-    );
+        backgroundColor: faintGrey,
+        body: ModalProgressHUD(
+          inAsyncCall: _isShowLoader,
+          child: ListView(
+            children: <Widget>[
+              Headers(context, Constants.txt_account, 30.0),
+              profileView(context),
+              menuItem(
+                  context,
+                  Constants.txt_change_password,
+                  Icon(Icons.lock_outline_rounded, color: Colors.grey),
+                  1.0,
+                  Colors.black),
+              Headers(context, Constants.txt_support, 18.0),
+              menuItem(
+                  context,
+                  Constants.txt_help,
+                  Icon(Icons.help_outline_rounded, color: Colors.grey),
+                  1.0,
+                  Colors.black),
+              menuItem(
+                  context,
+                  Constants.txt_ask_zeemart,
+                  Icon(Icons.message_outlined, color: Colors.grey),
+                  1.0,
+                  Colors.black),
+              menuItem(
+                  context,
+                  Constants.txt_send_feed_back,
+                  Icon(Icons.thumb_up_alt_outlined, color: Colors.grey),
+                  1.0,
+                  Colors.black),
+              menuItem(
+                  context,
+                  Constants.txt_terms_of_use,
+                  Icon(Icons.contact_page_outlined, color: Colors.grey),
+                  20.0,
+                  Colors.black),
+              menuItem(
+                  context,
+                  Constants.txt_privacy_policy,
+                  Icon(Icons.privacy_tip_outlined, color: Colors.grey),
+                  1.0,
+                  Colors.black),
+              menuItem(
+                  context,
+                  Constants.txt_log_out,
+                  Icon(Icons.lock_outline_rounded, color: Colors.pinkAccent),
+                  20.0,
+                  Colors.pinkAccent),
+            ],
+          ),
+        ));
   }
 
   Widget profileView(context) {
@@ -340,7 +355,8 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         }
         if (user.data.logoUrl != null) {
           _image_Url = user.data.logoUrl;
-          _networkImage = NetworkImage(_image_Url);
+          _networkImage = NetworkImage(user.data.logoUrl);
+          print("logo url: " + user.data.logoUrl);
         }
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
@@ -356,6 +372,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   }
 
   void uploadImage() async {
+    _showLoader();
     var uri = Uri.parse(URLEndPoints.img_upload_url);
     var imageModel = new ImageUploadResponse();
     http.MultipartRequest request = http.MultipartRequest('POST', uri);
@@ -390,12 +407,17 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         'mudra': mudra,
         'supplierId': supplierID
       };
-      var requestUrl = URLEndPoints.get_specific_user_url;
-      final msg = jsonEncode({'logoURL': fileUrl});
-
+      Map<String, String> queryParams = {'supplierId': supplierID};
+      String queryString = Uri(queryParameters: queryParams).query;
+      var requestUrl = URLEndPoints.get_specific_user_url + '?' + queryString;
+      final msg = jsonEncode({'logoURL': fileUrl, 'supplierId': supplierID});
       var response = await http.put(requestUrl, headers: headers, body: msg);
+      print(response.body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         UpdateImageView(fileUrl);
+      } else {
+        _hideLoader();
       }
     }
   }
@@ -403,6 +425,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   void UpdateImageView(String fileUrl) {
     setState(() {
       _networkImage = new NetworkImage(fileUrl);
+      _hideLoader();
     });
   }
 }
