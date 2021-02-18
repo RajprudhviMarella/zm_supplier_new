@@ -130,7 +130,6 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       child: Row(
         children: <Widget>[
           Container(
-              margin: EdgeInsets.only(left: 15.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
