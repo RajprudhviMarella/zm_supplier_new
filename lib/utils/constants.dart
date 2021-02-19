@@ -22,4 +22,5 @@ class Constants {
   static const String txt_select_from = "Change profile photo";
   static const String txt_take_photo = "Take photo";
   static const String txt_select_library = "Select from Library";
+  static const String txt_select_librarya = "Select from Library";
 }
