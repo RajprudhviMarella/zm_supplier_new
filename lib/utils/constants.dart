@@ -34,6 +34,13 @@ class Constants {
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
   static const String specific_user_info = "specificUserInfo";
 
+  static const String txt_incorrect_format = "Incorrect format";
+   static const String txt_short_password = "New password is too short";
+   static const String txt_password_not_match = "New passwords entered do not match";
+   static const String txt_re_enter_new_password = "Please reenter new password.";
+   static const String txt_password_length = "Please enter at least 8 characters.";
+  static const String txt_password = "Password";
+  static const String txt_re_enter_password = "Re-enter password";
   static const String txt_current_password = "Current Password";
   static const String txt_enter_current_password = "Enter Current Password";
   static const String txt_new_password_min = "New Password (min.8 characters)";
@@ -46,8 +53,13 @@ class Constants {
       "Incorrect current password";
   static const String txt_password_requirements =
       "Min. 8 characters - at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
+  static const String txt_password_requiremntSemiBold = "Min. 8 characters, ";
+  static const String txt_password_requirementRegular = "at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
+  static const String txt_create_password = "Create new password";
 
+  static const String user_email = 'user_Email';
   static const String is_logged = "isLogged";
+  static const String verification_code = "VerificationCode";
   static const String status_success = "Success";
   static const String txt_new_password_didnt_match =
       "New password does not match Confirm password.";

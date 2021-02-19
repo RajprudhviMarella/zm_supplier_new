@@ -24,25 +24,25 @@ class Authentication {
     print(headers);
     print(msg);
     print(URLEndPoints.login_url);
-    //try {
-    //    await client
-    //        .post(URLEndPoints.login_url, headers: headers, body: msg)
-    //        .then((response) {
-    var response =
-        await client.post(URLEndPoints.login_url, headers: headers, body: msg);
-    print(response.toString());
-    if (response.statusCode == 200) {
-      print(response.body);
-      print('Success response');
-      var jsonString = response.body;
-      var jsonMap = json.decode(response.body);
-      print(jsonMap.toString());
-      authModel = LoginResponse.fromJson(json.decode(response.body));
-      return authModel;
-    } else {
-      return authModel;
-      throw Exception('Failed to login');
-    }
+    // try {
+    //   await client
+    //       .post(URLEndPoints.login_url, headers: headers, body: msg)
+    //       .then((response) {
+         var response =
+         await client.post(URLEndPoints.login_url, headers: headers, body: msg);
+        print(response.toString());
+        if (response.statusCode == 200) {
+          print(response.body);
+          print('Success response');
+          var jsonString = response.body;
+          var jsonMap = json.decode(response.body);
+          print(jsonMap.toString());
+          authModel = LoginResponse.fromJson(json.decode(response.body));
+          return authModel;
+        } else {
+          return authModel;
+          throw Exception('Failed to login');
+        }
   }
 }
 

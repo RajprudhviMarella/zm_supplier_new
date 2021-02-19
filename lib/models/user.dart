@@ -173,6 +173,29 @@ class ChangePasswordRequest {
 // password = json['password'];
 }
 
+class CreatePasswordRequest {
+  String ZeemartId;
+  String newPassword;
+  String verificationCode;
+
+  CreatePasswordRequest(
+      this.ZeemartId,
+      this.newPassword,
+      this.verificationCode,
+      );
+
+  // Login.fromJson(Map<String, dynamic> json) {
+
+  Map<String, dynamic> tojson() {
+    Map<String, dynamic> map = {
+      'ZeemartId': ZeemartId,
+      'newPassword': newPassword,
+      'verificationCode': verificationCode,
+    };
+    return map;
+  }
+}
+
 class userData {
   userData({
     this.dateUpdated,
