@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:zm_supplier/services/userApi.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+
+import 'create_password_page.dart';
 
 // void main() {
 //   runApp(VerificationCode());
@@ -31,7 +34,7 @@ class _VerificationCodeState extends State<VerificationCode> {
 
   _VerificationCodeState(this.email);
 
-  var value;
+  var codeValue;
   bool isFilledOTP = false;
   bool isCodeValid = true;
   bool isTimerEnabled = true;
@@ -115,7 +118,7 @@ class _VerificationCodeState extends State<VerificationCode> {
 
       UserApi login = new UserApi();
 
-      login.validateVerificationCode(email, value).then((value) async {
+      login.validateVerificationCode(email, codeValue).then((value) async {
         _hideLoader();
         if (value == null) {
           setState(() {
@@ -127,6 +130,11 @@ class _VerificationCodeState extends State<VerificationCode> {
             isCodeValid = true;
             isFilledOTP = true;
           });
+
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString(Constants.verification_code, codeValue);
+          
           print('otp validated');
         } else {
           setState(() {
@@ -230,8 +238,8 @@ class _VerificationCodeState extends State<VerificationCode> {
                       // },
 
                       onCompleted: (_value) {
-                        value = _value;
-                        print("values entered $value");
+                        codeValue = _value;
+                        print("values entered $codeValue");
                         validateVerificationCode();
                       },
 
@@ -339,6 +347,12 @@ class _VerificationCodeState extends State<VerificationCode> {
                     onPressed: isCodeValid && isFilledOTP
                         ? () {
                             //Navigation to create password.
+
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CreatePassword()));
+
                           }
                         : null,
                     child: Text(

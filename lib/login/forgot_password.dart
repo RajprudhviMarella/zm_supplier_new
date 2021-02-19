@@ -88,6 +88,9 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
         if (value.status == Constants.status_success.toLowerCase()) {
           print('OTP sent to email');
 
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString(Constants.user_email, _email);
+
           Navigator.push(
               context,
               MaterialPageRoute(

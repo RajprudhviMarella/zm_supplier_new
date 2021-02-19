@@ -55,7 +55,13 @@ class Constants {
   static const String txt_password_requirements =
       "Include at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
 
+  static const String txt_password_requiremntSemiBold = "Min. 8 characters, ";
+  static const String txt_password_requirementRegular = "at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
+  static const String txt_create_password = "Create new password";
+
+  static const String user_email = 'user_Email';
   static const String is_logged = "isLogged";
+  static const String verification_code = "VerificationCode";
   static const String status_success = "Success";
   static const String txt_new_password_didnt_match =
       "New password does not match Confirm password.";
