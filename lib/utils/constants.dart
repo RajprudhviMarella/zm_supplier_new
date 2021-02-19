@@ -34,6 +34,14 @@ class Constants {
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
   static const String specific_user_info = "specificUserInfo";
 
+  static const String txt_incorrect_format = "Incorrect format";
+  static const String txt_short_password = "New password is too short";
+  static const String txt_password_not_match = "New passwords entered do not match";
+  static const String txt_re_enter_new_password = "Please reenter new password.";
+  static const String txt_password_length = "Please enter at least 8 characters.";
+  static const String txt_password = "Password";
+  static const String txt_re_enter_password = "Re-enter password";
+
   static const String txt_current_password = "Current password";
   static const String txt_enter_current_password = "Enter current password";
   static const String txt_new_password_min = "New password (min. 8 characters)";
