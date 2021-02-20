@@ -10,4 +10,5 @@ class URLEndPoints {
   static const String validate_verification_code = auth_server + "validateVerificationCode";
   static const String change_password = auth_server +"changePassword/v1";
   static const String img_upload_url = "http://zm-staging-commonservices.zeemart.asia/services/storage/files/multipart";
+  static const String retrieve_orders = "https://zm-staging-ordermanagementserv.zeemart.asia/services/orders/po";
 }

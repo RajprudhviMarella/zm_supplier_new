@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/utils/urlEndPoints.dart';
+import 'package:http/http.dart' as http;
 
 /**
  * Created by RajPrudhviMarella on 18/Feb/2021.
@@ -42,6 +47,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   void initState() {
     super.initState();
     loadSharedPrefs();
+
   }
 
   void _showLoader() {
@@ -68,7 +74,9 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         }
         if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
           supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
+          callRetreiveOrdersAPI();
         }
+        print("supplier id :"+loginResponse.user.supplier.elementAt(0).supplierId);
       });
     } catch (Exception) {
       // do something
@@ -164,5 +172,26 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       _isSearching = false;
       _controller.clear();
     });
+  }
+
+  void callRetreiveOrdersAPI() async {
+   var ordersModel = OrdersBaseResponse();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierID
+    };
+    Map<String, String> queryParams = {'supplierId': supplierID};
+    String queryString = Uri(queryParameters: queryParams).query;
+    var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
+   print(requestUrl);
+    // final msg = jsonEncode({'logoURL': fileUrl, 'supplierId': supplierID});
+    var response = await http.get(requestUrl, headers: headers);
+    var jsonMap = json.decode(response.body);
+    ordersModel = OrdersBaseResponse.fromJson(jsonMap);
+    print(response.body);
+    print(json.encode(ordersModel));
+    print(response.statusCode);
   }
 }

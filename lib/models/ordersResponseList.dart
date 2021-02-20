@@ -44,14 +44,13 @@ class OrdersResponse {
   int numberOfPages;
   int numberOfRecords;
   int currentPageNumber;
-  String message;
   List<Orders> data;
 
   factory OrdersResponse.fromJson(Map<String, dynamic> json) => OrdersResponse(
       numberOfPages: json["numberOfPages"],
       currentPageNumber: json["currentPageNumber"],
       numberOfRecords: json["numberOfRecords"],
-      data: List<Orders>.from(json["files"].map((x) => Orders.fromJson(x))));
+      data: List<Orders>.from(json["data"].map((x) => Orders.fromJson(x))));
 
   Map<String, dynamic> toJson() => {
         "numberOfPages": numberOfPages,
@@ -74,8 +73,6 @@ class Orders {
   Amount amount;
   String orderStatus;
   List<Products> products;
-  List<Null> approvers;
-  List<Null> approvalHistory;
   int timeCutOff;
   int timeDrafted;
   int timePlaced;
@@ -103,8 +100,6 @@ class Orders {
       this.amount,
       this.orderStatus,
       this.products,
-      this.approvers,
-      this.approvalHistory,
       this.timeCutOff,
       this.timeDrafted,
       this.timePlaced,
@@ -393,8 +388,6 @@ class Settings {
   String language;
   bool enableSpecialRequest;
   bool enableDeliveryInstruction;
-  List<String> customDeliveryInstructions;
-  Notification notification;
   WeeklyOrder weeklyOrder;
 
   Settings(
@@ -402,8 +395,6 @@ class Settings {
       this.language,
       this.enableSpecialRequest,
       this.enableDeliveryInstruction,
-      this.customDeliveryInstructions,
-      this.notification,
       this.weeklyOrder});
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -411,11 +402,6 @@ class Settings {
     language = json['language'];
     enableSpecialRequest = json['enableSpecialRequest'];
     enableDeliveryInstruction = json['enableDeliveryInstruction'];
-    customDeliveryInstructions =
-        json['customDeliveryInstructions'].cast<String>();
-    notification = json['notification'] != null
-        ? new Notification.fromJson(json['notification'])
-        : null;
     weeklyOrder = json['weeklyOrder'] != null
         ? new WeeklyOrder.fromJson(json['weeklyOrder'])
         : null;
@@ -427,69 +413,12 @@ class Settings {
     data['language'] = this.language;
     data['enableSpecialRequest'] = this.enableSpecialRequest;
     data['enableDeliveryInstruction'] = this.enableDeliveryInstruction;
-    data['customDeliveryInstructions'] = this.customDeliveryInstructions;
-    if (this.notification != null) {
-      data['notification'] = this.notification.toJson();
-    }
     if (this.weeklyOrder != null) {
       data['weeklyOrder'] = this.weeklyOrder.toJson();
     }
     return data;
   }
 }
-
-class Notification {
-  SummaryReport summaryReport;
-
-  Notification({this.summaryReport});
-
-  Notification.fromJson(Map<String, dynamic> json) {
-    summaryReport = json['summaryReport'] != null
-        ? new SummaryReport.fromJson(json['summaryReport'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.summaryReport != null) {
-      data['summaryReport'] = this.summaryReport.toJson();
-    }
-    return data;
-  }
-}
-
-class SummaryReport {
-  List<String> emails;
-  List<String> frequency;
-  String status;
-  List<WeeklyOn> weeklyOn;
-
-  SummaryReport({this.emails, this.frequency, this.status, this.weeklyOn});
-
-  SummaryReport.fromJson(Map<String, dynamic> json) {
-    emails = json['emails'].cast<String>();
-    frequency = json['frequency'].cast<String>();
-    status = json['status'];
-    if (json['weeklyOn'] != null) {
-      weeklyOn = new List<WeeklyOn>();
-      json['weeklyOn'].forEach((v) {
-        weeklyOn.add(new WeeklyOn.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['emails'] = this.emails;
-    data['frequency'] = this.frequency;
-    data['status'] = this.status;
-    if (this.weeklyOn != null) {
-      data['weeklyOn'] = this.weeklyOn.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
-}
-
 class WeeklyOn {
   String day;
   String time;
@@ -746,7 +675,7 @@ class DeliveryFee {
 class Products {
   String sku;
   String productName;
-  int quantity;
+  var quantity;
   String supplierProductCode;
   String unitSize;
   DeliveryFee unitPrice;

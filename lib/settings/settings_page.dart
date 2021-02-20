@@ -419,6 +419,9 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         _hideLoader();
       }
     }
+    else{
+      _hideLoader();
+    }
   }
 
   void UpdateImageView(String fileUrl) {
