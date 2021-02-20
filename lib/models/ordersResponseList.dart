@@ -78,6 +78,8 @@ class Orders {
   int timePlaced;
   int timeDelivered;
   int timeReceived;
+  int timeRejected;
+  int timeCancelled;
   String datePlaced;
   String dateDelivered;
   CreatedBy draftedBy;
@@ -86,6 +88,25 @@ class Orders {
   String notes;
   String promoCode;
   String pdfURL;
+  DateTime timeCompare;
+
+  DateTime getTimeCompare() {
+    if (this.timePlaced != null &&
+        (identical(this.orderStatus, "Placed") ||
+            identical(this.orderStatus, "Invoiced"))) {
+      return new DateTime.fromMillisecondsSinceEpoch(this.timePlaced * 1000);
+    } else if (this.timeRejected != null &&
+        identical(this.orderStatus, "Rejected")) {
+      return new DateTime.fromMillisecondsSinceEpoch(this.timeRejected * 1000);
+    } else if (this.timeCancelled != null &&
+        identical(this.orderStatus, "Cancelled")) {
+      return new DateTime.fromMillisecondsSinceEpoch(this.timeCancelled * 1000);
+    } else if (this.timeUpdated != null) {
+      return new DateTime.fromMillisecondsSinceEpoch(this.timeUpdated * 1000);
+    } else {
+      return new DateTime.fromMillisecondsSinceEpoch(this.timeCreated * 1000);
+    }
+  }
 
   Orders(
       {this.dateCreated,
@@ -110,8 +131,11 @@ class Orders {
       this.draftedBy,
       this.receivedBy,
       this.lastUpdatedBy,
+      this.timeRejected,
+      this.timeCancelled,
       this.notes,
       this.promoCode,
+      this.timeCompare,
       this.pdfURL});
 
   Orders.fromJson(Map<String, dynamic> json) {
@@ -119,6 +143,8 @@ class Orders {
     dateUpdated = json['dateUpdated'];
     timeCreated = json['timeCreated'];
     timeUpdated = json['timeUpdated'];
+    timeRejected = json['timeRejected'];
+    timeCancelled = json['timeCancelled'];
     createdBy = json['createdBy'] != null
         ? new CreatedBy.fromJson(json['createdBy'])
         : null;
@@ -139,6 +165,7 @@ class Orders {
       json['products'].forEach((v) {
         products.add(new Products.fromJson(v));
       });
+      timeCompare = this.getTimeCompare();
     }
     // if (json['approvers'] != null) {
     //   approvers = new List<Null>();
@@ -160,6 +187,7 @@ class Orders {
     timeReceived = json['timeReceived'];
     datePlaced = json['datePlaced'];
     dateDelivered = json['dateDelivered'];
+    timeCancelled = json['timeCancelled'];
     draftedBy = json['draftedBy'] != null
         ? new CreatedBy.fromJson(json['draftedBy'])
         : null;
@@ -180,6 +208,7 @@ class Orders {
     data['dateUpdated'] = this.dateUpdated;
     data['timeCreated'] = this.timeCreated;
     data['timeUpdated'] = this.timeUpdated;
+    data['timeRejected'] = this.timeRejected;
     if (this.createdBy != null) {
       data['createdBy'] = this.createdBy.toJson();
     }
@@ -419,6 +448,7 @@ class Settings {
     return data;
   }
 }
+
 class WeeklyOn {
   String day;
   String time;
