@@ -41,7 +41,8 @@ class Constants {
   static const String txt_enter_new_password_again = "Enter new password again";
   static const String txt_invalid_password = "Invalid password";
   static const String txt_password_updated = "Password updated";
-  static const String txt_for_security_login_again = "For security reasons, please login again";
+  static const String txt_for_security_login_again =
+      "For security reasons, please login again";
   static const String txt_incorrect_current_password =
       "Incorrect current password";
   static const String txt_password_requirements =
@@ -52,12 +53,14 @@ class Constants {
   static const String txt_new_password_didnt_match =
       "New password does not match Confirm password.";
   static const String txt_resend_otp = "Resend OTP";
-  static const String txt_something_wrong = "Something went wrong. please try again";
+  static const String txt_something_wrong =
+      "Something went wrong. please try again";
 
   static const String termsUrl = "https://www.zeemart.asia/terms";
   static const String privacyUrl = "https://www.zeemart.asia/privacy-policy";
   static const String txt_orders = "Orders";
   static const String txt_deliveries = "Deliveries";
+  static const String txt_Search_order_number = "Search order number";
 }
 
 class SharedPref {

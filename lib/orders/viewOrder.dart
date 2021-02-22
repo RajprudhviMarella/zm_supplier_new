@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
-import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 
 /**
  * Created by RajPrudhviMarella on 18/Feb/2021.
@@ -36,31 +35,29 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _controller = new TextEditingController();
   Future<List<Orders>> ordersList;
-  List<dynamic> _list;
+  List<Orders> arrayOrderList;
   bool _isSearching;
-  String _searchText = "";
-  List searchresult = new List();
-
   String supplierID;
   String mudra;
-  bool _isShowLoader = false;
+  int totalNoRecords = 0;
+  int pageNum = 1;
+  bool isPageLoading = false;
+  int totalNumberOfPages = 0;
+  int pageSize = 10;
+  ScrollController controller;
+  String searchedString;
 
   @override
   void initState() {
-    super.initState();
+    controller = new ScrollController()..addListener(_scrollListener);
     loadSharedPrefs();
+    super.initState();
   }
 
-  void _showLoader() {
-    setState(() {
-      _isShowLoader = true;
-    });
-  }
-
-  void _hideLoader() {
-    setState(() {
-      _isShowLoader = false;
-    });
+  @override
+  void dispose() {
+    controller.removeListener(_scrollListener);
+    super.dispose();
   }
 
   SharedPref sharedPref = SharedPref();
@@ -88,14 +85,11 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: faintGrey,
-      body: ModalProgressHUD(
-        inAsyncCall: _isShowLoader,
-        child: ListView(
-          children: <Widget>[
-            buildAppBar(context),
-            displayList(context),
-          ],
-        ),
+      body: ListView(
+        children: <Widget>[
+          buildAppBar(context),
+          displayList(context),
+        ],
       ),
     );
   }
@@ -128,7 +122,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                     ),
                     decoration: new InputDecoration(
                         prefixIcon: new Icon(Icons.search, color: Colors.black),
-                        hintText: "Search",
+                        hintText: Constants.txt_Search_order_number,
                         hintStyle: new TextStyle(color: Colors.black)),
                     onChanged: searchOperation,
                   );
@@ -154,11 +148,14 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
                 snapShot.data.isNotEmpty) {
+              isPageLoading = false;
               return SizedBox(
-                  height: double.maxFinite,
-                  child: StickyGroupedListView<Orders, DateTime>(
+                  height: 600.0,
+                  child: GroupedListView<Orders, DateTime>(
+                    controller: controller,
                     elements: snapShot.data,
-                    order: StickyGroupedListOrder.ASC,
+                    physics: BouncingScrollPhysics(),
+                    order: GroupedListOrder.ASC,
                     groupComparator: (DateTime value1, DateTime value2) =>
                         value2.compareTo(value1),
                     groupBy: (Orders element) => DateTime(
@@ -170,7 +167,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                             .getTimeCompare()
                             .compareTo(element2.getTimeCompare()),
                     floatingHeader: true,
-                    groupSeparatorBuilder: (Orders element) => Container(
+                    groupSeparatorBuilder: (DateTime element) => Container(
                       height: 50,
                       child: Align(
                         alignment: Alignment.center,
@@ -187,7 +184,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              '${element.getTimeCompare().day}. ${element.getTimeCompare().month}, ${element.getTimeCompare().year}',
+                              '${element.day}. ${element.month}, ${element.year}',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -222,14 +219,11 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   }
 
   void searchOperation(String searchText) {
-    searchresult.clear();
+    arrayOrderList.clear();
+    ordersList = null;
     if (_isSearching != null) {
-      for (int i = 0; i < _list.length; i++) {
-        String data = _list[i];
-        if (data.toLowerCase().contains(searchText.toLowerCase())) {
-          searchresult.add(data);
-        }
-      }
+      searchedString = searchText;
+      ordersList = callRetreiveOrdersAPI();
     }
   }
 
@@ -251,10 +245,13 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       );
       _isSearching = false;
       _controller.clear();
+      searchedString = "";
+      ordersList = callRetreiveOrdersAPI();
     });
   }
 
   Future<List<Orders>> callRetreiveOrdersAPI() async {
+    isPageLoading = true;
     var ordersModel = OrdersBaseResponse();
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -262,7 +259,15 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       'mudra': mudra,
       'supplierId': supplierID
     };
-    Map<String, String> queryParams = {'supplierId': supplierID};
+    Map<String, String> queryParams = {
+      'supplierId': supplierID,
+      'pageNumber': pageNum.toString(),
+      'pageSize': pageSize.toString(),
+      'sortBy': 'timeUpdated',
+      'sortOrder': 'DESC',
+      if (searchedString != null && searchedString.isNotEmpty)
+        'orderIdText': searchedString,
+    };
     String queryString = Uri(queryParameters: queryParams).query;
     var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
     print(requestUrl);
@@ -272,7 +277,28 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     print(response.statusCode);
     if (response.statusCode == 200) {
       ordersModel = OrdersBaseResponse.fromJson(jsonMap);
-      return ordersModel.data.data;
+      totalNoRecords = ordersModel.data.numberOfPages;
+      setState(() {
+        if (pageNum == 1) {
+          arrayOrderList = ordersModel.data.data;
+        } else {
+          arrayOrderList.addAll(ordersModel.data.data);
+        }
+      });
+      return arrayOrderList;
+    }
+  }
+
+  _scrollListener() {
+    print("on scroll current page number $pageNum");
+    print("on scroll  total page numbers $totalNoRecords");
+    if (controller.position.maxScrollExtent == controller.offset) {
+      if (pageNum < totalNoRecords && !isPageLoading) {
+        pageNum++;
+        print("PAGE NUMBER $pageNum");
+        print("getting data");
+        callRetreiveOrdersAPI(); // Hit API to get new data
+      }
     }
   }
 }
