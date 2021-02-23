@@ -204,6 +204,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                           child: Container(
                               color: Colors.white,
                               child: ListTile(
+                                onTap: moveToOrderDetailsPage(element),
                                 contentPadding: EdgeInsets.only(
                                     top: 10.0,
                                     bottom: 10.0,
@@ -371,5 +372,9 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         callRetreiveOrdersAPI(); // Hit API to get new data
       }
     }
+  }
+
+  moveToOrderDetailsPage(Orders element) {
+    
   }
 }
