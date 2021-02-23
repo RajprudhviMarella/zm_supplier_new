@@ -154,7 +154,8 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                 margin: EdgeInsets.only(left: 100.0),
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    image: DecorationImage(
+                    image:
+                    DecorationImage(
                         fit: BoxFit.fill, image: _networkImage))),
             onTap: () {
               showImagePickerAlert(context);
@@ -418,6 +419,9 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       } else {
         _hideLoader();
       }
+    }
+    else{
+      _hideLoader();
     }
   }
 
