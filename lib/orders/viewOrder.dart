@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:intl/intl.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -43,7 +45,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   int pageNum = 1;
   bool isPageLoading = false;
   int totalNumberOfPages = 0;
-  int pageSize = 10;
+  int pageSize = 50;
   ScrollController controller;
   String searchedString;
 
@@ -116,15 +118,18 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                     color: Colors.black,
                   );
                   this.appBarTitle = new TextField(
+                    maxLines: null,
+                    textInputAction: TextInputAction.go,
                     controller: _controller,
+                    onSubmitted: searchOperation,
                     style: new TextStyle(
                       color: Colors.black,
                     ),
                     decoration: new InputDecoration(
                         prefixIcon: new Icon(Icons.search, color: Colors.black),
                         hintText: Constants.txt_Search_order_number,
-                        hintStyle: new TextStyle(color: Colors.black)),
-                    onChanged: searchOperation,
+                        hintStyle: new TextStyle(color: greyText)),
+                    // onChanged: searchOperation,
                   );
                   _handleSearchStart();
                 } else {
@@ -172,43 +177,88 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                       child: Align(
                         alignment: Alignment.center,
                         child: Container(
-                          width: 120,
-                          decoration: BoxDecoration(
-                            color: Colors.blue[300],
-                            border: Border.all(
-                              color: Colors.blue[300],
-                            ),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0)),
-                          ),
+                          padding: EdgeInsets.only(
+                              left: 10.0, top: 5.0, bottom: 5.0),
+                          height: 70.0,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              '${element.day}. ${element.month}, ${element.year}',
-                              textAlign: TextAlign.center,
-                            ),
+                            child: Row(children: <Widget>[
+                              Text(DateFormat('d MMM yyyy').format(element),
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: Colors.black,
+                                      fontFamily: "SourceSansProBold")),
+                              Text(" " + DateFormat('EEE').format(element),
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: greyText,
+                                      fontFamily: "SourceSansProRegular")),
+                            ]),
                           ),
                         ),
                       ),
                     ),
                     itemBuilder: (context, element) {
                       return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                        ),
-                        elevation: 8.0,
-                        margin: new EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 6.0),
-                        child: Container(
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10.0),
-                            // leading: Icon(element.),
-                            title: Text(element.orderId),
-                            // trailing: Text('${element.date.hour}:00'),
-                          ),
-                        ),
-                      );
+                          margin: EdgeInsets.only(top: 1.0),
+                          child: Container(
+                              color: Colors.white,
+                              child: ListTile(
+                                contentPadding: EdgeInsets.only(
+                                    top: 10.0,
+                                    bottom: 10.0,
+                                    left: 15.0,
+                                    right: 10.0),
+                                leading: displayImage(element.outlet.logoURL),
+                                title: Text(
+                                  element.outlet.outletName,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.black,
+                                    fontFamily: "SourceSansProSemiBold",
+                                  ),
+                                ),
+                                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+                                subtitle: Container(
+                                  margin: EdgeInsets.only(top: 3.0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.only(top: 2.0),
+                                            height: 14.0,
+                                            width: 14.0,
+                                            child: ImageIcon(AssetImage(
+                                                'assets/images/truck.png')),
+                                          ),
+                                          Text(" " + element.getTimeDelivered(),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12.0,
+                                                  fontFamily:
+                                                      "SourceSansProRegular")),
+                                          Text(
+                                            " " + '# ${element.orderId}',
+                                            style: TextStyle(
+                                                color: greyText,
+                                                fontSize: 12.0,
+                                                fontFamily:
+                                                    "SourceSansProRegular"),
+                                          ),
+                                        ]),
+                                        Constants.OrderStatusColor(element),
+                                      ]),
+                                ),
+                                trailing: Text(
+                                    element.amount.total.getDisplayValue(),
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                        fontFamily: "SourceSansProRegular")),
+                              )));
                     },
                   ));
             } else {
@@ -231,6 +281,27 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     setState(() {
       _isSearching = true;
     });
+  }
+
+  Widget displayImage(String Url) {
+    if (Url != null && Url.isNotEmpty) {
+      return Container(
+          height: 40.0,
+          width: 40.0,
+          decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              image:
+                  DecorationImage(fit: BoxFit.fill, image: NetworkImage(Url))));
+    } else {
+      return Container(
+          height: 40.0,
+          width: 40.0,
+          decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage('assets/images/icon_place_holder.png'))));
+    }
   }
 
   void _handleSearchEnd() {

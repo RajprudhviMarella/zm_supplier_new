@@ -39,6 +39,7 @@ dependencies:
   url_launcher: ^5.7.10
   pin_code_fields: ^6.1.0
   grouped_list: ^3.7.1
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +61,7 @@ flutter:
     - assets/images/icon_place_holder.png
     - assets/images/img_welcome_salmon.png
     - assets/images/ZM_logo_white.png
+    - assets/images/truck.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

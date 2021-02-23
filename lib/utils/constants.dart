@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'package:zm_supplier/models/ordersResponseList.dart';
+
+import 'color.dart';
+
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
  */
@@ -61,6 +65,195 @@ class Constants {
   static const String txt_orders = "Orders";
   static const String txt_deliveries = "Deliveries";
   static const String txt_Search_order_number = "Search order number";
+
+  static Widget OrderStatusColor(Orders orders) {
+    String status = orders.orderStatus;
+    if (status == "Approving") {
+      return Container(
+        decoration: BoxDecoration(
+          color: keyLineGrey,
+          border: Border.all(
+            color: keyLineGrey,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.black,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else if (status == "Cancelling") {
+      return Container(
+        decoration: BoxDecoration(
+          color: keyLineGrey,
+          border: Border.all(
+            color: keyLineGrey,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.black,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else if (status == "Creating") {
+      return Container(
+        decoration: BoxDecoration(
+          color: keyLineGrey,
+          border: Border.all(
+            color: keyLineGrey,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.black,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else if (status == "Rejecting") {
+      return Container(
+        decoration: BoxDecoration(
+          color: keyLineGrey,
+          border: Border.all(
+            color: keyLineGrey,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.black,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else if (status == "Draft") {
+      return Container(
+        decoration: BoxDecoration(
+          color: chartBlue,
+          border: Border.all(
+            color: chartBlue,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.white,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else if (status == "Created" || status == "PendingPayment") {
+      return Container(
+        decoration: BoxDecoration(
+          color: yellow,
+          border: Border.all(
+            color: yellow,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.black,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else if (status == "Placed" ||
+        (orders.isInvoiced != null && orders.isInvoiced)) {
+      return Container(
+        decoration: BoxDecoration(
+          color: green,
+          border: Border.all(
+            color: green,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.white,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else if (status == "Cancelled" ||
+        status == "Deleted" ||
+        status == "Rejected" ||
+        status == "Void") {
+      return Container(
+        decoration: BoxDecoration(
+          color: pinkyRed,
+          border: Border.all(
+            color: pinkyRed,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text(status.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.white,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    } else {
+      return Container(
+        decoration: BoxDecoration(
+          color: pinkyRed,
+          border: Border.all(
+            color: pinkyRed,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+          child: Text("UN AVAILABLE",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.white,
+                  fontFamily: "SourceSansProSemiBold")),
+        ),
+      );
+    }
+  }
 }
 
 class SharedPref {

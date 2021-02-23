@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class OrdersBaseResponse {
   OrdersBaseResponse({
@@ -89,6 +92,13 @@ class Orders {
   String promoCode;
   String pdfURL;
   DateTime timeCompare;
+  bool isInvoiced = false;
+
+  String getTimeDelivered() {
+    DateTime dateTime =
+        new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+    return DateFormat('EEE, d MMM').format(dateTime);
+  }
 
   DateTime getTimeCompare() {
     if (this.timePlaced != null &&
@@ -136,6 +146,7 @@ class Orders {
       this.notes,
       this.promoCode,
       this.timeCompare,
+      this.isInvoiced,
       this.pdfURL});
 
   Orders.fromJson(Map<String, dynamic> json) {
@@ -145,6 +156,7 @@ class Orders {
     timeUpdated = json['timeUpdated'];
     timeRejected = json['timeRejected'];
     timeCancelled = json['timeCancelled'];
+    isInvoiced = json['isInvoiced'];
     createdBy = json['createdBy'] != null
         ? new CreatedBy.fromJson(json['createdBy'])
         : null;
@@ -209,6 +221,7 @@ class Orders {
     data['timeCreated'] = this.timeCreated;
     data['timeUpdated'] = this.timeUpdated;
     data['timeRejected'] = this.timeRejected;
+    data['isInvoiced'] = this.isInvoiced;
     if (this.createdBy != null) {
       data['createdBy'] = this.createdBy.toJson();
     }
@@ -686,18 +699,34 @@ class Amount {
 class DeliveryFee {
   String currencyCode;
   int amount;
+  var amountV1;
 
-  DeliveryFee({this.currencyCode, this.amount});
+  double getAmount() {
+    if (amountV1 == null) {
+      return 0.0;
+    } else {
+      return amountV1;
+    }
+  }
+
+  String getDisplayValue() {
+    double amt = getAmount();
+    return "\$$amt";
+  }
+
+  DeliveryFee({this.currencyCode, this.amount, this.amountV1});
 
   DeliveryFee.fromJson(Map<String, dynamic> json) {
     currencyCode = json['currencyCode'];
     amount = json['amount'];
+    amountV1 = json['amountV1'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['currencyCode'] = this.currencyCode;
     data['amount'] = this.amount;
+    data['amountV1'] = this.amountV1;
     return data;
   }
 }
