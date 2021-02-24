@@ -6,6 +6,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
@@ -145,7 +146,129 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     return FutureBuilder<List<Orders>>(
         future: ordersList,
         builder: (context, snapShot) {
-          
+          if (snapShot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            if (snapShot.connectionState == ConnectionState.done &&
+                snapShot.hasData &&
+                snapShot.data.isNotEmpty) {
+              isPageLoading = false;
+              return SizedBox(
+                  height: 600.0,
+                  child: GroupedListView<Orders, DateTime>(
+                    controller: controller,
+                    elements: snapShot.data,
+                    physics: BouncingScrollPhysics(),
+                    order: GroupedListOrder.ASC,
+                    groupComparator: (DateTime value1, DateTime value2) =>
+                        value2.compareTo(value1),
+                    groupBy: (Orders element) => DateTime(
+                        element.getTimeCompare().year,
+                        element.getTimeCompare().month,
+                        element.getTimeCompare().day),
+                    itemComparator: (Orders element1, Orders element2) =>
+                        element1
+                            .getTimeCompare()
+                            .compareTo(element2.getTimeCompare()),
+                    floatingHeader: true,
+                    groupSeparatorBuilder: (DateTime element) => Container(
+                      height: 50,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: 10.0, top: 5.0, bottom: 5.0),
+                          height: 70.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(children: <Widget>[
+                              Text(DateFormat('d MMM yyyy').format(element),
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: Colors.black,
+                                      fontFamily: "SourceSansProBold")),
+                              Text(" " + DateFormat('EEE').format(element),
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: greyText,
+                                      fontFamily: "SourceSansProRegular")),
+                            ]),
+                          ),
+                        ),
+                      ),
+                    ),
+                    itemBuilder: (context, element) {
+                      return Card(
+                          margin: EdgeInsets.only(top: 1.0),
+                          child: Container(
+                              color: Colors.white,
+                              child: ListTile(
+                                onTap: () {
+                                  moveToOrderDetailsPage(element);
+                                },
+                                contentPadding: EdgeInsets.only(
+                                    top: 10.0,
+                                    bottom: 10.0,
+                                    left: 15.0,
+                                    right: 10.0),
+                                leading: displayImage(element.outlet.logoURL),
+                                title: Text(
+                                  element.outlet.outletName,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.black,
+                                    fontFamily: "SourceSansProSemiBold",
+                                  ),
+                                ),
+                                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+                                subtitle: Container(
+                                  margin: EdgeInsets.only(top: 3.0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.only(top: 2.0),
+                                            height: 14.0,
+                                            width: 14.0,
+                                            child: ImageIcon(AssetImage(
+                                                'assets/images/truck.png')),
+                                          ),
+                                          Text(" " + element.getTimeDelivered(),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12.0,
+                                                  fontFamily:
+                                                      "SourceSansProRegular")),
+                                          Text(
+                                            " " + '# ${element.orderId}',
+                                            style: TextStyle(
+                                                color: greyText,
+                                                fontSize: 12.0,
+                                                fontFamily:
+                                                    "SourceSansProRegular"),
+                                          ),
+                                        ]),
+                                        Constants.OrderStatusColor(element),
+                                      ]),
+                                ),
+                                trailing: Text(
+                                    element.amount.total.getDisplayValue(),
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                        fontFamily: "SourceSansProRegular")),
+                              )));
+                    },
+                  ));
+            } else {
+              return Container();
+            }
+          }
         });
   }
 
@@ -255,6 +378,9 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   }
 
   moveToOrderDetailsPage(Orders element) {
-    
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => new OrderDetailsPage(element.orderId)));
   }
 }

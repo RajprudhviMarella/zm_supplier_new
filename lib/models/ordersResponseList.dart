@@ -118,6 +118,10 @@ class Orders {
     }
   }
 
+  DateTime getTimeDeliveredLong() {
+    return new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+  }
+
   Orders(
       {this.dateCreated,
       this.dateUpdated,
