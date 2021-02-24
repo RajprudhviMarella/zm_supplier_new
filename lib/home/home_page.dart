@@ -59,7 +59,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       style: optionStyle,
     ),
   ];
-  final _pageOptions = [DashBoardPage(), CustomersPage(), SettingsPage()];
+  final _pageOptions = [DashboardPage(), CustomersPage(), SettingsPage()];
 
   void _onItemTapped(int index) {
     setState(() {
