@@ -19,4 +19,5 @@ class URLEndPoints {
 
   static const String order_summary_url = report_management_server + "reports/order/summary";
   static const String retrive_paginated_orders_url = order_management_server + "orders/po";
+  static const String order_activity_url = order_management_server + "orders/activitylogs";
 }
