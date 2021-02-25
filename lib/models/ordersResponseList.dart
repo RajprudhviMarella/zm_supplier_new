@@ -94,6 +94,10 @@ class Orders {
   DateTime timeCompare;
   bool isInvoiced = false;
 
+  bool isAddOn;
+  String linkedOrder;
+  bool isAcknowledged;
+
   String getTimeDelivered() {
     DateTime dateTime =
         new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
@@ -151,6 +155,9 @@ class Orders {
       this.promoCode,
       this.timeCompare,
       this.isInvoiced,
+        this.isAddOn,
+        this.linkedOrder,
+        this.isAcknowledged,
       this.pdfURL});
 
   Orders.fromJson(Map<String, dynamic> json) {
@@ -216,6 +223,9 @@ class Orders {
     notes = json['notes'];
     promoCode = json['promoCode'];
     pdfURL = json['pdfURL'];
+    isAddOn = json["isAddOn"];
+    linkedOrder = json['linkedOrder'];
+    isAcknowledged = json['isAcknowledged'];
   }
 
   Map<String, dynamic> toJson() {
@@ -272,6 +282,9 @@ class Orders {
     data['notes'] = this.notes;
     data['promoCode'] = this.promoCode;
     data['pdfURL'] = this.pdfURL;
+    data['isAddOn'] = this.isAddOn;
+    data['linkedOrder'] = this.linkedOrder;
+    data['isAcknowledged'] = this.isAcknowledged;
     return data;
   }
 }

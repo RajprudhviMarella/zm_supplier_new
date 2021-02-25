@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
-import 'package:zm_supplier/models/PaginatedOrders.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
 import 'package:zm_supplier/utils/constants.dart';
@@ -238,19 +237,9 @@ class ActivityState extends State<OrderActivityPage> {
                               ],
                             ),
 
-                            check(snapshot.data[index]),
-                            
-                            Row(
-                              children: [
-                                Text(
-                                  snapshot.data[index].activityUser != null ? snapshot.data[index].activityUser.firstName : "",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontFamily: "SourceSansProRegular",
-                                      color: greyText),
-                                ),
-                              ],
-                            ),
+                            checkRemark(snapshot.data[index]),
+                            checkActivityUser(snapshot.data[index])
+
                           ],
                         ),
                       ),
@@ -261,13 +250,31 @@ class ActivityState extends State<OrderActivityPage> {
         });
   }
 
-  Widget check(ActivityData arr) {
+  Widget checkRemark(ActivityData arr) {
 
     if (arr.activityRemark != null && arr.activityRemark.isNotEmpty) {
       return Container(
         height: 20,
         child: Row(children: [
-          Text('"' + (arr.activityRemark) + '"', style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProItalic'),)
+          Text('"' + (arr.activityRemark) + '"', style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProItalic', color: greyText),)
+        ]),
+      );
+    } else {
+      return Container(
+        height: 0,
+      );
+    }
+
+  }
+
+
+  Widget checkActivityUser(ActivityData arr) {
+
+    if (arr.activityUser != null && arr.activityUser.firstName.isNotEmpty) {
+      return Container(
+        height: 20,
+        child: Row(children: [
+          Text(arr.activityUser.firstName, style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProRegular', color: greyText),)
         ]),
       );
     } else {
