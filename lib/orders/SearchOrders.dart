@@ -27,7 +27,7 @@ class SearchOrderDesign extends State<SearchOrderPage>
     with TickerProviderStateMixin {
   final TextEditingController _controller = new TextEditingController();
   Future<List<Orders>> ordersList;
-  List<Orders> arrayOrderList
+  List<Orders> arrayOrderList;
   String supplierID;
   String mudra;
   int totalNoRecords = 0;
