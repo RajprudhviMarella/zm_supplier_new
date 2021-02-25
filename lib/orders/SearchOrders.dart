@@ -1,45 +1,33 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
-import 'package:zm_supplier/models/user.dart';
-import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
+import 'orderDetailsPage.dart';
+import 'package:zm_supplier/models/user.dart';
 
 /**
- * Created by RajPrudhviMarella on 18/Feb/2021.
+ * Created by RajPrudhviMarella on 25/Feb/2021.
  */
 
-class ViewOrdersPage extends StatefulWidget {
-  static const String tag = 'ViewOrdersPage';
-
+class SearchOrderPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ViewOrdersDesign();
+    return SearchOrderDesign();
   }
 }
 
-class ViewOrdersDesign extends State<ViewOrdersPage>
+class SearchOrderDesign extends State<SearchOrderPage>
     with TickerProviderStateMixin {
-  Widget appBarTitle = new Text(
-    Constants.txt_orders,
-    style: new TextStyle(color: Colors.black),
-  );
-  Icon icon = new Icon(
-    Icons.search,
-    color: Colors.black,
-  );
-  final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _controller = new TextEditingController();
   Future<List<Orders>> ordersList;
-  List<Orders> arrayOrderList;
-  bool _isSearching;
+  List<Orders> arrayOrderList
   String supplierID;
   String mudra;
   int totalNoRecords = 0;
@@ -75,7 +63,6 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         }
         if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
           supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
-          ordersList = callRetreiveOrdersAPI();
         }
       });
     } catch (Exception) {
@@ -98,50 +85,51 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   }
 
   Widget buildAppBar(BuildContext context) {
-    return new AppBar(
-        centerTitle: true,
-        title: appBarTitle,
-        backgroundColor: Colors.white,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: <Widget>[
-          new IconButton(
-            icon: icon,
-            onPressed: () {
-              setState(() {
-                if (this.icon.icon == Icons.search) {
-                  this.icon = new Icon(
-                    Icons.close,
+    return Container(
+        padding: EdgeInsets.all(5.0),
+        color: Colors.white,
+        child: ListTile(
+          leading: null,
+          title: Container(
+            margin: EdgeInsets.only(top: 3),
+            decoration: BoxDecoration(
+              color: keyLineGrey,
+              border: Border.all(
+                color: keyLineGrey,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            child: TextField(
+              cursorColor: Colors.blue,
+              maxLines: null,
+              textInputAction: TextInputAction.go,
+              controller: _controller,
+              onSubmitted: searchOperation,
+              autofocus: true,
+              // controller: _controller,
+              // onSubmitted: searchOperation,
+              style: new TextStyle(
+                color: Colors.black,
+              ),
+              decoration: new InputDecoration(
+                  border: InputBorder.none,
+                  prefixIcon: new Icon(Icons.search, color: Colors.grey),
+                  hintText: Constants.txt_Search_order_number,
+                  hintStyle: new TextStyle(color: greyText)),
+              // onChanged: searchOperation,
+            ),
+          ),
+          trailing: InkWell(
+            child: Text("Cancel",
+                style: TextStyle(
+                    fontSize: 16.0,
                     color: Colors.black,
-                  );
-                  this.appBarTitle = new TextField(
-                    cursorColor: Colors.blue,
-                    maxLines: null,
-                    textInputAction: TextInputAction.go,
-                    controller: _controller,
-                    onSubmitted: searchOperation,
-                    autofocus: true,
-                    style: new TextStyle(
-                      color: Colors.black,
-                    ),
-                    decoration: new InputDecoration(
-                        prefixIcon: new Icon(Icons.search, color: Colors.black),
-                        hintText: Constants.txt_Search_order_number,
-                        hintStyle: new TextStyle(color: greyText)),
-                    // onChanged: searchOperation,
-                  );
-                  _handleSearchStart();
-                } else {
-                  _handleSearchEnd();
-                }
-              });
+                    fontFamily: "SourceSansProRegular")),
+            onTap: () {
+              Navigator.of(context).pop();
             },
           ),
-        ]);
+        ));
   }
 
   Widget displayList(BuildContext context) {
@@ -275,18 +263,12 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   }
 
   void searchOperation(String searchText) {
-    arrayOrderList.clear();
-    ordersList = null;
-    if (_isSearching != null) {
-      searchedString = searchText;
-      ordersList = callRetreiveOrdersAPI();
+    if (arrayOrderList != null) {
+      arrayOrderList.clear();
     }
-  }
-
-  void _handleSearchStart() {
-    setState(() {
-      _isSearching = true;
-    });
+    ordersList = null;
+    searchedString = searchText;
+    if (searchedString.isNotEmpty) ordersList = callRetreiveOrdersAPI();
   }
 
   Widget displayImage(String Url) {
@@ -308,23 +290,6 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                   fit: BoxFit.fill,
                   image: AssetImage('assets/images/icon_place_holder.png'))));
     }
-  }
-
-  void _handleSearchEnd() {
-    setState(() {
-      this.icon = new Icon(
-        Icons.search,
-        color: Colors.black,
-      );
-      this.appBarTitle = new Text(
-        Constants.txt_orders,
-        style: new TextStyle(color: Colors.black),
-      );
-      _isSearching = false;
-      _controller.clear();
-      searchedString = "";
-      ordersList = callRetreiveOrdersAPI();
-    });
   }
 
   Future<List<Orders>> callRetreiveOrdersAPI() async {

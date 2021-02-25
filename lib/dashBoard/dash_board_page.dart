@@ -8,6 +8,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
 import 'package:zm_supplier/models/PaginatedOrders.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/orders/SearchOrders.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
@@ -260,36 +261,10 @@ class DashboardState extends State<DashboardPage> {
             new IconButton(
               icon: actionIcon,
               onPressed: () {
-                setState(() {
-                  if (this.actionIcon.icon == Icons.search) {
-                    this.actionIcon = new Icon(
-                      Icons.close,
-                      color: Colors.black,
-                    );
-                    this.appBarTitle = new TextField(
-                      style: new TextStyle(
-                        color: Colors.black,
-                      ),
-                      decoration: new InputDecoration(
-                          prefixIcon:
-                          new Icon(Icons.search, color: Colors.black),
-                          hintText: "Search orders",
-                          hintStyle: new TextStyle(color: Colors.black)),
-                    );
-                  } else {
-                    this.actionIcon = new Icon(
-                      Icons.search,
-                      color: Colors.black,
-                    );
-                    this.appBarTitle = new Text(
-                      "  Orders",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: "SourceSansProBold",
-                          fontSize: 30),
-                    );
-                  }
-                });
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => new SearchOrderPage()));
               },
             ),
           ]),
