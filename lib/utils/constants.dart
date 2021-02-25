@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,9 +41,12 @@ class Constants {
 
   static const String txt_incorrect_format = "Incorrect format";
   static const String txt_short_password = "New password is too short";
-  static const String txt_password_not_match = "New passwords entered do not match";
-  static const String txt_re_enter_new_password = "Please reenter new password.";
-  static const String txt_password_length = "Please enter at least 8 characters.";
+  static const String txt_password_not_match =
+      "New passwords entered do not match";
+  static const String txt_re_enter_new_password =
+      "Please reenter new password.";
+  static const String txt_password_length =
+      "Please enter at least 8 characters.";
   static const String txt_password = "Password";
   static const String txt_re_enter_password = "Re-enter password";
 
@@ -61,7 +65,8 @@ class Constants {
       "Include at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
 
   static const String txt_password_requiremntSemiBold = "Min. 8 characters, ";
-  static const String txt_password_requirementRegular = "at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
+  static const String txt_password_requirementRegular =
+      "at least 1 lowercase and uppercase letters, 1 number, and 1 symbol/special character.";
   static const String txt_create_password = "Create new password";
 
   static const String user_email = 'user_Email';
@@ -84,6 +89,7 @@ class Constants {
     String status = orders.orderStatus;
     if (status == "Approving") {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -93,7 +99,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -104,6 +110,7 @@ class Constants {
       );
     } else if (status == "Cancelling") {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -113,7 +120,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -124,6 +131,7 @@ class Constants {
       );
     } else if (status == "Creating") {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -133,7 +141,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -144,6 +152,7 @@ class Constants {
       );
     } else if (status == "Rejecting") {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -153,7 +162,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -164,6 +173,7 @@ class Constants {
       );
     } else if (status == "Draft") {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: chartBlue,
           border: Border.all(
@@ -173,7 +183,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -184,6 +194,7 @@ class Constants {
       );
     } else if (status == "Created" || status == "PendingPayment") {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: yellow,
           border: Border.all(
@@ -193,7 +204,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -205,6 +216,7 @@ class Constants {
     } else if (status == "Placed" ||
         (orders.isInvoiced != null && orders.isInvoiced)) {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: green,
           border: Border.all(
@@ -214,7 +226,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -228,6 +240,7 @@ class Constants {
         status == "Rejected" ||
         status == "Void") {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(
@@ -237,7 +250,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text(status.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -248,6 +261,7 @@ class Constants {
       );
     } else {
       return Container(
+        margin: EdgeInsets.only(top: 3),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(
@@ -257,7 +271,7 @@ class Constants {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-              top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+              top: 2.0, bottom: 2.0, left: 5.0, right: 5.0),
           child: Text("UN AVAILABLE",
               textAlign: TextAlign.center,
               style: TextStyle(
