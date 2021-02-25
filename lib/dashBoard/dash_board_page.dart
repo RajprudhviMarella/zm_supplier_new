@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
-import 'package:zm_supplier/models/PaginatedOrders.dart';
+import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/SearchOrders.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
@@ -35,15 +35,15 @@ class DashboardState extends State<DashboardPage> {
 
   // OrderSummaryResponse orderSummary;
 
-  PaginatedOrders ordersData;
+  OrdersBaseResponse ordersData;
   LoginResponse userResponse;
 
   OrderSummaryResponse summaryData;
   Future<OrderSummaryResponse> orderSummaryData;
 
-  Future<List<OrdersData>> ordersListToday;
-  Future<List<OrdersData>> ordersListYesterday;
-  List<OrdersData> arrayOrderList;
+  Future<List<Orders>> ordersListToday;
+  Future<List<Orders>> ordersListYesterday;
+  List<Orders> arrayOrderList;
 
   var selectedTab = 'Today';
   Widget appBarTitle = new Text(
@@ -121,7 +121,7 @@ class DashboardState extends State<DashboardPage> {
     // });
   }
 
-  Future<List<OrdersData>> _retriveYesterdayOrders() async {
+  Future<List<Orders>> _retriveYesterdayOrders() async {
     final now = DateTime.now();
 
     var yesterdayStartTime = DateTime(now.year, now.month, now.day - 1);
@@ -160,7 +160,7 @@ class DashboardState extends State<DashboardPage> {
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      ordersData = PaginatedOrders.fromJson(json.decode(response.body));
+      ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get orders data');
     }
@@ -169,7 +169,7 @@ class DashboardState extends State<DashboardPage> {
     return arrayOrderList;
   }
 
-  Future<List<OrdersData>> _retriveTodayOrders() async {
+  Future<List<Orders>> _retriveTodayOrders() async {
     final now = DateTime.now();
 
     var todayStartTime = DateTime(now.year, now.month, now.day);
@@ -208,7 +208,7 @@ class DashboardState extends State<DashboardPage> {
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      ordersData = PaginatedOrders.fromJson(json.decode(response.body));
+      ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get orders data');
     }
@@ -596,11 +596,11 @@ class DashboardState extends State<DashboardPage> {
   Widget list() {
     return Column(
       children: [
-        FutureBuilder<List<OrdersData>>(
+        FutureBuilder<List<Orders>>(
             future:
             selectedTab == "Today" ? ordersListToday : ordersListYesterday,
             builder: (BuildContext context,
-                AsyncSnapshot<List<OrdersData>> snapshot) {
+                AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
@@ -803,11 +803,11 @@ class DashboardState extends State<DashboardPage> {
                           //       maxWidth: 38,
                           //       maxHeight: 38,
                           //     ),
-                          child: snapshot.data[index].outlet.logoUrl == null
+                          child: snapshot.data[index].outlet.logoURL == null
                               ? ImageIcon(
                               AssetImage('assets/images/Truck-black.png'))
                               : Image.network(
-                            snapshot.data[index].outlet.logoUrl,
+                            snapshot.data[index].outlet.logoURL,
                             fit: BoxFit.fill,
                           ),
                           // ),
