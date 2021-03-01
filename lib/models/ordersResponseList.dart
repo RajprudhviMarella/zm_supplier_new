@@ -93,6 +93,7 @@ class Orders {
   String pdfURL;
   DateTime timeCompare;
   bool isInvoiced = false;
+  String deliveryInstruction;
 
   bool isAddOn;
   String linkedOrder;
@@ -102,6 +103,24 @@ class Orders {
     DateTime dateTime =
         new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
     return DateFormat('EEE, d MMM').format(dateTime);
+  }
+
+  String getDeliveryDay() {
+    DateTime dateTime =
+    new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+    return DateFormat('EEEE').format(dateTime);
+  }
+
+  String getDeliveryDateMonthYear() {
+    DateTime dateTime =
+    new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+    return DateFormat('d MMM yyyy').format(dateTime);
+  }
+
+  String getDatePlaced() {
+    DateTime dateTime =
+    new DateTime.fromMillisecondsSinceEpoch(this.timePlaced * 1000);
+    return DateFormat('d MMM yyyy, HH:mm').format(dateTime);
   }
 
   DateTime getTimeCompare() {
@@ -134,6 +153,7 @@ class Orders {
       this.createdBy,
       this.updatedBy,
       this.orderId,
+        this.deliveryInstruction,
       this.outlet,
       this.supplier,
       this.amount,
@@ -165,6 +185,7 @@ class Orders {
     dateUpdated = json['dateUpdated'];
     timeCreated = json['timeCreated'];
     timeUpdated = json['timeUpdated'];
+    deliveryInstruction = json['deliveryInstruction'];
     timeRejected = json['timeRejected'];
     timeCancelled = json['timeCancelled'];
     isInvoiced = json['isInvoiced'];
@@ -236,6 +257,7 @@ class Orders {
     data['timeUpdated'] = this.timeUpdated;
     data['timeRejected'] = this.timeRejected;
     data['isInvoiced'] = this.isInvoiced;
+    data['deliveryInstruction'] = this.deliveryInstruction;
     if (this.createdBy != null) {
       data['createdBy'] = this.createdBy.toJson();
     }
@@ -751,6 +773,7 @@ class DeliveryFee {
 class Products {
   String sku;
   String productName;
+  String notes;
   var quantity;
   String supplierProductCode;
   String unitSize;
@@ -760,6 +783,7 @@ class Products {
   Products(
       {this.sku,
       this.productName,
+        this.notes,
       this.quantity,
       this.supplierProductCode,
       this.unitSize,
@@ -769,6 +793,7 @@ class Products {
   Products.fromJson(Map<String, dynamic> json) {
     sku = json['sku'];
     productName = json['productName'];
+    notes = json['notes'];
     quantity = json['quantity'];
     supplierProductCode = json['supplierProductCode'];
     unitSize = json['unitSize'];
@@ -784,6 +809,7 @@ class Products {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['sku'] = this.sku;
     data['productName'] = this.productName;
+    data['notes'] = this.notes;
     data['quantity'] = this.quantity;
     data['supplierProductCode'] = this.supplierProductCode;
     data['unitSize'] = this.unitSize;

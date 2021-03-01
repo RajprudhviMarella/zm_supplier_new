@@ -289,7 +289,7 @@ void showAlert(context) {
   Widget okButton = FlatButton(
     child: Text(Constants.txt_ok),
     onPressed: () {
-      Navigator.pop(context);
+      Navigator.of(context, rootNavigator: true).pop();
     },
   );
 
