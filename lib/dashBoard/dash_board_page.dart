@@ -25,6 +25,8 @@ import 'dart:ui' as ui;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
+import '../utils/color.dart';
+
 class DashboardPage extends StatefulWidget {
   @override
   DashboardState createState() => new DashboardState();
@@ -79,7 +81,7 @@ class DashboardState extends State<DashboardPage> {
 
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -89,7 +91,7 @@ class DashboardState extends State<DashboardPage> {
     };
 
     var response =
-    await http.get(URLEndPoints.order_summary_url, headers: headers);
+        await http.get(URLEndPoints.order_summary_url, headers: headers);
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
@@ -128,16 +130,16 @@ class DashboardState extends State<DashboardPage> {
     var yesterdayStartTime = DateTime(now.year, now.month, now.day - 1);
     var epochStartTime = yesterdayStartTime.millisecondsSinceEpoch / 1000;
     var startDate =
-    epochStartTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+        epochStartTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
 
     var yesterdayEndTime =
-    DateTime(now.year, now.month, now.day - 1, 23, 59, 59);
+        DateTime(now.year, now.month, now.day - 1, 23, 59, 59);
     var epochEndTime = yesterdayEndTime.millisecondsSinceEpoch / 1000;
     var endDate =
-    epochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+        epochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
 
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -182,10 +184,10 @@ class DashboardState extends State<DashboardPage> {
     var todayEndTime = DateTime(now.year, now.month, now.day, 23, 59, 59);
     var todayEpochEndTime = todayEndTime.millisecondsSinceEpoch / 1000;
     var todayEndDate =
-    todayEpochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+        todayEpochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
 
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -269,6 +271,19 @@ class DashboardState extends State<DashboardPage> {
               },
             ),
           ]),
+      floatingActionButton: new FloatingActionButton.extended(
+        backgroundColor: buttonBlue,
+        foregroundColor: Colors.white,
+        onPressed: () {
+          print('new order pressed');
+        },
+        icon: Icon(Icons.add, size: 22,),
+        elevation: 0,
+        label: Text(
+          'New order',
+          style: TextStyle(fontSize: 16, fontFamily: 'SourceSansProSemiBold'),
+        ),
+      ),
       body: Container(
         color: faintGrey,
         child: ListView(
@@ -277,7 +292,7 @@ class DashboardState extends State<DashboardPage> {
             //dots(context),
             Header(),
             tabs(),
-            list()
+            list(),
           ],
         ),
       ),
@@ -301,7 +316,7 @@ class DashboardState extends State<DashboardPage> {
                     //  height: 200,
 
                     options: CarouselOptions(
-                      //autoPlay: true,
+                        //autoPlay: true,
                         viewportFraction: 0.9,
                         enableInfiniteScroll: false,
                         aspectRatio: 2.5,
@@ -320,7 +335,7 @@ class DashboardState extends State<DashboardPage> {
                           return Container(
                             decoration: BoxDecoration(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                                  BorderRadius.all(Radius.circular(10.0)),
                               color: Colors.white,
                             ),
 
@@ -342,12 +357,12 @@ class DashboardState extends State<DashboardPage> {
                                               currentIndex == 0
                                                   ? "Total orders".toUpperCase()
                                                   : 'East coast team'
-                                                  .toUpperCase(),
+                                                      .toUpperCase(),
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 14,
                                                   fontFamily:
-                                                  "SourceSansProBold"),
+                                                      "SourceSansProBold"),
                                             )),
                                       ),
                                       Padding(
@@ -358,16 +373,16 @@ class DashboardState extends State<DashboardPage> {
                                             child: new Text(
                                               currentIndex == 0
                                                   ? 'S\$' +
-                                                  snapshot.data.data
-                                                      .totalSpendingCurrMonth
-                                                      .toString() ??
-                                                  ""
+                                                          snapshot.data.data
+                                                              .totalSpendingCurrMonth
+                                                              .toString() ??
+                                                      ""
                                                   : '',
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 30,
                                                   fontFamily:
-                                                  "SourceSansProBold"),
+                                                      "SourceSansProBold"),
                                             )),
                                       ),
                                       Padding(
@@ -381,7 +396,7 @@ class DashboardState extends State<DashboardPage> {
                                                   color: greyText,
                                                   fontSize: 14,
                                                   fontFamily:
-                                                  "SourceSansProSemiBold"),
+                                                      "SourceSansProSemiBold"),
                                             )),
                                       ),
 
@@ -434,23 +449,23 @@ class DashboardState extends State<DashboardPage> {
                                             //color: faintGrey,
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   (snapshot.data.data
-                                                      .todayPendingDeliveries >
-                                                      0)
+                                                              .todayPendingDeliveries >
+                                                          0)
                                                       ? snapshot.data.data
-                                                      .todayPendingDeliveries
-                                                      .toString() +
-                                                      ' deliveries today'
+                                                              .todayPendingDeliveries
+                                                              .toString() +
+                                                          ' deliveries today'
                                                       : 'No deliveries today',
                                                   style: TextStyle(
                                                       color: greyText,
                                                       fontSize: 14,
                                                       fontFamily:
-                                                      "SourceSansProSemiBold"),
+                                                          "SourceSansProSemiBold"),
                                                 ),
                                                 FlatButton(
                                                   onPressed: () {
@@ -460,14 +475,15 @@ class DashboardState extends State<DashboardPage> {
                                                     Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
-                                                            builder: (context) => DeliveriesPage()));
+                                                            builder: (context) =>
+                                                                DeliveriesPage()));
                                                   },
                                                   child: Text(
                                                     'View deliveries',
                                                     style: TextStyle(
                                                         color: buttonBlue,
                                                         fontFamily:
-                                                        "SourceSansProRegular",
+                                                            "SourceSansProRegular",
                                                         fontSize: 12),
                                                   ),
                                                 ),
@@ -526,10 +542,8 @@ class DashboardState extends State<DashboardPage> {
             FlatButton(
               onPressed: () {
                 print('View all orders tapped');
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ViewOrdersPage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ViewOrdersPage()));
               },
               child: Text(
                 'View all orders',
@@ -553,7 +567,7 @@ class DashboardState extends State<DashboardPage> {
         child: Container(
           height: 50.0,
           decoration: BoxDecoration(
-            //This is for background color
+              //This is for background color
               color: Colors.white,
               //This is for bottom border that is needed
               border: Border(bottom: BorderSide(color: faintGrey, width: 1.5))),
@@ -562,7 +576,7 @@ class DashboardState extends State<DashboardPage> {
             unselectedLabelColor: greyText,
             labelColor: Colors.black,
             labelStyle:
-            TextStyle(fontFamily: 'SourceSansProBold', fontSize: 14),
+                TextStyle(fontFamily: 'SourceSansProBold', fontSize: 14),
             tabs: [
               Tab(
                 text: "Today",
@@ -599,9 +613,9 @@ class DashboardState extends State<DashboardPage> {
       children: [
         FutureBuilder<List<Orders>>(
             future:
-            selectedTab == "Today" ? ordersListToday : ordersListYesterday,
-            builder: (BuildContext context,
-                AsyncSnapshot<List<Orders>> snapshot) {
+                selectedTab == "Today" ? ordersListToday : ordersListYesterday,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
@@ -634,7 +648,7 @@ class DashboardState extends State<DashboardPage> {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   ImageIcon(
                                     AssetImage("assets/images/Truck-black.png"),
@@ -661,24 +675,25 @@ class DashboardState extends State<DashboardPage> {
                                   ),
 
                                   SizedBox(width: 5),
-                                if (snapshot.data[index].isAcknowledged != null)
-                                  Container(
-                                    width: snapshot.data[index].isAcknowledged
-                                        ? 12
-                                        : 0,
-                                    child: InkResponse(
-                                      child: Image.asset(
-                                        "assets/images/icon-tick-green.png",
-                                        width: 12,
-                                        height: 12,
+                                  if (snapshot.data[index].isAcknowledged !=
+                                      null)
+                                    Container(
+                                      width: snapshot.data[index].isAcknowledged
+                                          ? 12
+                                          : 0,
+                                      child: InkResponse(
+                                        child: Image.asset(
+                                          "assets/images/icon-tick-green.png",
+                                          width: 12,
+                                          height: 12,
+                                        ),
                                       ),
                                     ),
-                                  ),
 
                                   //Icon(Icons.navigate_next, size: 12,),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 80.0, right: 20),
+                                        left: 80.0, right: 0),
                                     child: Container(
                                       child: Text(
                                           'S\$' +
@@ -689,7 +704,7 @@ class DashboardState extends State<DashboardPage> {
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontFamily:
-                                              "SourceSansProRegular",
+                                                  "SourceSansProRegular",
                                               color: Colors.black)),
                                     ),
                                   )
@@ -697,14 +712,14 @@ class DashboardState extends State<DashboardPage> {
                               ),
                               Padding(
                                 padding:
-                                const EdgeInsets.only(top: 2.0, bottom: 10),
+                                    const EdgeInsets.only(top: 2.0, bottom: 10),
                                 child: Container(
                                   height: (snapshot.data[index].orderStatus ==
-                                      "Void" ||
-                                      snapshot.data[index].orderStatus ==
-                                          "Cancelled" ||
-                                      snapshot.data[index].orderStatus ==
-                                          "Invoiced")
+                                              "Void" ||
+                                          snapshot.data[index].orderStatus ==
+                                              "Cancelled" ||
+                                          snapshot.data[index].orderStatus ==
+                                              "Invoiced")
                                       ? 20
                                       : 0,
                                   //  margin: EdgeInsets.symmetric(horizontal: 5.0),
@@ -715,12 +730,12 @@ class DashboardState extends State<DashboardPage> {
                                     children: [
                                       Container(
                                         width:
-                                        (snapshot.data[index].orderStatus ==
-                                            "Void")
-                                            ? 50
-                                            : 0,
+                                            (snapshot.data[index].orderStatus ==
+                                                    "Void")
+                                                ? 50
+                                                : 0,
                                         margin:
-                                        EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
 
                                         decoration: BoxDecoration(
                                             color: warningRed,
@@ -736,19 +751,19 @@ class DashboardState extends State<DashboardPage> {
                                                 color: Colors.white,
                                                 fontSize: 10,
                                                 fontFamily:
-                                                "SourceSansProSemiBold"),
+                                                    "SourceSansProSemiBold"),
                                           ),
                                         ),
                                         //  color: Colors.grey,
                                       ),
                                       Container(
                                         width:
-                                        (snapshot.data[index].orderStatus ==
-                                            "Cancelled")
-                                            ? 50
-                                            : 0,
+                                            (snapshot.data[index].orderStatus ==
+                                                    "Cancelled")
+                                                ? 50
+                                                : 0,
                                         margin:
-                                        EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
                                         decoration: BoxDecoration(
                                             color: warningRed,
                                             borderRadius: BorderRadius.all(
@@ -759,15 +774,15 @@ class DashboardState extends State<DashboardPage> {
                                               color: Colors.white,
                                               fontSize: 12,
                                               fontFamily:
-                                              "SourceSansProSemiBold"),
+                                                  "SourceSansProSemiBold"),
                                         ),
                                       ),
                                       Container(
                                         width:
-                                        (snapshot.data[index].orderStatus ==
-                                            "Invoiced")
-                                            ? 50
-                                            : 0,
+                                            (snapshot.data[index].orderStatus ==
+                                                    "Invoiced")
+                                                ? 50
+                                                : 0,
                                         decoration: BoxDecoration(
                                             color: lightGreen,
                                             borderRadius: BorderRadius.all(
@@ -778,7 +793,7 @@ class DashboardState extends State<DashboardPage> {
                                                 color: Colors.white,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                "SourceSansProSemiBold")),
+                                                    "SourceSansProSemiBold")),
                                         // color: Colors.pink,
                                       )
                                     ],
@@ -795,7 +810,7 @@ class DashboardState extends State<DashboardPage> {
                           width: 38,
                           decoration: BoxDecoration(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                           ),
                           // child: ConstrainedBox(
                           //     constraints: BoxConstraints(
@@ -806,11 +821,11 @@ class DashboardState extends State<DashboardPage> {
                           //     ),
                           child: snapshot.data[index].outlet.logoURL == null
                               ? ImageIcon(
-                              AssetImage('assets/images/Truck-black.png'))
+                                  AssetImage('assets/images/Truck-black.png'))
                               : Image.network(
-                            snapshot.data[index].outlet.logoURL,
-                            fit: BoxFit.fill,
-                          ),
+                                  snapshot.data[index].outlet.logoURL,
+                                  fit: BoxFit.fill,
+                                ),
                           // ),
                         ),
 
@@ -837,9 +852,7 @@ class DashboardState extends State<DashboardPage> {
   }
 
   moveToOrderDetailsPage(Orders element) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => new OrderDetailsPage(element)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
 }
