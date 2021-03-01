@@ -678,7 +678,7 @@ class DashboardState extends State<DashboardPage> {
                                   //Icon(Icons.navigate_next, size: 12,),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 80.0, right: 20),
+                                        left: 80.0, right: 0),
                                     child: Container(
                                       child: Text(
                                           'S\$' +
