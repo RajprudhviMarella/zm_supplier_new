@@ -403,6 +403,6 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => new OrderDetailsPage(element.orderId)));
+            builder: (context) => new OrderDetailsPage(element)));
   }
 }

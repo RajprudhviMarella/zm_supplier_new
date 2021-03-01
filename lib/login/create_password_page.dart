@@ -376,6 +376,7 @@ class CreatePasswordState extends State<CreatePassword> {
         child: Text(Constants.txt_ok),
         onPressed: () {
           // Navigator.pop(context);
+          Navigator.of(context, rootNavigator: true).pop();
           Navigator.push(
               context,
               MaterialPageRoute(

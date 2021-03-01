@@ -49,10 +49,10 @@ class _VerificationCodeState extends State<VerificationCode> {
     startTimer();
   }
 
-  @override
-  void dipose() {
-    super.dispose();
-  }
+  // @override
+  // void dipose() {
+  //   super.dispose();
+  // }
 
   void _showLoader() {
     setState(() {
