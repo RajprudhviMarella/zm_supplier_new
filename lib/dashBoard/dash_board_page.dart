@@ -9,6 +9,7 @@ import 'package:zm_supplier/deliveries/deliveries_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/SearchOrders.dart';
+import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
@@ -660,7 +661,7 @@ class DashboardState extends State<DashboardPage> {
                                   ),
 
                                   SizedBox(width: 5),
-
+                                if (snapshot.data[index].isAcknowledged != null)
                                   Container(
                                     width: snapshot.data[index].isAcknowledged
                                         ? 12
@@ -816,6 +817,7 @@ class DashboardState extends State<DashboardPage> {
                         tileColor: Colors.white,
                         onTap: () {
                           print('item tapped $index');
+                          moveToOrderDetailsPage(snapshot.data[index]);
                         },
                       ),
                       // ListTile(
@@ -832,5 +834,12 @@ class DashboardState extends State<DashboardPage> {
             }),
       ],
     );
+  }
+
+  moveToOrderDetailsPage(Orders element) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => new OrderDetailsPage(element)));
   }
 }
