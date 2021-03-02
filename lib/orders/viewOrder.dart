@@ -306,7 +306,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
               shape: BoxShape.rectangle,
               image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage('assets/images/icon_place_holder.png'))));
+                  image: AssetImage('assets/images/placeholder_all.png'))));
     }
   }
 
