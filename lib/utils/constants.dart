@@ -84,6 +84,7 @@ class Constants {
   static const String txt_orders = "Orders";
   static const String txt_deliveries = "Deliveries";
   static const String txt_Search_order_number = "Search order number";
+  static const String txt_search_outlet = "Search outlet or people";
 
   static Widget OrderStatusColor(Orders orders) {
     String status = orders.orderStatus;
@@ -282,6 +283,23 @@ class Constants {
       );
     }
   }
+
+  String getInitialWords(String name) {
+    var firstWord = name[0];
+    var lastWord = name.substring(name.lastIndexOf(' ') + 1);
+    var finalStr = '';
+    if (name.split(' ').length > 1) {
+      finalStr = firstWord + ' ' + lastWord;
+    } else {
+      finalStr = firstWord;
+    }
+    return getInitialsChars(finalStr).toUpperCase();
+  }
+
+  String getInitialsChars(String bank_account_name) =>
+      bank_account_name.isNotEmpty
+          ? bank_account_name.trim().split(' ').map((l) => l[0]).take(2).join()
+          : '';
 }
 
 class SharedPref {

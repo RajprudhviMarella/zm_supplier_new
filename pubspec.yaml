@@ -65,6 +65,9 @@ flutter:
     - assets/images/truck.png
     - assets/images/Truck-black.png
     - assets/images/icon-tick-green.png
+    - assets/images/Star_light_grey.png
+    - assets/images/Star_yellow.png
+    - assets/images/Sort-blue.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
