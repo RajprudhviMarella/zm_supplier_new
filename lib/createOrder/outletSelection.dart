@@ -221,9 +221,13 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         future: getList(bool),
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            if (bool) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return Container();
+            }
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
@@ -292,12 +296,13 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                 },
                 contentPadding: EdgeInsets.only(left: 15.0, right: 10.0),
                 leading: displayImage(snapShot.data[index].outlet.logoUrl),
-                title: Text(
-                  snapShot.data[index].outlet.outletName,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.black,
-                    fontFamily: "SourceSansProSemiBold",
+                title: RichText(
+                  text: TextSpan(
+                    children: highlightOccurrences(snapShot.data[index].outlet.outletName, _controller.text),
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black,
+                      fontFamily: "SourceSansProSemiBold"),
                   ),
                 ),
                 subtitle: Text(
@@ -339,7 +344,42 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       });
     }
   }
+  List<TextSpan> highlightOccurrences(String source, String query) {
+    if (query == null || query.isEmpty || !source.toLowerCase().contains(query.toLowerCase())) {
+      return [ TextSpan(text: source) ];
+    }
+    final matches = query.toLowerCase().allMatches(source.toLowerCase());
 
+    int lastMatchEnd = 0;
+
+    final List<TextSpan> children = [];
+    for (var i = 0; i < matches.length; i++) {
+      final match = matches.elementAt(i);
+
+      if (match.start != lastMatchEnd) {
+        children.add(TextSpan(
+          text: source.substring(lastMatchEnd, match.start),
+        ));
+      }
+
+      children.add(TextSpan(
+        text: source.substring(match.start, match.end),
+        style: TextStyle(
+          fontSize: 16.0,
+          color: chartBlue,
+          fontFamily: "SourceSansProSemiBold"),
+      ));
+
+      if (i == matches.length - 1 && match.end != source.length) {
+        children.add(TextSpan(
+          text: source.substring(match.end, source.length),
+        ));
+      }
+
+      lastMatchEnd = match.end;
+    }
+    return children;
+  }
   void moveToProductPage(Outlet outlet) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new MarketListPage(outlet)));
