@@ -8,6 +8,8 @@ import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 import 'dart:ui';
 
+import 'market_list_page.dart';
+
 /**
  * Created by RajPrudhviMarella on 02/Mar/2021.
  */
@@ -24,7 +26,7 @@ class OutletSelectionPage extends StatefulWidget {
 class OutletSelectionDesign extends State<OutletSelectionPage>
     with TickerProviderStateMixin {
   Widget appBarTitle = new Text(
-    "Select outlet",
+    Constants.txt_select_outlet,
     style: new TextStyle(color: Colors.black),
   );
   Icon icon = new Icon(
@@ -123,7 +125,9 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                     maxLines: null,
                     textInputAction: TextInputAction.go,
                     controller: _controller,
-                    onChanged: searchOperation,
+                    onChanged: (value) {
+                      setState(() {});
+                    },
                     cursorColor: Colors.blue,
                     autofocus: true,
                     style: new TextStyle(
@@ -133,7 +137,6 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                         prefixIcon: new Icon(Icons.search, color: Colors.black),
                         hintText: Constants.txt_Search_order_number,
                         hintStyle: new TextStyle(color: greyText)),
-                    // onChanged: searchOperation,
                   );
                 } else {
                   _handleSearchEnd();
@@ -144,10 +147,6 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         ]);
   }
 
-  void searchOperation(String searchText) {
-    // filterSearchResults(searchText);
-  }
-
   void _handleSearchEnd() {
     setState(() {
       this.icon = new Icon(
@@ -155,13 +154,11 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         color: Colors.black,
       );
       this.appBarTitle = new Text(
-        Constants.txt_orders,
+        Constants.txt_select_outlet,
         style: new TextStyle(color: Colors.black),
       );
       _controller.clear();
       searchedString = "";
-      // filterSearchResults(null);
-      // ordersList = callRetreiveOrdersAPI();
     });
   }
 
@@ -236,45 +233,15 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: snapShot.data.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                        margin: EdgeInsets.only(top: 1.0),
-                        child: Container(
-                            color: Colors.white,
-                            child: ListTile(
-                                focusColor: Colors.white,
-                                onTap: () {
-                                  moveToProductPage(
-                                      snapShot.data[index].outlet);
-                                },
-                                contentPadding:
-                                    EdgeInsets.only(left: 15.0, right: 10.0),
-                                leading: displayImage(
-                                    snapShot.data[index].outlet.logoUrl),
-                                title: Text(
-                                  snapShot.data[index].outlet.outletName,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontFamily: "SourceSansProSemiBold",
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  snapShot
-                                      .data[index].outlet.company.companyName,
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                    color: greyText,
-                                    fontFamily: "SourceSansProRegular",
-                                  ),
-                                ),
-                                trailing: Icon(
-                                  snapShot.data[index].isFavourite
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  color: snapShot.data[index].isFavourite
-                                      ? Colors.yellow
-                                      : null,
-                                ))));
+                    if (_controller.text.isEmpty) {
+                      return displaySearchedList(snapShot, index);
+                    } else if (snapShot.data[index].outlet.outletName
+                        .toLowerCase()
+                        .contains(_controller.text)) {
+                      return displaySearchedList(snapShot, index);
+                    } else {
+                      return Container();
+                    }
                   });
             } else {
               return Container();
@@ -312,6 +279,44 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
     }
   }
 
+  Widget displaySearchedList(
+      AsyncSnapshot<List<FavouriteOutletsList>> snapShot, int index) {
+    return Card(
+        margin: EdgeInsets.only(top: 1.0),
+        child: Container(
+            color: Colors.white,
+            child: ListTile(
+                focusColor: Colors.white,
+                onTap: () {
+                  moveToProductPage(snapShot.data[index].outlet);
+                },
+                contentPadding: EdgeInsets.only(left: 15.0, right: 10.0),
+                leading: displayImage(snapShot.data[index].outlet.logoUrl),
+                title: Text(
+                  snapShot.data[index].outlet.outletName,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
+                    fontFamily: "SourceSansProSemiBold",
+                  ),
+                ),
+                subtitle: Text(
+                  snapShot.data[index].outlet.company.companyName,
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: greyText,
+                    fontFamily: "SourceSansProRegular",
+                  ),
+                ),
+                trailing: Icon(
+                  snapShot.data[index].isFavourite
+                      ? Icons.star
+                      : Icons.star_border,
+                  color:
+                      snapShot.data[index].isFavourite ? Colors.yellow : null,
+                ))));
+  }
+
   void filterSearchResults(String query) {
     List<FavouriteOutletsList> dummySearchList = List<FavouriteOutletsList>();
     dummySearchList.addAll(allOutletList);
@@ -335,5 +340,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
     }
   }
 
-  void moveToProductPage(Outlet outlet) {}
+  void moveToProductPage(Outlet outlet) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new MarketListPage(outlet)));
+  }
 }
