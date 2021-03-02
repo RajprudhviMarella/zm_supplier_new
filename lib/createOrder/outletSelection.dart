@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:zm_supplier/models/outletResponse.dart';
+import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -72,7 +73,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return new Scaffold(
+      key: globalKey,
       backgroundColor: faintGrey,
       body: ListView(
         children: <Widget>[
@@ -291,18 +293,17 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
             color: Colors.white,
             child: ListTile(
                 focusColor: Colors.white,
-                onTap: () {
-                  moveToProductPage(snapShot.data[index].outlet);
-                },
                 contentPadding: EdgeInsets.only(left: 15.0, right: 10.0),
                 leading: displayImage(snapShot.data[index].outlet.logoUrl),
                 title: RichText(
                   text: TextSpan(
-                    children: highlightOccurrences(snapShot.data[index].outlet.outletName, _controller.text),
+                    children: highlightOccurrences(
+                        snapShot.data[index].outlet.outletName,
+                        _controller.text),
                     style: TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.black,
-                      fontFamily: "SourceSansProSemiBold"),
+                        fontSize: 16.0,
+                        color: Colors.black,
+                        fontFamily: "SourceSansProSemiBold"),
                   ),
                 ),
                 subtitle: Text(
@@ -313,13 +314,58 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                     fontFamily: "SourceSansProRegular",
                   ),
                 ),
-                trailing: Icon(
-                  snapShot.data[index].isFavourite
-                      ? Icons.star
-                      : Icons.star_border,
-                  color:
-                      snapShot.data[index].isFavourite ? Colors.yellow : null,
-                ))));
+                trailing: IconButton(
+                  icon: snapShot.data[index].isFavourite
+                      ? Image(
+                          image: AssetImage('assets/images/Star_yellow.png'),
+                          fit: BoxFit.fill,
+                          width: 25,
+                          height: 25,
+                        )
+                      : ImageIcon(
+                          AssetImage('assets/images/Star_light_grey.png'),
+                        ),
+                  onPressed: () {
+                    print('tapped $index');
+                    tapOnFavourite(index, snapShot.data[index]);
+                    //   _onDeleteItemPressed(index);
+                  },
+                ),
+                onTap: () {
+                  moveToProductPage(snapShot.data[index].outlet);
+                })));
+  }
+
+  tapOnFavourite(int index, FavouriteOutletsList customers) {
+    if (customers.isFavourite) {
+      setState(() {
+        customers.isFavourite = false;
+        globalKey.currentState.showSnackBar(
+          SnackBar(
+            content: Text('Removed from starred'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      });
+    } else {
+      setState(() {
+        customers.isFavourite = true;
+
+        globalKey.currentState
+          ..showSnackBar(
+            SnackBar(
+              content: Text('Added to starred'),
+              duration: Duration(seconds: 1),
+            ),
+          );
+      });
+    }
+
+    FavouritesApi favourite = new FavouritesApi();
+    favourite
+        .updateFavourite(
+            mudra, supplierID, customers.outlet.outletId, customers.isFavourite)
+        .then((value) async {});
   }
 
   void filterSearchResults(String query) {
@@ -344,9 +390,12 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       });
     }
   }
+
   List<TextSpan> highlightOccurrences(String source, String query) {
-    if (query == null || query.isEmpty || !source.toLowerCase().contains(query.toLowerCase())) {
-      return [ TextSpan(text: source) ];
+    if (query == null ||
+        query.isEmpty ||
+        !source.toLowerCase().contains(query.toLowerCase())) {
+      return [TextSpan(text: source)];
     }
     final matches = query.toLowerCase().allMatches(source.toLowerCase());
 
@@ -365,9 +414,9 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       children.add(TextSpan(
         text: source.substring(match.start, match.end),
         style: TextStyle(
-          fontSize: 16.0,
-          color: chartBlue,
-          fontFamily: "SourceSansProSemiBold"),
+            fontSize: 16.0,
+            color: chartBlue,
+            fontFamily: "SourceSansProSemiBold"),
       ));
 
       if (i == matches.length - 1 && match.end != source.length) {
@@ -380,6 +429,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
     }
     return children;
   }
+
   void moveToProductPage(Outlet outlet) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new MarketListPage(outlet)));
