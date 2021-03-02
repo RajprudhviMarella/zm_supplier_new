@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:zm_supplier/createOrder/outletSelection.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -73,7 +74,6 @@ class DashboardState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
     ordersListYesterday = _retriveYesterdayOrders();
@@ -275,9 +275,15 @@ class DashboardState extends State<DashboardPage> {
         backgroundColor: buttonBlue,
         foregroundColor: Colors.white,
         onPressed: () {
-          print('new order pressed');
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => new OutletSelectionPage()));
         },
-        icon: Icon(Icons.add, size: 22,),
+        icon: Icon(
+          Icons.add,
+          size: 22,
+        ),
         elevation: 0,
         label: Text(
           'New order',
@@ -812,13 +818,6 @@ class DashboardState extends State<DashboardPage> {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)),
                           ),
-                          // child: ConstrainedBox(
-                          //     constraints: BoxConstraints(
-                          //       minWidth: 38,
-                          //       minHeight: 38,
-                          //       maxWidth: 38,
-                          //       maxHeight: 38,
-                          //     ),
                           child: snapshot.data[index].outlet.logoURL == null
                               ? ImageIcon(
                                   AssetImage('assets/images/Truck-black.png'))

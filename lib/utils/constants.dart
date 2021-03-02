@@ -82,8 +82,11 @@ class Constants {
   static const String termsUrl = "https://www.zeemart.asia/terms";
   static const String privacyUrl = "https://www.zeemart.asia/privacy-policy";
   static const String txt_orders = "Orders";
+  static const String txt_select_outlet= "Select outlet";
   static const String txt_deliveries = "Deliveries";
+  static const String txt_starred = "Starred";
   static const String txt_Search_order_number = "Search order number";
+  static const String txt_all_outlets = "All outlets";
   static const String txt_search_outlet = "Search outlet or people";
 
   static Widget OrderStatusColor(Orders orders) {
