@@ -29,6 +29,8 @@ class MarketListDesign extends State<MarketListPage>
     with TickerProviderStateMixin {
   final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _controller = new TextEditingController();
+  final TextEditingController _textEditingController =
+      new TextEditingController();
   Future<List<OutletMarketList>> favouriteOutletMarketListFuture;
   List<OutletMarketList> allOutletMarketList;
   String supplierID;
@@ -37,6 +39,7 @@ class MarketListDesign extends State<MarketListPage>
   bool _isSearching = false;
   String searchQuery = "";
   String _homeDate = "+";
+  int counter = 0;
 
   @override
   void initState() {
@@ -227,10 +230,6 @@ class MarketListDesign extends State<MarketListPage>
   }
 
   Widget displayPriceWithShortNames(OutletMarketList marketList) {
-    print("price" + marketList.toJson().toString());
-    print("price" +
-        marketList.priceList[0].price.amountV1.toString() +
-        marketList.priceList[0].unitSize.toString());
     return Row(children: <Widget>[
       Text(
         marketList.priceList[0].price.getDisplayValue() + " / ",
@@ -273,24 +272,150 @@ class MarketListDesign extends State<MarketListPage>
               subtitle: displayPriceWithShortNames(snapShot.data[index]),
               trailing: GestureDetector(
                   onTap: () {
+                    counter = snapShot.data[index].quantity;
+                    _textEditingController.value = TextEditingValue(
+                      text: this.counter.toString(),
+                      selection: TextSelection.fromPosition(
+                        TextPosition(offset: this.counter.toString().length),
+                      ),
+                    );
+
                     showModalBottomSheet<void>(
                       context: context,
-                      builder: (BuildContext context) {
-                        return Container(
-                          height: 200,
+                      builder: (context) {
+                        return SingleChildScrollView(
+                            child: Container(
+                          padding: EdgeInsets.only(
+                              top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
                           color: Colors.white,
                           child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                const Text('Modal BottomSheet'),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      top: 5, left: 20.0, bottom: 10.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                          snapShot.data[index].productName,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.black,
+                                              fontFamily:
+                                                  "SourceSansProSemiBold"))),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (counter > 0) this.counter--;
+                                              _textEditingController.text =
+                                                  counter.toString();
+                                            });
+                                          },
+                                          child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 5.0),
+                                              height: 40.0,
+                                              width: 40.0,
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(200),
+                                                ),
+                                                color: snapShot
+                                                    .data[index].bgColor,
+                                              ))),
+                                      Container(
+                                          width: 200.0,
+                                          height: 40.0,
+                                          child: TextField(
+                                              maxLines: null,
+                                              controller:
+                                                  _textEditingController,
+                                              textInputAction:
+                                                  TextInputAction.go,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              cursorColor: Colors.blue,
+                                              textAlign: TextAlign.center,
+                                              decoration: InputDecoration(
+                                                fillColor: faintGrey,
+                                                filled: true,
+                                                border: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                errorBorder: InputBorder.none,
+                                                disabledBorder:
+                                                    InputBorder.none,
+                                                hintText: Constants
+                                                    .txt_Search_order_number,
+                                                hintStyle: new TextStyle(
+                                                    color: greyText,
+                                                    fontSize: 16.0,
+                                                    fontFamily:
+                                                        "SourceSansProRegular"),
+                                              ),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16.0,
+                                                  fontFamily:
+                                                      "SourceSansProSemiBold"),
+                                              onChanged: (query) {
+                                                counter = int.parse(query);
+                                              })),
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              this.counter++;
+                                              _textEditingController.text =
+                                                  counter.toString();
+                                            });
+                                          },
+                                          child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 5.0),
+                                              height: 40.0,
+                                              width: 40.0,
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(200),
+                                                ),
+                                                color: snapShot
+                                                    .data[index].bgColor,
+                                              )))
+                                    ],
+                                  ),
+                                ),
                                 ElevatedButton(
                                     child: const Text('Close BottomSheet'),
                                     onPressed: () {
+                                      print("$counter");
                                       setState(() {
+                                        _textEditingController.text =
+                                            counter.toString();
+                                        snapShot.data[index].quantity = counter;
                                         snapShot.data[index].selectedQuantity =
-                                            " 3";
+                                            counter.toString();
                                         snapShot.data[index].bgColor =
                                             Colors.blue;
                                         snapShot.data[index].txtColor =
@@ -301,7 +426,7 @@ class MarketListDesign extends State<MarketListPage>
                               ],
                             ),
                           ),
-                        );
+                        ));
                       },
                     );
                   },
@@ -383,14 +508,10 @@ class MarketListDesign extends State<MarketListPage>
     String queryString = Uri(queryParameters: queryParams).query;
     var requestUrl =
         URLEndPoints.retrieve_outlet_market_list + '?' + queryString;
-    print(requestUrl);
     http.Response response = await http.get(requestUrl, headers: headers);
-    print("statuscode" + response.statusCode.toString());
     Map results = json.decode(response.body);
-    print("json map" + results.toString());
     marketList = OutletMarketBaseResponse.fromJson(results);
     allOutletMarketList = marketList.data.data;
-    print("marketList" + json.encode(allOutletMarketList).toString());
     // dummyList.forEach((element) {
     //   print("products" + allOutletMarketList.length.toString());
     //   element.priceList.forEach((elements) {
@@ -420,7 +541,7 @@ class MarketListDesign extends State<MarketListPage>
     //     }
     //   }
     // }
-    print("marketList" + allOutletMarketList.length.toString());
+
     return allOutletMarketList;
   }
 
