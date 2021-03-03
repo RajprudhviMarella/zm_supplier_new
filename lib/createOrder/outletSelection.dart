@@ -368,29 +368,6 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         .then((value) async {});
   }
 
-  void filterSearchResults(String query) {
-    List<FavouriteOutletsList> dummySearchList = List<FavouriteOutletsList>();
-    dummySearchList.addAll(allOutletList);
-    if (query.isNotEmpty) {
-      List<FavouriteOutletsList> dummyListData = List<FavouriteOutletsList>();
-      for (var i = 0; i < dummySearchList.length; i++) {
-        if (dummySearchList[i].outlet.outletName.contains(query)) {
-          dummyListData.add(dummySearchList[i]);
-        }
-      }
-      setState(() {
-        allOutletListFuture =
-            dummyListData as Future<List<FavouriteOutletsList>>;
-      });
-      return;
-    } else {
-      setState(() {
-        allOutletListFuture =
-            dummySearchList as Future<List<FavouriteOutletsList>>;
-      });
-    }
-  }
-
   List<TextSpan> highlightOccurrences(String source, String query) {
     if (query == null ||
         query.isEmpty ||
