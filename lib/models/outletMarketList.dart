@@ -95,8 +95,11 @@ class OutletMarketList {
   int timePriceUpdated;
   Color bgColor = faintGrey;
   Color txtColor = Colors.blue;
+  var txtSize = 30.0;
   String selectedQuantity = "+";
+  String skuNotes = "";
   int quantity = 0;
+  bool isSelected = false;
 
   OutletMarketList(
       {this.dateCreated,
@@ -123,6 +126,9 @@ class OutletMarketList {
       this.bgColor,
       this.txtColor,
       this.quantity,
+      this.skuNotes,
+      this.txtSize,
+      this.isSelected,
       this.selectedQuantity});
 
   OutletMarketList.fromJson(Map<String, dynamic> json) {
