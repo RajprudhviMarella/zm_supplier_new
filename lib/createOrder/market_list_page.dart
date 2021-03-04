@@ -195,7 +195,7 @@ class MarketListDesign extends State<MarketListPage>
       cursorColor: Colors.blue,
       decoration: InputDecoration(
         prefixIcon: new Icon(Icons.search, color: Colors.black),
-        hintText: Constants.txt_Search_order_number,
+        hintText: Constants.txt_Search_sku,
         hintStyle: new TextStyle(
             color: greyText,
             fontSize: 16.0,

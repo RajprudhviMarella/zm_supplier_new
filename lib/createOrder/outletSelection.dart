@@ -137,7 +137,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                     ),
                     decoration: new InputDecoration(
                         prefixIcon: new Icon(Icons.search, color: Colors.black),
-                        hintText: Constants.txt_Search_order_number,
+                        hintText: Constants.txt_Search_outlet,
                         hintStyle: new TextStyle(color: greyText)),
                   );
                 } else {
