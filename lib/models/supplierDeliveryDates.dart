@@ -249,8 +249,14 @@ class DeliveryDates {
   int cutOffDate;
   bool isPH;
   bool isEvePH;
+  bool isSelected = false;
 
-  DeliveryDates({this.deliveryDate, this.cutOffDate, this.isPH, this.isEvePH});
+  DeliveryDates(
+      {this.deliveryDate,
+      this.cutOffDate,
+      this.isPH,
+      this.isEvePH,
+      this.isSelected});
 
   DeliveryDates.fromJson(Map<String, dynamic> json) {
     deliveryDate = json['deliveryDate'];

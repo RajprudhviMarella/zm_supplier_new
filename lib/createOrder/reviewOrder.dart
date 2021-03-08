@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:intl/intl.dart';
+import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
@@ -18,8 +21,9 @@ class ReviewOrderPage extends StatefulWidget {
   static const String tag = 'MarketListPage';
   List<OutletMarketList> marketList;
   String outletId;
+  String orderNotes;
 
-  ReviewOrderPage(this.marketList, this.outletId);
+  ReviewOrderPage(this.marketList, this.outletId, this.orderNotes);
 
   @override
   State<StatefulWidget> createState() {
@@ -30,6 +34,7 @@ class ReviewOrderPage extends StatefulWidget {
 class ReviewOrderDesign extends State<ReviewOrderPage>
     with TickerProviderStateMixin {
   int counter = 0;
+  final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _textEditingController =
       new TextEditingController();
   final TextEditingController _txtSkuNotesEditController =
@@ -45,6 +50,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   Future<List<DeliveryDateList>> deliveryDatesListFuture;
   String supplierID;
   String mudra;
+  var selectedDate = 0;
 
   @override
   void initState() {
@@ -73,6 +79,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: globalKey,
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.white,
@@ -162,30 +169,25 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     borderRadius: BorderRadius.circular(30.0),
                                   ),
                                   onPressed: () {
-                                    // if (selectedMarketList != null &&
-                                    //     selectedMarketList.isNotEmpty) {
-                                    //   print(jsonEncode(selectedMarketList));
-                                    //   Navigator.push(
-                                    //       context,
-                                    //       MaterialPageRoute(
-                                    //           builder: (context) => new ReviewOrderPage(
-                                    //               selectedMarketList,widget.outletList.outletId
-                                    //           )));
-                                    // } else {
-                                    //   globalKey.currentState.showSnackBar(
-                                    //     SnackBar(
-                                    //       content: Text('Please select atlease one product'),
-                                    //       duration: Duration(seconds: 1),
-                                    //     ),
-                                    //   );
-                                    // }
+                                    if (widget.marketList != null &&
+                                        widget.marketList.isNotEmpty) {
+                                      showAlert(context);
+                                    } else {
+                                      globalKey.currentState.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Please select atlease one product'),
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                    }
                                   },
                                 )
                               ]))),
                       body: ListView(
                         children: [
                           Headers("Delivery date"),
-                          displayDeliveryDates(context, snapShot.data),
+                          displayDeliveryDates(context),
                           Headers(
                               widget.marketList.length.toString() + " items"),
                           displayList(context),
@@ -804,21 +806,228 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     Map results = json.decode(response.body);
     deliveryDateList = SupplierDeliveryDates.fromJson(results);
     lstDeliveryDates = deliveryDateList.data;
+    lstDeliveryDates[0].deliveryDates[0].isSelected = true;
+    selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
     calculatePrice();
     return lstDeliveryDates;
   }
 
-  displayDeliveryDates(BuildContext context, List<DeliveryDateList> data) {
+  createOrderAPI() async {
+    CreateOrderModel createOrderModel = new CreateOrderModel();
+    createOrderModel.timeDelivered = selectedDate;
+    createOrderModel.notes = widget.orderNotes;
+    List<Products> productslist = [];
+    for (var i = 0; i < widget.marketList.length; i++) {
+      Products products = new Products();
+      products.sku = widget.marketList[i].sku;
+      products.notes = widget.marketList[i].skuNotes;
+      products.quantity = widget.marketList[i].quantity;
+      products.unitSize = widget.marketList[i].priceList[0].unitSize;
+      productslist.add(products);
+    }
+    createOrderModel.products = productslist;
+    createOrderModel.notes = widget.orderNotes;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierID
+    };
+    Map<String, String> queryParams = {
+      'supplierId': supplierID,
+      'outletId': widget.outletId,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+    var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
+    print("url" + requestUrl);
+    print("ms" + createOrderModel.toJson().toString());
+    final msg = jsonEncode(createOrderModel);
+
+    http.Response response =
+        await http.post(requestUrl, headers: headers, body: msg);
+    print("ms" + response.statusCode.toString());
+    print("ms" + response.body.toString());
+    if (response.statusCode == 200) {
+    } else {}
+  }
+
+  void showAlert(context) {
+    BuildContext dialogContext;
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(Constants.txt_ok),
+      onPressed: () {
+        createOrderAPI();
+      },
+    );
+    // set up the button
+    Widget btnCancel = FlatButton(
+      child: Text(Constants.txt_cancel),
+      onPressed: () {
+        Navigator.pop(dialogContext);
+      },
+    );
+
+    // set up the AlertDialog
+    BasicDialogAlert alert = BasicDialogAlert(
+      title: Text(Constants.txt_place_this_order),
+      actions: [btnCancel, okButton],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        dialogContext = context;
+        return alert;
+      },
+    );
+  }
+
+  displayDeliveryDates(BuildContext context) {
     return Container(
         height: 100.0,
         color: Colors.white,
         width: MediaQuery.of(context).size.width,
         child: ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: widget.marketList.length,
+            scrollDirection: Axis.horizontal,
+            physics: ClampingScrollPhysics(),
+            itemCount: lstDeliveryDates[0].deliveryDates.length,
             itemBuilder: (BuildContext context, int index) {
-              return Card(
+              Container contianer;
+              Text text;
+              if (lstDeliveryDates[0].deliveryDates[index].isEvePH ||
+                  lstDeliveryDates[0].deliveryDates[index].isPH) {
+                text = Text(
+                    DateFormat('d MMM').format(
+                        DateTime.fromMillisecondsSinceEpoch(lstDeliveryDates[0]
+                                .deliveryDates[index]
+                                .deliveryDate *
+                            1000)),
+                    style: TextStyle(
+                        fontFamily: "SourceSansProSemiBold",
+                        fontSize: 16.0,
+                        color: warning_red));
+              } else {
+                text = Text(
+                    DateFormat('d MMM').format(
+                        DateTime.fromMillisecondsSinceEpoch(lstDeliveryDates[0]
+                                .deliveryDates[index]
+                                .deliveryDate *
+                            1000)),
+                    style: TextStyle(
+                        fontFamily: "SourceSansProSemiBold",
+                        fontSize: 16.0,
+                        color: grey_text));
+              }
+              if (lstDeliveryDates[0].deliveryDates[index].isSelected) {
+                print("camehere" +
+                    lstDeliveryDates[0]
+                        .deliveryDates[index]
+                        .isSelected
+                        .toString());
+                contianer = new Container(
+                    margin: EdgeInsets.all(10.0),
+                    decoration: new BoxDecoration(
+                      borderRadius: new BorderRadius.circular(10.0),
+                      border: Border.all(
+                        color: azul_blue,
+                        //                   <--- border color
+                        width: 2.0,
+                      ),
+                      color: faintGrey,
+                    ),
+                    alignment: Alignment.center,
+                    height: 55.0,
+                    width: 100.0,
+                    child: Center(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                            DateFormat('EEEE').format(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    lstDeliveryDates[0]
+                                            .deliveryDates[index]
+                                            .deliveryDate *
+                                        1000)),
+                            style: TextStyle(
+                                fontFamily: "SourceSansProRegular",
+                                fontSize: 12.0,
+                                color: azul_blue)),
+                        Text(
+                            DateFormat('d MMM').format(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    lstDeliveryDates[0]
+                                            .deliveryDates[index]
+                                            .deliveryDate *
+                                        1000)),
+                            style: TextStyle(
+                                fontFamily: "SourceSansProSemiBold",
+                                fontSize: 16.0,
+                                color: azul_blue))
+                      ],
+                    )));
+              } else {
+                print("camehere" +
+                    lstDeliveryDates[0]
+                        .deliveryDates[index]
+                        .isSelected
+                        .toString());
+                contianer = new Container(
+                    margin: EdgeInsets.all(10.0),
+                    decoration: new BoxDecoration(
+                      borderRadius: new BorderRadius.circular(10.0),
+                      color: faintGrey,
+                    ),
+                    alignment: Alignment.center,
+                    height: 55.0,
+                    width: 100.0,
+                    child: Center(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                            DateFormat('EEEE').format(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    lstDeliveryDates[0]
+                                            .deliveryDates[index]
+                                            .deliveryDate *
+                                        1000)),
+                            style: TextStyle(
+                                fontFamily: "SourceSansProRegular",
+                                fontSize: 12.0,
+                                color: grey_text)),
+                        text
+                      ],
+                    )));
+              }
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (!lstDeliveryDates[0].deliveryDates[index].isSelected) {
+                      selectedDate =
+                          lstDeliveryDates[0].deliveryDates[index].deliveryDate;
+                      lstDeliveryDates[0].deliveryDates[index].isSelected =
+                          true;
+                      for (var i = 0;
+                          i < lstDeliveryDates[0].deliveryDates.length;
+                          i++) {
+                        if (lstDeliveryDates[0].deliveryDates[i].isSelected &&
+                            i != index) {
+                          lstDeliveryDates[0].deliveryDates[i].isSelected =
+                              false;
+                        }
+                      }
+                    }
+                  });
+                },
+                child: contianer,
               );
             }));
   }

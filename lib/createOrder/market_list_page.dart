@@ -138,7 +138,7 @@ class MarketListDesign extends State<MarketListPage>
                           context,
                           MaterialPageRoute(
                               builder: (context) => new ReviewOrderPage(
-                                    selectedMarketList,widget.outletList.outletId
+                                    selectedMarketList,widget.outletList.outletId,_txtOrderNotesEditController.text
                                   )));
                     } else {
                       globalKey.currentState.showSnackBar(
