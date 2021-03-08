@@ -19,9 +19,12 @@ import 'package:http/http.dart' as http;
 class ViewOrdersPage extends StatefulWidget {
   static const String tag = 'ViewOrdersPage';
 
+  final outletId;
+  ViewOrdersPage(this.outletId);
+
   @override
   State<StatefulWidget> createState() {
-    return ViewOrdersDesign();
+    return ViewOrdersDesign(this.outletId);
   }
 }
 
@@ -35,6 +38,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     Icons.search,
     color: Colors.black,
   );
+
   final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _controller = new TextEditingController();
   Future<List<Orders>> ordersList;
@@ -50,11 +54,15 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   ScrollController controller;
   String searchedString;
 
+  final outletId;
+  ViewOrdersDesign(this.outletId);
   @override
   void initState() {
     controller = new ScrollController()..addListener(_scrollListener);
     loadSharedPrefs();
     super.initState();
+
+    print('outletid --- $outletId');
   }
 
   @override
@@ -336,8 +344,10 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       'mudra': mudra,
       'supplierId': supplierID
     };
+
     Map<String, String> queryParams = {
       'supplierId': supplierID,
+      'outletId': outletId,
       'pageNumber': pageNum.toString(),
       'pageSize': pageSize.toString(),
       'sortBy': 'timeUpdated',

@@ -15,14 +15,14 @@ class OrderSummaryResponse {
   DateTime timestamp;
   int status;
   String message;
-  summaryData data;
+  SummaryData data;
 
   factory OrderSummaryResponse.fromJson(Map<String, dynamic> json) => OrderSummaryResponse(
     path: json["path"],
     timestamp: DateTime.parse(json["timestamp"]),
     status: json["status"],
     message: json["message"],
-    data: summaryData.fromJson(json["data"]),
+    data: SummaryData.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -34,26 +34,29 @@ class OrderSummaryResponse {
   };
 }
 
-class summaryData {
-  summaryData({
+class SummaryData {
+  SummaryData({
     this.totalSpendingCurrWeek,
     this.totalSpendingLastWeek,
     this.totalSpendingCurrMonth,
     this.totalSpendingLastMonth,
+    this.totalSpendingLastTwoMonths,
     this.todayPendingDeliveries,
   });
 
-  double totalSpendingCurrWeek;
-  double totalSpendingLastWeek;
-  double totalSpendingCurrMonth;
-  double totalSpendingLastMonth;
-  int todayPendingDeliveries;
+  dynamic totalSpendingCurrWeek;
+  dynamic totalSpendingLastWeek;
+  dynamic totalSpendingCurrMonth;
+  dynamic totalSpendingLastMonth;
+  dynamic totalSpendingLastTwoMonths;
+  dynamic todayPendingDeliveries;
 
-  factory summaryData.fromJson(Map<String, dynamic> json) => summaryData(
+  factory SummaryData.fromJson(Map<String, dynamic> json) => SummaryData(
     totalSpendingCurrWeek: json["totalSpendingCurrWeek"],
     totalSpendingLastWeek: json["totalSpendingLastWeek"],
     totalSpendingCurrMonth: json["totalSpendingCurrMonth"],
     totalSpendingLastMonth: json["totalSpendingLastMonth"],
+    totalSpendingLastTwoMonths: json["totalSpendingLastTwoMonths"],
     todayPendingDeliveries: json["todayPendingDeliveries"],
   );
 
@@ -62,6 +65,7 @@ class summaryData {
     "totalSpendingLastWeek": totalSpendingLastWeek,
     "totalSpendingCurrMonth": totalSpendingCurrMonth,
     "totalSpendingLastMonth": totalSpendingLastMonth,
+    "totalSpendingLastTwoMonths": totalSpendingLastTwoMonths,
     "todayPendingDeliveries": todayPendingDeliveries,
   };
 }
