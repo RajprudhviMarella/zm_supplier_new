@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/models/buyerUserResponse.dart';
-import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletResponse.dart';
@@ -13,7 +13,7 @@ import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
-
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class CustomerDetailsPage extends StatefulWidget {
@@ -421,6 +421,13 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                 fontFamily: "SourceSansProBold",
                 fontSize: 18,
               )),
+          Text(
+            ' (active for last 90 days)',
+            style: TextStyle(
+                fontSize: 12,
+                fontFamily: 'SourceSansProRegular',
+                color: greyText),
+          )
         ],
       ),
     );
@@ -758,44 +765,176 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   Widget trailingIcon(BuyerDetails userInfo) {
     if (userInfo.email != null && userInfo.phone != null) {
       return Wrap(
-        spacing: 12, // space between two icons
+        spacing: 10, // space between two icons
         children: <Widget>[
           // Image(image: AssetImage("assets/images/Sort-blue.png"),),
-          Image(
-            image: AssetImage("assets/images/phone-grey.png"),
-            height: 22,
-            width: 22,
+          GestureDetector(
+            onTap: () {
+              showActionSheet(userInfo.email);
+            },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: faintGrey,
+              ),
+              child: Center(
+                child: Image(
+                  image: AssetImage("assets/images/email_grey.png"),
+                  height: 22,
+                  width: 22,
+                ),
+              ),
+            ),
           ),
-          Image(
-            image: AssetImage("assets/images/phone-grey.png"),
-            height: 22,
-            width: 22,
+          GestureDetector(
+            onTap: () {
+              showActionSheetPhone(userInfo.phone);
+            },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: faintGrey,
+              ),
+              child: Center(
+                child: Image(
+                  image: AssetImage("assets/images/phone-grey.png"),
+                  height: 22,
+                  width: 22,
+                ),
+              ),
+            ),
           ),
-
-          // ImageIcon(AssetImage('assets/images/envolope_grey.png')),
-          // Image(image: ImageIcon(AssetImage('assets/images/phone_grey.png')))
-          // // Icon(Icons.message),
-          // Icon(Icons.call), // icon-1
-          // icon-2
         ],
       );
     } else {
-      return Wrap(
-        spacing: 12, // space between two icons
-        children: <Widget>[
-          ImageIcon(
-            AssetImage('assets/images/envolope_grey.png'),
-            size: 22,
-          ),
-          ImageIcon(
-            AssetImage('assets/images/envolope_grey.png'),
-            size: 12,
-          ),
-          //Icon(Icons.message),
-          // icon-2
-        ],
+      return Image(
+        image: AssetImage("assets/images/email_grey.png"),
+        height: 22,
+        width: 22,
       );
     }
+  }
+
+  Widget showActionSheet(String email) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text(email,
+            style: TextStyle(
+                color: greyText,
+                fontSize: 14,
+                fontFamily: 'SourceSansProSemiBold')),
+        // message: const Text('Your options are '),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text('Email',
+                style: TextStyle(
+                    color: buttonBlue,
+                    fontSize: 20,
+                    fontFamily: 'SourceSansProRegular')),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Email using Gmail',
+                style: TextStyle(
+                    color: buttonBlue,
+                    fontSize: 20,
+                    fontFamily: 'SourceSansProRegular')),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Copy address',
+                style: TextStyle(
+                    color: buttonBlue,
+                    fontSize: 20,
+                    fontFamily: 'SourceSansProRegular')),
+            onPressed: () {
+              Clipboard.setData(new ClipboardData(text: email));
+              Navigator.pop(context);
+            },
+          )
+        ],
+
+        cancelButton: CupertinoActionSheetAction(
+          child: Text('Cancel',
+              style: TextStyle(
+                  color: buttonBlue,
+                  fontSize: 20,
+                  fontFamily: 'SourceSansProSemiBold')),
+          isDefaultAction: true,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget showActionSheetPhone(String phone) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text(phone,
+            style: TextStyle(
+                color: greyText,
+                fontSize: 14,
+                fontFamily: 'SourceSansProSemiBold')),
+        // message: const Text('Your options are '),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text('Call',
+                style: TextStyle(
+                    color: buttonBlue,
+                    fontSize: 20,
+                    fontFamily: 'SourceSansProRegular')),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Message',
+                style: TextStyle(
+                    color: buttonBlue,
+                    fontSize: 20,
+                    fontFamily: 'SourceSansProRegular')),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Copy number',
+                style: TextStyle(
+                    color: buttonBlue,
+                    fontSize: 20,
+                    fontFamily: 'SourceSansProRegular')),
+            onPressed: () {
+              Clipboard.setData(new ClipboardData(text: phone));
+              Navigator.pop(context);
+            },
+          )
+        ],
+
+        cancelButton: CupertinoActionSheetAction(
+          child: Text('Cancel',
+              style: TextStyle(
+                  color: buttonBlue,
+                  fontSize: 20,
+                  fontFamily: 'SourceSansProSemiBold')),
+          isDefaultAction: true,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
   }
 
   String outletPlaceholder(String name) {

@@ -70,14 +70,6 @@ class SearchCustomersState extends State<SearchCustomersPage> {
     } catch (Exception) {}
   }
 
-  updatedCustomers() {
-    allCustomers = customersFuture();
-  }
-
-  Future<CustomersData> customersFuture() async {
-    return customers;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,7 +138,7 @@ class SearchCustomersState extends State<SearchCustomersPage> {
                     color: Colors.black,
                     fontFamily: "SourceSansProRegular")),
             onTap: () {
-              Navigator.of(context).pop(updatedCustomers());
+              Navigator.of(context).pop();
             },
           ),
         ));

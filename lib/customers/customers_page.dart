@@ -53,11 +53,12 @@ class CustomerState extends State<CustomersPage> {
   void initState() {
     super.initState();
 
-    customersData = getCustomersReportApiCalling();
-    selectedCustomersDataFuture = getCustomersListCalling();
+    customersData = getCustomersReportApiCalling(false);
+    selectedCustomersDataFuture = getCustomersListCalling(false);
   }
 
-  Future<List<CustomersData>> getCustomersReportApiCalling() async {
+  Future<List<CustomersData>> getCustomersReportApiCalling(
+      bool isUpdating) async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
@@ -85,10 +86,16 @@ class CustomerState extends State<CustomersPage> {
     }
 
     customerDataList = customersReportResponse.data;
+    if (isUpdating) {
+      setState(() {
+
+        customersData = updateData(customerDataList);
+      });
+    }
     return customerDataList;
   }
 
-  Future<CustomersData> getCustomersListCalling() async {
+  Future<CustomersData> getCustomersListCalling(bool isUpdating) async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
@@ -112,8 +119,19 @@ class CustomerState extends State<CustomersPage> {
       print('failed get customers reports');
     }
 
-    selectedCustomerData = customersReportResponse.data.first;
+    selectedCustomerData = customersReportResponse.data[selectedIndex];
+    //refresh the list when tap on starred.
+    if (isUpdating) {
+      setState(() {
+        selectedCustomersDataFuture = selectedD(selectedCustomerData);
+      });
+    }
+
     return selectedCustomerData;
+  }
+
+  Future<List<CustomersData>> updateData(List<CustomersData> i) async {
+    return i;
   }
 
   Future<CustomersData> selectedD(CustomersData i) async {
@@ -194,9 +212,10 @@ class CustomerState extends State<CustomersPage> {
                             new SearchCustomersPage(customerDataList.first)));
 
                 print(result);
-                setState(() {
-                  //  customers = result;
-                });
+                //  setState(() {
+                getCustomersReportApiCalling(true);
+                getCustomersListCalling(true);
+                // });
               },
               decoration: new InputDecoration(
                   border: InputBorder.none,
@@ -263,7 +282,9 @@ class CustomerState extends State<CustomersPage> {
             return SizedBox(
               height: 130,
               child: ListView.builder(
+                  key: const PageStorageKey<String>('scrollPosition'),
                   itemCount: 5,
+                  shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
                     bool last = 5 == (index + 1);
@@ -447,25 +468,23 @@ class CustomerState extends State<CustomersPage> {
                           ),
                           // ),
                           trailing: IconButton(
-                            icon: snapshot.data.outlets[index].isFavourite
-                                ? Image(
-                                    image: AssetImage(
-                                        'assets/images/Star_yellow.png'),
-                                    fit: BoxFit.fill,
-                                    width: 25,
-                                    height: 25,
-                                  )
-                                : ImageIcon(
-                                    AssetImage(
-                                        'assets/images/Star_light_grey.png'),
-                                  ),
-                            onPressed: () {
-                              print('tapped $index');
-                              tapOnFavourite(
-                                  index, snapshot.data.outlets[index]);
-                              //   _onDeleteItemPressed(index);
-                            },
-                          ),
+                              icon: snapshot.data.outlets[index].isFavourite
+                                  ? Image(
+                                      image: AssetImage(
+                                          'assets/images/Star_yellow.png'),
+                                      fit: BoxFit.fill,
+                                      width: 25,
+                                      height: 25,
+                                    )
+                                  : ImageIcon(
+                                      AssetImage(
+                                          'assets/images/Star_light_grey.png'),
+                                    ),
+                              onPressed: () {
+                                print('tapped $index');
+                                tapOnFavourite(
+                                    index, snapshot.data.outlets[index]);
+                              }),
                           tileColor: Colors.white,
                           onTap: () async {
                             var outletName =
@@ -533,7 +552,10 @@ class CustomerState extends State<CustomersPage> {
     favourite
         .updateFavourite(userData.mudra, userData.supplier.first.supplierId,
             customers.outlet.outletId, customers.isFavourite)
-        .then((value) async {});
+        .then((value) async {
+      getCustomersReportApiCalling(true);
+      getCustomersListCalling(true);
+    });
   }
 
   String outletPlaceholder(String name) {
