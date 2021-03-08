@@ -137,8 +137,9 @@ class MarketListDesign extends State<MarketListPage>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  new ReviewOrderPage(selectedMarketList)));
+                              builder: (context) => new ReviewOrderPage(
+                                    selectedMarketList,widget.outletList.outletId
+                                  )));
                     } else {
                       globalKey.currentState.showSnackBar(
                         SnackBar(
@@ -323,7 +324,7 @@ class MarketListDesign extends State<MarketListPage>
               ),
             ),
             Text(
-              marketList.priceList[0].unitSize.toString(),
+              marketList.priceList[0].unitSizeAlias,
               style: TextStyle(
                 fontSize: 12.0,
                 color: azul_blue,
@@ -474,8 +475,6 @@ class MarketListDesign extends State<MarketListPage>
                                                 errorBorder: InputBorder.none,
                                                 disabledBorder:
                                                     InputBorder.none,
-                                                hintText: Constants
-                                                    .txt_Search_order_number,
                                                 hintStyle: new TextStyle(
                                                     color: greyText,
                                                     fontSize: 16.0,
@@ -555,6 +554,10 @@ class MarketListDesign extends State<MarketListPage>
                                         _textEditingController.text =
                                             counter.toString();
                                         snapShot.data[index].quantity = counter;
+                                        snapShot.data[index].skuNotes =
+                                            _txtSkuNotesEditController.text;
+
+                                        snapShot.data[index].isSelected = true;
                                         if (snapShot.data[index].quantity ==
                                             0) {
                                           snapShot.data[index]
@@ -593,12 +596,22 @@ class MarketListDesign extends State<MarketListPage>
                                           snapShot.data[index].txtColor =
                                               Colors.white;
                                           snapShot.data[index].txtSize = 16.0;
+                                          selectedMarketList.removeWhere((it) =>
+                                              it.productName.toLowerCase() ==
+                                                  snapShot
+                                                      .data[index].productName
+                                                      .toLowerCase() &&
+                                              it.sku.toLowerCase() ==
+                                                  snapShot.data[index].sku
+                                                      .toLowerCase() &&
+                                              snapShot.data[index].priceList[0]
+                                                      .unitSize
+                                                      .toLowerCase() ==
+                                                  it.priceList[0].unitSize
+                                                      .toLowerCase());
                                           selectedMarketList
                                               .add(snapShot.data[index]);
                                         }
-                                        snapShot.data[index].skuNotes =
-                                            _txtSkuNotesEditController.text;
-                                        snapShot.data[index].isSelected = true;
                                       });
                                       Navigator.pop(context);
                                     },

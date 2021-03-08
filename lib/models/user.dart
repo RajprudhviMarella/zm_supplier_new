@@ -29,6 +29,7 @@ class User {
   List<String> supplierRoles;
   String market;
   String language;
+
   //OutletFeatures outletFeatures;
   String email;
   String userId;
@@ -179,10 +180,10 @@ class CreatePasswordRequest {
   String verificationCode;
 
   CreatePasswordRequest(
-      this.ZeemartId,
-      this.newPassword,
-      this.verificationCode,
-      );
+    this.ZeemartId,
+    this.newPassword,
+    this.verificationCode,
+  );
 
   // Login.fromJson(Map<String, dynamic> json) {
 
@@ -211,7 +212,7 @@ class userData {
     this.market,
     this.phone,
     this.regNo,
-    //this.settings,
+    // this.settings,
     this.shortDesc,
     this.showPrice,
     this.supplierIntegrationEnabled,
@@ -235,7 +236,7 @@ class userData {
   String phone;
   String regNo;
 
-  //Settings settings;
+  SupplierSettings settings;
   String shortDesc;
   bool showPrice;
   bool supplierIntegrationEnabled;
@@ -257,7 +258,7 @@ class userData {
         market: json["market"],
         phone: json["phone"],
         regNo: json["regNo"],
-        //settings: Settings.fromJson(json["settings"]),
+        // settings: SupplierSettings.fromJson(json["settings"]),
         shortDesc: json["shortDesc"],
         showPrice: json["showPrice"],
         supplierIntegrationEnabled: json["supplierIntegrationEnabled"],
@@ -280,13 +281,42 @@ class userData {
         "market": market,
         "phone": phone,
         "regNo": regNo,
-        //"settings": settings.toJson(),
+        // "settings": settings.toJson(),
         "shortDesc": shortDesc,
         "showPrice": showPrice,
         "supplierIntegrationEnabled": supplierIntegrationEnabled,
         "isActive": isActive,
         "status": status,
         "timePublished": timePublished,
+      };
+}
+
+class SupplierSettings {
+  GST gST;
+
+  SupplierSettings({this.gST});
+
+  factory SupplierSettings.fromJson(Map<String, dynamic> json) =>
+      SupplierSettings(
+        gST: json["GST"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "GST": gST.toJson(),
+      };
+}
+
+class GST {
+  double percent;
+
+  GST({this.percent});
+
+  factory GST.fromJson(Map<String, dynamic> json) => GST(
+        percent: json["percent"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "percent": percent,
       };
 }
 
@@ -303,6 +333,6 @@ class statusSuccessResponse {
       );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-  };
+        "status": status,
+      };
 }

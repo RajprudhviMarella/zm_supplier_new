@@ -25,8 +25,10 @@ class URLEndPoints {
   static const String retrieve_orders = order_management_server + "orders/po";
   static const String retrieve_outlets = inventory_management_server +
       "inventory/deliveryPreference/linkedOutlets";
-  static const String retrieve_outlet_market_list = inventory_management_server +
-      "inventory/marketlist";
+  static const String retrieve_supplier_delivery_dates = inventory_management_server +
+      "inventory/deliveryPreference/delivery/settings";
+  static const String retrieve_outlet_market_list =
+      inventory_management_server + "inventory/marketlist";
   static const String order_summary_url =
       report_management_server + "reports/order/summary";
   static const String retrive_paginated_orders_url =

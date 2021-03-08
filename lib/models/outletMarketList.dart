@@ -267,6 +267,7 @@ class PriceList {
   Price price;
   String status;
   String unitSize;
+  String unitSizeAlias;
 
   PriceList({this.moq, this.price, this.status, this.unitSize});
 
@@ -275,6 +276,7 @@ class PriceList {
     price = json['price'] != null ? new Price.fromJson(json['price']) : null;
     status = json['status'];
     unitSize = json['unitSize'];
+    unitSizeAlias = json['unitSizeAlias'];
   }
 
   Map<String, dynamic> toJson() {
@@ -285,6 +287,7 @@ class PriceList {
     }
     data['status'] = this.status;
     data['unitSize'] = this.unitSize;
+    data['unitSizeAlias'] = this.unitSizeAlias;
     return data;
   }
 }
