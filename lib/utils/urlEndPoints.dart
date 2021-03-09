@@ -38,4 +38,8 @@ class URLEndPoints {
       "inventory/deliveryPreference/linkedOutlets";
   static const String favourite_url =
       inventory_management_server + "inventory/deliveryPreference/favourite";
+  static const String recent_orderd_outlets = inventory_management_server + "inventory/deliveryPreference/recent/order/outlets";
+
+  static const String customers_report_data = report_management_server + "reports/customers";
+  static const String buyer_people_url = account_managent_server + "account/users/outlet";
 }

@@ -224,3 +224,111 @@ class LinkedUser {
     "supplierRoles": supplierRoles == null ? null : List<dynamic>.from(supplierRoles.map((x) => x)),
   };
 }
+
+class CustomersReportResponse {
+  CustomersReportResponse({
+    this.path,
+    this.timestamp,
+    this.status,
+    this.message,
+    this.data,
+  });
+
+  String path;
+  DateTime timestamp;
+  int status;
+  String message;
+  List<CustomersData> data;
+
+  factory CustomersReportResponse.fromJson(Map<String, dynamic> json) => CustomersReportResponse(
+    path: json["path"],
+    timestamp: DateTime.parse(json["timestamp"]),
+    status: json["status"],
+    message: json["message"],
+    data: List<CustomersData>.from(json["data"].map((x) => CustomersData.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "path": path,
+    "timestamp": timestamp.toIso8601String(),
+    "status": status,
+    "message": message,
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+  };
+}
+
+class CustomersData {
+  CustomersData({
+    this.customerType,
+    this.count,
+    this.outlets,
+  });
+
+  String customerType;
+  int count;
+  List<Customers> outlets;
+
+  factory CustomersData.fromJson(Map<String, dynamic> json) => CustomersData(
+    customerType: json["customerType"],
+    count: json["count"],
+    outlets: List<Customers>.from(json["outlets"].map((x) => Customers.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "customerType": customerType,
+    "count": count,
+    "outlets": List<dynamic>.from(outlets.map((x) => x.toJson())),
+  };
+}
+/*
+class CustomersData {
+  CustomersData({
+    this.allCustomers,
+    this.favouriteCustomers,
+    this.currentWeekOrderedCustomers,
+    this.lastWeekOrderedCustomers,
+    this.noRecentOrderedCustomers,
+  });
+
+  CustomersReport allCustomers;
+  CustomersReport favouriteCustomers;
+  CustomersReport currentWeekOrderedCustomers;
+  CustomersReport lastWeekOrderedCustomers;
+  CustomersReport noRecentOrderedCustomers;
+
+  factory CustomersData.fromJson(Map<String, dynamic> json) => CustomersData(
+    allCustomers: CustomersReport.fromJson(json["allCustomers"]),
+    favouriteCustomers: CustomersReport.fromJson(json["favouriteCustomers"]),
+    currentWeekOrderedCustomers: CustomersReport.fromJson(json["currentWeekOrderedCustomers"]),
+    lastWeekOrderedCustomers: CustomersReport.fromJson(json["lastWeekOrderedCustomers"]),
+    noRecentOrderedCustomers: CustomersReport.fromJson(json["noRecentOrderedCustomers"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "allCustomers": allCustomers.toJson(),
+    "favouriteCustomers": favouriteCustomers.toJson(),
+    "currentWeekOrderedCustomers": currentWeekOrderedCustomers.toJson(),
+    "lastWeekOrderedCustomers": lastWeekOrderedCustomers.toJson(),
+    "noRecentOrderedCustomers": noRecentOrderedCustomers.toJson(),
+  };
+}*/
+//
+// class CustomersReport {
+//   CustomersReport({
+//     this.count,
+//     this.outlets,
+//   });
+//
+//   int count;
+//   List<Outlet> outlets;
+//
+//   factory CustomersReport.fromJson(Map<String, dynamic> json) => CustomersReport(
+//     count: json["count"],
+//     outlets: List<Outlet>.from(json["outlets"].map((x) => Outlet.fromJson(x))),
+//   );
+//
+//   Map<String, dynamic> toJson() => {
+//     "count": count,
+//     "outlets": List<dynamic>.from(outlets.map((x) => x.toJson())),
+//   };
+// }
