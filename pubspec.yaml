@@ -69,6 +69,8 @@ flutter:
     - assets/images/Star_light_grey.png
     - assets/images/Star_yellow.png
     - assets/images/Sort-blue.png
+    - assets/images/img_exclaimation_red.png
+    - assets/images/tick_receive_big.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

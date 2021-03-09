@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/createOrder/reviewOrder.dart';
+import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
 import 'package:zm_supplier/models/outletResponse.dart';
+import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -46,6 +50,9 @@ class MarketListDesign extends State<MarketListPage>
   bool _isSearching = false;
   String searchQuery = "";
   int counter = 0;
+  bool _isShowLoader = false;
+  List<DeliveryDateList> lstDeliveryDates;
+  Future<List<DeliveryDateList>> deliveryDatesListFuture;
 
   @override
   void initState() {
@@ -65,112 +72,180 @@ class MarketListDesign extends State<MarketListPage>
         }
         if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
           supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
+          deliveryDatesListFuture = callDeliveryDatesApi();
           favouriteOutletMarketListFuture = callOutletsMarket();
         }
       });
     } catch (Exception) {}
   }
 
+  void _showLoader() {
+    setState(() {
+      _isShowLoader = true;
+    });
+  }
+
+  void _hideLoader() {
+    setState(() {
+      _isShowLoader = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      key: globalKey,
-      backgroundColor: faintGrey,
-      bottomNavigationBar: Container(
-          height: 80.0,
-          color: Colors.white,
-          child: Container(
-              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-              child: Row(children: <Widget>[
-                FloatingActionButton.extended(
-                  backgroundColor: faintGrey,
-                  foregroundColor: Colors.white,
-                  onPressed: () {
-                    createAddNotesOrder();
-                  },
-                  label: Text(
-                    'Notes',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: 'SourceSansProSemiBold',
-                        color: greyText),
-                  ),
-                  icon: Icon(
-                    Icons.library_books_outlined,
-                    size: 22,
-                    color: buttonBlue,
-                  ),
-                  elevation: 0,
-                ),
-                new Spacer(),
-                RaisedButton(
-                  child: Container(
-                    padding: EdgeInsets.only(left: 7.0, right: 7.0),
-                    height: 50,
-                    child:
-                        Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                      Text(
-                        'Next',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'SourceSansProSemiBold',
-                            color: Colors.white),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: 5.0, top: 2.0),
-                        child: Icon(
-                          Icons.arrow_forward_outlined,
-                          color: Colors.white,
-                          size: 22,
-                        ),
-                      ),
-                    ]),
-                  ),
-                  color: green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  onPressed: () {
-                    if (selectedMarketList != null &&
-                        selectedMarketList.isNotEmpty) {
-                      print(jsonEncode(selectedMarketList));
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new ReviewOrderPage(
-                                    selectedMarketList,widget.outletList.outletId,_txtOrderNotesEditController.text
-                                  )));
-                    } else {
-                      globalKey.currentState.showSnackBar(
-                        SnackBar(
-                          content: Text('Please select atlease one product'),
-                          duration: Duration(seconds: 1),
+        key: globalKey,
+        backgroundColor: faintGrey,
+        body: ModalProgressHUD(
+            inAsyncCall: _isShowLoader,
+            child: FutureBuilder<List<DeliveryDateList>>(
+                future: deliveryDatesListFuture,
+                builder: (context, snapShot) {
+                  if (snapShot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    if (snapShot.connectionState == ConnectionState.done &&
+                        snapShot.hasData &&
+                        snapShot.data.isNotEmpty) {
+                      return Scaffold(
+                        bottomNavigationBar: Container(
+                            height: 80.0,
+                            color: Colors.white,
+                            child: Container(
+                                padding:
+                                    EdgeInsets.only(left: 15.0, right: 15.0),
+                                child: Row(children: <Widget>[
+                                  FloatingActionButton.extended(
+                                    backgroundColor: faintGrey,
+                                    foregroundColor: Colors.white,
+                                    onPressed: () {
+                                      createAddNotesOrder();
+                                    },
+                                    label: Text(
+                                      'Notes',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'SourceSansProSemiBold',
+                                          color: greyText),
+                                    ),
+                                    icon: Icon(
+                                      Icons.library_books_outlined,
+                                      size: 22,
+                                      color: buttonBlue,
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  new Spacer(),
+                                  RaisedButton(
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                          left: 7.0, right: 7.0),
+                                      height: 50,
+                                      child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Text(
+                                              'Next',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontFamily:
+                                                      'SourceSansProSemiBold',
+                                                  color: Colors.white),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 5.0, top: 2.0),
+                                              child: Icon(
+                                                Icons.arrow_forward_outlined,
+                                                color: Colors.white,
+                                                size: 22,
+                                              ),
+                                            ),
+                                          ]),
+                                    ),
+                                    color: green,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    onPressed: () {
+                                      if (selectedMarketList != null &&
+                                          selectedMarketList.isNotEmpty) {
+                                        print(jsonEncode(selectedMarketList));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    new ReviewOrderPage(
+                                                        selectedMarketList,
+                                                        widget.outletList
+                                                            .outletId,
+                                                        _txtOrderNotesEditController
+                                                            .text,
+                                                        lstDeliveryDates)));
+                                      } else {
+                                        globalKey.currentState.showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                'Please select atlease one product'),
+                                            duration: Duration(seconds: 1),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  )
+                                ]))),
+                        body: displayList(context),
+                        appBar: AppBar(
+                          centerTitle: true,
+                          backgroundColor: Colors.white,
+                          bottomOpacity: 0.0,
+                          elevation: 0.0,
+                          leading: IconButton(
+                            icon: Icon(Icons.arrow_back_ios_outlined,
+                                color: Colors.black),
+                            onPressed: () => createDraftOrderAPI(),
+                          ),
+                          title: _isSearching
+                              ? _buildSearchField()
+                              : Container(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        widget.outletList.outletName,
+                                        style: new TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18.0,
+                                            fontFamily:
+                                                "SourceSansProSemiBold"),
+                                      ),
+                                      Text(
+                                        "Cutoff for earliest delivery: " +
+                                            DateFormat('d MMM, hh:mm a').format(
+                                                DateTime
+                                                    .fromMillisecondsSinceEpoch(
+                                                        lstDeliveryDates[0]
+                                                                .deliveryDates[
+                                                                    0]
+                                                                .cutOffDate *
+                                                            1000)),
+                                        style: new TextStyle(
+                                            color: grey_text,
+                                            fontSize: 12.0,
+                                            fontFamily: "SourceSansProRegular"),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                          actions: _buildActions(),
                         ),
                       );
+                    } else {
+                      return Container();
                     }
-                  },
-                )
-              ]))),
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: _isSearching
-            ? _buildSearchField()
-            : Text(
-                widget.outletList.outletName,
-                style: new TextStyle(
-                    color: Colors.black, fontFamily: "SourceSansProSemiBold"),
-              ),
-        actions: _buildActions(),
-      ),
-      body: displayList(context),
-    );
+                  }
+                })));
   }
 
   Widget headers(context, String name, double size) {
@@ -836,5 +911,82 @@ class MarketListDesign extends State<MarketListPage>
             ),
           ));
         });
+  }
+
+  createDraftOrderAPI() async {
+    if (selectedMarketList != null && selectedMarketList.length > 0) {
+      _showLoader();
+      CreateOrderModel createOrderModel = new CreateOrderModel();
+      createOrderModel.notes = _txtSkuNotesEditController.text;
+      createOrderModel.timeDelivered =
+          lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+      List<Products> productslist = [];
+      for (var i = 0; i < selectedMarketList.length; i++) {
+        Products products = new Products();
+        products.sku = selectedMarketList[i].sku;
+        products.notes = selectedMarketList[i].skuNotes;
+        products.quantity = selectedMarketList[i].quantity;
+        products.unitSize = selectedMarketList[i].priceList[0].unitSize;
+        productslist.add(products);
+      }
+      createOrderModel.products = productslist;
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'authType': 'Zeemart',
+        'mudra': mudra,
+        'supplierId': supplierID
+      };
+      Map<String, String> queryParams = {
+        'supplierId': supplierID,
+        'outletId': widget.outletList.outletId,
+      };
+
+      String queryString = Uri(queryParameters: queryParams).query;
+      var requestUrl = URLEndPoints.create_draft_orders + '?' + queryString;
+      print("url" + requestUrl);
+      print("ms" + createOrderModel.toJson().toString());
+      final msg = jsonEncode(createOrderModel);
+
+      http.Response response =
+          await http.post(requestUrl, headers: headers, body: msg);
+      print("ms" + response.statusCode.toString());
+      print("ms" + response.body.toString());
+      if (response.statusCode == 200) {
+        _hideLoader();
+        Navigator.of(context).pop();
+      } else {
+        _hideLoader();
+        Navigator.of(context).pop();
+      }
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<List<DeliveryDateList>> callDeliveryDatesApi() async {
+    _showLoader();
+    SupplierDeliveryDates deliveryDateList;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierID
+    };
+    Map<String, String> queryParams = {
+      'supplierId': supplierID,
+      'outletId': widget.outletList.outletId,
+      "orderEnabled": "true",
+    };
+    String queryString = Uri(queryParameters: queryParams).query;
+    var requestUrl =
+        URLEndPoints.retrieve_supplier_delivery_dates + '?' + queryString;
+    print("url" + requestUrl);
+
+    http.Response response = await http.get(requestUrl, headers: headers);
+    Map results = json.decode(response.body);
+    deliveryDateList = SupplierDeliveryDates.fromJson(results);
+    lstDeliveryDates = deliveryDateList.data;
+    _hideLoader();
+    return lstDeliveryDates;
   }
 }

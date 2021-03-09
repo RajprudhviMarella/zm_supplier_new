@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
@@ -9,9 +12,12 @@ import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:zm_supplier/utils/customDialog.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
+
+import 'outletSelection.dart';
 
 /**
  * Created by RajPrudhviMarella on 04/Mar/2021.
@@ -22,12 +28,14 @@ class ReviewOrderPage extends StatefulWidget {
   List<OutletMarketList> marketList;
   String outletId;
   String orderNotes;
+  List<DeliveryDateList> lstDeliveryDates;
 
-  ReviewOrderPage(this.marketList, this.outletId, this.orderNotes);
+  ReviewOrderPage(
+      this.marketList, this.outletId, this.orderNotes, this.lstDeliveryDates);
 
   @override
   State<StatefulWidget> createState() {
-    return ReviewOrderDesign();
+    return ReviewOrderDesign(lstDeliveryDates);
   }
 }
 
@@ -47,15 +55,32 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   String error = "";
   bool isAddonOrder = false;
   List<DeliveryDateList> lstDeliveryDates;
-  Future<List<DeliveryDateList>> deliveryDatesListFuture;
   String supplierID;
   String mudra;
   var selectedDate = 0;
+  bool _isShowLoader = false;
+
+  ReviewOrderDesign(this.lstDeliveryDates);
 
   @override
   void initState() {
     loadSharedPrefs();
+    lstDeliveryDates[0].deliveryDates[0].isSelected = true;
+    selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+    calculatePrice();
     super.initState();
+  }
+
+  void _showLoader() {
+    setState(() {
+      _isShowLoader = true;
+    });
+  }
+
+  void _hideLoader() {
+    setState(() {
+      _isShowLoader = false;
+    });
   }
 
   SharedPref sharedPref = SharedPref();
@@ -70,7 +95,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         }
         if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
           supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
-          deliveryDatesListFuture = callDeliveryDatesApi();
         }
       });
     } catch (Exception) {}
@@ -78,129 +102,107 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: globalKey,
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          bottomOpacity: 0.0,
-          elevation: 0.0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            "Review order",
-            style: new TextStyle(
-                color: Colors.black, fontFamily: "SourceSansProSemiBold"),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.delete_forever_outlined,
-                  color: Colors.black),
+    return ModalProgressHUD(
+        inAsyncCall: _isShowLoader,
+        child: Scaffold(
+            key: globalKey,
+            appBar: AppBar(
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              bottomOpacity: 0.0,
+              elevation: 0.0,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(
+                "Review order",
+                style: new TextStyle(
+                    color: Colors.black, fontFamily: "SourceSansProSemiBold"),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.delete_forever_outlined,
+                      color: Colors.black),
+                ),
+              ],
             ),
-          ],
-        ),
-        body: FutureBuilder<List<DeliveryDateList>>(
-            future: deliveryDatesListFuture,
-            builder: (context, snapShot) {
-              if (snapShot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                if (snapShot.connectionState == ConnectionState.done &&
-                    snapShot.hasData &&
-                    snapShot.data.isNotEmpty) {
-                  return Scaffold(
-                      bottomNavigationBar: Container(
-                          height: 80.0,
-                          color: Colors.white,
-                          child: Container(
-                              padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                              child: Row(children: <Widget>[
-                                Container(
-                                  padding:
-                                      EdgeInsets.only(left: 7.0, right: 7.0),
-                                  height: 50,
-                                  child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          'Total',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily:
-                                                  'SourceSansProSemiBold',
-                                              color: Colors.black),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              left: 5.0, top: 2.0),
-                                          child: Text(
-                                            "\$${totalPrice.toStringAsFixed(2)}",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontFamily:
-                                                    'SourceSansProSemiBold',
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                      ]),
+            bottomNavigationBar: Container(
+                height: 80.0,
+                color: Colors.white,
+                child: Container(
+                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    child: Row(children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(left: 7.0, right: 7.0),
+                        height: 50,
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                'Total',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'SourceSansProSemiBold',
+                                    color: Colors.black),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 5.0, top: 2.0),
+                                child: Text(
+                                  "\$${totalPrice.toStringAsFixed(2)}",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'SourceSansProSemiBold',
+                                      color: Colors.black),
                                 ),
-                                new Spacer(),
-                                RaisedButton(
-                                  child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: 7.0, right: 7.0),
-                                      height: 50,
-                                      child: Center(
-                                        child: Text(
-                                          'Place order',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily:
-                                                  'SourceSansProSemiBold',
-                                              color: Colors.white),
-                                        ),
-                                      )),
-                                  color: green,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  onPressed: () {
-                                    if (widget.marketList != null &&
-                                        widget.marketList.isNotEmpty) {
-                                      showAlert(context);
-                                    } else {
-                                      globalKey.currentState.showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                              'Please select atlease one product'),
-                                          duration: Duration(seconds: 1),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                )
-                              ]))),
-                      body: ListView(
-                        children: [
-                          Headers("Delivery date"),
-                          displayDeliveryDates(context),
-                          Headers(
-                              widget.marketList.length.toString() + " items"),
-                          displayList(context),
-                          Headers("Notes / special requests"),
-                          EditNotes(),
-                          priceDetails(context)
-                        ],
-                      ));
-                } else {
-                  return Container();
-                }
-              }
-            }));
+                              ),
+                            ]),
+                      ),
+                      new Spacer(),
+                      RaisedButton(
+                        child: Container(
+                            padding: EdgeInsets.only(left: 7.0, right: 7.0),
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                'Place order',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'SourceSansProSemiBold',
+                                    color: Colors.white),
+                              ),
+                            )),
+                        color: green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        onPressed: () {
+                          if (widget.marketList != null &&
+                              widget.marketList.isNotEmpty) {
+                            showAlert(context);
+                          } else {
+                            globalKey.currentState.showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Please select atlease one product'),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          }
+                        },
+                      )
+                    ]))),
+            body: ListView(
+              children: [
+                Headers("Delivery date"),
+                displayDeliveryDates(context),
+                Headers(widget.marketList.length.toString() + " items"),
+                displayList(context),
+                Headers("Notes / special requests"),
+                EditNotes(),
+                priceDetails(context)
+              ],
+            )));
   }
 
   Widget Headers(String name) {
@@ -230,20 +232,26 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       if (lstDeliveryDates[0].deliveryFeePolicy.condition ==
           "BELOW_MINIMUM_ORDER") {
         if (totalSkusPrice <
-            lstDeliveryDates[0].deliveryFeePolicy.minOrder.amountV1) {
+            lstDeliveryDates[0]
+                .deliveryFeePolicy
+                .minOrder
+                .amountV1
+                .toDouble()) {
           totalDeliveryPrice =
-              lstDeliveryDates[0].deliveryFeePolicy.fee.amountV1;
+              lstDeliveryDates[0].deliveryFeePolicy.fee.amountV1.toDouble();
           error =
               "Order can be placed, but supplier may reject the order or  \n delivery fee may have to be paid";
         }
       } else if (lstDeliveryDates[0].deliveryFeePolicy.condition ==
           "ALL_ORDERS") {
-        totalDeliveryPrice = lstDeliveryDates[0].deliveryFeePolicy.fee.amountV1;
+        totalDeliveryPrice =
+            lstDeliveryDates[0].deliveryFeePolicy.fee.amountV1.toDouble();
         error =
             "Order can be placed, but supplier may reject the order or \n delivery fee may have to be paid";
       } else if (lstDeliveryDates[0].deliveryFeePolicy.condition ==
           "REJECT_BELOW_MIN_ORDER") {
-        totalDeliveryPrice = lstDeliveryDates[0].deliveryFeePolicy.fee.amountV1;
+        totalDeliveryPrice =
+            lstDeliveryDates[0].deliveryFeePolicy.fee.amountV1.toDouble();
         error =
             "Order can be placed, but supplier may reject the order or \n delivery fee may have to be paid";
       } else {
@@ -784,35 +792,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     }
   }
 
-  Future<List<DeliveryDateList>> callDeliveryDatesApi() async {
-    SupplierDeliveryDates deliveryDateList;
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'authType': 'Zeemart',
-      'mudra': mudra,
-      'supplierId': supplierID
-    };
-    Map<String, String> queryParams = {
-      'supplierId': supplierID,
-      // 'outletId': widget.outletId,
-      "orderEnabled": "true",
-    };
-    String queryString = Uri(queryParameters: queryParams).query;
-    var requestUrl =
-        URLEndPoints.retrieve_supplier_delivery_dates + '?' + queryString;
-    print("url" + requestUrl);
-
-    http.Response response = await http.get(requestUrl, headers: headers);
-    Map results = json.decode(response.body);
-    deliveryDateList = SupplierDeliveryDates.fromJson(results);
-    lstDeliveryDates = deliveryDateList.data;
-    lstDeliveryDates[0].deliveryDates[0].isSelected = true;
-    selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
-    calculatePrice();
-    return lstDeliveryDates;
-  }
-
   createOrderAPI() async {
+    _showLoader();
     CreateOrderModel createOrderModel = new CreateOrderModel();
     createOrderModel.timeDelivered = selectedDate;
     createOrderModel.notes = widget.orderNotes;
@@ -849,7 +830,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     print("ms" + response.statusCode.toString());
     print("ms" + response.body.toString());
     if (response.statusCode == 200) {
-    } else {}
+      showSuccessDialog();
+    } else {
+      showFailureDialog();
+    }
   }
 
   void showAlert(context) {
@@ -858,6 +842,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     Widget okButton = FlatButton(
       child: Text(Constants.txt_ok),
       onPressed: () {
+        Navigator.pop(dialogContext);
         createOrderAPI();
       },
     );
@@ -1030,5 +1015,39 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 child: contianer,
               );
             }));
+  }
+
+  void showFailureDialog() {
+    _hideLoader();
+    showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          Future.delayed(Duration(seconds: 2), () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
+          });
+          return CustomDialogBox(
+            title: "Can’t create this order",
+            imageAssets: 'assets/images/img_exclaimation_red.png',
+          );
+        });
+  }
+
+  void showSuccessDialog() {
+    _hideLoader();
+    showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          Future.delayed(Duration(seconds: 2), () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage(), fullscreenDialog: true));
+          });
+          return CustomDialogBox(
+            title: "Order Created",
+            imageAssets: 'assets/images/tick_receive_big.png',
+          );
+        });
   }
 }
