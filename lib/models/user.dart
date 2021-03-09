@@ -212,7 +212,6 @@ class userData {
     this.market,
     this.phone,
     this.regNo,
-    // this.settings,
     this.shortDesc,
     this.showPrice,
     this.supplierIntegrationEnabled,
@@ -236,7 +235,7 @@ class userData {
   String phone;
   String regNo;
 
-  SupplierSettings settings;
+// SupplierSettings settings;
   String shortDesc;
   bool showPrice;
   bool supplierIntegrationEnabled;
@@ -258,7 +257,6 @@ class userData {
         market: json["market"],
         phone: json["phone"],
         regNo: json["regNo"],
-        // settings: SupplierSettings.fromJson(json["settings"]),
         shortDesc: json["shortDesc"],
         showPrice: json["showPrice"],
         supplierIntegrationEnabled: json["supplierIntegrationEnabled"],
@@ -281,7 +279,6 @@ class userData {
         "market": market,
         "phone": phone,
         "regNo": regNo,
-        // "settings": settings.toJson(),
         "shortDesc": shortDesc,
         "showPrice": showPrice,
         "supplierIntegrationEnabled": supplierIntegrationEnabled,

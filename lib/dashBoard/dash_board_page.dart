@@ -57,12 +57,16 @@ class DashboardState extends State<DashboardPage> {
 
   Future<List<OrderSummaryResponse>> getJobFuture;
 
+  Future<List<Orders>> draftOrdersFuture;
+  List<Orders> draftOrdersList;
+
   @override
   void initState() {
     super.initState();
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
     ordersListYesterday = _retriveYesterdayOrders();
+    draftOrdersFuture = getDraftOrders();
   }
 
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
@@ -108,6 +112,40 @@ class DashboardState extends State<DashboardPage> {
     //   }
     //   return value;
     // });
+  }
+
+  Future<List<Orders>> getDraftOrders() async {
+    LoginResponse user =
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': user.mudra,
+      'supplierId': user.supplier.first.supplierId
+    };
+
+    Map<String, String> queryParams = {
+      'supplierId': user.supplier.first.supplierId,
+      'orderStatus': 'Draft'
+    };
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.retrive_paginated_orders_url + '?' + queryString;
+
+    print(headers);
+    print(url);
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
+    } else {
+      print('failed get customers reports');
+    }
+
+    draftOrdersList = ordersData.data.data;
+    return draftOrdersList;
   }
 
   Future<List<Orders>> _retriveYesterdayOrders() async {
@@ -282,6 +320,10 @@ class DashboardState extends State<DashboardPage> {
           children: [
             banner(context),
             //dots(context),
+
+            draftsHeader(),
+            bannerList(),
+
             Header(),
             tabs(),
             list(),
@@ -519,6 +561,148 @@ class DashboardState extends State<DashboardPage> {
     );
   }
 
+  Widget leadingImage(String url) {
+    if (url != null && url.isNotEmpty) {
+      return Container(
+          height: 40.0,
+          width: 40.0,
+          decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              image:
+                  DecorationImage(fit: BoxFit.fill, image: NetworkImage(url))));
+    } else {
+      return Container(
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder('Hey Res'),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
+    }
+  }
+
+  String outletPlaceholder(String name) {
+    Constants value = Constants();
+    var placeholder = value.getInitialWords(name);
+    return placeholder;
+  }
+
+  Widget draftsHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30.0, top: 20, right: 15),
+      child: Container(
+        height: 30,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Continue ordering',
+              style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget bannerList() {
+    return FutureBuilder<List<Orders>>(
+        future: draftOrdersFuture,
+        builder: (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container();
+          } else if (snapshot.hasError) {
+            return Center(child: Text('failed to load'));
+          } else {
+            return SizedBox(
+              height: 90,
+              child: ListView.builder(
+                  itemCount: snapshot.data.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                    bool last = 5 == (index + 1);
+                    bool first = -1 == (index - 1);
+                    bool second = 0 == (index - 1);
+                    return Padding(
+                      padding:
+                          first ? EdgeInsets.only(left: 15) : EdgeInsets.all(0),
+                      child: GestureDetector(
+                        onTap: () {
+                          print('tapped $index');
+                          setState(() {
+                            // selectedIndex = index;
+                            // var a = snapshot.data[index];
+                            // selectedCustomersDataFuture = selectedD(a);
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: last
+                                  ? EdgeInsets.only(right: 15)
+                                  : EdgeInsets.all(0),
+                              child: Container(
+
+                                  //  padding: last ? EdgeInsets.only(left: 20): null,
+                                  width: 180,
+                                  height: 70,
+                                  margin: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 12,
+                                              top: 15.0,
+                                            ),
+                                            child: leadingImage(''),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0,
+                                                  top: 12,
+                                                  right: 15),
+                                              child: Text(
+                                                snapshot.data[index].outlet
+                                                    .outletName,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      'SourceSansProRegular',
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+            );
+          }
+        });
+  }
+
   Widget Header() {
     return Padding(
       padding: const EdgeInsets.only(left: 30.0, top: 20, right: 15),
@@ -534,8 +718,10 @@ class DashboardState extends State<DashboardPage> {
             FlatButton(
               onPressed: () {
                 print('View all orders tapped');
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ViewOrdersPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ViewOrdersPage(null)));
               },
               child: Text(
                 'View all orders',
@@ -553,7 +739,7 @@ class DashboardState extends State<DashboardPage> {
 
   Widget tabs() {
     return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
+      padding: const EdgeInsets.only(top: 10.0),
       child: DefaultTabController(
         length: 2,
         child: Container(

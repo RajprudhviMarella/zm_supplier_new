@@ -151,3 +151,34 @@ class Settings {
     return data;
   }
 }
+class SpecificOutletResponse {
+  SpecificOutletResponse({
+    this.path,
+    this.timestamp,
+    this.status,
+    this.message,
+    this.data,
+  });
+
+  String path;
+  DateTime timestamp;
+  int status;
+  String message;
+  List<Outlet> data;
+
+  factory SpecificOutletResponse.fromJson(Map<String, dynamic> json) => SpecificOutletResponse(
+    path: json["path"],
+    timestamp: DateTime.parse(json["timestamp"]),
+    status: json["status"],
+    message: json["message"],
+    data: List<Outlet>.from(json["data"].map((x) => Outlet.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "path": path,
+    "timestamp": timestamp.toIso8601String(),
+    "status": status,
+    "message": message,
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+  };
+}
