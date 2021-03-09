@@ -4,7 +4,7 @@
 
 class CreateOrderModel {
   int timeDelivered;
-  List<Products> products=[];
+  List<Product> products=[];
   String deliveryInstruction;
   String notes;
 
@@ -17,9 +17,9 @@ class CreateOrderModel {
   CreateOrderModel.fromJson(Map<String, dynamic> json) {
     timeDelivered = json['timeDelivered'];
     if (json['products'] != null) {
-      products = new List<Products>();
+      products = new List<Product>();
       json['products'].forEach((v) {
-        products.add(new Products.fromJson(v));
+        products.add(new Product.fromJson(v));
       });
     }
     deliveryInstruction = json['deliveryInstruction'];
@@ -38,15 +38,15 @@ class CreateOrderModel {
   }
 }
 
-class Products {
+class Product {
   String sku;
   int quantity;
   String unitSize;
   String notes;
 
-  Products({this.sku, this.quantity, this.unitSize, this.notes});
+  Product({this.sku, this.quantity, this.unitSize, this.notes});
 
-  Products.fromJson(Map<String, dynamic> json) {
+  Product.fromJson(Map<String, dynamic> json) {
     sku = json['sku'];
     quantity = json['quantity'];
     unitSize = json['unitSize'];
