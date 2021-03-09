@@ -797,9 +797,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     CreateOrderModel createOrderModel = new CreateOrderModel();
     createOrderModel.timeDelivered = selectedDate;
     createOrderModel.notes = widget.orderNotes;
-    List<Products> productslist = [];
+    List<Product> productslist = [];
     for (var i = 0; i < widget.marketList.length; i++) {
-      Products products = new Products();
+      Product products = new Product();
       products.sku = widget.marketList[i].sku;
       products.notes = widget.marketList[i].skuNotes;
       products.quantity = widget.marketList[i].quantity;

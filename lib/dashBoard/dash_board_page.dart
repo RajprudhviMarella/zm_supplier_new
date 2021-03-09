@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/createOrder/outletSelection.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
@@ -17,7 +18,6 @@ import 'package:zm_supplier/utils/urlEndPoints.dart';
 import '../utils/color.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -635,12 +635,13 @@ class DashboardState extends State<DashboardPage> {
                           first ? EdgeInsets.only(left: 15) : EdgeInsets.all(0),
                       child: GestureDetector(
                         onTap: () {
-                          print('tapped $index');
-                          setState(() {
-                            // selectedIndex = index;
-                            // var a = snapshot.data[index];
-                            // selectedCustomersDataFuture = selectedD(a);
-                          });
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new MarketListPage(
+                                        snapshot.data[index].outlet.outletId,
+                                        snapshot.data[index].outlet.outletName,
+                                      )));
                         },
                         child: Row(
                           children: [

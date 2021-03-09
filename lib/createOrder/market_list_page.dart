@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/createOrder/reviewOrder.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
+import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
-import 'package:zm_supplier/models/outletResponse.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -21,9 +21,10 @@ import 'dart:ui';
 
 class MarketListPage extends StatefulWidget {
   static const String tag = 'MarketListPage';
-  Outlet outletList;
+  final String outletId;
+  final String outletName;
 
-  MarketListPage(this.outletList);
+  MarketListPage(this.outletId, this.outletName);
 
   @override
   State<StatefulWidget> createState() {
@@ -179,8 +180,7 @@ class MarketListDesign extends State<MarketListPage>
                                                 builder: (context) =>
                                                     new ReviewOrderPage(
                                                         selectedMarketList,
-                                                        widget.outletList
-                                                            .outletId,
+                                                        widget.outletId,
                                                         _txtOrderNotesEditController
                                                             .text,
                                                         lstDeliveryDates)));
@@ -213,7 +213,7 @@ class MarketListDesign extends State<MarketListPage>
                                   child: Column(
                                     children: [
                                       Text(
-                                        widget.outletList.outletName,
+                                        widget.outletName,
                                         style: new TextStyle(
                                             color: Colors.black,
                                             fontSize: 18.0,
@@ -415,7 +415,7 @@ class MarketListDesign extends State<MarketListPage>
   }
 
   Widget displaySkuNotesName(String text) {
-    if (text.isNotEmpty) {
+    if (text != null && text.isNotEmpty) {
       return Container(
           margin: EdgeInsets.only(top: 3.0, bottom: 3.0),
           child: Text(text,
@@ -780,7 +780,10 @@ class MarketListDesign extends State<MarketListPage>
   }
 
   Future<List<OutletMarketList>> callOutletsMarket() async {
+    _showLoader();
     OutletMarketBaseResponse marketList;
+    OrdersBaseResponse ordersData;
+    List<Products> draftOrdersList = [];
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -790,7 +793,7 @@ class MarketListDesign extends State<MarketListPage>
     Map<String, String> queryParams = {
       'supplierId': supplierID,
       'sortBy': "productName",
-      "outletId": widget.outletList.outletId,
+      "outletId": widget.outletId,
       "sortOrder": "ASC"
     };
     String queryString = Uri(queryParameters: queryParams).query;
@@ -825,10 +828,79 @@ class MarketListDesign extends State<MarketListPage>
       }
     }
 
+    Map<String, String> draftParams = {
+      'supplierId': supplierID,
+      'orderStatus': 'Draft',
+      'outletId': widget.outletId
+    };
+    String draftqueryString = Uri(queryParameters: draftParams).query;
+
+    var url =
+        URLEndPoints.retrive_paginated_orders_url + '?' + draftqueryString;
+
+    print(headers);
+    print(url);
+    var draftResponse = await http.get(url, headers: headers);
+    if (draftResponse.statusCode == 200 ||
+        draftResponse.statusCode == 201 ||
+        draftResponse.statusCode == 202) {
+      ordersData = OrdersBaseResponse.fromJson(json.decode(draftResponse.body));
+      if (ordersData != null &&
+          ordersData.data != null &&
+          ordersData.data.data != null &&
+          ordersData.data.data.length > 0)
+        draftOrdersList = ordersData.data.data[0].products;
+    } else {
+      print('failed get customers reports');
+    }
+    for (var i = 0; i < allOutletMarketList.length; i++) {
+      if (draftOrdersList != null && draftOrdersList.length > 0) {
+        for (var j = 0; j < draftOrdersList.length; j++) {
+          if (draftOrdersList[j].sku == allOutletMarketList[i].sku &&
+              draftOrdersList[j].unitSize ==
+                  allOutletMarketList[i].priceList[0].unitSize &&
+              draftOrdersList[j].productName ==
+                  allOutletMarketList[i].productName) {
+            print(jsonEncode('came here'));
+            allOutletMarketList[i].isSelected = true;
+            allOutletMarketList[i].quantity = draftOrdersList[j].quantity;
+            allOutletMarketList[i].bgColor = Colors.blue;
+            allOutletMarketList[i].skuNotes = draftOrdersList[j].notes;
+            allOutletMarketList[i].txtColor = Colors.white;
+            allOutletMarketList[i].txtSize = 16.0;
+            allOutletMarketList[i].selectedQuantity =
+                draftOrdersList[j].quantity.toString();
+            print(jsonEncode('came here'+allOutletMarketList[i].selectedQuantity));
+            selectedMarketList.removeWhere((it) =>
+                it.productName.toLowerCase() ==
+                    allOutletMarketList[i].productName.toLowerCase() &&
+                it.sku.toLowerCase() ==
+                    allOutletMarketList[i].sku.toLowerCase() &&
+                allOutletMarketList[i].priceList[0].unitSize.toLowerCase() ==
+                    it.priceList[0].unitSize.toLowerCase());
+            selectedMarketList.add(allOutletMarketList[i]);
+          }
+          else {
+            allOutletMarketList[i].bgColor = faintGrey;
+            allOutletMarketList[i].txtColor = Colors.blue;
+            allOutletMarketList[i].txtSize = 30.0;
+            allOutletMarketList[i].selectedQuantity = "+";
+            allOutletMarketList[i].isSelected = false;
+            allOutletMarketList[i].skuNotes = "";
+          }
+        }
+      } else {
+        allOutletMarketList[i].bgColor = faintGrey;
+        allOutletMarketList[i].txtColor = Colors.blue;
+        allOutletMarketList[i].txtSize = 30.0;
+        allOutletMarketList[i].selectedQuantity = "+";
+        allOutletMarketList[i].isSelected = false;
+        allOutletMarketList[i].skuNotes = "";
+      }
+    }
+    _hideLoader();
     return allOutletMarketList;
   }
-
-  newProductObject(OutletMarketList marketList) {}
 
   void createAddNotesOrder() {
     showModalBottomSheet<void>(
@@ -920,9 +992,9 @@ class MarketListDesign extends State<MarketListPage>
       createOrderModel.notes = _txtSkuNotesEditController.text;
       createOrderModel.timeDelivered =
           lstDeliveryDates[0].deliveryDates[0].deliveryDate;
-      List<Products> productslist = [];
+      List<Product> productslist = [];
       for (var i = 0; i < selectedMarketList.length; i++) {
-        Products products = new Products();
+        Product products = new Product();
         products.sku = selectedMarketList[i].sku;
         products.notes = selectedMarketList[i].skuNotes;
         products.quantity = selectedMarketList[i].quantity;
@@ -938,7 +1010,7 @@ class MarketListDesign extends State<MarketListPage>
       };
       Map<String, String> queryParams = {
         'supplierId': supplierID,
-        'outletId': widget.outletList.outletId,
+        'outletId': widget.outletId,
       };
 
       String queryString = Uri(queryParameters: queryParams).query;
@@ -974,7 +1046,7 @@ class MarketListDesign extends State<MarketListPage>
     };
     Map<String, String> queryParams = {
       'supplierId': supplierID,
-      'outletId': widget.outletList.outletId,
+      'outletId': widget.outletId,
       "orderEnabled": "true",
     };
     String queryString = Uri(queryParameters: queryParams).query;

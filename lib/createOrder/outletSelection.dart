@@ -332,7 +332,12 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                   },
                 ),
                 onTap: () {
-                  moveToProductPage(snapShot.data[index].outlet);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new MarketListPage(
+                              snapShot.data[index].outlet.outletId,
+                              snapShot.data[index].outlet.outletName)));
                 })));
   }
 
@@ -405,10 +410,5 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       lastMatchEnd = match.end;
     }
     return children;
-  }
-
-  void moveToProductPage(Outlet outlet) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => new MarketListPage(outlet)));
   }
 }
