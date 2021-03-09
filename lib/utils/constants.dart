@@ -27,6 +27,7 @@ class Constants {
   static const String txt_ok = "OK";
   static const String txt_cancel = "Cancel";
   static const String txt_confirm_logout = "Are you sure you want to sign out?";
+  static const String txt_place_this_order = "Place this order now?";
   static const String txt_select_from = "Change profile photo";
   static const String txt_take_photo = "Take photo";
   static const String txt_select_library = "Select from library";
@@ -82,11 +83,14 @@ class Constants {
   static const String termsUrl = "https://www.zeemart.asia/terms";
   static const String privacyUrl = "https://www.zeemart.asia/privacy-policy";
   static const String txt_orders = "Orders";
-  static const String txt_select_outlet= "Select outlet";
+  static const String txt_select_outlet = "Select outlet";
   static const String txt_deliveries = "Deliveries";
   static const String txt_starred = "Starred";
   static const String txt_Search_order_number = "Search order number";
+  static const String txt_Search_outlet = "Search outlet";
+  static const String txt_Search_sku = "Search SKU";
   static const String txt_all_outlets = "All outlets";
+  static const String txt_add_notes = "Add notes..";
   static const String txt_search_outlet = "Search outlet or people";
 
   static Widget OrderStatusColor(Orders orders) {

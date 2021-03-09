@@ -4,7 +4,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/createOrder/outletSelection.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
@@ -16,17 +15,9 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import 'dart:ui' as ui;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
-import '../utils/color.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -36,8 +27,6 @@ class DashboardPage extends StatefulWidget {
 class DashboardState extends State<DashboardPage> {
   int currentIndex = 0;
   var arra = [1]; // add more values, for new cards.
-
-  // OrderSummaryResponse orderSummary;
 
   OrdersBaseResponse ordersData;
   LoginResponse userResponse;
@@ -60,9 +49,6 @@ class DashboardState extends State<DashboardPage> {
     Icons.search,
     color: Colors.black,
   );
-
-  final ValueNotifier<int> _pageNotifier = new ValueNotifier<int>(0);
-  final PageController _pageController = new PageController();
 
   double height;
   double width;

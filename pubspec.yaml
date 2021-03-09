@@ -69,6 +69,8 @@ flutter:
     - assets/images/Star_light_grey.png
     - assets/images/Star_yellow.png
     - assets/images/Sort-blue.png
+    - assets/images/img_exclaimation_red.png
+    - assets/images/tick_receive_big.png
     - assets/images/orders_icon.png
     - assets/images/phone-grey.png
     - assets/images/email_grey.png
