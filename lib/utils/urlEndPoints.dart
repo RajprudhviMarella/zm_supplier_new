@@ -23,6 +23,7 @@ class URLEndPoints {
   static const String img_upload_url =
       "http://zm-staging-commonservices.zeemart.asia/services/storage/files/multipart";
   static const String retrieve_orders = order_management_server + "orders/po";
+  static const String edit_place_order = order_management_server + "orders/po/draft/edit/place";
   static const String create_draft_orders = order_management_server + "orders/po/draft";
   static const String retrieve_outlets = inventory_management_server +
       "inventory/deliveryPreference/linkedOutlets";

@@ -5,13 +5,13 @@
 class CreateOrderModel {
   int timeDelivered;
   List<Product> products=[];
-  String deliveryInstruction;
   String notes;
+  String orderId;
 
   CreateOrderModel(
       {this.timeDelivered,
         this.products,
-        this.deliveryInstruction,
+        this.orderId,
         this.notes});
 
   CreateOrderModel.fromJson(Map<String, dynamic> json) {
@@ -22,8 +22,8 @@ class CreateOrderModel {
         products.add(new Product.fromJson(v));
       });
     }
-    deliveryInstruction = json['deliveryInstruction'];
     notes = json['notes'];
+    orderId = json['orderId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -32,8 +32,8 @@ class CreateOrderModel {
     if (this.products != null) {
       data['products'] = this.products.map((v) => v.toJson()).toList();
     }
-    data['deliveryInstruction'] = this.deliveryInstruction;
     data['notes'] = this.notes;
+    data['orderId'] = this.orderId;
     return data;
   }
 }
