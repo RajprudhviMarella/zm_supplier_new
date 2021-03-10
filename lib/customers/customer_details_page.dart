@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:zm_supplier/invoices/invoices_page.dart';
 import 'package:zm_supplier/models/buyerUserResponse.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
@@ -172,6 +173,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       body: ListView(
         children: <Widget>[
           orderSummaryBanner(),
+          Invoicesheader(context),
           headers(context),
           list(),
           header(context),
@@ -364,6 +366,44 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     }
   }
 
+  Widget Invoicesheader(context) {
+    return Container(
+      color: faintGrey,
+      margin: EdgeInsets.only(top: 2.0),
+      padding:
+      EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0, bottom: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          new RaisedButton(
+            color: Colors.transparent,
+            elevation: 0,
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => InvoicesPage(outletId, outletName)));
+            },
+            child: new Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(width: 5),
+                new Text(
+                  'View all invoices',
+                  style: TextStyle(
+                      color: buttonBlue,
+                      fontSize: 12,
+                      fontFamily: 'SourceSansProRegular'),
+                ),
+              ],
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
   Widget headers(context) {
     return Container(
       color: faintGrey,
@@ -422,9 +462,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                 fontSize: 18,
               )),
           Text(
-            ' (active for last 90 days)',
+            ' (active for last 180 days)',
             style: TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 fontFamily: 'SourceSansProRegular',
                 color: greyText),
           )
@@ -830,26 +870,26 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                 fontFamily: 'SourceSansProSemiBold')),
         // message: const Text('Your options are '),
         actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text('Email',
-                style: TextStyle(
-                    color: buttonBlue,
-                    fontSize: 20,
-                    fontFamily: 'SourceSansProRegular')),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Email using Gmail',
-                style: TextStyle(
-                    color: buttonBlue,
-                    fontSize: 20,
-                    fontFamily: 'SourceSansProRegular')),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+          // CupertinoActionSheetAction(
+          //   child: Text('Email',
+          //       style: TextStyle(
+          //           color: buttonBlue,
+          //           fontSize: 20,
+          //           fontFamily: 'SourceSansProRegular')),
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          // CupertinoActionSheetAction(
+          //   child: Text('Email using Gmail',
+          //       style: TextStyle(
+          //           color: buttonBlue,
+          //           fontSize: 20,
+          //           fontFamily: 'SourceSansProRegular')),
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
           CupertinoActionSheetAction(
             child: Text('Copy address',
                 style: TextStyle(
@@ -889,26 +929,26 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                 fontFamily: 'SourceSansProSemiBold')),
         // message: const Text('Your options are '),
         actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: Text('Call',
-                style: TextStyle(
-                    color: buttonBlue,
-                    fontSize: 20,
-                    fontFamily: 'SourceSansProRegular')),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: Text('Message',
-                style: TextStyle(
-                    color: buttonBlue,
-                    fontSize: 20,
-                    fontFamily: 'SourceSansProRegular')),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+          // CupertinoActionSheetAction(
+          //   child: Text('Call',
+          //       style: TextStyle(
+          //           color: buttonBlue,
+          //           fontSize: 20,
+          //           fontFamily: 'SourceSansProRegular')),
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
+          // CupertinoActionSheetAction(
+          //   child: Text('Message',
+          //       style: TextStyle(
+          //           color: buttonBlue,
+          //           fontSize: 20,
+          //           fontFamily: 'SourceSansProRegular')),
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
           CupertinoActionSheetAction(
             child: Text('Copy number',
                 style: TextStyle(

@@ -9,6 +9,8 @@ class URLEndPoints {
       "https://zm-staging-ordermanagementserv.zeemart.asia/services/";
   static const String inventory_management_server =
       "https://zm-staging-inventorymanagement.zeemart.asia/services/";
+  static const String invoice_management_server = "https://zm-staging-invoicemanagement.zeemart.asia/services/";
+
 
   static const String login_url = auth_server + "supplier/login";
   static const String get_specific_user_url =
@@ -38,8 +40,15 @@ class URLEndPoints {
       "inventory/deliveryPreference/linkedOutlets";
   static const String favourite_url =
       inventory_management_server + "inventory/deliveryPreference/favourite";
-  static const String recent_orderd_outlets = inventory_management_server + "inventory/deliveryPreference/recent/order/outlets";
+  static const String recent_orderd_outlets = inventory_management_server +
+      "inventory/deliveryPreference/recent/order/outlets";
 
-  static const String customers_report_data = report_management_server + "reports/customers";
-  static const String buyer_people_url = account_managent_server + "account/users/outlet";
+  static const String customers_report_data = report_management_server +
+      "reports/customers";
+  static const String buyer_people_url = account_managent_server +
+      "account/users/outlet";
+
+  //Invoice related URLs.
+  static const String retrive_invoices_url = invoice_management_server + "supplier/eInvoices/v1";
+
 }
