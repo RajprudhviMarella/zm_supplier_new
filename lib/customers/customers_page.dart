@@ -41,14 +41,6 @@ class CustomerState extends State<CustomersPage> {
   LoginResponse userData;
   int selectedIndex = 0;
 
-  var reportsArr = [
-    "All",
-    "Starred",
-    "Ordered this week",
-    "Ordered last week",
-    "No recent orders"
-  ];
-
   @override
   void initState() {
     super.initState();
