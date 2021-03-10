@@ -54,6 +54,7 @@ class MarketListDesign extends State<MarketListPage>
   bool _isShowLoader = false;
   List<DeliveryDateList> lstDeliveryDates;
   Future<List<DeliveryDateList>> deliveryDatesListFuture;
+  String orderID = "";
 
   @override
   void initState() {
@@ -183,7 +184,8 @@ class MarketListDesign extends State<MarketListPage>
                                                         widget.outletId,
                                                         _txtOrderNotesEditController
                                                             .text,
-                                                        lstDeliveryDates)));
+                                                        lstDeliveryDates,
+                                                        orderID)));
                                       } else {
                                         globalKey.currentState.showSnackBar(
                                           SnackBar(
@@ -453,7 +455,11 @@ class MarketListDesign extends State<MarketListPage>
               subtitle: displayPriceWithShortNames(snapShot.data[index]),
               trailing: GestureDetector(
                   onTap: () {
-                    counter = snapShot.data[index].quantity;
+                    if (snapShot.data[index].quantity != 0) {
+                      counter = snapShot.data[index].quantity;
+                    } else {
+                      counter = snapShot.data[index].priceList[0].moq;
+                    }
                     _textEditingController.value = TextEditingValue(
                       text: this.counter.toString(),
                       selection: TextSelection.fromPosition(
@@ -504,7 +510,11 @@ class MarketListDesign extends State<MarketListPage>
                                       GestureDetector(
                                           onTap: () {
                                             setState(() {
-                                              if (counter > 0) this.counter--;
+                                              if (counter >
+                                                  snapShot
+                                                      .data[index]
+                                                      .priceList[0]
+                                                      .moq) this.counter--;
                                               _textEditingController.text =
                                                   counter.toString();
                                               _txtSkuNotesEditController.text =
@@ -848,57 +858,39 @@ class MarketListDesign extends State<MarketListPage>
       if (ordersData != null &&
           ordersData.data != null &&
           ordersData.data.data != null &&
-          ordersData.data.data.length > 0)
+          ordersData.data.data.length > 0) {
         draftOrdersList = ordersData.data.data[0].products;
+        orderID = ordersData.data.data[0].orderId;
+      }
     } else {
       print('failed get customers reports');
     }
-    for (var i = 0; i < allOutletMarketList.length; i++) {
-      if (draftOrdersList != null && draftOrdersList.length > 0) {
-        for (var j = 0; j < draftOrdersList.length; j++) {
-          if (draftOrdersList[j].sku == allOutletMarketList[i].sku &&
-              draftOrdersList[j].unitSize ==
-                  allOutletMarketList[i].priceList[0].unitSize &&
-              draftOrdersList[j].productName ==
-                  allOutletMarketList[i].productName) {
-            print(jsonEncode('came here'));
-            allOutletMarketList[i].isSelected = true;
-            allOutletMarketList[i].quantity = draftOrdersList[j].quantity;
-            allOutletMarketList[i].bgColor = Colors.blue;
-            allOutletMarketList[i].skuNotes = draftOrdersList[j].notes;
-            allOutletMarketList[i].txtColor = Colors.white;
-            allOutletMarketList[i].txtSize = 16.0;
-            allOutletMarketList[i].selectedQuantity =
-                draftOrdersList[j].quantity.toString();
-            print(jsonEncode('came here'+allOutletMarketList[i].selectedQuantity));
+    if (draftOrdersList != null && draftOrdersList.length > 0)
+      allOutletMarketList.forEach((elements) {
+        draftOrdersList.forEach((element) {
+          if (elements.sku == element.sku &&
+              elements.priceList[0].unitSize == element.unitSize &&
+              elements.productName == element.productName) {
+            elements.isSelected = true;
+            elements.quantity = element.quantity;
+            elements.bgColor = Colors.blue;
+            elements.skuNotes = element.notes;
+            elements.txtColor = Colors.white;
+            elements.txtSize = 16.0;
+            elements.selectedQuantity = element.quantity.toString();
+
             selectedMarketList.removeWhere((it) =>
                 it.productName.toLowerCase() ==
-                    allOutletMarketList[i].productName.toLowerCase() &&
-                it.sku.toLowerCase() ==
-                    allOutletMarketList[i].sku.toLowerCase() &&
-                allOutletMarketList[i].priceList[0].unitSize.toLowerCase() ==
+                    elements.productName.toLowerCase() &&
+                it.sku.toLowerCase() == elements.sku.toLowerCase() &&
+                elements.priceList[0].unitSize.toLowerCase() ==
                     it.priceList[0].unitSize.toLowerCase());
-            selectedMarketList.add(allOutletMarketList[i]);
+            selectedMarketList.add(elements);
           }
-          else {
-            allOutletMarketList[i].bgColor = faintGrey;
-            allOutletMarketList[i].txtColor = Colors.blue;
-            allOutletMarketList[i].txtSize = 30.0;
-            allOutletMarketList[i].selectedQuantity = "+";
-            allOutletMarketList[i].isSelected = false;
-            allOutletMarketList[i].skuNotes = "";
-          }
-        }
-      } else {
-        allOutletMarketList[i].bgColor = faintGrey;
-        allOutletMarketList[i].txtColor = Colors.blue;
-        allOutletMarketList[i].txtSize = 30.0;
-        allOutletMarketList[i].selectedQuantity = "+";
-        allOutletMarketList[i].isSelected = false;
-        allOutletMarketList[i].skuNotes = "";
-      }
-    }
+        });
+      });
     _hideLoader();
+
     return allOutletMarketList;
   }
 

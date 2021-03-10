@@ -93,17 +93,17 @@ class OutletMarketList {
   List<String> tags;
   List<Certifications> certifications;
   int timePriceUpdated;
-  Color bgColor;
-  Color txtColor;
+  Color bgColor = faintGrey;
+  Color txtColor = Colors.blue;
 
-  var txtSize;
+  var txtSize = 30.0;
 
-  String selectedQuantity;
+  String selectedQuantity = "+";
 
-  String skuNotes;
+  String skuNotes = "";
 
-  int quantity;
-  bool isSelected;
+  int quantity = 0;
+  bool isSelected = false;
 
   OutletMarketList(
       {this.dateCreated,

@@ -28,10 +28,11 @@ class ReviewOrderPage extends StatefulWidget {
   List<OutletMarketList> marketList;
   String outletId;
   String orderNotes;
+  String orderId;
   List<DeliveryDateList> lstDeliveryDates;
 
-  ReviewOrderPage(
-      this.marketList, this.outletId, this.orderNotes, this.lstDeliveryDates);
+  ReviewOrderPage(this.marketList, this.outletId, this.orderNotes,
+      this.lstDeliveryDates, this.orderId);
 
   @override
   State<StatefulWidget> createState() {
@@ -435,7 +436,12 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                           displayPriceWithShortNames(widget.marketList[index]),
                       trailing: GestureDetector(
                           onTap: () {
-                            counter = widget.marketList[index].quantity;
+                            if (widget.marketList[index].quantity != 0) {
+                              counter = widget.marketList[index].quantity;
+                            } else {
+                              counter =
+                                  widget.marketList[index].priceList[0].moq;
+                            }
                             _textEditingController.value = TextEditingValue(
                               text: this.counter.toString(),
                               selection: TextSelection.fromPosition(
@@ -494,7 +500,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                               GestureDetector(
                                                   onTap: () {
                                                     setState(() {
-                                                      if (counter > 0)
+                                                      if (counter >
+                                                          widget
+                                                              .marketList[index]
+                                                              .priceList[0]
+                                                              .moq)
                                                         this.counter--;
                                                       _textEditingController
                                                               .text =
@@ -797,6 +807,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     CreateOrderModel createOrderModel = new CreateOrderModel();
     createOrderModel.timeDelivered = selectedDate;
     createOrderModel.notes = widget.orderNotes;
+    createOrderModel.orderId = widget.orderId;
     List<Product> productslist = [];
     for (var i = 0; i < widget.marketList.length; i++) {
       Product products = new Product();
@@ -807,7 +818,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       productslist.add(products);
     }
     createOrderModel.products = productslist;
-    createOrderModel.notes = widget.orderNotes;
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -820,13 +830,18 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     };
 
     String queryString = Uri(queryParameters: queryParams).query;
-    var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
+    var requestUrl;
+    http.Response response;
+    final msg = jsonEncode(createOrderModel);
+    if (widget.orderId != null && widget.orderId.isNotEmpty) {
+      requestUrl = URLEndPoints.edit_place_order + '?' + queryString;
+      response = await http.put(requestUrl, headers: headers, body: msg);
+    } else {
+      requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
+      response = await http.post(requestUrl, headers: headers, body: msg);
+    }
     print("url" + requestUrl);
     print("ms" + createOrderModel.toJson().toString());
-    final msg = jsonEncode(createOrderModel);
-
-    http.Response response =
-        await http.post(requestUrl, headers: headers, body: msg);
     print("ms" + response.statusCode.toString());
     print("ms" + response.body.toString());
     if (response.statusCode == 200) {
