@@ -51,4 +51,5 @@ class URLEndPoints {
   //Invoice related URLs.
   static const String retrive_invoices_url = invoice_management_server + "supplier/eInvoices/v1";
 
+  static const String retrive_specific_invoice = invoice_management_server + 'invoice';
 }

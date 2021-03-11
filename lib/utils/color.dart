@@ -17,3 +17,4 @@ Color warningRed = Color(0xffff4b33);
 Color yellow = Color(0xfff2b90c);
 Color green = Color(0xff03b02b);
 Color pinkyRed = Color(0xffff1848);
+Color notesyellow = Color(0xfffdca40);

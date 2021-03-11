@@ -144,9 +144,6 @@ class Invoices {
     return new DateTime.fromMillisecondsSinceEpoch(this.invoiceDate * 1000);
   }
 
-
-
-
   DateTime getPaymentDueDate() {
     return new DateTime.fromMillisecondsSinceEpoch(this.paymentDueDate * 1000);
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:zm_supplier/invoices/invoice_details_page.dart';
 import 'package:zm_supplier/models/invoicesResponse.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -252,7 +253,6 @@ class InvoicesState extends State<InvoicesPage> {
   Widget invoicesList() {
     final height = AppBar().preferredSize.height;
 
-    print(height);
     return FutureBuilder<List<Invoices>>(
         future: invoicesFuture,
         builder: (context, snapShot) {
@@ -310,7 +310,7 @@ class InvoicesState extends State<InvoicesPage> {
                           ListTile(
                             tileColor: Colors.white,
                             onTap: () {
-                              // moveToOrderDetailsPage(element);
+                               moveToInvoiceDetailsPage(element);
                             },
                             // contentPadding: EdgeInsets.only(
                             //     top: 10.0,
@@ -365,7 +365,9 @@ class InvoicesState extends State<InvoicesPage> {
                                 //Container(height: 20, color: Colors.yellow,)
                               ],
                             ),
+
                           ),
+
                           Divider(
                             height: 1.5,
                             color: faintGrey,
@@ -404,6 +406,15 @@ class InvoicesState extends State<InvoicesPage> {
             }
           }
         });
+  }
+
+  Widget moveToInvoiceDetailsPage(Invoices inv) {
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+            new InvoiceDetailsPage(inv)));
   }
 
   Widget checkPaymentStatus(Invoices inv) {
