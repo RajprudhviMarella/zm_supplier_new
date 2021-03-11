@@ -575,15 +575,16 @@ class DashboardState extends State<DashboardPage> {
     );
   }
 
-  Widget leadingImage(String url) {
-    if (url != null && url.isNotEmpty) {
+  Widget leadingImage(Orders order) {
+    if (order.outlet.logoURL != null && order.outlet.logoURL.isNotEmpty) {
       return Container(
           height: 40.0,
           width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image:
-                  DecorationImage(fit: BoxFit.fill, image: NetworkImage(url))));
+         child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(order.outlet.logoURL, fit: BoxFit.fill,),
+          )
+    );
     } else {
       return Container(
         height: 38,
@@ -594,7 +595,7 @@ class DashboardState extends State<DashboardPage> {
         ),
         child: Center(
           child: Text(
-            outletPlaceholder('Hey Res'),
+            outletPlaceholder(order.outlet.outletName),
             style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
           ),
         ),
@@ -682,7 +683,7 @@ class DashboardState extends State<DashboardPage> {
                                               left: 12,
                                               top: 15.0,
                                             ),
-                                            child: leadingImage(''),
+                                            child: leadingImage(snapshot.data[index]),
                                           ),
                                           Expanded(
                                             child: Padding(
@@ -997,22 +998,7 @@ class DashboardState extends State<DashboardPage> {
                         ),
 
                         //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                        leading: Container(
-                          height: 38,
-                          width: 38,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                          ),
-                          child: snapshot.data[index].outlet.logoURL == null
-                              ? ImageIcon(
-                                  AssetImage('assets/images/Truck-black.png'))
-                              : Image.network(
-                                  snapshot.data[index].outlet.logoURL,
-                                  fit: BoxFit.fill,
-                                ),
-                          // ),
-                        ),
+                        leading: leadingImage(snapshot.data[index]),
 
                         tileColor: Colors.white,
                         onTap: () {

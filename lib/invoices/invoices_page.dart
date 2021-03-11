@@ -317,7 +317,7 @@ class InvoicesState extends State<InvoicesPage> {
                             //     bottom: 10.0,
                             //     left: 15.0,
                             //     right: 10.0),
-                            leading: leadingImage(element.outlet.outletName),
+                            leading: leadingImage(element),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -489,22 +489,35 @@ class InvoicesState extends State<InvoicesPage> {
     }
   }
 
-  Widget leadingImage(String name) {
-    return Container(
-      height: 38,
-      width: 38,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        color: Colors.blue.withOpacity(0.5),
-      ),
-      child: Center(
-        child: Text(
-          outletPlaceholder(name),
-          style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+
+  Widget leadingImage(Invoices inv) {
+    if (inv.outlet.logoURL != null && inv.outlet.logoURL.isNotEmpty) {
+      return Container(
+          height: 40.0,
+          width: 40.0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(inv.outlet.logoURL, fit: BoxFit.fill,),
+          )
+      );
+    } else {
+      return Container(
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
         ),
-      ),
-    );
+        child: Center(
+          child: Text(
+            outletPlaceholder(inv.outlet.outletName),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
+    }
   }
+
 
   String outletPlaceholder(String name) {
     Constants value = Constants();

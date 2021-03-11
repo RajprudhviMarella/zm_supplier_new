@@ -309,7 +309,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                 snapShot.hasData) {
               if (snapShot.data.products != null) {
                 return Container(
-                  margin: EdgeInsets.all(20),
+                  margin: EdgeInsets.only(left: 20, bottom: 10),
                   child: Text(
                     (snapShot.data.products.length ?? 0).toString() + ' Items',
                     style: TextStyle(
@@ -345,7 +345,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   }
 
   Widget checkNotes(InvoiceDetails inv) {
-    if (inv.notes != null) {
+    if (inv.notes != null && inv.notes != "") {
+
       return Container(
         height: 60,
         decoration: BoxDecoration(
@@ -547,6 +548,35 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                   )
                                 ])
                               ]),
+
+                        Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
+                        if (snapshot.data.promoCodeDiscount != null &&
+                            snapshot.data.promoCodeDiscount.amountV1 != null)
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(children: <Widget>[
+                                  Expanded(
+                                    child: LeftRightAlign(
+                                        left: Text("Promo code",
+                                            style: TextStyle(
+                                                color: greyText,
+                                                fontSize: 16.0,
+                                                fontFamily:
+                                                "SourceSansProRegular")),
+                                        right: Text(
+                                            getAmountDisplayValue(snapshot.data
+                                                .promoCodeDiscount.amountV1 ??
+                                                0),
+                                            style: TextStyle(
+                                                color: greyText,
+                                                fontSize: 16.0,
+                                                fontFamily:
+                                                "SourceSansProRegular"))),
+                                  )
+                                ])
+                              ]),
+
                         Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
                         if (snapshot.data.discount != null &&
                             snapshot.data.discount.amountV1 != null)
@@ -583,7 +613,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                 Row(children: <Widget>[
                                   Expanded(
                                     child: LeftRightAlign(
-                                        left: Text("Discount",
+                                        left: Text(snapshot.data.others.name,
                                             style: TextStyle(
                                                 color: greyText,
                                                 fontSize: 16.0,

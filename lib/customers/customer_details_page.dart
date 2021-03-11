@@ -689,10 +689,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       return Container(
           height: 40.0,
           width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image: DecorationImage(
-                  fit: BoxFit.fill, image: NetworkImage(img.outlet.logoURL))));
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(img.outlet.logoURL, fit: BoxFit.fill,),
+          )
+      );
     } else {
       return Container(
         height: 38,
@@ -789,6 +790,10 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                         ),
 
                         trailing: trailingIcon(snapshot.data[index]),
+
+                        onTap: () {
+                          _moreActionBottomSheet(snapshot.data[index]);
+                        },
                         //subtitle: Text(timeDiff(snapshot.data[index])),
                       ),
                       Divider(
@@ -857,6 +862,44 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
         width: 22,
       );
     }
+  }
+
+  void _moreActionBottomSheet(BuyerDetails details){
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc){
+          return Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+
+                    title: new Text(details.firstName, style: TextStyle(fontSize: 14, fontFamily: 'SourceSansProSemibold'),),
+
+                    onTap: () => {
+                    }
+                ),
+
+                new ListTile(
+                    title: new Text(details.email, style: TextStyle(fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                    onTap: () => {
+                      showActionSheet(details.email)
+                    }
+                ),
+                Divider(thickness: 1, color: faintGrey,),
+                if(details.phone != null && details.phone.isNotEmpty)
+                  new ListTile(
+                    title: new Text(details.phone, style: TextStyle(fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                    onTap: () => {
+                     // moveToOrderActivityPage(order)
+                      showActionSheetPhone(details.phone)
+                    },
+                  ),
+                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
+              ],
+            ),
+          );
+        }
+    );
   }
 
   Widget showActionSheet(String email) {
