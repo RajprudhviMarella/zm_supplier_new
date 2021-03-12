@@ -338,7 +338,7 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
                             //     bottom: 10.0,
                             //     left: 15.0,
                             //     right: 10.0),
-                            leading: leadingImage(element.outlet.outletName),
+                            leading: leadingImage(element),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -510,21 +510,31 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
     }
   }
 
-  Widget leadingImage(String name) {
-    return Container(
-      height: 38,
-      width: 38,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        color: Colors.blue.withOpacity(0.5),
-      ),
-      child: Center(
-        child: Text(
-          outletPlaceholder(name),
-          style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+  Widget leadingImage(Invoices inv) {
+    if (inv.outlet.logoURL != null && inv.outlet.logoURL.isNotEmpty) {
+      return Container(
+          height: 40.0,
+          width: 40.0,
+          decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              image: DecorationImage(
+                  fit: BoxFit.fill, image: NetworkImage(inv.outlet.logoURL))));
+    } else {
+      return Container(
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
         ),
-      ),
-    );
+        child: Center(
+          child: Text(
+            outletPlaceholder(inv.outlet.outletName),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
+    }
   }
 
   String outletPlaceholder(String name) {

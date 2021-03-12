@@ -440,25 +440,8 @@ class CustomerState extends State<CustomersPage> {
                               )),
 
                           //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                          leading: Container(
-                            height: 38,
-                            width: 38,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                              color: Colors.blue.withOpacity(0.5),
-                            ),
-                            child: Center(
-                              child: Text(
-                                outletPlaceholder(snapshot
-                                    .data.outlets[index].outlet.outletName),
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: "SourceSansProSemiBold"),
-                              ),
-                            ),
-                          ),
-                          // ),
+                          leading: leadingImage(snapshot.data.outlets[index]),
+
                           trailing: IconButton(
                               icon: snapshot.data.outlets[index].isFavourite
                                   ? Image(
@@ -514,6 +497,34 @@ class CustomerState extends State<CustomersPage> {
             }),
       ],
     );
+  }
+
+  Widget leadingImage(Customers customer) {
+    if (customer.outlet.logoURL != null && customer.outlet.logoURL.isNotEmpty) {
+      return Container(
+          height: 40.0,
+          width: 40.0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(customer.outlet.logoURL, fit: BoxFit.fill,),
+          )
+      );
+    } else {
+      return Container(
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder(customer.outlet.outletName),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
+    }
   }
 
   tapOnFavourite(int index, Customers customers) {
