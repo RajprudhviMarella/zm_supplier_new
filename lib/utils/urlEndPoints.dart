@@ -24,11 +24,15 @@ class URLEndPoints {
 
   static const String img_upload_url =
       "http://zm-staging-commonservices.zeemart.asia/services/storage/files/multipart";
-  static const String retrieve_orders =
-      "https://zm-staging-ordermanagementserv.zeemart.asia/services/orders/po";
-  static const String retrieve_outlets =
-      "https://zm-staging-inventorymanagement.zeemart.asia/services/inventory/deliveryPreference/linkedOutlets";
-
+  static const String retrieve_orders = order_management_server + "orders/po";
+  static const String edit_place_order = order_management_server + "orders/po/draft/edit/place";
+  static const String create_draft_orders = order_management_server + "orders/po/draft";
+  static const String retrieve_outlets = inventory_management_server +
+      "inventory/deliveryPreference/linkedOutlets";
+  static const String retrieve_supplier_delivery_dates = inventory_management_server +
+      "inventory/deliveryPreference/delivery/settings";
+  static const String retrieve_outlet_market_list =
+      inventory_management_server + "inventory/marketlist";
   static const String order_summary_url =
       report_management_server + "reports/order/summary";
   static const String retrive_paginated_orders_url =

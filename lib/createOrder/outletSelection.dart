@@ -137,7 +137,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                     ),
                     decoration: new InputDecoration(
                         prefixIcon: new Icon(Icons.search, color: Colors.black),
-                        hintText: Constants.txt_Search_order_number,
+                        hintText: Constants.txt_Search_outlet,
                         hintStyle: new TextStyle(color: greyText)),
                   );
                 } else {
@@ -332,7 +332,12 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                   },
                 ),
                 onTap: () {
-                  moveToProductPage(snapShot.data[index].outlet);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new MarketListPage(
+                              snapShot.data[index].outlet.outletId,
+                              snapShot.data[index].outlet.outletName)));
                 })));
   }
 
@@ -366,29 +371,6 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         .updateFavourite(
             mudra, supplierID, customers.outlet.outletId, customers.isFavourite)
         .then((value) async {});
-  }
-
-  void filterSearchResults(String query) {
-    List<FavouriteOutletsList> dummySearchList = List<FavouriteOutletsList>();
-    dummySearchList.addAll(allOutletList);
-    if (query.isNotEmpty) {
-      List<FavouriteOutletsList> dummyListData = List<FavouriteOutletsList>();
-      for (var i = 0; i < dummySearchList.length; i++) {
-        if (dummySearchList[i].outlet.outletName.contains(query)) {
-          dummyListData.add(dummySearchList[i]);
-        }
-      }
-      setState(() {
-        allOutletListFuture =
-            dummyListData as Future<List<FavouriteOutletsList>>;
-      });
-      return;
-    } else {
-      setState(() {
-        allOutletListFuture =
-            dummySearchList as Future<List<FavouriteOutletsList>>;
-      });
-    }
   }
 
   List<TextSpan> highlightOccurrences(String source, String query) {
@@ -428,10 +410,5 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       lastMatchEnd = match.end;
     }
     return children;
-  }
-
-  void moveToProductPage(Outlet outlet) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => new MarketListPage(outlet)));
   }
 }

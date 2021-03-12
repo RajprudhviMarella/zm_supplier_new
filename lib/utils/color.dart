@@ -18,3 +18,6 @@ Color yellow = Color(0xfff2b90c);
 Color green = Color(0xff03b02b);
 Color pinkyRed = Color(0xffff1848);
 Color notesyellow = Color(0xfffdca40);
+Color warning_red = Color(0xffff4b33);
+Color grey_text = Color(0xff999999);
+Color azul_blue = Color(0xff115ece);
