@@ -23,12 +23,13 @@ class MarketListPage extends StatefulWidget {
   static const String tag = 'MarketListPage';
   final String outletId;
   final String outletName;
+  List<Products> repeatOrderProducts;
 
-  MarketListPage(this.outletId, this.outletName);
+  MarketListPage(this.outletId, this.outletName, this.repeatOrderProducts);
 
   @override
   State<StatefulWidget> createState() {
-    return MarketListDesign();
+    return MarketListDesign(repeatOrderProducts);
   }
 }
 
@@ -55,6 +56,9 @@ class MarketListDesign extends State<MarketListPage>
   List<DeliveryDateList> lstDeliveryDates;
   Future<List<DeliveryDateList>> deliveryDatesListFuture;
   String orderID = "";
+  List<Products> repeatOrderProducts;
+
+  MarketListDesign(this.repeatOrderProducts);
 
   @override
   void initState() {
@@ -837,37 +841,9 @@ class MarketListDesign extends State<MarketListPage>
         }
       }
     }
-
-    Map<String, String> draftParams = {
-      'supplierId': supplierID,
-      'orderStatus': 'Draft',
-      'outletId': widget.outletId
-    };
-    String draftqueryString = Uri(queryParameters: draftParams).query;
-
-    var url =
-        URLEndPoints.retrive_paginated_orders_url + '?' + draftqueryString;
-
-    print(headers);
-    print(url);
-    var draftResponse = await http.get(url, headers: headers);
-    if (draftResponse.statusCode == 200 ||
-        draftResponse.statusCode == 201 ||
-        draftResponse.statusCode == 202) {
-      ordersData = OrdersBaseResponse.fromJson(json.decode(draftResponse.body));
-      if (ordersData != null &&
-          ordersData.data != null &&
-          ordersData.data.data != null &&
-          ordersData.data.data.length > 0) {
-        draftOrdersList = ordersData.data.data[0].products;
-        orderID = ordersData.data.data[0].orderId;
-      }
-    } else {
-      print('failed get customers reports');
-    }
-    if (draftOrdersList != null && draftOrdersList.length > 0)
+    if (repeatOrderProducts != null && repeatOrderProducts.length > 0) {
       allOutletMarketList.forEach((elements) {
-        draftOrdersList.forEach((element) {
+        repeatOrderProducts.forEach((element) {
           if (elements.sku == element.sku &&
               elements.priceList[0].unitSize == element.unitSize &&
               elements.productName == element.productName) {
@@ -889,8 +865,62 @@ class MarketListDesign extends State<MarketListPage>
           }
         });
       });
-    _hideLoader();
+      _hideLoader();
+    } else {
+      Map<String, String> draftParams = {
+        'supplierId': supplierID,
+        'orderStatus': 'Draft',
+        'outletId': widget.outletId
+      };
+      String draftqueryString = Uri(queryParameters: draftParams).query;
 
+      var url =
+          URLEndPoints.retrive_paginated_orders_url + '?' + draftqueryString;
+
+      print(headers);
+      print(url);
+      var draftResponse = await http.get(url, headers: headers);
+      if (draftResponse.statusCode == 200 ||
+          draftResponse.statusCode == 201 ||
+          draftResponse.statusCode == 202) {
+        ordersData =
+            OrdersBaseResponse.fromJson(json.decode(draftResponse.body));
+        if (ordersData != null &&
+            ordersData.data != null &&
+            ordersData.data.data != null &&
+            ordersData.data.data.length > 0) {
+          draftOrdersList = ordersData.data.data[0].products;
+          orderID = ordersData.data.data[0].orderId;
+        }
+      } else {
+        print('failed get customers reports');
+      }
+      if (draftOrdersList != null && draftOrdersList.length > 0)
+        allOutletMarketList.forEach((elements) {
+          draftOrdersList.forEach((element) {
+            if (elements.sku == element.sku &&
+                elements.priceList[0].unitSize == element.unitSize &&
+                elements.productName == element.productName) {
+              elements.isSelected = true;
+              elements.quantity = element.quantity;
+              elements.bgColor = Colors.blue;
+              elements.skuNotes = element.notes;
+              elements.txtColor = Colors.white;
+              elements.txtSize = 16.0;
+              elements.selectedQuantity = element.quantity.toString();
+
+              selectedMarketList.removeWhere((it) =>
+                  it.productName.toLowerCase() ==
+                      elements.productName.toLowerCase() &&
+                  it.sku.toLowerCase() == elements.sku.toLowerCase() &&
+                  elements.priceList[0].unitSize.toLowerCase() ==
+                      it.priceList[0].unitSize.toLowerCase());
+              selectedMarketList.add(elements);
+            }
+          });
+        });
+      _hideLoader();
+    }
     return allOutletMarketList;
   }
 

@@ -822,3 +822,36 @@ class Products {
     return data;
   }
 }
+
+class OrderDetailsResponse {
+  OrderDetailsResponse({
+    this.path,
+    this.timestamp,
+    this.status,
+    this.message,
+    this.data,
+  });
+
+  String path;
+  DateTime timestamp;
+  int status;
+  String message;
+  Orders data;
+
+  factory OrderDetailsResponse.fromJson(Map<String, dynamic> json) =>
+      OrderDetailsResponse(
+        path: json["path"],
+        timestamp: DateTime.parse(json["timestamp"]),
+        status: json["status"],
+        message: json["message"],
+        data: Orders.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+    "path": path,
+    "timestamp": timestamp.toIso8601String(),
+    "status": status,
+    "message": message,
+    "data": data.toJson(),
+  };
+}

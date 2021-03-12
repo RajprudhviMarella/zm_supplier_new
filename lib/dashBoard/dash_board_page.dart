@@ -641,7 +641,7 @@ class DashboardState extends State<DashboardPage> {
                               MaterialPageRoute(
                                   builder: (context) => new MarketListPage(
                                         snapshot.data[index].outlet.outletId,
-                                        snapshot.data[index].outlet.outletName,
+                                        snapshot.data[index].outlet.outletName,null,
                                       )));
                         },
                         child: Row(
