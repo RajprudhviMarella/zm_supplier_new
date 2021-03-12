@@ -4,7 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:zm_supplier/createOrder/market_list_page.dart';
+import 'package:zm_supplier/createOrder/outletSelection.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -15,13 +16,6 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
-import 'dart:ui' as ui;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -33,8 +27,6 @@ class DashboardPage extends StatefulWidget {
 class DashboardState extends State<DashboardPage> {
   int currentIndex = 0;
   var arra = [1]; // add more values, for new cards.
-
-  // OrderSummaryResponse orderSummary;
 
   OrdersBaseResponse ordersData;
   LoginResponse userResponse;
@@ -58,9 +50,6 @@ class DashboardState extends State<DashboardPage> {
     color: Colors.black,
   );
 
-  final ValueNotifier<int> _pageNotifier = new ValueNotifier<int>(0);
-  final PageController _pageController = new PageController();
-
   double height;
   double width;
 
@@ -68,18 +57,21 @@ class DashboardState extends State<DashboardPage> {
 
   Future<List<OrderSummaryResponse>> getJobFuture;
 
+  Future<List<Orders>> draftOrdersFuture;
+  List<Orders> draftOrdersList;
+
   @override
   void initState() {
     super.initState();
-
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
     ordersListYesterday = _retriveYesterdayOrders();
+    draftOrdersFuture = getDraftOrders();
   }
 
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -89,7 +81,7 @@ class DashboardState extends State<DashboardPage> {
     };
 
     var response =
-    await http.get(URLEndPoints.order_summary_url, headers: headers);
+        await http.get(URLEndPoints.order_summary_url, headers: headers);
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
@@ -122,22 +114,56 @@ class DashboardState extends State<DashboardPage> {
     // });
   }
 
+  Future<List<Orders>> getDraftOrders() async {
+    LoginResponse user =
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': user.mudra,
+      'supplierId': user.supplier.first.supplierId
+    };
+
+    Map<String, String> queryParams = {
+      'supplierId': user.supplier.first.supplierId,
+      'orderStatus': 'Draft'
+    };
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.retrive_paginated_orders_url + '?' + queryString;
+
+    print(headers);
+    print(url);
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
+    } else {
+      print('failed get customers reports');
+    }
+
+    draftOrdersList = ordersData.data.data;
+    return draftOrdersList;
+  }
+
   Future<List<Orders>> _retriveYesterdayOrders() async {
     final now = DateTime.now();
 
     var yesterdayStartTime = DateTime(now.year, now.month, now.day - 1);
     var epochStartTime = yesterdayStartTime.millisecondsSinceEpoch / 1000;
     var startDate =
-    epochStartTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+        epochStartTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
 
     var yesterdayEndTime =
-    DateTime(now.year, now.month, now.day - 1, 23, 59, 59);
+        DateTime(now.year, now.month, now.day - 1, 23, 59, 59);
     var epochEndTime = yesterdayEndTime.millisecondsSinceEpoch / 1000;
     var endDate =
-    epochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+        epochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
 
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -182,10 +208,10 @@ class DashboardState extends State<DashboardPage> {
     var todayEndTime = DateTime(now.year, now.month, now.day, 23, 59, 59);
     var todayEpochEndTime = todayEndTime.millisecondsSinceEpoch / 1000;
     var todayEndDate =
-    todayEpochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
+        todayEpochEndTime.toString().replaceAll(RegExp(r"([.]*0)(?!.*\d)"), "");
 
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -269,15 +295,38 @@ class DashboardState extends State<DashboardPage> {
               },
             ),
           ]),
+      floatingActionButton: new FloatingActionButton.extended(
+        backgroundColor: buttonBlue,
+        foregroundColor: Colors.white,
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => new OutletSelectionPage()));
+        },
+        icon: Icon(
+          Icons.add,
+          size: 22,
+        ),
+        elevation: 0,
+        label: Text(
+          'New order',
+          style: TextStyle(fontSize: 16, fontFamily: 'SourceSansProSemiBold'),
+        ),
+      ),
       body: Container(
         color: faintGrey,
         child: ListView(
           children: [
             banner(context),
             //dots(context),
+
+            draftsHeader(),
+            bannerList(),
+
             Header(),
             tabs(),
-            list()
+            list(),
           ],
         ),
       ),
@@ -301,7 +350,7 @@ class DashboardState extends State<DashboardPage> {
                     //  height: 200,
 
                     options: CarouselOptions(
-                      //autoPlay: true,
+                        //autoPlay: true,
                         viewportFraction: 0.9,
                         enableInfiniteScroll: false,
                         aspectRatio: 2.5,
@@ -320,7 +369,7 @@ class DashboardState extends State<DashboardPage> {
                           return Container(
                             decoration: BoxDecoration(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                                  BorderRadius.all(Radius.circular(10.0)),
                               color: Colors.white,
                             ),
 
@@ -342,12 +391,12 @@ class DashboardState extends State<DashboardPage> {
                                               currentIndex == 0
                                                   ? "Total orders".toUpperCase()
                                                   : 'East coast team'
-                                                  .toUpperCase(),
+                                                      .toUpperCase(),
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 14,
                                                   fontFamily:
-                                                  "SourceSansProBold"),
+                                                      "SourceSansProBold"),
                                             )),
                                       ),
                                       Padding(
@@ -358,16 +407,16 @@ class DashboardState extends State<DashboardPage> {
                                             child: new Text(
                                               currentIndex == 0
                                                   ? 'S\$' +
-                                                  snapshot.data.data
-                                                      .totalSpendingCurrMonth
-                                                      .toString() ??
-                                                  ""
+                                                          snapshot.data.data
+                                                              .totalSpendingCurrMonth
+                                                              .toString() ??
+                                                      ""
                                                   : '',
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 30,
                                                   fontFamily:
-                                                  "SourceSansProBold"),
+                                                      "SourceSansProBold"),
                                             )),
                                       ),
                                       Padding(
@@ -381,7 +430,7 @@ class DashboardState extends State<DashboardPage> {
                                                   color: greyText,
                                                   fontSize: 14,
                                                   fontFamily:
-                                                  "SourceSansProSemiBold"),
+                                                      "SourceSansProSemiBold"),
                                             )),
                                       ),
 
@@ -434,23 +483,23 @@ class DashboardState extends State<DashboardPage> {
                                             //color: faintGrey,
                                             child: Row(
                                               mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   (snapshot.data.data
-                                                      .todayPendingDeliveries >
-                                                      0)
+                                                              .todayPendingDeliveries >
+                                                          0)
                                                       ? snapshot.data.data
-                                                      .todayPendingDeliveries
-                                                      .toString() +
-                                                      ' deliveries today'
+                                                              .todayPendingDeliveries
+                                                              .toString() +
+                                                          ' deliveries today'
                                                       : 'No deliveries today',
                                                   style: TextStyle(
                                                       color: greyText,
                                                       fontSize: 14,
                                                       fontFamily:
-                                                      "SourceSansProSemiBold"),
+                                                          "SourceSansProSemiBold"),
                                                 ),
                                                 FlatButton(
                                                   onPressed: () {
@@ -460,14 +509,15 @@ class DashboardState extends State<DashboardPage> {
                                                     Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
-                                                            builder: (context) => DeliveriesPage()));
+                                                            builder: (context) =>
+                                                                DeliveriesPage()));
                                                   },
                                                   child: Text(
                                                     'View deliveries',
                                                     style: TextStyle(
                                                         color: buttonBlue,
                                                         fontFamily:
-                                                        "SourceSansProRegular",
+                                                            "SourceSansProRegular",
                                                         fontSize: 12),
                                                   ),
                                                 ),
@@ -511,6 +561,149 @@ class DashboardState extends State<DashboardPage> {
     );
   }
 
+  Widget leadingImage(String url) {
+    if (url != null && url.isNotEmpty) {
+      return Container(
+          height: 40.0,
+          width: 40.0,
+          decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              image:
+                  DecorationImage(fit: BoxFit.fill, image: NetworkImage(url))));
+    } else {
+      return Container(
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder('Hey Res'),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
+    }
+  }
+
+  String outletPlaceholder(String name) {
+    Constants value = Constants();
+    var placeholder = value.getInitialWords(name);
+    return placeholder;
+  }
+
+  Widget draftsHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30.0, top: 20, right: 15),
+      child: Container(
+        height: 30,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Continue ordering',
+              style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget bannerList() {
+    return FutureBuilder<List<Orders>>(
+        future: draftOrdersFuture,
+        builder: (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container();
+          } else if (snapshot.hasError) {
+            return Center(child: Text('failed to load'));
+          } else {
+            return SizedBox(
+              height: 90,
+              child: ListView.builder(
+                  itemCount: snapshot.data.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                    bool last = 5 == (index + 1);
+                    bool first = -1 == (index - 1);
+                    bool second = 0 == (index - 1);
+                    return Padding(
+                      padding:
+                          first ? EdgeInsets.only(left: 15) : EdgeInsets.all(0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new MarketListPage(
+                                        snapshot.data[index].outlet.outletId,
+                                        snapshot.data[index].outlet.outletName,
+                                      )));
+                        },
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: last
+                                  ? EdgeInsets.only(right: 15)
+                                  : EdgeInsets.all(0),
+                              child: Container(
+
+                                  //  padding: last ? EdgeInsets.only(left: 20): null,
+                                  width: 180,
+                                  height: 70,
+                                  margin: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                    color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 12,
+                                              top: 15.0,
+                                            ),
+                                            child: leadingImage(''),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0,
+                                                  top: 12,
+                                                  right: 15),
+                                              child: Text(
+                                                snapshot.data[index].outlet
+                                                    .outletName,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      'SourceSansProRegular',
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+            );
+          }
+        });
+  }
+
   Widget Header() {
     return Padding(
       padding: const EdgeInsets.only(left: 30.0, top: 20, right: 15),
@@ -529,7 +722,7 @@ class DashboardState extends State<DashboardPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ViewOrdersPage()));
+                        builder: (context) => ViewOrdersPage(null)));
               },
               child: Text(
                 'View all orders',
@@ -547,13 +740,13 @@ class DashboardState extends State<DashboardPage> {
 
   Widget tabs() {
     return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
+      padding: const EdgeInsets.only(top: 10.0),
       child: DefaultTabController(
         length: 2,
         child: Container(
           height: 50.0,
           decoration: BoxDecoration(
-            //This is for background color
+              //This is for background color
               color: Colors.white,
               //This is for bottom border that is needed
               border: Border(bottom: BorderSide(color: faintGrey, width: 1.5))),
@@ -562,7 +755,7 @@ class DashboardState extends State<DashboardPage> {
             unselectedLabelColor: greyText,
             labelColor: Colors.black,
             labelStyle:
-            TextStyle(fontFamily: 'SourceSansProBold', fontSize: 14),
+                TextStyle(fontFamily: 'SourceSansProBold', fontSize: 14),
             tabs: [
               Tab(
                 text: "Today",
@@ -599,9 +792,9 @@ class DashboardState extends State<DashboardPage> {
       children: [
         FutureBuilder<List<Orders>>(
             future:
-            selectedTab == "Today" ? ordersListToday : ordersListYesterday,
-            builder: (BuildContext context,
-                AsyncSnapshot<List<Orders>> snapshot) {
+                selectedTab == "Today" ? ordersListToday : ordersListYesterday,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
@@ -634,7 +827,7 @@ class DashboardState extends State<DashboardPage> {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   ImageIcon(
                                     AssetImage("assets/images/Truck-black.png"),
@@ -661,24 +854,25 @@ class DashboardState extends State<DashboardPage> {
                                   ),
 
                                   SizedBox(width: 5),
-                                if (snapshot.data[index].isAcknowledged != null)
-                                  Container(
-                                    width: snapshot.data[index].isAcknowledged
-                                        ? 12
-                                        : 0,
-                                    child: InkResponse(
-                                      child: Image.asset(
-                                        "assets/images/icon-tick-green.png",
-                                        width: 12,
-                                        height: 12,
+                                  if (snapshot.data[index].isAcknowledged !=
+                                      null)
+                                    Container(
+                                      width: snapshot.data[index].isAcknowledged
+                                          ? 12
+                                          : 0,
+                                      child: InkResponse(
+                                        child: Image.asset(
+                                          "assets/images/icon-tick-green.png",
+                                          width: 12,
+                                          height: 12,
+                                        ),
                                       ),
                                     ),
-                                  ),
 
                                   //Icon(Icons.navigate_next, size: 12,),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 80.0, right: 20),
+                                        left: 80.0, right: 0),
                                     child: Container(
                                       child: Text(
                                           'S\$' +
@@ -689,7 +883,7 @@ class DashboardState extends State<DashboardPage> {
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontFamily:
-                                              "SourceSansProRegular",
+                                                  "SourceSansProRegular",
                                               color: Colors.black)),
                                     ),
                                   )
@@ -697,14 +891,14 @@ class DashboardState extends State<DashboardPage> {
                               ),
                               Padding(
                                 padding:
-                                const EdgeInsets.only(top: 2.0, bottom: 10),
+                                    const EdgeInsets.only(top: 2.0, bottom: 10),
                                 child: Container(
                                   height: (snapshot.data[index].orderStatus ==
-                                      "Void" ||
-                                      snapshot.data[index].orderStatus ==
-                                          "Cancelled" ||
-                                      snapshot.data[index].orderStatus ==
-                                          "Invoiced")
+                                              "Void" ||
+                                          snapshot.data[index].orderStatus ==
+                                              "Cancelled" ||
+                                          snapshot.data[index].orderStatus ==
+                                              "Invoiced")
                                       ? 20
                                       : 0,
                                   //  margin: EdgeInsets.symmetric(horizontal: 5.0),
@@ -715,12 +909,12 @@ class DashboardState extends State<DashboardPage> {
                                     children: [
                                       Container(
                                         width:
-                                        (snapshot.data[index].orderStatus ==
-                                            "Void")
-                                            ? 50
-                                            : 0,
+                                            (snapshot.data[index].orderStatus ==
+                                                    "Void")
+                                                ? 50
+                                                : 0,
                                         margin:
-                                        EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
 
                                         decoration: BoxDecoration(
                                             color: warningRed,
@@ -736,19 +930,19 @@ class DashboardState extends State<DashboardPage> {
                                                 color: Colors.white,
                                                 fontSize: 10,
                                                 fontFamily:
-                                                "SourceSansProSemiBold"),
+                                                    "SourceSansProSemiBold"),
                                           ),
                                         ),
                                         //  color: Colors.grey,
                                       ),
                                       Container(
                                         width:
-                                        (snapshot.data[index].orderStatus ==
-                                            "Cancelled")
-                                            ? 50
-                                            : 0,
+                                            (snapshot.data[index].orderStatus ==
+                                                    "Cancelled")
+                                                ? 50
+                                                : 0,
                                         margin:
-                                        EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
                                         decoration: BoxDecoration(
                                             color: warningRed,
                                             borderRadius: BorderRadius.all(
@@ -759,15 +953,15 @@ class DashboardState extends State<DashboardPage> {
                                               color: Colors.white,
                                               fontSize: 12,
                                               fontFamily:
-                                              "SourceSansProSemiBold"),
+                                                  "SourceSansProSemiBold"),
                                         ),
                                       ),
                                       Container(
                                         width:
-                                        (snapshot.data[index].orderStatus ==
-                                            "Invoiced")
-                                            ? 50
-                                            : 0,
+                                            (snapshot.data[index].orderStatus ==
+                                                    "Invoiced")
+                                                ? 50
+                                                : 0,
                                         decoration: BoxDecoration(
                                             color: lightGreen,
                                             borderRadius: BorderRadius.all(
@@ -778,7 +972,7 @@ class DashboardState extends State<DashboardPage> {
                                                 color: Colors.white,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                "SourceSansProSemiBold")),
+                                                    "SourceSansProSemiBold")),
                                         // color: Colors.pink,
                                       )
                                     ],
@@ -795,22 +989,15 @@ class DashboardState extends State<DashboardPage> {
                           width: 38,
                           decoration: BoxDecoration(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                           ),
-                          // child: ConstrainedBox(
-                          //     constraints: BoxConstraints(
-                          //       minWidth: 38,
-                          //       minHeight: 38,
-                          //       maxWidth: 38,
-                          //       maxHeight: 38,
-                          //     ),
                           child: snapshot.data[index].outlet.logoURL == null
                               ? ImageIcon(
-                              AssetImage('assets/images/Truck-black.png'))
+                                  AssetImage('assets/images/Truck-black.png'))
                               : Image.network(
-                            snapshot.data[index].outlet.logoURL,
-                            fit: BoxFit.fill,
-                          ),
+                                  snapshot.data[index].outlet.logoURL,
+                                  fit: BoxFit.fill,
+                                ),
                           // ),
                         ),
 
@@ -837,9 +1024,7 @@ class DashboardState extends State<DashboardPage> {
   }
 
   moveToOrderDetailsPage(Orders element) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => new OrderDetailsPage(element)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
 }

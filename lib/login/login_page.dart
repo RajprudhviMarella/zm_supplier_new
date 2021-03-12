@@ -83,7 +83,6 @@ class _LoginPageState extends State<LoginPage> {
             .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
             .then((value) async {
           sharedPref.saveData(Constants.specific_user_info, value);
-
           SharedPreferences prefs = await SharedPreferences.getInstance();
           isLogged = true;
           prefs.setBool(Constants.is_logged, isLogged);

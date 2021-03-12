@@ -65,7 +65,19 @@ flutter:
     - assets/images/truck.png
     - assets/images/Truck-black.png
     - assets/images/icon-tick-green.png
-  # An image asset can refer to one or more resolution-specific "variants", see
+    - assets/images/placeholder_all.png
+    - assets/images/Star_light_grey.png
+    - assets/images/Star_yellow.png
+    - assets/images/Sort-blue.png
+    - assets/images/img_exclaimation_red.png
+    - assets/images/tick_receive_big.png
+    - assets/images/orders_icon.png
+    - assets/images/phone-grey.png
+    - assets/images/email_grey.png
+    - assets/images/filter_white.png
+    - assets/images/no_orders_icon.png
+
+    # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
   # For details regarding adding assets from package dependencies, see
