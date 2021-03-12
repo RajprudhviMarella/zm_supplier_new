@@ -12,6 +12,8 @@ import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:zm_supplier/utils/webview.dart';
 
+import '../models/ordersResponseList.dart';
+
 class InvoiceDetailsPage extends StatefulWidget {
   Invoices invoice;
 
@@ -30,6 +32,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   InvoiceDetails invoiceDetails;
   Future<InvoiceDetails> invoiceDetailsFuture;
 
+  OrderDetailsResponse orderResponse;
+  Orders order;
   String pdfUrl;
 
   @override
@@ -75,6 +79,46 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
     invoiceDetails = invoicesDetailsResponse.data;
 
     return invoiceDetails;
+  }
+
+  goToOrderDetails(String orderId) async {
+    LoginResponse user =
+    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': user.mudra,
+      'supplierId': user.supplier.first.supplierId
+    };
+
+    Map<String, String> queryParams = {
+      'orderId': orderId,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.retrive_specific_order_details + '?' + queryString;
+    print(headers);
+    print(url);
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      // Map results = json.decode(response.body);
+      orderResponse =
+          OrderDetailsResponse.fromJson(json.decode(response.body));
+    } else {
+      print('failed get invoices');
+    }
+
+    order = orderResponse.data;
+
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => OrderDetailsPage(order)));
+
+
+    //return order;
   }
 
   @override
@@ -280,18 +324,28 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
     if (inv.orderIds.length > 1) {
       for (var i in inv.orderIds) {
         Expanded(
-            child: Text('Order #' + inv.orderIds.first + '\n',
-                style: TextStyle(
-                    fontSize: 14,
-                    color: buttonBlue,
-                    fontFamily: 'SourceSansProSemiBold')));
+            child: GestureDetector(
+              onTap: () {
+                goToOrderDetails(i);
+              },
+              child: Text('Order #' + i + '\n',
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: buttonBlue,
+                      fontFamily: 'SourceSansProSemiBold')),
+            ));
       }
     } else {
-      return Text('Order #' + inv.orderIds.first,
-          style: TextStyle(
-              fontSize: 14,
-              color: buttonBlue,
-              fontFamily: 'SourceSansProSemiBold'));
+      return GestureDetector(
+        onTap: () {
+          goToOrderDetails(inv.orderIds.first);
+        },
+        child: Text('Order #' + inv.orderIds.first,
+            style: TextStyle(
+                fontSize: 14,
+                color: buttonBlue,
+                fontFamily: 'SourceSansProSemiBold')),
+      );
     }
   }
 
