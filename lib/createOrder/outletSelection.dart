@@ -337,7 +337,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                       MaterialPageRoute(
                           builder: (context) => new MarketListPage(
                               snapShot.data[index].outlet.outletId,
-                              snapShot.data[index].outlet.outletName)));
+                              snapShot.data[index].outlet.outletName,null)));
                 })));
   }
 

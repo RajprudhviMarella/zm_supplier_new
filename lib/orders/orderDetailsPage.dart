@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -21,13 +22,12 @@ class OrderDetailsPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-
     return OrderDetailsDesign();
   }
 }
 
-class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderStateMixin {
-
+class OrderDetailsDesign extends State<OrderDetailsPage>
+    with TickerProviderStateMixin {
   Widget appBarTitle = new Text(
     "Order details",
     style: new TextStyle(color: Colors.black),
@@ -48,6 +48,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
   int pageSize = 50;
   ScrollController controller;
   String searchedString;
+
   @override
   void initState() {
     loadSharedPrefs();
@@ -81,13 +82,58 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
 
     }
   }
-  //
-  // Widget build(BuildContext context) {
-  //   return new Text(widget.orderId);
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Container(
+          height: 80.0,
+          color: Colors.white,
+          child: Center(
+              child: Container(
+                  height: 50,
+                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                  child: Row(children: <Widget>[
+                    FloatingActionButton.extended(
+                      backgroundColor: faintGrey,
+                      foregroundColor: Colors.white,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => new MarketListPage(
+                                    order.outlet.outletId,
+                                    order.outlet.outletName,
+                                    order.products)));
+                      },
+                      label: Text(
+                        'Repeat order',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'SourceSansProSemiBold',
+                            color: azul_blue),
+                      ),
+                      icon: Icon(
+                        Icons.repeat_one_rounded,
+                        size: 22,
+                        color: buttonBlue,
+                      ),
+                      elevation: 0,
+                    ),
+                    new Spacer(),
+                    FloatingActionButton.extended(
+                      backgroundColor: azul_blue,
+                      foregroundColor: Colors.white,
+                      onPressed: () {},
+                      label: Text(
+                        'Respond',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'SourceSansProSemiBold',
+                            color: Colors.white),
+                      ),
+                      elevation: 0,
+                    ),
+                  ])))),
       backgroundColor: faintGrey,
       body: ListView(
         children: <Widget>[
@@ -132,7 +178,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
 
   Widget banner(BuildContext context) {
     return new Container(
-      padding: new EdgeInsets.only(top: 20, left: 20.0, bottom: 8.0, right: 20.0),
+      padding:
+          new EdgeInsets.only(top: 20, left: 20.0, bottom: 8.0, right: 20.0),
       decoration: new BoxDecoration(color: faintGrey),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -141,29 +188,33 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
           new Card(
             child: new Column(
               children: <Widget>[
-
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-                    child: Text( "#" + order.orderId,
-                        style: TextStyle(fontSize: 18, fontFamily:
-                        "SourceSansProSemiBold", color: greyText)))),
-
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                    child: Text( order.outlet.outletName,
-                        style: TextStyle(fontSize: 18, fontFamily:
-                        "SourceSansProBold")))),
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                    child: Text( "Placed: "+ order.getDatePlaced(),
-                        style: TextStyle(fontSize: 14, fontFamily:
-                        "SourceSansProRegular")))),
+                Center(
+                    child: Container(
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                        child: Text("#" + order.orderId,
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: "SourceSansProSemiBold",
+                                color: greyText)))),
+                Center(
+                    child: Container(
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Text(order.outlet.outletName,
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: "SourceSansProBold")))),
+                Center(
+                    child: Container(
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Text("Placed: " + order.getDatePlaced(),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: "SourceSansProRegular")))),
                 Constants.OrderStatusColor(order),
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                    child: Text( '',
-                        style: TextStyle(fontSize: 4)))),
-
+                Center(
+                    child: Container(
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Text('', style: TextStyle(fontSize: 4)))),
               ],
             ),
           )
@@ -171,6 +222,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
       ),
     );
   }
+
   Widget deliveryBanner(BuildContext context) {
     return new Container(
       padding: new EdgeInsets.only(top: 0, left: 0.0, bottom: 0.0, right: 0.0),
@@ -179,27 +231,22 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-
           new Card(
             child: new Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-
                   Row(children: <Widget>[
                     Container(
-                      margin: EdgeInsets.fromLTRB(30.0,10.0,10.0,5.0),
+                      margin: EdgeInsets.fromLTRB(30.0, 10.0, 10.0, 5.0),
                       height: 26.0,
                       width: 26.0,
-                      child: ImageIcon(AssetImage(
-                          'assets/images/truck.png')),
+                      child: ImageIcon(AssetImage('assets/images/truck.png')),
                     ),
                     Text(order.getDeliveryDay(),
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 16.0,
-                            fontFamily:
-                            "SourceSansProRegular")),
+                            fontFamily: "SourceSansProRegular")),
                   ]),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -208,52 +255,43 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16.0,
-                                fontFamily:
-                                "SourceSansProRegular")),
-
+                                fontFamily: "SourceSansProRegular")),
                         Text(order.getDeliveryDateMonthYear(),
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16.0,
-                                fontFamily:
-                                "SourceSansProBold")),
+                                fontFamily: "SourceSansProBold")),
                       ]),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 5)),
-                  if(order.deliveryInstruction != null && order.deliveryInstruction.isNotEmpty)
+                  if (order.deliveryInstruction != null &&
+                      order.deliveryInstruction.isNotEmpty)
                     new Card(
                       margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
                       color: keyLineGrey,
                       child: new Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-
                             Row(children: <Widget>[
-                              Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 5)),
+                              Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 20, 0, 5)),
                               Text("    Delivery instructions",
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
-                                      fontFamily:
-                                      "SourceSansProBold")),
-
+                                      fontFamily: "SourceSansProBold")),
                             ]),
                             Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),
                             Row(children: <Widget>[
-
                               Text("     " + order.deliveryInstruction,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 14.0,
-                                      fontFamily:
-                                      "SourceSansProRegular")),
-
+                                      fontFamily: "SourceSansProRegular")),
                             ]),
-                            Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),]),
-
+                            Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),
+                          ]),
                     ),
                 ]),
-
           )
         ],
       ),
@@ -265,43 +303,36 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
     return Padding(
         padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
         child: Text('$count items',
-            style: TextStyle(fontSize: 18,color: Colors.black,fontFamily:
-            "SourceSansProBold" )));
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+                fontFamily: "SourceSansProBold")));
   }
 
   Widget notesBanner(BuildContext context) {
-    return
-      new Card(
-        margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-        color: yellow,
-        child: new Column(
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
-            children: <Widget>[
-
-              Row(children: <Widget>[
-
-                Text("    Notes or Special request",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
-                        fontFamily:
-                        "SourceSansProBold")),
-
-              ]),
-              Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 0)),
-              Row(children: <Widget>[
-
-                Text("     " + order.notes,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14.0,
-                        fontFamily:
-                        "SourceSansProRegular")),
-
-              ])]),
-
-      );
+    return new Card(
+      margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+      color: yellow,
+      child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(children: <Widget>[
+              Text("    Notes or Special request",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                      fontFamily: "SourceSansProBold")),
+            ]),
+            Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 0)),
+            Row(children: <Widget>[
+              Text("     " + order.notes,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14.0,
+                      fontFamily: "SourceSansProRegular")),
+            ])
+          ]),
+    );
   }
 
   Widget skuDetails(BuildContext context) {
@@ -312,339 +343,325 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
         physics: const ClampingScrollPhysics(),
         itemCount: products.length,
         itemBuilder: (context, index) {
-          return
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-
-                  new Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: <Widget>[
-                              LeftRightAlign(left: Text(products[index].productName,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16.0,
-                                      fontFamily:
-                                      "SourceSansProBold")), right: Text(products[index].quantity.toString() + products[index].unitSize,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16.0,
-
-                                      fontFamily:
-                                      "SourceSansProBold"))),
-
-                              Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 0)),
-                              Row(children: <Widget>[
-
-                                Text(getAmountDisplayValue(products[index].totalPrice.amountV1),
+          return Container(
+            color: Colors.white,
+            padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            LeftRightAlign(
+                                left: Text(products[index].productName,
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 14.0,
-                                        fontFamily:
-                                        "SourceSansProRegular")),
-
-                              ])]),
-
-                        if(products[index].notes != null && products[index].notes.isNotEmpty)
-                          new Card(
-                            margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            color: yellow,
-                            child: new Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: <Widget>[
-
-                                  Row(children: <Widget>[
-
-                                    Text("    Special notes",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16.0,
-                                            fontFamily:
-                                            "SourceSansProBold")),
-
-                                  ]),
-                                  Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),
-                                  Row(children: <Widget>[
-
-                                    Text("     " + products[index].notes,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14.0,
-                                            fontFamily:
-                                            "SourceSansProRegular")),
-
-                                  ])]),
-
-                          ),
-                        Divider(
-                            color: greyText
-                        )
-
-                      ]),
-
-
-
-                ],
-              ),
-            );
-
-        }
-    );
+                                        fontSize: 16.0,
+                                        fontFamily: "SourceSansProBold")),
+                                right: Text(
+                                    products[index].quantity.toString() +
+                                        products[index].unitSize,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16.0,
+                                        fontFamily: "SourceSansProBold"))),
+                            Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 0)),
+                            Row(children: <Widget>[
+                              Text(
+                                  getAmountDisplayValue(
+                                      products[index].totalPrice.amountV1),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14.0,
+                                      fontFamily: "SourceSansProRegular")),
+                            ])
+                          ]),
+                      if (products[index].notes != null &&
+                          products[index].notes.isNotEmpty)
+                        new Card(
+                          margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          color: yellow,
+                          child: new Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(children: <Widget>[
+                                  Text("    Special notes",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16.0,
+                                          fontFamily: "SourceSansProBold")),
+                                ]),
+                                Padding(
+                                    padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),
+                                Row(children: <Widget>[
+                                  Text("     " + products[index].notes,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14.0,
+                                          fontFamily: "SourceSansProRegular")),
+                                ])
+                              ]),
+                        ),
+                      Divider(color: greyText)
+                    ]),
+              ],
+            ),
+          );
+        });
 
     // return listView;
-    return Padding(
-        padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-        child: listView);
+    return Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0), child: listView);
   }
+
   Widget spaceBanner(BuildContext context) {
     return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20));
   }
 
-  Widget priceDetails(BuildContext context){
-    return
-      Container(
-        color: Colors.white,
-        padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-
-            new Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
+  Widget priceDetails(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          new Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+              Widget>[
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                Widget>[
+              Row(children: <Widget>[
+                Expanded(
+                  child: LeftRightAlign(
+                      left: Text("Subtotal",
+                          style: TextStyle(
+                              color: greyText,
+                              fontSize: 16.0,
+                              fontFamily: "SourceSansProRegular")),
+                      right: Text(
+                          getAmountDisplayValue(order.amount.subTotal.amountV1),
+                          style: TextStyle(
+                              color: greyText,
+                              fontSize: 16.0,
+                              fontFamily: "SourceSansProRegular"))),
+                )
+              ])
+            ]),
+            if (order.promoCode != null && order.promoCode.isNotEmpty)
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text("Promocode",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text(
+                                getAmountDisplayValue(
+                                    order.amount.subTotal.amountV1),
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])
+                  ]),
+            if (order.amount.deliveryFee != null &&
+                order.amount.deliveryFee.amountV1 != null)
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text("Delivery fee",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text(
+                                getAmountDisplayValue(
+                                    order.amount.deliveryFee.amountV1),
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])
+                  ]),
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(children: <Widget>[
-                          Expanded(
-                            child:LeftRightAlign(left: Text("Subtotal",
-                                style: TextStyle(
-                                    color: greyText,
-                                    fontSize: 16.0,
-                                    fontFamily:
-                                    "SourceSansProRegular")), right: Text(getAmountDisplayValue(order.amount.subTotal.amountV1),
-                                style: TextStyle(
-                                    color: greyText,
-                                    fontSize: 16.0,
-
-                                    fontFamily:
-                                    "SourceSansProRegular"))),
-
-                          ) ])]),
-
-                  if(order.promoCode != null && order.promoCode.isNotEmpty)
-                    Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(children: <Widget>[
-                            Expanded(
-                              child:LeftRightAlign(left: Text("Promocode",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily:
-                                      "SourceSansProRegular")), right: Text(getAmountDisplayValue(order.amount.subTotal.amountV1),
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-
-                                      fontFamily:
-                                      "SourceSansProRegular"))),
-
-                            )])]),
-                  if(order.amount.deliveryFee != null && order.amount.deliveryFee.amountV1 != null)
-                    Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(children: <Widget>[
-                            Expanded(
-                              child:
-                              LeftRightAlign(left: Text("Delivery fee",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily:
-                                      "SourceSansProRegular")), right: Text(getAmountDisplayValue(order.amount.deliveryFee.amountV1),
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-
-                                      fontFamily:
-                                      "SourceSansProRegular"))),
-
-                            )])]),
-                  Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(children: <Widget>[
-                          Expanded(
-                            child: LeftRightAlign(left: Text("Gst ",
-                                style: TextStyle(
-                                    color: greyText,
-                                    fontSize: 16.0,
-                                    fontFamily:
-                                    "SourceSansProRegular")), right: Text(getAmountDisplayValue(order.amount.gst.amountV1),
-                                style: TextStyle(
-                                    color: greyText,
-                                    fontSize: 16.0,
-
-                                    fontFamily:
-                                    "SourceSansProRegular"))),
-
-                          )])]),
-                  Divider(
-                      color: greyText
-                  ),
-                  Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(children: <Widget>[
-                          Expanded(
-                            child: LeftRightAlign(left: Text("Total ",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16.0,
-                                    fontFamily:
-                                    "SourceSansProBold")), right: Text(getAmountDisplayValue(order.amount.total.amountV1),
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16.0,
-
-                                    fontFamily:
-                                    "SourceSansProBold"))),
-
-                          )])]),
+                  Row(children: <Widget>[
+                    Expanded(
+                      child: LeftRightAlign(
+                          left: Text("Gst ",
+                              style: TextStyle(
+                                  color: greyText,
+                                  fontSize: 16.0,
+                                  fontFamily: "SourceSansProRegular")),
+                          right: Text(
+                              getAmountDisplayValue(order.amount.gst.amountV1),
+                              style: TextStyle(
+                                  color: greyText,
+                                  fontSize: 16.0,
+                                  fontFamily: "SourceSansProRegular"))),
+                    )
+                  ])
                 ]),
-            Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
-
-
-          ],
-        ),
-      );
+            Divider(color: greyText),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                Widget>[
+              Row(children: <Widget>[
+                Expanded(
+                  child: LeftRightAlign(
+                      left: Text("Total ",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              fontFamily: "SourceSansProBold")),
+                      right: Text(
+                          getAmountDisplayValue(order.amount.total.amountV1),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              fontFamily: "SourceSansProBold"))),
+                )
+              ])
+            ]),
+          ]),
+          Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
+        ],
+      ),
+    );
   }
 
-  String getAmountDisplayValue(var amount){
+  String getAmountDisplayValue(var amount) {
     return "\$$amount";
   }
+
   Widget contactDetails(BuildContext context) {
     return ListTile(
       //contentPadding: EdgeInsets.all(<some value here>),//change for side padding
       title: Row(
         children: <Widget>[
-          Expanded(child: RaisedButton(color: Colors.white,onPressed: () {
-            _newTaskModalBottomSheet(context);
-          },child:
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-
-            children: <Widget>[
-              Icon(Icons.phone, color: buttonBlue,),
-              Text(' Contact', style: TextStyle(
-                  color: buttonBlue,
-                  fontSize: 16.0,
-                  fontFamily:
-                  "SourceSansProBold"),),
-            ],))),
-
+          Expanded(
+              child: RaisedButton(
+                  color: Colors.white,
+                  onPressed: () {
+                    _newTaskModalBottomSheet(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.phone,
+                        color: buttonBlue,
+                      ),
+                      Text(
+                        ' Contact',
+                        style: TextStyle(
+                            color: buttonBlue,
+                            fontSize: 16.0,
+                            fontFamily: "SourceSansProBold"),
+                      ),
+                    ],
+                  ))),
           Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
-          Expanded(child: RaisedButton(color: Colors.white,onPressed: () {
-            openPdf(context);
-          },child:
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.picture_as_pdf, color: buttonBlue,),
-              Text(' View as Pdf', style: TextStyle(
-                  color: buttonBlue,
-                  fontSize: 16.0,
-
-                  fontFamily:
-                  "SourceSansProBold"),),
-            ],)))
+          Expanded(
+              child: RaisedButton(
+                  color: Colors.white,
+                  onPressed: () {
+                    openPdf(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.picture_as_pdf,
+                        color: buttonBlue,
+                      ),
+                      Text(
+                        ' View as Pdf',
+                        style: TextStyle(
+                            color: buttonBlue,
+                            fontSize: 16.0,
+                            fontFamily: "SourceSansProBold"),
+                      ),
+                    ],
+                  )))
         ],
       ),
     );
   }
 
   openPdf(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WebViewContainer(order.pdfURL, "")));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WebViewContainer(order.pdfURL, "")));
   }
-  void _newTaskModalBottomSheet(context){
+
+  void _newTaskModalBottomSheet(context) {
     showModalBottomSheet(
         context: context,
-        builder: (BuildContext bc){
+        builder: (BuildContext bc) {
           return Container(
             child: new Wrap(
               children: <Widget>[
-                if(order.outlet.company.email != null && order.outlet.company.email.isNotEmpty)
+                if (order.outlet.company.email != null &&
+                    order.outlet.company.email.isNotEmpty)
                   new ListTile(
                       leading: new Icon(Icons.email),
                       title: new Text(order.outlet.company.email),
                       onTap: () => {
-                        Clipboard.setData(new ClipboardData(text: order.outlet.company.email))
-                      }
-                  ),
-                if(order.outlet.company.phone != null && order.outlet.company.phone.isNotEmpty)
+                            Clipboard.setData(new ClipboardData(
+                                text: order.outlet.company.email))
+                          }),
+                if (order.outlet.company.phone != null &&
+                    order.outlet.company.phone.isNotEmpty)
                   new ListTile(
                     leading: new Icon(Icons.phone),
                     title: new Text(order.outlet.company.phone),
                     onTap: () => {
-                      Clipboard.setData(new ClipboardData(text: order.outlet.company.phone))
-
+                      Clipboard.setData(
+                          new ClipboardData(text: order.outlet.company.phone))
                     },
                   ),
                 Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
               ],
             ),
           );
-        }
-    );
+        });
   }
 
-  void _moreActionBottomSheet(context){
+  void _moreActionBottomSheet(context) {
     showModalBottomSheet(
         context: context,
-        builder: (BuildContext bc){
+        builder: (BuildContext bc) {
           return Container(
             child: new Wrap(
               children: <Widget>[
-                  new ListTile(
-                      title: new Text("More actions"),
-                      onTap: () => {
-                      }
-                  ),
-                if(order.outlet.company.phone != null && order.outlet.company.phone.isNotEmpty)
+                new ListTile(title: new Text("More actions"), onTap: () => {}),
+                if (order.outlet.company.phone != null &&
+                    order.outlet.company.phone.isNotEmpty)
                   new ListTile(
                     title: new Text("Activity history"),
-                    onTap: () => {
-                      moveToOrderActivityPage(order)
-                    },
+                    onTap: () => {moveToOrderActivityPage(order)},
                   ),
                 Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
               ],
             ),
           );
-        }
-    );
+        });
   }
+
   moveToOrderActivityPage(Orders element) {
     Navigator.push(
         context,
@@ -652,8 +669,6 @@ class OrderDetailsDesign extends State<OrderDetailsPage>  with TickerProviderSta
             builder: (context) => new OrderActivityPage(element.orderId)));
   }
 }
-
-
 
 class LeftRightAlign extends MultiChildRenderObjectWidget {
   LeftRightAlign({
@@ -666,7 +681,6 @@ class LeftRightAlign extends MultiChildRenderObjectWidget {
   RenderLeftRightAlign createRenderObject(BuildContext context) {
     return RenderLeftRightAlign();
   }
-
 }
 
 class LeftRightAlignParentData extends ContainerBoxParentData<RenderBox> {}
@@ -675,7 +689,6 @@ class RenderLeftRightAlign extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, LeftRightAlignParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, LeftRightAlignParentData> {
-
   RenderLeftRightAlign({
     List<RenderBox> children,
   }) {
