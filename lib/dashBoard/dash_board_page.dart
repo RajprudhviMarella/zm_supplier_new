@@ -321,8 +321,8 @@ class DashboardState extends State<DashboardPage> {
             banner(context),
             //dots(context),
 
-            draftsHeader(),
-            bannerList(),
+          //  draftsHeader(),
+            draftBannersList(),
 
             Header(),
             tabs(),
@@ -353,7 +353,7 @@ class DashboardState extends State<DashboardPage> {
                         //autoPlay: true,
                         viewportFraction: 0.9,
                         enableInfiniteScroll: false,
-                        aspectRatio: 2.5,
+                        aspectRatio: 2.4,
                         initialPage: 0,
                         onPageChanged: (index, reason) {
                           setState(() {
@@ -597,7 +597,7 @@ class DashboardState extends State<DashboardPage> {
 
   Widget draftsHeader() {
     return Padding(
-      padding: const EdgeInsets.only(left: 30.0, top: 20, right: 15),
+      padding: const EdgeInsets.only(left: 10.0, top: 20, right: 15),
       child: Container(
         height: 30,
         child: Row(
@@ -613,7 +613,7 @@ class DashboardState extends State<DashboardPage> {
     );
   }
 
-  Widget bannerList() {
+  Widget draftBannersList() {
     return FutureBuilder<List<Orders>>(
         future: draftOrdersFuture,
         builder: (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
@@ -622,87 +622,105 @@ class DashboardState extends State<DashboardPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('failed to load'));
           } else {
-            return SizedBox(
-              height: 90,
-              child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (BuildContext context, int index) {
-                    bool last = 5 == (index + 1);
-                    bool first = -1 == (index - 1);
-                    bool second = 0 == (index - 1);
-                    return Padding(
-                      padding:
-                          first ? EdgeInsets.only(left: 15) : EdgeInsets.all(0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new MarketListPage(
-                                        snapshot.data[index].outlet.outletId,
-                                        snapshot.data[index].outlet.outletName,
-                                      )));
-                        },
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: last
-                                  ? EdgeInsets.only(right: 15)
-                                  : EdgeInsets.all(0),
-                              child: Container(
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data.isNotEmpty) {
+              return SizedBox(
+                height: 130,
+                child: ListView.builder(
+                    itemCount: snapshot.data.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      bool last = 5 == (index + 1);
+                      bool first = -1 == (index - 1);
+                      bool second = 0 == (index - 1);
+                      return Column(
 
-                                  //  padding: last ? EdgeInsets.only(left: 20): null,
-                                  width: 180,
-                                  height: 70,
-                                  margin: EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    color: Colors.white,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 12,
-                                              top: 15.0,
-                                            ),
-                                            child: leadingImage(snapshot.data[index]),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8.0,
-                                                  top: 12,
-                                                  right: 15),
-                                              child: Text(
-                                                snapshot.data[index].outlet
-                                                    .outletName,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      'SourceSansProRegular',
-                                                  color: Colors.black,
+                        children: [
+                          draftsHeader(),
+                          Padding(
+                            padding:
+                            first ? EdgeInsets.only(left: 15) : EdgeInsets.all(0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                        new MarketListPage(
+                                          snapshot.data[index].outlet.outletId,
+                                          snapshot.data[index].outlet.outletName,
+                                        )));
+                              },
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: last
+                                        ? EdgeInsets.only(right: 15)
+                                        : EdgeInsets.all(0),
+                                    child: Container(
+
+                                      //  padding: last ? EdgeInsets.only(left: 20): null,
+                                        width: 180,
+                                        height: 70,
+                                        margin: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                    left: 12,
+                                                    top: 15.0,
+                                                  ),
+                                                  child: leadingImage(
+                                                      snapshot.data[index]),
                                                 ),
-                                              ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        left: 8.0,
+                                                        top: 12,
+                                                        right: 15),
+                                                    child: Text(
+                                                      snapshot.data[index].outlet
+                                                          .outletName,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily:
+                                                        'SourceSansProRegular',
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
+                                          ],
+                                        )),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-            );
+                          ),
+                        ],
+                      );
+                    }),
+              );
+            } else {
+              return Container();
+            }
           }
         });
+  }
+
+  Widget draftsCheck(Orders order) {
+
   }
 
   Widget Header() {
