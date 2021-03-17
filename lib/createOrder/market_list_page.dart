@@ -208,10 +208,13 @@ class MarketListDesign extends State<MarketListPage>
                           backgroundColor: Colors.white,
                           bottomOpacity: 0.0,
                           elevation: 0.0,
-                          leading: IconButton(
-                            icon: Icon(Icons.arrow_back_ios_outlined,
-                                color: Colors.black),
-                            onPressed: () => createDraftOrderAPI(),
+                          leading: Container(
+                            padding: EdgeInsets.only(right: 12.0),
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back_ios_outlined,
+                                  color: Colors.black),
+                              onPressed: () => createDraftOrderAPI(),
+                            ),
                           ),
                           title: _isSearching
                               ? _buildSearchField()
@@ -259,10 +262,10 @@ class MarketListDesign extends State<MarketListPage>
       color: faintGrey,
       margin: EdgeInsets.only(top: 2.0),
       padding:
-          EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
+          EdgeInsets.only(left: 15.0, right: 20.0, top: 15.0, bottom: 10.0),
       child: Text(name,
           style: TextStyle(
-            fontFamily: "SourceSansProSemiBold",
+            fontFamily: "SourceSansProBold",
             fontSize: size,
           )),
     );
@@ -439,7 +442,7 @@ class MarketListDesign extends State<MarketListPage>
   Widget displaySearchedList(
       AsyncSnapshot<List<OutletMarketList>> snapShot, int index) {
     return Card(
-        margin: EdgeInsets.only(top: 1.0),
+        margin: EdgeInsets.only(top: 2.0),
         child: Container(
             color: Colors.white,
             child: ListTile(
