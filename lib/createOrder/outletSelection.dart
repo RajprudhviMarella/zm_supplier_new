@@ -93,7 +93,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       color: faintGrey,
       margin: EdgeInsets.only(top: 2.0),
       padding:
-          EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
+          EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0, bottom: 15.0),
       child: Text(name,
           style: TextStyle(
             fontFamily: "SourceSansProBold",
@@ -109,9 +109,12 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         backgroundColor: Colors.white,
         bottomOpacity: 0.0,
         elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+        leading: Container(
+          padding: EdgeInsets.only(right: 8.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         actions: <Widget>[
           new IconButton(
@@ -288,12 +291,12 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
   Widget displaySearchedList(
       AsyncSnapshot<List<FavouriteOutletsList>> snapShot, int index) {
     return Card(
-        margin: EdgeInsets.only(top: 1.0),
+        margin: EdgeInsets.only(top: 2.0),
         child: Container(
             color: Colors.white,
             child: ListTile(
                 focusColor: Colors.white,
-                contentPadding: EdgeInsets.only(left: 15.0, right: 10.0),
+                contentPadding: EdgeInsets.only(left: 15.0, right: 3.0),
                 leading: displayImage(snapShot.data[index].outlet.logoUrl),
                 title: RichText(
                   text: TextSpan(
@@ -337,7 +340,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                       MaterialPageRoute(
                           builder: (context) => new MarketListPage(
                               snapShot.data[index].outlet.outletId,
-                              snapShot.data[index].outlet.outletName,null)));
+                              snapShot.data[index].outlet.outletName,
+                              null)));
                 })));
   }
 
