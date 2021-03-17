@@ -133,13 +133,13 @@ class MarketListDesign extends State<MarketListPage>
                                       'Notes',
                                       style: TextStyle(
                                           fontSize: 16,
+                                          letterSpacing: 0,
                                           fontFamily: 'SourceSansProSemiBold',
                                           color: greyText),
                                     ),
-                                    icon: Icon(
-                                      Icons.library_books_outlined,
-                                      size: 22,
-                                      color: buttonBlue,
+                                    icon: Image(
+                                      image: AssetImage(
+                                          "assets/images/ic_notes.png"),
                                     ),
                                     elevation: 0,
                                   ),
@@ -171,7 +171,8 @@ class MarketListDesign extends State<MarketListPage>
                                             ),
                                           ]),
                                     ),
-                                    color: green,
+                                    color: lightGreen,
+                                    elevation: 0,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
@@ -597,7 +598,7 @@ class MarketListDesign extends State<MarketListPage>
                                               child: Center(
                                                 child: Icon(
                                                   Icons.add,
-                                                  color:buttonBlue,
+                                                  color: buttonBlue,
                                                 ),
                                               ),
                                               decoration: BoxDecoration(
@@ -852,7 +853,7 @@ class MarketListDesign extends State<MarketListPage>
               elements.productName == element.productName) {
             elements.isSelected = true;
             elements.quantity = element.quantity;
-            elements.bgColor =buttonBlue;
+            elements.bgColor = buttonBlue;
             elements.skuNotes = element.notes;
             elements.txtColor = Colors.white;
             elements.txtSize = 16.0;

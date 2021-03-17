@@ -80,6 +80,7 @@ flutter:
     - assets/images/Location_grey.png
     - assets/images/Link_grey.png
     - assets/images/Document_blue.png
+    - assets/images/ic_notes.png
 
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
