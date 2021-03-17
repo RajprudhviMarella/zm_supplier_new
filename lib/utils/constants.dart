@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -307,6 +308,13 @@ class Constants {
       bank_account_name.isNotEmpty
           ? bank_account_name.trim().split(' ').map((l) => l[0]).take(2).join()
           : '';
+
+  static Future<Mixpanel> initMixPanel() async {
+    //below is the project token from mixpanel.
+    Mixpanel mixPanel = await Mixpanel.init("b82a8f3697de395f8a83ff6c3949947f",
+        optOutTrackingDefault: false);
+    return mixPanel;
+  }
 }
 
 class SharedPref {
