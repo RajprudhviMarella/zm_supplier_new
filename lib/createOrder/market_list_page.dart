@@ -466,6 +466,7 @@ class MarketListDesign extends State<MarketListPage>
 
             showModalBottomSheet<void>(
               context: context,
+              isScrollControlled: true,
               builder: (context) {
                 return SingleChildScrollView(
                     child: Container(
@@ -497,9 +498,7 @@ class MarketListDesign extends State<MarketListPage>
                               GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      if (counter >
-                                          snapShot.data[index].priceList[0].moq)
-                                        this.counter--;
+                                      if (counter > 0) this.counter--;
                                       _textEditingController.text =
                                           counter.toString();
                                       _txtSkuNotesEditController.text = snapShot
@@ -527,8 +526,12 @@ class MarketListDesign extends State<MarketListPage>
                                   width: 200.0,
                                   height: 40.0,
                                   child: TextField(
+                                      autofocus: true,
                                       controller: _textEditingController,
-                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                      maxLength: 7,
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                              decimal: true),
                                       textInputAction: TextInputAction.go,
                                       cursorColor: Colors.blue,
                                       textAlign: TextAlign.center,

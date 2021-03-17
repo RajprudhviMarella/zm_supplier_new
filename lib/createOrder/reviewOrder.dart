@@ -419,323 +419,282 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             itemBuilder: (BuildContext context, int index) {
               return Card(
                 margin: EdgeInsets.only(top: 1.0),
-                child: Container(
-                    color: Colors.white,
-                    child: ListTile(
-                      focusColor: Colors.white,
-                      contentPadding: EdgeInsets.only(
-                          left: 15.0, right: 10.0, top: 5.0, bottom: 5.0),
-                      title: Text(
-                        widget.marketList[index].productName,
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
-                            fontFamily: "SourceSansProSemiBold"),
+                child: GestureDetector(
+                  onTap: () {
+                    if (widget.marketList[index].quantity != 0) {
+                      counter = widget.marketList[index].quantity;
+                    } else {
+                      counter = widget.marketList[index].priceList[0].moq;
+                    }
+                    _textEditingController.value = TextEditingValue(
+                      text: this.counter.toString(),
+                      selection: TextSelection.fromPosition(
+                        TextPosition(offset: this.counter.toString().length),
                       ),
-                      subtitle:
-                          displayPriceWithShortNames(widget.marketList[index]),
-                      trailing: GestureDetector(
-                          onTap: () {
-                            if (widget.marketList[index].quantity != 0) {
-                              counter = widget.marketList[index].quantity;
-                            } else {
-                              counter =
-                                  widget.marketList[index].priceList[0].moq;
-                            }
-                            _textEditingController.value = TextEditingValue(
-                              text: this.counter.toString(),
-                              selection: TextSelection.fromPosition(
-                                TextPosition(
-                                    offset: this.counter.toString().length),
-                              ),
-                            );
-                            _txtSkuNotesEditController.value = TextEditingValue(
-                              text: widget.marketList[index].skuNotes,
-                              selection: TextSelection.fromPosition(
-                                TextPosition(
-                                    offset: widget
-                                        .marketList[index].skuNotes.length),
-                              ),
-                            );
+                    );
+                    _txtSkuNotesEditController.value = TextEditingValue(
+                      text: widget.marketList[index].skuNotes,
+                      selection: TextSelection.fromPosition(
+                        TextPosition(
+                            offset: widget.marketList[index].skuNotes.length),
+                      ),
+                    );
 
-                            showModalBottomSheet<void>(
-                              context: context,
-                              builder: (context) {
-                                return SingleChildScrollView(
-                                    child: Container(
-                                  padding: EdgeInsets.only(
-                                      top: 15.0,
-                                      right: 10.0,
-                                      left: 10.0,
-                                      bottom: 15.0),
-                                  color: Colors.white,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              top: 5, left: 20.0, bottom: 10.0),
-                                          child: Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return SingleChildScrollView(
+                            child: Container(
+                          padding: EdgeInsets.only(
+                              top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                          color: Colors.white,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      top: 5, left: 20.0, bottom: 10.0),
+                                  child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                          widget.marketList[index].productName,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.black,
+                                              fontFamily:
+                                                  "SourceSansProSemiBold"))),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (counter > 0) this.counter--;
+                                              _textEditingController.text =
+                                                  counter.toString();
+                                              _txtSkuNotesEditController.text =
                                                   widget.marketList[index]
-                                                      .productName,
-                                                  textAlign: TextAlign.start,
-                                                  style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      color: Colors.black,
-                                                      fontFamily:
-                                                          "SourceSansProSemiBold"))),
-                                        ),
-                                        Container(
-                                          margin:
-                                              const EdgeInsets.only(top: 10.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: <Widget>[
-                                              GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      if (counter >
-                                                          widget
-                                                              .marketList[index]
-                                                              .priceList[0]
-                                                              .moq)
-                                                        this.counter--;
-                                                      _textEditingController
-                                                              .text =
-                                                          counter.toString();
-                                                      _txtSkuNotesEditController
-                                                              .text =
-                                                          widget
-                                                              .marketList[index]
-                                                              .skuNotes
-                                                              .toString();
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                      margin: EdgeInsets.only(
-                                                          right: 5.0),
-                                                      height: 40.0,
-                                                      width: 40.0,
-                                                      child: Center(
-                                                        child: Icon(
-                                                          Icons.remove,
-                                                          color: buttonBlue,
-                                                        ),
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                          Radius.circular(200),
-                                                        ),
-                                                        color: faintGrey,
-                                                      ))),
-                                              Container(
-                                                  width: 200.0,
-                                                  height: 40.0,
-                                                  child: TextField(
-                                                      controller:
-                                                          _textEditingController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      textInputAction:
-                                                          TextInputAction.go,
-                                                      cursorColor: Colors.blue,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        fillColor: faintGrey,
-                                                        filled: true,
-                                                        border:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        errorBorder:
-                                                            InputBorder.none,
-                                                        disabledBorder:
-                                                            InputBorder.none,
-                                                        hintStyle: new TextStyle(
-                                                            color: greyText,
-                                                            fontSize: 16.0,
-                                                            fontFamily:
-                                                                "SourceSansProRegular"),
-                                                      ),
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 16.0,
-                                                          fontFamily:
-                                                              "SourceSansProSemiBold"),
-                                                      onChanged: (query) {
-                                                        counter =
-                                                            int.parse(query);
-                                                      })),
-                                              GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      this.counter++;
-                                                      _textEditingController
-                                                              .text =
-                                                          counter.toString();
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                      margin: EdgeInsets.only(
-                                                          right: 5.0),
-                                                      height: 40.0,
-                                                      width: 40.0,
-                                                      child: Center(
-                                                        child: Icon(
-                                                          Icons.add,
-                                                          color: buttonBlue,
-                                                        ),
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                          Radius.circular(200),
-                                                        ),
-                                                        color: faintGrey,
-                                                      )))
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15.0, right: 15.0),
-                                          margin: EdgeInsets.only(top: 20.0),
+                                                      .skuNotes
+                                                      .toString();
+                                            });
+                                          },
+                                          child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 5.0),
+                                              height: 40.0,
+                                              width: 40.0,
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: buttonBlue,
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(200),
+                                                ),
+                                                color: faintGrey,
+                                              ))),
+                                      Container(
+                                          width: 200.0,
+                                          height: 40.0,
                                           child: TextField(
-                                            controller:
-                                                _txtSkuNotesEditController,
-                                            keyboardType: TextInputType.text,
-                                            maxLines: null,
-                                            maxLength: 150,
-                                            cursorColor: Colors.blue,
-                                            decoration: InputDecoration(
-                                              fillColor: faintGrey,
-                                              filled: true,
-                                              border: InputBorder.none,
-                                              focusedBorder: InputBorder.none,
-                                              enabledBorder: InputBorder.none,
-                                              errorBorder: InputBorder.none,
-                                              disabledBorder: InputBorder.none,
-                                              hintText: Constants.txt_add_notes,
-                                              hintStyle: new TextStyle(
-                                                  color: greyText,
+                                              autofocus: true,
+                                              controller:
+                                                  _textEditingController,
+                                              maxLength: 7,
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                      decimal: true),
+                                              textInputAction:
+                                                  TextInputAction.go,
+                                              cursorColor: Colors.blue,
+                                              textAlign: TextAlign.center,
+                                              decoration: InputDecoration(
+                                                fillColor: faintGrey,
+                                                filled: true,
+                                                border: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                errorBorder: InputBorder.none,
+                                                disabledBorder:
+                                                    InputBorder.none,
+                                                hintStyle: new TextStyle(
+                                                    color: greyText,
+                                                    fontSize: 16.0,
+                                                    fontFamily:
+                                                        "SourceSansProRegular"),
+                                              ),
+                                              style: TextStyle(
+                                                  color: Colors.black,
                                                   fontSize: 16.0,
                                                   fontFamily:
-                                                      "SourceSansProRegular"),
-                                            ),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16.0,
-                                                fontFamily:
-                                                    "SourceSansProRegular"),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                            onTap: () {
-                                              print("$counter");
-                                              setState(() {
-                                                _textEditingController.text =
-                                                    counter.toString();
-                                                widget.marketList[index]
-                                                    .quantity = counter;
-                                                if (widget.marketList[index]
-                                                        .quantity ==
-                                                    0) {
-                                                  widget.marketList[index]
-                                                      .selectedQuantity = "+";
-                                                  widget.marketList[index]
-                                                      .bgColor = faintGrey;
-                                                  widget.marketList[index]
-                                                      .txtColor = buttonBlue;
-                                                  widget.marketList[index]
-                                                      .txtSize = 30.0;
-                                                  widget.marketList[index]
-                                                      .isSelected = false;
-                                                  widget.marketList.removeWhere((it) =>
-                                                      it.productName
-                                                              .toLowerCase() ==
-                                                          widget
-                                                              .marketList[index]
-                                                              .productName
-                                                              .toLowerCase() &&
-                                                      it.sku.toLowerCase() ==
-                                                          widget
-                                                              .marketList[index]
-                                                              .sku
-                                                              .toLowerCase() &&
-                                                      widget
-                                                              .marketList[index]
-                                                              .priceList[0]
-                                                              .unitSize
-                                                              .toLowerCase() ==
-                                                          it.priceList[0]
-                                                              .unitSize
-                                                              .toLowerCase());
-                                                } else {
-                                                  widget.marketList[index]
-                                                          .selectedQuantity =
-                                                      counter.toString();
-                                                  widget.marketList[index]
-                                                      .bgColor = buttonBlue;
-                                                  widget.marketList[index]
-                                                      .txtColor = Colors.white;
-                                                  widget.marketList[index]
-                                                      .txtSize = 16.0;
-                                                  widget.marketList[index]
-                                                          .skuNotes =
-                                                      _txtSkuNotesEditController
-                                                          .text;
-                                                  widget.marketList[index]
-                                                      .isSelected = true;
-                                                }
-                                                calculatePrice();
-                                                Navigator.pop(context);
-                                              });
-                                            },
-                                            child: Container(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, right: 20.0),
-                                                margin: EdgeInsets.only(
-                                                    top: 20.0,
-                                                    right: 20.0,
-                                                    left: 20.0),
-                                                height: 47.0,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                decoration: BoxDecoration(
-                                                    color: buttonBlue,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                30))),
-                                                child: Center(
-                                                    child: Text(
-                                                  "Done",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontFamily:
-                                                          "SourceSansProSemiBold"),
-                                                ))))
-                                      ],
-                                    ),
+                                                      "SourceSansProSemiBold"),
+                                              onChanged: (query) {
+                                                counter = int.parse(query);
+                                              })),
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              this.counter++;
+                                              _textEditingController.text =
+                                                  counter.toString();
+                                            });
+                                          },
+                                          child: Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 5.0),
+                                              height: 40.0,
+                                              width: 40.0,
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: buttonBlue,
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(200),
+                                                ),
+                                                color: faintGrey,
+                                              )))
+                                    ],
                                   ),
-                                ));
-                              },
-                            );
-                          },
-                          child: Container(
+                                ),
+                                Container(
+                                  padding:
+                                      EdgeInsets.only(left: 15.0, right: 15.0),
+                                  margin: EdgeInsets.only(top: 20.0),
+                                  child: TextField(
+                                    controller: _txtSkuNotesEditController,
+                                    keyboardType: TextInputType.text,
+                                    maxLines: null,
+                                    maxLength: 150,
+                                    cursorColor: Colors.blue,
+                                    decoration: InputDecoration(
+                                      fillColor: faintGrey,
+                                      filled: true,
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      hintText: Constants.txt_add_notes,
+                                      hintStyle: new TextStyle(
+                                          color: greyText,
+                                          fontSize: 16.0,
+                                          fontFamily: "SourceSansProRegular"),
+                                    ),
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16.0,
+                                        fontFamily: "SourceSansProRegular"),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      print("$counter");
+                                      setState(() {
+                                        _textEditingController.text =
+                                            counter.toString();
+                                        widget.marketList[index].quantity =
+                                            counter;
+                                        if (widget.marketList[index].quantity ==
+                                            0) {
+                                          widget.marketList[index]
+                                              .selectedQuantity = "+";
+                                          widget.marketList[index].bgColor =
+                                              faintGrey;
+                                          widget.marketList[index].txtColor =
+                                              buttonBlue;
+                                          widget.marketList[index].txtSize =
+                                              30.0;
+                                          widget.marketList[index].isSelected =
+                                              false;
+                                          widget.marketList.removeWhere((it) =>
+                                              it.productName.toLowerCase() ==
+                                                  widget.marketList[index]
+                                                      .productName
+                                                      .toLowerCase() &&
+                                              it.sku.toLowerCase() ==
+                                                  widget.marketList[index].sku
+                                                      .toLowerCase() &&
+                                              widget.marketList[index]
+                                                      .priceList[0].unitSize
+                                                      .toLowerCase() ==
+                                                  it.priceList[0].unitSize
+                                                      .toLowerCase());
+                                        } else {
+                                          widget.marketList[index]
+                                                  .selectedQuantity =
+                                              counter.toString();
+                                          widget.marketList[index].bgColor =
+                                              buttonBlue;
+                                          widget.marketList[index].txtColor =
+                                              Colors.white;
+                                          widget.marketList[index].txtSize =
+                                              16.0;
+                                          widget.marketList[index].skuNotes =
+                                              _txtSkuNotesEditController.text;
+                                          widget.marketList[index].isSelected =
+                                              true;
+                                        }
+                                        calculatePrice();
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                    child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20.0, right: 20.0),
+                                        margin: EdgeInsets.only(
+                                            top: 20.0, right: 20.0, left: 20.0),
+                                        height: 47.0,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                            color: buttonBlue,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(30))),
+                                        child: Center(
+                                            child: Text(
+                                          "Done",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontFamily:
+                                                  "SourceSansProSemiBold"),
+                                        ))))
+                              ],
+                            ),
+                          ),
+                        ));
+                      },
+                    );
+                  },
+                  child: Container(
+                      color: Colors.white,
+                      child: ListTile(
+                          focusColor: Colors.white,
+                          contentPadding: EdgeInsets.only(
+                              left: 15.0, right: 10.0, top: 5.0, bottom: 5.0),
+                          title: Text(
+                            widget.marketList[index].productName,
+                            style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.black,
+                                fontFamily: "SourceSansProSemiBold"),
+                          ),
+                          subtitle: displayPriceWithShortNames(
+                              widget.marketList[index]),
+                          trailing: Container(
                             margin: EdgeInsets.only(right: 5.0),
                             height: 40.0,
                             width: 40.0,
@@ -751,8 +710,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     fontFamily: "SourceSansProSemiBold"),
                               ),
                             ),
-                          )),
-                    )),
+                          ))),
+                ),
               );
             }));
   }
