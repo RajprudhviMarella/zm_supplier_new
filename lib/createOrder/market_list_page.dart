@@ -187,6 +187,7 @@ class MarketListDesign extends State<MarketListPage>
                                                     new ReviewOrderPage(
                                                         selectedMarketList,
                                                         widget.outletId,
+                                                        widget.outletName,
                                                         _txtOrderNotesEditController
                                                             .text,
                                                         lstDeliveryDates,
@@ -528,7 +529,6 @@ class MarketListDesign extends State<MarketListPage>
                                   child: TextField(
                                       autofocus: true,
                                       controller: _textEditingController,
-                                      maxLength: 7,
                                       keyboardType:
                                           TextInputType.numberWithOptions(
                                               decimal: true),
@@ -901,6 +901,7 @@ class MarketListDesign extends State<MarketListPage>
   void createAddNotesOrder() {
     showModalBottomSheet<void>(
         context: context,
+        isScrollControlled: true,
         builder: (context) {
           return SingleChildScrollView(
               child: Container(
@@ -931,6 +932,7 @@ class MarketListDesign extends State<MarketListPage>
                       keyboardType: TextInputType.text,
                       maxLines: null,
                       maxLength: 150,
+                      autofocus: true,
                       cursorColor: Colors.blue,
                       decoration: InputDecoration(
                         fillColor: faintGrey,

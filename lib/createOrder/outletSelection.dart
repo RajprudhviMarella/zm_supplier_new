@@ -273,10 +273,13 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       return Container(
           height: 40.0,
           width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image: DecorationImage(
-                  fit: BoxFit.fill, image: NetworkImage(outlet.logoUrl))));
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(
+              outlet.logoUrl,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
         height: 38,
