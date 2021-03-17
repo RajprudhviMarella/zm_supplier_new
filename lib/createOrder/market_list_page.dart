@@ -537,7 +537,7 @@ class MarketListDesign extends State<MarketListPage>
                                               child: Center(
                                                 child: Icon(
                                                   Icons.remove,
-                                                  color: Colors.blue,
+                                                  color: buttonBlue,
                                                 ),
                                               ),
                                               decoration: BoxDecoration(
@@ -597,7 +597,7 @@ class MarketListDesign extends State<MarketListPage>
                                               child: Center(
                                                 child: Icon(
                                                   Icons.add,
-                                                  color: Colors.blue,
+                                                  color:buttonBlue,
                                                 ),
                                               ),
                                               decoration: BoxDecoration(
@@ -657,7 +657,7 @@ class MarketListDesign extends State<MarketListPage>
                                           snapShot.data[index].bgColor =
                                               faintGrey;
                                           snapShot.data[index].txtColor =
-                                              Colors.blue;
+                                              buttonBlue;
                                           snapShot.data[index].txtSize = 30.0;
                                           snapShot.data[index].isSelected =
                                               false;
@@ -684,7 +684,7 @@ class MarketListDesign extends State<MarketListPage>
                                                   .selectedQuantity =
                                               counter.toString();
                                           snapShot.data[index].bgColor =
-                                              Colors.blue;
+                                              buttonBlue;
                                           snapShot.data[index].txtColor =
                                               Colors.white;
                                           snapShot.data[index].txtSize = 16.0;
@@ -852,7 +852,7 @@ class MarketListDesign extends State<MarketListPage>
               elements.productName == element.productName) {
             elements.isSelected = true;
             elements.quantity = element.quantity;
-            elements.bgColor = Colors.blue;
+            elements.bgColor =buttonBlue;
             elements.skuNotes = element.notes;
             elements.txtColor = Colors.white;
             elements.txtSize = 16.0;
@@ -906,7 +906,7 @@ class MarketListDesign extends State<MarketListPage>
                 elements.productName == element.productName) {
               elements.isSelected = true;
               elements.quantity = element.quantity;
-              elements.bgColor = Colors.blue;
+              elements.bgColor = buttonBlue;
               elements.skuNotes = element.notes;
               elements.txtColor = Colors.white;
               elements.txtSize = 16.0;

@@ -525,7 +525,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                       child: Center(
                                                         child: Icon(
                                                           Icons.remove,
-                                                          color: Colors.blue,
+                                                          color: buttonBlue,
                                                         ),
                                                       ),
                                                       decoration: BoxDecoration(
@@ -594,7 +594,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                       child: Center(
                                                         child: Icon(
                                                           Icons.add,
-                                                          color: Colors.blue,
+                                                          color: buttonBlue,
                                                         ),
                                                       ),
                                                       decoration: BoxDecoration(
@@ -656,7 +656,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                   widget.marketList[index]
                                                       .bgColor = faintGrey;
                                                   widget.marketList[index]
-                                                      .txtColor = Colors.blue;
+                                                      .txtColor = buttonBlue;
                                                   widget.marketList[index]
                                                       .txtSize = 30.0;
                                                   widget.marketList[index]
@@ -686,7 +686,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                           .selectedQuantity =
                                                       counter.toString();
                                                   widget.marketList[index]
-                                                      .bgColor = Colors.blue;
+                                                      .bgColor = buttonBlue;
                                                   widget.marketList[index]
                                                       .txtColor = Colors.white;
                                                   widget.marketList[index]
