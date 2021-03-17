@@ -97,7 +97,7 @@ class Constants {
     String status = orders.orderStatus;
     if (status == "Approving") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -118,7 +118,7 @@ class Constants {
       );
     } else if (status == "Cancelling") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -139,7 +139,7 @@ class Constants {
       );
     } else if (status == "Creating") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -160,7 +160,7 @@ class Constants {
       );
     } else if (status == "Rejecting") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -181,7 +181,7 @@ class Constants {
       );
     } else if (status == "Draft") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: chartBlue,
           border: Border.all(
@@ -202,7 +202,7 @@ class Constants {
       );
     } else if (status == "Created" || status == "PendingPayment") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: yellow,
           border: Border.all(
@@ -224,7 +224,7 @@ class Constants {
     } else if (status == "Placed" ||
         (orders.isInvoiced != null && orders.isInvoiced)) {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: green,
           border: Border.all(
@@ -248,7 +248,7 @@ class Constants {
         status == "Rejected" ||
         status == "Void") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(
@@ -269,7 +269,7 @@ class Constants {
       );
     } else {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(

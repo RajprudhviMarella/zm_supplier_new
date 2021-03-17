@@ -29,7 +29,8 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
     with TickerProviderStateMixin {
   Widget appBarTitle = new Text(
     "Deliveries",
-    style: new TextStyle(color: Colors.black),
+    style: new TextStyle(
+        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 18.0),
   );
   Icon icon = new Icon(
     Icons.search,
@@ -52,8 +53,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
 
   @override
   void initState() {
-    controller = new ScrollController()
-      ..addListener(_scrollListener);
+    controller = new ScrollController()..addListener(_scrollListener);
     loadSharedPrefs();
     super.initState();
   }
@@ -74,12 +74,8 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
         }
-        if (loginResponse.user.supplier
-            .elementAt(0)
-            .supplierId != null) {
-          supplierID = loginResponse.user.supplier
-              .elementAt(0)
-              .supplierId;
+        if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
+          supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
           ordersList = callRetreiveOrdersAPI();
         }
       });
@@ -109,9 +105,12 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
         backgroundColor: Colors.white,
         bottomOpacity: 0.0,
         elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         actions: <Widget>[
           new IconButton(
@@ -163,122 +162,112 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                 snapShot.data.isNotEmpty) {
               isPageLoading = false;
               return SizedBox(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height - 100,
+                  height: MediaQuery.of(context).size.height - 85,
                   child: GroupedListView<Orders, DateTime>(
-                  controller: controller,
-              elements: snapShot.data,
-              physics: BouncingScrollPhysics(),
-          order: GroupedListOrder.DESC,
-          groupComparator: (DateTime value1, DateTime value2) =>
-          value2.compareTo(value1),
-          groupBy: (Orders element) => DateTime(
-          element.getTimeDeliveredLong().year,
-          element.getTimeDeliveredLong().month,
-          element.getTimeDeliveredLong().day),
-          itemComparator: (Orders element1, Orders element2) =>
-          element1
-              .getTimeDeliveredLong()
-              .compareTo(element2.getTimeDeliveredLong()),
-          floatingHeader: true,
-          groupSeparatorBuilder: (DateTime element) => Container(
-          height: 50,
-          child: Align(
-          alignment: Alignment.center,
-          child: Container(
-          padding: EdgeInsets.only(
-          left: 10.0, top: 5.0, bottom: 5.0),
-          height: 70.0,
-          child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(children: <Widget>[
-          Text(DateFormat('d MMM yyyy').format(element),
-          style: TextStyle(
-          fontSize: 18.0,
-          color: Colors.black,
-          fontFamily: "SourceSansProBold")),
-          Text(" " + DateFormat('EEE').format(element),
-          style: TextStyle(
-          fontSize: 18.0,
-          color: greyText,
-          fontFamily: "SourceSansProRegular")),
-          ]),
-          ),
-          ),
-          ),
-          ),
-          itemBuilder: (context, element) {
-          return Card(
-          margin: EdgeInsets.only(top: 1.0),
-          child: Container(
-          color: Colors.white,
-          child: ListTile(
-          onTap: () {
-          moveToOrderDetailsPage(element);
-          },
-          contentPadding: EdgeInsets.only(
-          top: 10.0,
-          bottom: 10.0,
-          left: 15.0,
-          right: 10.0),
-          leading: displayImage(element.outlet.logoURL),
-          title: Text(
-          element.outlet.outletName,
-          style: TextStyle(
-          fontSize: 16.0,
-          color: Colors.black,
-          fontFamily: "SourceSansProSemiBold",
-          ),
-          ),
-          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+                    controller: controller,
+                    elements: snapShot.data,
+                    physics: BouncingScrollPhysics(),
+                    order: GroupedListOrder.DESC,
+                    groupComparator: (DateTime value1, DateTime value2) =>
+                        value2.compareTo(value1),
+                    groupBy: (Orders element) => DateTime(
+                        element.getTimeDeliveredLong().year,
+                        element.getTimeDeliveredLong().month,
+                        element.getTimeDeliveredLong().day),
+                    itemComparator: (Orders element1, Orders element2) =>
+                        element1
+                            .getTimeDeliveredLong()
+                            .compareTo(element2.getTimeDeliveredLong()),
+                    floatingHeader: true,
+                    groupSeparatorBuilder: (DateTime element) => Container(
+                      margin: EdgeInsets.only(top: 4.0),
+                      height: 50.0,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15.0, top: 5.0),
+                        child: Row(children: <Widget>[
+                          Text(DateFormat('d MMM yyyy').format(element),
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                  fontFamily: "SourceSansProBold")),
+                          Text(" " + DateFormat('EEE').format(element),
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: greyText,
+                                  fontFamily: "SourceSansProRegular")),
+                        ]),
+                      ),
+                    ),
+                    itemBuilder: (context, element) {
+                      return Card(
+                          margin: EdgeInsets.only(top: 1.0),
+                          child: Container(
+                              color: Colors.white,
+                              child: ListTile(
+                                onTap: () {
+                                  moveToOrderDetailsPage(element);
+                                },
+                                contentPadding: EdgeInsets.only(
+                                    top: 10.0,
+                                    bottom: 10.0,
+                                    left: 15.0,
+                                    right: 10.0),
+                                leading: displayImage(element.outlet),
+                                title: Text(
+                                  element.outlet.outletName,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.black,
+                                    fontFamily: "SourceSansProSemiBold",
+                                  ),
+                                ),
+                                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-          subtitle: Container(
-          margin: EdgeInsets.only(top: 3.0),
-          child: Column(
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
-          children: <Widget>[
-          Row(children: <Widget>[
-          Container(
-          margin: EdgeInsets.only(top: 2.0),
-          height: 14.0,
-          width: 14.0,
-          child: ImageIcon(AssetImage(
-          'assets/images/truck.png')),
-          ),
-          Text(" " + element.getTimeDelivered(),
-          style: TextStyle(
-          color: Colors.black,
-          fontSize: 12.0,
-          fontFamily:
-          "SourceSansProRegular")),
-          Text(
-          " " + '# ${element.orderId}',
-          style: TextStyle(
-          color: greyText,
-          fontSize: 12.0,
-          fontFamily:
-          "SourceSansProRegular"),
-          ),
-          ]),
-          Constants.OrderStatusColor(element),
-          ]),
-          ),
-          trailing: Text(
-          element.amount.total.getDisplayValue(),
-          style: TextStyle(
-          fontSize: 16.0,
-          color: Colors.black,
-          fontFamily: "SourceSansProRegular")),
-          )));
-          },
-          ));
-          } else {
-          return Container();
+                                subtitle: Container(
+                                  margin: EdgeInsets.only(top: 2.0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.only(top: 2.0),
+                                            height: 14.0,
+                                            width: 14.0,
+                                            child: ImageIcon(AssetImage(
+                                                'assets/images/truck.png')),
+                                          ),
+                                          Text(" " + element.getTimeDelivered(),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12.0,
+                                                  fontFamily:
+                                                      "SourceSansProRegular")),
+                                          Text(
+                                            " " + '# ${element.orderId}',
+                                            style: TextStyle(
+                                                color: greyText,
+                                                fontSize: 12.0,
+                                                fontFamily:
+                                                    "SourceSansProRegular"),
+                                          ),
+                                        ]),
+                                        Constants.OrderStatusColor(element),
+                                      ]),
+                                ),
+                                trailing: Text(
+                                    element.amount.total.getDisplayValue(),
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                        fontFamily: "SourceSansProRegular")),
+                              )));
+                    },
+                  ));
+            } else {
+              return Container();
+            }
           }
-        }
         });
   }
 
@@ -297,25 +286,40 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
     });
   }
 
-  Widget displayImage(String Url) {
-    if (Url != null && Url.isNotEmpty) {
+  Widget displayImage(Outlet outlet) {
+    if (outlet != null && outlet.logoURL != null && outlet.logoURL.isNotEmpty) {
       return Container(
           height: 40.0,
           width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image:
-              DecorationImage(fit: BoxFit.fill, image: NetworkImage(Url))));
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(
+              outlet.logoURL,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
-          height: 40.0,
-          width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: AssetImage('assets/images/placeholder_all.png'))));
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder(outlet.outletName),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
     }
+  }
+
+  String outletPlaceholder(String name) {
+    Constants value = Constants();
+    var placeholder = value.getInitialWords(name);
+    return placeholder;
   }
 
   void _handleSearchEnd() {
@@ -345,13 +349,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
       'supplierId': supplierID
     };
     DateTime todaysDate = new DateTime(
-        DateTime
-            .now()
-            .year, DateTime
-        .now()
-        .month, DateTime
-        .now()
-        .day, 0, 0, 0);
+        DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0);
     int currentDate = todaysDate.millisecondsSinceEpoch;
     int date = currentDate ~/ 1000;
     print("current date ${currentDate}");
@@ -400,9 +398,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
   }
 
   moveToOrderDetailsPage(Orders element) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => new OrderDetailsPage(element)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
 }
