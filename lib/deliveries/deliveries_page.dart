@@ -207,11 +207,8 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                                 onTap: () {
                                   moveToOrderDetailsPage(element);
                                 },
-                                contentPadding: EdgeInsets.only(
-                                    top: 10.0,
-                                    bottom: 10.0,
-                                    left: 15.0,
-                                    right: 10.0),
+                                contentPadding:
+                                    EdgeInsets.only(left: 15.0, right: 10.0),
                                 leading: displayImage(element.outlet),
                                 title: Text(
                                   element.outlet.outletName,
@@ -222,38 +219,15 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                                   ),
                                 ),
                                 // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
                                 subtitle: Container(
                                   margin: EdgeInsets.only(top: 2.0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(top: 2.0),
-                                            height: 14.0,
-                                            width: 14.0,
-                                            child: ImageIcon(AssetImage(
-                                                'assets/images/truck.png')),
-                                          ),
-                                          Text(" " + element.getTimeDelivered(),
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12.0,
-                                                  fontFamily:
-                                                      "SourceSansProRegular")),
-                                          Text(
-                                            " " + '# ${element.orderId}',
-                                            style: TextStyle(
-                                                color: greyText,
-                                                fontSize: 12.0,
-                                                fontFamily:
-                                                    "SourceSansProRegular"),
-                                          ),
-                                        ]),
-                                        Constants.OrderStatusColor(element),
-                                      ]),
+                                  child: Text(
+                                    '# ${element.orderId}',
+                                    style: TextStyle(
+                                        color: greyText,
+                                        fontSize: 12.0,
+                                        fontFamily: "SourceSansProRegular"),
+                                  ),
                                 ),
                                 trailing: Text(
                                     element.amount.total.getDisplayValue(),
@@ -289,6 +263,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
   Widget displayImage(Outlet outlet) {
     if (outlet != null && outlet.logoURL != null && outlet.logoURL.isNotEmpty) {
       return Container(
+          margin: EdgeInsets.only(top: 2.0),
           height: 40.0,
           width: 40.0,
           child: ClipRRect(
