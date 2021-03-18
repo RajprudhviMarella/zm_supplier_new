@@ -228,8 +228,7 @@ class MarketListDesign extends State<MarketListPage>
                                         style: new TextStyle(
                                             color: Colors.black,
                                             fontSize: 18.0,
-                                            fontFamily:
-                                                "SourceSansProBold"),
+                                            fontFamily: "SourceSansProBold"),
                                       ),
                                       Text(
                                         "Cutoff for earliest delivery: " +
@@ -525,9 +524,17 @@ class MarketListDesign extends State<MarketListPage>
                                       ))),
                               Container(
                                   width: 200.0,
-                                  height: 40.0,
-                                  child: TextField(
+                                  child: TextFormField(
                                       autofocus: true,
+                                      autovalidate: true,
+                                      validator: (value) => (value != null &&
+                                              value.isNotEmpty &&
+                                              int.parse(_textEditingController
+                                                      .text) <
+                                                  snapShot.data[index]
+                                                      .priceList[0].moq)
+                                          ? "quantity is below moq"
+                                          : null,
                                       controller: _textEditingController,
                                       keyboardType:
                                           TextInputType.numberWithOptions(
@@ -536,13 +543,20 @@ class MarketListDesign extends State<MarketListPage>
                                       cursorColor: Colors.blue,
                                       textAlign: TextAlign.center,
                                       decoration: InputDecoration(
+                                        errorText: (_textEditingController
+                                                        .text !=
+                                                    null &&
+                                                _textEditingController
+                                                    .text.isNotEmpty &&
+                                                int.parse(_textEditingController
+                                                        .text) <
+                                                    snapShot.data[index]
+                                                        .priceList[0].moq)
+                                            ? "quantity is below moq"
+                                            : null,
                                         fillColor: faintGrey,
                                         filled: true,
-                                        border: InputBorder.none,
                                         focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
                                         hintStyle: new TextStyle(
                                             color: greyText,
                                             fontSize: 16.0,
@@ -553,7 +567,8 @@ class MarketListDesign extends State<MarketListPage>
                                           fontSize: 16.0,
                                           fontFamily: "SourceSansProSemiBold"),
                                       onChanged: (query) {
-                                        counter = int.parse(query);
+                                        if (query != null && query.isNotEmpty)
+                                          counter = int.parse(query);
                                       })),
                               GestureDetector(
                                   onTap: () {
