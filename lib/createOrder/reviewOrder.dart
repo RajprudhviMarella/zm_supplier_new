@@ -17,8 +17,6 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 
-import 'outletSelection.dart';
-
 /**
  * Created by RajPrudhviMarella on 04/Mar/2021.
  */
@@ -143,8 +141,12 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 ),
               ),
               actions: [
-                Image(
-                  image: AssetImage("assets/images/icon_trash.png"),
+                IconButton(
+                  icon: Image.asset("assets/images/icon_trash.png"),
+                  onPressed: () =>
+                      (widget.orderId != null && widget.orderId.isNotEmpty)
+                          ? showDraftAlert(context)
+                          : Navigator.of(context).pop(),
                 ),
               ],
             ),
@@ -834,6 +836,30 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     }
   }
 
+  deleteOrderAPI() async {
+    _showLoader();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierID
+    };
+    Map<String, String> queryParams = {
+      'supplierId': supplierID,
+      'outletId': widget.outletId,
+      'orderId': widget.orderId,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+    var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
+    print("url" + requestUrl);
+    http.Response response = await http.delete(requestUrl, headers: headers);
+    _hideLoader();
+    Navigator.of(context).pop();
+    print("url" + requestUrl);
+    print("ms" + response.statusCode.toString());
+  }
+
   void showAlert(context) {
     FocusScope.of(context).unfocus();
     BuildContext dialogContext;
@@ -856,6 +882,41 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     // set up the AlertDialog
     BasicDialogAlert alert = BasicDialogAlert(
       title: Text(Constants.txt_place_this_order),
+      actions: [btnCancel, okButton],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        dialogContext = context;
+        return alert;
+      },
+    );
+  }
+
+  void showDraftAlert(context) {
+    FocusScope.of(context).unfocus();
+    BuildContext dialogContext;
+    // set up the button
+    Widget okButton = FlatButton(
+      child: Text(Constants.txt_ok),
+      onPressed: () {
+        Navigator.pop(dialogContext);
+        deleteOrderAPI();
+      },
+    );
+    // set up the button
+    Widget btnCancel = FlatButton(
+      child: Text(Constants.txt_cancel),
+      onPressed: () {
+        Navigator.pop(dialogContext);
+      },
+    );
+
+    // set up the AlertDialog
+    BasicDialogAlert alert = BasicDialogAlert(
+      title: Text(Constants.txt_delete_draft),
       actions: [btnCancel, okButton],
     );
 

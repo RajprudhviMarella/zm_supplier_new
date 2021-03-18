@@ -229,7 +229,7 @@ class MarketListDesign extends State<MarketListPage>
                                             color: Colors.black,
                                             fontSize: 18.0,
                                             fontFamily:
-                                                "SourceSansProSemiBold"),
+                                                "SourceSansProBold"),
                                       ),
                                       Text(
                                         "Cutoff for earliest delivery: " +

@@ -27,6 +27,7 @@ class Constants {
   static const String txt_ok = "OK";
   static const String txt_cancel = "Cancel";
   static const String txt_confirm_logout = "Are you sure you want to sign out?";
+  static const String txt_delete_draft = "Are you sure you want to delete the order?";
   static const String txt_place_this_order = "Place this order now?";
   static const String txt_select_from = "Change profile photo";
   static const String txt_take_photo = "Take photo";
