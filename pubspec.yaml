@@ -83,6 +83,9 @@ flutter:
     - assets/images/Location_grey.png
     - assets/images/Link_grey.png
     - assets/images/Document_blue.png
+    - assets/images/ic_notes.png
+    - assets/images/icon_trash.png
+    - assets/images/icon_notes_white.png
     - assets/images/zm_logo.png
     - assets/images/orders_blue.png
     - assets/images/Customers_grey.png

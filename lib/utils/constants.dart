@@ -28,6 +28,7 @@ class Constants {
   static const String txt_ok = "OK";
   static const String txt_cancel = "Cancel";
   static const String txt_confirm_logout = "Are you sure you want to sign out?";
+  static const String txt_delete_draft = "Are you sure you want to delete the order?";
   static const String txt_place_this_order = "Place this order now?";
   static const String txt_select_from = "Change profile photo";
   static const String txt_take_photo = "Take photo";
@@ -99,7 +100,7 @@ class Constants {
     String status = orders.orderStatus;
     if (status == "Approving") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -120,7 +121,7 @@ class Constants {
       );
     } else if (status == "Cancelling") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -141,7 +142,7 @@ class Constants {
       );
     } else if (status == "Creating") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -162,7 +163,7 @@ class Constants {
       );
     } else if (status == "Rejecting") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -183,7 +184,7 @@ class Constants {
       );
     } else if (status == "Draft") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: chartBlue,
           border: Border.all(
@@ -204,7 +205,7 @@ class Constants {
       );
     } else if (status == "Created" || status == "PendingPayment") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: yellow,
           border: Border.all(
@@ -226,7 +227,7 @@ class Constants {
     } else if (status == "Placed" ||
         (orders.isInvoiced != null && orders.isInvoiced)) {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: green,
           border: Border.all(
@@ -250,7 +251,7 @@ class Constants {
         status == "Rejected" ||
         status == "Void") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(
@@ -271,7 +272,7 @@ class Constants {
       );
     } else {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(

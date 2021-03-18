@@ -102,7 +102,7 @@ class Orders {
   String getTimeDelivered() {
     DateTime dateTime =
         new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
-    return DateFormat('EEE, d MMM').format(dateTime);
+    return DateFormat('EEE d MMM').format(dateTime);
   }
 
   String getDeliveryDay() {
