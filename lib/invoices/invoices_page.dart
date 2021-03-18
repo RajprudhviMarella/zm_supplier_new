@@ -440,6 +440,11 @@ class InvoicesState extends State<InvoicesPage> {
   }
 
   bool isExpired(Invoices inv) {
+
+    if (inv.paymentStatus == 'Paid') {
+      return false;
+    }
+
     if (inv.paymentDueDate != null) {
       final now = DateTime.now();
       final expirationDate = inv.getPaymentDueDate();
