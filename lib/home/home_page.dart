@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:zm_supplier/settings/settings_page.dart';
 import 'package:zm_supplier/dashBoard/dash_board_page.dart';
 import 'package:zm_supplier/customers/customers_page.dart';
+import 'package:zm_supplier/utils/color.dart';
 
 void main() => runApp(HomePage());
 
@@ -45,18 +46,18 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
+  static List<Widget> _widgetOptions = <Widget>[
     Text(
       'Orders',
-      style: optionStyle,
+      style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProSemiBold', color: buttonBlue),
     ),
     Text(
       'Customers',
-      style: optionStyle,
+      style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProSemiBold', color: greyText),
     ),
     Text(
       'Settings',
-      style: optionStyle,
+      style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProSemiBold', color: greyText),
     ),
   ];
   final _pageOptions = [DashboardPage(), CustomersPage(), SettingsPage()];
@@ -76,20 +77,21 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
         backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.reorder_outlined),
+            icon: ImageIcon(AssetImage('assets/images/orders_blue.png'), size: 22,),
             label: 'Orders',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.supervisor_account_outlined),
+            icon: ImageIcon(AssetImage('assets/images/Customers_grey.png'), size: 22,),//Icon(Icons.supervisor_account_outlined),
             label: 'Customers',
+
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
+            icon: ImageIcon(AssetImage('assets/images/user_grey.png'), size: 22,),//Icon(Icons.account_circle_outlined),
             label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: buttonBlue,
         onTap: _onItemTapped,
       ),
     );

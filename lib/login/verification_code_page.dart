@@ -154,6 +154,7 @@ class _VerificationCodeState extends State<VerificationCode> {
               icon: new Icon(
                 Icons.arrow_back_ios,
                 size: 22,
+                color: Colors.black,
               ),
               onPressed: () => Navigator.of(context).pop()),
           backgroundColor: faintGrey,

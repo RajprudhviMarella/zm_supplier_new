@@ -142,14 +142,19 @@ class _LoginPageState extends State<LoginPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+
+
       body: ModalProgressHUD(
         inAsyncCall: _isShowLoader,
         child: Container(
           height: height,
           width: width,
           child: SingleChildScrollView(
+            reverse: true,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+           //   mainAxisSize: MainAxisSize.min,
+              //mainAxisAlignment: MainAxisAlignment.center,
+               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
                   width: width,
@@ -157,19 +162,17 @@ class _LoginPageState extends State<LoginPage> {
                   // child: Container(child: Image.asset('assets/img_welcome_salmon.png', fit: BoxFit.fill,)),
 
                   child: Stack(
+
                     children: <Widget>[
 
-                      Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Image.asset('assets/images/img_welcome_salmon.png',
-                          fit: BoxFit.fill,
-                          height: double.infinity,
-                          width: double.infinity,),
-
+                      Image.asset('assets/images/img_welcome_salmon.png',
+                        fit: BoxFit.fill,
+                        height: double.infinity,
+                        width: double.infinity,
                       ),
 
                       // FadeInImage(
-                      //  // placeholder: AssetImage("assets/images/blackdot.png"),
+                      //   placeholder: AssetImage("assets/images/blackdot.png"),
                       //   image:
                       //       AssetImage("assets/images/img_welcome_salmon.png"),
                       //   fit: BoxFit.fill,
@@ -178,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                       // ),
                       Padding(
                         padding: const EdgeInsets.only(left: 23, top: 35),
-                        child: Image.asset('assets/images/ZM_logo_white.png'),
+                        child: Image.asset('assets/images/zm_logo.png', width: 28, height:28, fit: BoxFit.fill,),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 60, top: 40),
@@ -327,9 +330,9 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {
                       print('forgot tapped');
 
-                      mixpanel.timeEvent('spider');
-                      mixpanel.track('spider');
-                      mixpanel.flush();
+                      // mixpanel.timeEvent('Aquaman');
+                      // mixpanel.track('Aquaman');
+                      // mixpanel.flush();
 
                       Navigator.push(
                           context,
@@ -349,9 +352,11 @@ class _LoginPageState extends State<LoginPage> {
                         ]),
                   ),
                 ),
+
                 SizedBox(
-                  height: 40,
+                  height: height - (height*0.5 + 270),
                 ),
+
                 Container(
                   width: width,
                   height: 48,
@@ -363,7 +368,9 @@ class _LoginPageState extends State<LoginPage> {
                         : lightGreen.withOpacity(0.5),
                     onPressed: isEmailFilled && isPasswordFilled
                         ? () {
-                            setState(() {
+                      FocusScope.of(context).unfocus();
+
+                      setState(() {
                               isApiCallingProcess = true;
                               validator();
                             });
@@ -381,7 +388,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 32,
                 ),
               ],
             ),
@@ -405,7 +412,7 @@ void showAlert(context) {
 
   // set up the AlertDialog
   BasicDialogAlert alert = BasicDialogAlert(
-    title: Text(Constants.txt_login),
+    title: Text(Constants.invalid_details),
     content: Text(Constants.txt_alert_message),
     actions: [okButton],
   );
