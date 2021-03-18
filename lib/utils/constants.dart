@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -34,9 +35,10 @@ class Constants {
   static const String txt_select_library = "Select from library";
 
   static const String txt_login = "Login";
-  static const String txt_reset_password = "Reset Password";
-  static const String txt_alert_message = "please enter valid email/password";
-  static const String txt_alert_email_message = "please enter valid email";
+  static const String invalid_details = 'Invalid email/password';
+  static const String txt_reset_password = "Invalid email address";
+  static const String txt_alert_message = "Please correct any mistakes and try again";
+  static const String txt_please_try_again = "Please try again";
   static const String login_Info = "loginInfo";
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
   static const String specific_user_info = "specificUserInfo";
@@ -308,6 +310,13 @@ class Constants {
       bank_account_name.isNotEmpty
           ? bank_account_name.trim().split(' ').map((l) => l[0]).take(2).join()
           : '';
+
+  static Future<Mixpanel> initMixPanel() async {
+    //below is the project token from mixpanel.
+    Mixpanel mixPanel = await Mixpanel.init("b82a8f3697de395f8a83ff6c3949947f",
+        optOutTrackingDefault: false);
+    return mixPanel;
+  }
 }
 
 class SharedPref {

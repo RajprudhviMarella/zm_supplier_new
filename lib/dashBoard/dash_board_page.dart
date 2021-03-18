@@ -40,7 +40,7 @@ class DashboardState extends State<DashboardPage> {
 
   var selectedTab = 'Today';
   Widget appBarTitle = new Text(
-    "  Orders",
+    "Orders",
     style: TextStyle(
         color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
     textAlign: TextAlign.left,
@@ -280,8 +280,27 @@ class DashboardState extends State<DashboardPage> {
     height = MediaQuery.of(context).size.height;
     return new Scaffold(
       appBar: new AppBar(
+        toolbarHeight: 70,
           centerTitle: false,
-          title: appBarTitle,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: InteractiveViewer(
+              panEnabled: false, // Set it to false to prevent panning.
+              boundaryMargin: EdgeInsets.all(80),
+              minScale: 0.5,
+              maxScale: 4,
+              child: Row(
+                children: [
+                  Text(
+                    "Orders",
+                    style: TextStyle(
+                        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+            ),
+          ),
           backgroundColor: faintGrey,
           elevation: 0,
           actions: <Widget>[
@@ -311,7 +330,10 @@ class DashboardState extends State<DashboardPage> {
         elevation: 0,
         label: Text(
           'New order',
-          style: TextStyle(fontSize: 16, fontFamily: 'SourceSansProSemiBold'),
+          style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'SourceSansProSemiBold',
+              letterSpacing: 0),
         ),
       ),
       body: Container(
@@ -321,9 +343,8 @@ class DashboardState extends State<DashboardPage> {
             banner(context),
             //dots(context),
 
-            draftsHeader(),
-            bannerList(),
-
+            // draftsHeader(),
+            draftBannersList(),
             Header(),
             tabs(),
             list(),
@@ -344,197 +365,219 @@ class DashboardState extends State<DashboardPage> {
             } else if (snapshot.hasError) {
               return Center(child: Text('failed to load'));
             } else {
-              return Column(
-                children: <Widget>[
-                  CarouselSlider(
-                    //  height: 200,
+              return Container(
 
-                    options: CarouselOptions(
-                        //autoPlay: true,
-                        viewportFraction: 0.9,
-                        enableInfiniteScroll: false,
-                        aspectRatio: 2.5,
-                        initialPage: 0,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            currentIndex = index;
-                            print(index);
-                            print(reason);
-                          });
-                        }),
+                child: Column(
+                  children: <Widget>[
+                    CarouselSlider(
+                      //  height: 200,
 
-                    items: arra.map((i) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              color: Colors.white,
-                            ),
 
-                            //        margin: EdgeInsets.all(20),
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            // width: width,
-                            //  height: 250.0,
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Stack(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20, top: 15),
-                                        child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: new Text(
-                                              currentIndex == 0
-                                                  ? "Total orders".toUpperCase()
-                                                  : 'East coast team'
-                                                      .toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      "SourceSansProBold"),
-                                            )),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20, top: 30),
-                                        child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: new Text(
-                                              currentIndex == 0
-                                                  ? 'S\$' +
-                                                          snapshot.data.data
-                                                              .totalSpendingCurrMonth
-                                                              .toString() ??
-                                                      ""
-                                                  : '',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 30,
-                                                  fontFamily:
-                                                      "SourceSansProBold"),
-                                            )),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20, top: 70),
-                                        child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: new Text(
-                                              "this month",
-                                              style: TextStyle(
-                                                  color: greyText,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      "SourceSansProSemiBold"),
-                                            )),
-                                      ),
+                      options: CarouselOptions(
+                          //autoPlay: true,
 
-                                      /*
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 240, top: 40, right: 20),
-                                    child: Container(
-                                      // alignment: Alignment.centerRight,
-                                      height: 48,
-                                      width: 120,
-                                      // color: Colors.yellow,
+                          viewportFraction: 0.94,
 
-                                      decoration: BoxDecoration(
-                                          color: greyText,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(24))),
+                          enableInfiniteScroll: false,
+                         height: 145,
+                         // aspectRatio: 2.6,
+                          initialPage: 0,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              currentIndex = index;
+                              print(index);
+                              print(reason);
+                            });
+                          }),
 
-                                      child: FlatButton(
-                                        onPressed: () {
-                                          print('set a goal tapped.');
-                                        },
-                                        color: faintGrey,
-                                        child: new Text(
-                                          "Set a goal",
-                                          style: TextStyle(
-                                              color: buttonBlue,
-                                              fontSize: 16,
-                                              fontFamily: "SourceSansProSemiBold"),
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(24)),
-                                      ),
-                                    ),
-                                  ),*/
-
-                                      Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, right: 20, top: 110),
-                                          child: Container(
-                                            height: 1,
-                                            color: faintGrey,
-                                          )),
-                                      Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, right: 10, top: 120),
-                                          child: Container(
-                                            height: 30,
-                                            //color: faintGrey,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  (snapshot.data.data
-                                                              .todayPendingDeliveries >
-                                                          0)
-                                                      ? snapshot.data.data
-                                                              .todayPendingDeliveries
-                                                              .toString() +
-                                                          ' deliveries today'
-                                                      : 'No deliveries today',
-                                                  style: TextStyle(
-                                                      color: greyText,
-                                                      fontSize: 14,
-                                                      fontFamily:
-                                                          "SourceSansProSemiBold"),
-                                                ),
-                                                FlatButton(
-                                                  onPressed: () {
-                                                    print(
-                                                        'view deliveries tapped');
-
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                DeliveriesPage()));
-                                                  },
-                                                  child: Text(
-                                                    'View deliveries',
-                                                    style: TextStyle(
-                                                        color: buttonBlue,
-                                                        fontFamily:
-                                                            "SourceSansProRegular",
-                                                        fontSize: 12),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ))
-                                    ],
+                      items: arra.map((i) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3), // changes position of shadow
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  )
-                ],
+                                ],
+                              ),
+
+                              //        margin: EdgeInsets.all(20),
+                              margin: EdgeInsets.symmetric(horizontal: 5.0),
+                              // width: width,
+                              //  height: 250.0,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    child: Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20, top: 15),
+                                          child: Align(
+                                              alignment: Alignment.topLeft,
+                                              child: new Text(
+                                                currentIndex == 0
+                                                    ? "Total orders".toUpperCase()
+                                                    : 'East coast team'
+                                                        .toUpperCase(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                    fontFamily:
+                                                        "SourceSansProBold"),
+                                              )),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20, top: 30),
+                                          child: Align(
+                                              alignment: Alignment.topLeft,
+                                              child: new Text(
+                                                currentIndex == 0
+                                                    ? '\$' +
+                                                            snapshot.data.data
+                                                                .totalSpendingCurrMonth
+                                                                .toString()
+                                                                .replaceAllMapped(
+                                                                    reg,
+                                                                    (Match m) =>
+                                                                        '${m[1]},') ??
+                                                        ""
+                                                    : '',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 30,
+                                                    fontFamily:
+                                                        "SourceSansProBold"),
+                                              )),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20, top: 65),
+                                          child: Align(
+                                              alignment: Alignment.topLeft,
+                                              child: new Text(
+                                                "this month",
+                                                style: TextStyle(
+                                                    color: greyText,
+                                                    fontSize: 14,
+                                                    fontFamily:
+                                                        "SourceSansProSemiBold"),
+                                              )),
+                                        ),
+
+                                        /*
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 240, top: 40, right: 20),
+                                      child: Container(
+                                        // alignment: Alignment.centerRight,
+                                        height: 48,
+                                        width: 120,
+                                        // color: Colors.yellow,
+
+                                        decoration: BoxDecoration(
+                                            color: greyText,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(24))),
+
+                                        child: FlatButton(
+                                          onPressed: () {
+                                            print('set a goal tapped.');
+                                          },
+                                          color: faintGrey,
+                                          child: new Text(
+                                            "Set a goal",
+                                            style: TextStyle(
+                                                color: buttonBlue,
+                                                fontSize: 16,
+                                                fontFamily: "SourceSansProSemiBold"),
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(24)),
+                                        ),
+                                      ),
+                                    ),*/
+
+                                        Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20, right: 20, top: 100),
+                                            child: Container(
+                                              height: 1.5,
+
+                                              color: faintGrey,
+                                            )),
+                                        Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20, right: 10, top: 106),
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            DeliveriesPage()));
+                                              },
+                                              child: Container(
+                                                height: 30,
+                                                //color: faintGrey,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      (snapshot.data.data
+                                                                  .todayPendingDeliveries >
+                                                              0)
+                                                          ? snapshot.data.data
+                                                                  .todayPendingDeliveries
+                                                                  .toString() +
+                                                              ' deliveries today'
+                                                          : 'No deliveries today',
+                                                      style: TextStyle(
+                                                          color: greyText,
+                                                          fontSize: 14,
+                                                          fontFamily:
+                                                              "SourceSansProSemiBold"),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 10.0),
+                                                      child: Text(
+                                                        'View deliveries',
+                                                        style: TextStyle(
+                                                            color: buttonBlue,
+                                                            fontFamily:
+                                                                "SourceSansProRegular",
+                                                            fontSize: 12),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ))
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    )
+                  ],
+                ),
               );
             }
           }),
@@ -566,11 +609,13 @@ class DashboardState extends State<DashboardPage> {
       return Container(
           height: 40.0,
           width: 40.0,
-         child: ClipRRect(
+          child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
-            child: Image.network(order.outlet.logoURL, fit: BoxFit.fill,),
-          )
-    );
+            child: Image.network(
+              order.outlet.logoURL,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
         height: 38,
@@ -597,7 +642,7 @@ class DashboardState extends State<DashboardPage> {
 
   Widget draftsHeader() {
     return Padding(
-      padding: const EdgeInsets.only(left: 30.0, top: 20, right: 15),
+      padding: const EdgeInsets.only(left: 10.0, top: 20, right: 15),
       child: Container(
         height: 30,
         child: Row(
@@ -613,7 +658,7 @@ class DashboardState extends State<DashboardPage> {
     );
   }
 
-  Widget bannerList() {
+  Widget draftBannersList() {
     return FutureBuilder<List<Orders>>(
         future: draftOrdersFuture,
         builder: (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
@@ -622,102 +667,123 @@ class DashboardState extends State<DashboardPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('failed to load'));
           } else {
-            return SizedBox(
-              height: 90,
-              child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (BuildContext context, int index) {
-                    bool last = 5 == (index + 1);
-                    bool first = -1 == (index - 1);
-                    bool second = 0 == (index - 1);
-                    return Padding(
-                      padding:
-                          first ? EdgeInsets.only(left: 15) : EdgeInsets.all(0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new MarketListPage(
-                                        snapshot.data[index].outlet.outletId,
-                                        snapshot.data[index].outlet.outletName,null,
-                                      )));
-                        },
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: last
-                                  ? EdgeInsets.only(right: 15)
-                                  : EdgeInsets.all(0),
-                              child: Container(
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data.isNotEmpty) {
+              return SizedBox(
+                height: 130,
+                child: ListView.builder(
+                    itemCount: snapshot.data.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      bool last = 5 == (index + 1);
+                      bool first = -1 == (index - 1);
+                      bool second = 0 == (index - 1);
+                      return Column(
+                        children: [
+                          draftsHeader(),
+                          Padding(
+                            padding: first
+                                ? EdgeInsets.only(left: 15)
+                                : EdgeInsets.all(0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            new MarketListPage(
+                                              snapshot
+                                                  .data[index].outlet.outletId,
+                                              snapshot.data[index].outlet
+                                                  .outletName,
+                                              null,
+                                            )));
+                              },
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: last
+                                        ? EdgeInsets.only(right: 15)
+                                        : EdgeInsets.all(0),
+                                    child: Container(
 
-                                  //  padding: last ? EdgeInsets.only(left: 20): null,
-                                  width: 180,
-                                  height: 70,
-                                  margin: EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    color: Colors.white,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 12,
-                                              top: 15.0,
-                                            ),
-                                            child: leadingImage(snapshot.data[index]),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8.0,
-                                                  top: 12,
-                                                  right: 15),
-                                              child: Text(
-                                                snapshot.data[index].outlet
-                                                    .outletName,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      'SourceSansProRegular',
-                                                  color: Colors.black,
+                                        //  padding: last ? EdgeInsets.only(left: 20): null,
+                                        width: 180,
+                                        height: 70,
+                                        margin: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 12,
+                                                    top: 15.0,
+                                                  ),
+                                                  child: leadingImage(
+                                                      snapshot.data[index]),
                                                 ),
-                                              ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0,
+                                                            top: 12,
+                                                            right: 15),
+                                                    child: Text(
+                                                      snapshot.data[index]
+                                                          .outlet.outletName,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily:
+                                                            'SourceSansProRegular',
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
+                                          ],
+                                        )),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-            );
+                          ),
+                        ],
+                      );
+                    }),
+              );
+            } else {
+              return Container();
+            }
           }
         });
   }
 
   Widget Header() {
     return Padding(
-      padding: const EdgeInsets.only(left: 30.0, top: 20, right: 15),
+      padding: const EdgeInsets.only(left: 17.0, top: 20, right: 2),
       child: Container(
         height: 30,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Recent orders',
-              style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
+        child: LeftRightAlign(
+            left: Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: Text('Recent orders',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                      fontFamily: "SourceSansProBold")),
             ),
-            FlatButton(
+            right: FlatButton(
               onPressed: () {
                 print('View all orders tapped');
                 Navigator.push(
@@ -733,7 +799,6 @@ class DashboardState extends State<DashboardPage> {
                     fontSize: 12),
               ),
             )
-          ],
         ),
       ),
     );
@@ -788,7 +853,7 @@ class DashboardState extends State<DashboardPage> {
     return formattedDate;
   }
 
-  Widget list() {
+  Widget list({String key, String string}) {
     return Column(
       children: [
         FutureBuilder<List<Orders>>(
@@ -801,208 +866,152 @@ class DashboardState extends State<DashboardPage> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {
-                // if (snapshot.data == null) {
-                //   return Center(child: Text('loading...'),);
-                // } else {
-                //   child:
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return new Column(children: <Widget>[
-                      ListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            snapshot.data[index].outlet.outletName,
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: "SourceSansProSemiBold"),
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData &&
+                    snapshot.data.isNotEmpty) {
+                  return ListView.builder(
+                    key: PageStorageKey(selectedTab == "Today" ? 'a' : 'b'),
+                    shrinkWrap: true,
+
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return new Column(children: <Widget>[
+                        ListTile(
+                          title: Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: Text(
+                              snapshot.data[index].outlet.outletName,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: "SourceSansProSemiBold"),
+                            ),
                           ),
-                        ),
-                        isThreeLine: true,
-                        subtitle: Padding(
-                          padding: const EdgeInsets.only(top: 0),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ImageIcon(
-                                    AssetImage("assets/images/Truck-black.png"),
-                                    size: 14,
-                                  ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    readTimestamp(
-                                        snapshot.data[index].timeDelivered),
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: "SourceSansProRegular",
-                                        color: Colors.black),
-                                  ),
-
-                                  SizedBox(width: 5),
-                                  Flexible(
-                                    child: Text(snapshot.data[index].orderId,
-                                        style: TextStyle(
-                                            fontSize: 12.0,
-                                            fontFamily: "SourceSansProRegular",
-                                            color: greyText),
-                                        maxLines: 1),
-                                  ),
-
-                                  SizedBox(width: 5),
-                                  if (snapshot.data[index].isAcknowledged !=
-                                      null)
-                                    Container(
-                                      width: snapshot.data[index].isAcknowledged
-                                          ? 12
-                                          : 0,
-                                      child: InkResponse(
-                                        child: Image.asset(
-                                          "assets/images/icon-tick-green.png",
-                                          width: 12,
-                                          height: 12,
-                                        ),
-                                      ),
+                          isThreeLine: true,
+                          subtitle: Container(
+                            margin: EdgeInsets.only(top: 3.0, bottom: 10),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(children: <Widget>[
+                                    ImageIcon(
+                                      AssetImage(
+                                          "assets/images/Truck-black.png"),
+                                      size: 14,
                                     ),
-
-                                  //Icon(Icons.navigate_next, size: 12,),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 80.0, right: 0),
-                                    child: Container(
-                                      child: Text(
-                                          'S\$' +
-                                              snapshot.data[index].amount.total
-                                                  .amountV1
-                                                  .toString(),
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily:
-                                                  "SourceSansProRegular",
-                                              color: Colors.black)),
+                                    SizedBox(width: 2),
+                                    Text(
+                                      readTimestamp(
+                                          snapshot.data[index].timeDelivered),
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: "SourceSansProRegular",
+                                          color: Colors.black),
                                     ),
-                                  )
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 2.0, bottom: 10),
-                                child: Container(
-                                  height: (snapshot.data[index].orderStatus ==
-                                              "Void" ||
-                                          snapshot.data[index].orderStatus ==
-                                              "Cancelled" ||
-                                          snapshot.data[index].orderStatus ==
-                                              "Invoiced")
-                                      ? 20
-                                      : 0,
-                                  //  margin: EdgeInsets.symmetric(horizontal: 5.0),
-
-                                  // color: Colors.blue,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
+                                    SizedBox(width: 5),
+                                    Text(
+                                      snapshot.data[index].orderId,
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          fontFamily: "SourceSansProRegular",
+                                          color: greyText),
+                                    ),
+                                    SizedBox(width: 2),
+                                    if (snapshot.data[index].isAcknowledged !=
+                                        null)
                                       Container(
                                         width:
-                                            (snapshot.data[index].orderStatus ==
-                                                    "Void")
-                                                ? 50
+                                            snapshot.data[index].isAcknowledged
+                                                ? 12
                                                 : 0,
-                                        margin:
-                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
-
-                                        decoration: BoxDecoration(
-                                            color: warningRed,
-                                            // border: Border.all(
-                                            //   color: Colors.red[500],
-                                            // ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
-                                        child: Center(
-                                          child: Text(
-                                            '  Voided  '.toUpperCase(),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 10,
-                                                fontFamily:
-                                                    "SourceSansProSemiBold"),
+                                        child: InkResponse(
+                                          child: Image.asset(
+                                            "assets/images/icon-tick-green.png",
+                                            width: 12,
+                                            height: 12,
                                           ),
                                         ),
-                                        //  color: Colors.grey,
                                       ),
-                                      Container(
-                                        width:
-                                            (snapshot.data[index].orderStatus ==
-                                                    "Cancelled")
-                                                ? 50
-                                                : 0,
-                                        margin:
-                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                        decoration: BoxDecoration(
-                                            color: warningRed,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
-                                        child: Text(
-                                          '  cancelled  '.toUpperCase(),
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                              fontFamily:
-                                                  "SourceSansProSemiBold"),
-                                        ),
-                                      ),
-                                      Container(
-                                        width:
-                                            (snapshot.data[index].orderStatus ==
-                                                    "Invoiced")
-                                                ? 50
-                                                : 0,
-                                        decoration: BoxDecoration(
-                                            color: lightGreen,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
-                                        child: Text(
-                                            '  Invoiced  '.toUpperCase(),
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                                fontFamily:
-                                                    "SourceSansProSemiBold")),
-                                        // color: Colors.pink,
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                  ]),
+                                  if (snapshot.data[index].orderStatus !=
+                                      'Placed')
+                                    Constants.OrderStatusColor(
+                                        snapshot.data[index]),
+                                ]),
+                          ),
+
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 100,
+                                child: Text(
+                                    '\$' +
+                                        snapshot
+                                            .data[index].amount.total.amountV1
+                                            .toStringAsFixed(2)
+                                            .replaceAllMapped(
+                                                reg, (Match m) => '${m[1]},'),
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: "SourceSansProRegular",
+                                        color: Colors.black)),
                               ),
                             ],
                           ),
+
+                          //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
+                          leading: leadingImage(snapshot.data[index]),
+
+                          tileColor: Colors.white,
+                          onTap: () {
+                            print('item tapped $index');
+                            moveToOrderDetailsPage(snapshot.data[index]);
+                          },
                         ),
-
-                        //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                        leading: leadingImage(snapshot.data[index]),
-
-                        tileColor: Colors.white,
-                        onTap: () {
-                          print('item tapped $index');
-                          moveToOrderDetailsPage(snapshot.data[index]);
-                        },
-                      ),
-                      // ListTile(
-                      //
-                      // ),
-                      Divider(
-                        height: 1.5,
-                        color: faintGrey,
-                      ),
-                    ]);
-                  },
-                );
+                        Divider(
+                          height: 1.5,
+                          color: faintGrey,
+                        ),
+                        if (index == snapshot.data.length - 1)
+                          Container(
+                            height: 80,
+                          )
+                      ]);
+                    },
+                  );
+                } else {
+                  return Container(
+                    color: Colors.white,
+                    height: 250,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Image(
+                            image: new AssetImage(
+                                'assets/images/no_orders_icon.png'),
+                            width: 70,
+                            height: 70,
+                            color: null,
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.center,
+                          ),
+                        ),
+                        // ImageIcon(AssetImage('assets/images/orders_icon.png')),
+                        SizedBox(height: 10),
+                        Text(
+                          'No orders',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'SourceSansProRegular', color: greyText),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               }
             }),
       ],
@@ -1013,4 +1022,6 @@ class DashboardState extends State<DashboardPage> {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
+
+  RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 }

@@ -39,7 +39,8 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
     'outlet',
     'invoiceId',
     'paymentDueDate',
-    'totalCharge'
+    'totalCharge',
+    'paymentStatus'
   ];
   final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _controller = new TextEditingController();
@@ -439,7 +440,7 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
   }
 
   Widget checkPaymentStatus(Invoices inv) {
-    if (inv.status == 'Paid') {
+    if (inv.paymentStatus == 'Paid') {
       return Text('Paid', style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProRegular', color: lightGreen),);
     } else {
       if (inv.paymentDueDate != null) {
@@ -458,6 +459,9 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
   }
 
   bool isExpired(Invoices inv) {
+    if (inv.paymentStatus == 'Paid') {
+      return false;
+    }
     if (inv.paymentDueDate != null) {
       final now = DateTime.now();
       final expirationDate = inv.getPaymentDueDate();
