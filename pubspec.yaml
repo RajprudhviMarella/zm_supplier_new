@@ -82,6 +82,7 @@ flutter:
     - assets/images/Document_blue.png
     - assets/images/ic_notes.png
     - assets/images/icon_trash.png
+    - assets/images/icon_notes_white.png
 
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

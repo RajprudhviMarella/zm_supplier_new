@@ -57,6 +57,7 @@ class MarketListDesign extends State<MarketListPage>
   Future<List<DeliveryDateList>> deliveryDatesListFuture;
   String orderID = "";
   List<Products> repeatOrderProducts;
+  String orderNotes = "Notes";
 
   MarketListDesign(this.repeatOrderProducts);
 
@@ -124,22 +125,37 @@ class MarketListDesign extends State<MarketListPage>
                                     EdgeInsets.only(left: 15.0, right: 15.0),
                                 child: Row(children: <Widget>[
                                   FloatingActionButton.extended(
-                                    backgroundColor: faintGrey,
+                                    backgroundColor: (orderNotes != null &&
+                                            orderNotes.isNotEmpty &&
+                                            orderNotes == "Notes")
+                                        ? faintGrey
+                                        : buttonBlue,
                                     foregroundColor: Colors.white,
                                     onPressed: () {
                                       createAddNotesOrder();
                                     },
-                                    label: Text(
-                                      'Notes',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          letterSpacing: 0,
-                                          fontFamily: 'SourceSansProSemiBold',
-                                          color: greyText),
+                                    label: Container(
+                                      width: 45.0,
+                                      child: Text(
+                                        orderNotes,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            letterSpacing: 0,
+                                            fontFamily: 'SourceSansProSemiBold',
+                                            color: (orderNotes != null &&
+                                                    orderNotes.isNotEmpty &&
+                                                    orderNotes == "Notes")
+                                                ? greyText
+                                                : Colors.white),
+                                      ),
                                     ),
                                     icon: Image(
-                                      image: AssetImage(
-                                          "assets/images/ic_notes.png"),
+                                      image: AssetImage((orderNotes != null &&
+                                              orderNotes.isNotEmpty &&
+                                              orderNotes == "Notes")
+                                          ? "assets/images/ic_notes.png"
+                                          : "assets/images/icon_notes_white.png"),
                                     ),
                                     elevation: 0,
                                   ),
@@ -153,7 +169,8 @@ class MarketListDesign extends State<MarketListPage>
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Text(
-                                              'Next',
+                                              "Next",
+                                              overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   fontFamily:
@@ -188,8 +205,13 @@ class MarketListDesign extends State<MarketListPage>
                                                         selectedMarketList,
                                                         widget.outletId,
                                                         widget.outletName,
-                                                        _txtOrderNotesEditController
-                                                            .text,
+                                                        (orderNotes != null &&
+                                                                orderNotes
+                                                                    .isNotEmpty &&
+                                                                orderNotes !=
+                                                                    "Notes")
+                                                            ? orderNotes
+                                                            : "",
                                                         lstDeliveryDates,
                                                         orderID)));
                                       } else {
@@ -971,6 +993,16 @@ class MarketListDesign extends State<MarketListPage>
                   ),
                   GestureDetector(
                       onTap: () {
+                        if (_txtOrderNotesEditController.text != null &&
+                            _txtOrderNotesEditController.text.isNotEmpty) {
+                          setState(() {
+                            orderNotes = _txtOrderNotesEditController.text;
+                          });
+                        } else {
+                          setState(() {
+                            orderNotes = "Notes";
+                          });
+                        }
                         Navigator.pop(context);
                       },
                       child: Container(
