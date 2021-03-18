@@ -170,6 +170,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0-nullsafety.6"
+  mixpanel_flutter:
+    dependency: "direct main"
+    description:
+      name: mixpanel_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   modal_progress_hud:
     dependency: "direct main"
     description:

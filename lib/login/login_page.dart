@@ -14,6 +14,8 @@ import 'package:zm_supplier/services/authenticationApi.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+
 void main() {
   runApp(LoginPage());
 }
@@ -62,6 +64,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    mixPanelEvents();
+  }
+
+  Mixpanel mixpanel;
+  void mixPanelEvents() async {
+    mixpanel = await Constants.initMixPanel();
   }
 
   @override
@@ -318,6 +326,10 @@ class _LoginPageState extends State<LoginPage> {
                   child: GestureDetector(
                     onTap: () {
                       print('forgot tapped');
+
+                      mixpanel.timeEvent('spider');
+                      mixpanel.track('spider');
+                      mixpanel.flush();
 
                       Navigator.push(
                           context,

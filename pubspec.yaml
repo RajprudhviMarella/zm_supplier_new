@@ -41,6 +41,7 @@ dependencies:
   grouped_list: ^3.7.1
   intl: ^0.16.1
   carousel_slider: ^3.0.0
+  mixpanel_flutter: ^1.0.0
 
 dev_dependencies:
   flutter_test:
