@@ -28,7 +28,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
     with TickerProviderStateMixin {
   Widget appBarTitle = new Text(
     Constants.txt_select_outlet,
-    style: new TextStyle(color: Colors.black),
+    style: new TextStyle(
+        color: Colors.black, fontSize: 18, fontFamily: "SourceSansProBold"),
   );
   Icon icon = new Icon(
     Icons.search,
@@ -75,10 +76,10 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
   Widget build(BuildContext context) {
     return new Scaffold(
       key: globalKey,
+      appBar: buildAppBar(context),
       backgroundColor: faintGrey,
       body: ListView(
         children: <Widget>[
-          buildAppBar(context),
           headers(context, Constants.txt_starred, 18.0),
           displayList(context, true),
           headers(context, Constants.txt_all_outlets, 18.0),
@@ -93,7 +94,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
       color: faintGrey,
       margin: EdgeInsets.only(top: 2.0),
       padding:
-          EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 10.0),
+          EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0, bottom: 15.0),
       child: Text(name,
           style: TextStyle(
             fontFamily: "SourceSansProBold",
@@ -109,9 +110,12 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         backgroundColor: Colors.white,
         bottomOpacity: 0.0,
         elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+        leading: Container(
+          padding: EdgeInsets.only(right: 8.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         actions: <Widget>[
           new IconButton(
@@ -264,37 +268,52 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
     }
   }
 
-  Widget displayImage(String Url) {
-    if (Url != null && Url.isNotEmpty) {
+  Widget displayImage(Outlet outlet) {
+    if (outlet != null && outlet.logoUrl != null && outlet.logoUrl.isNotEmpty) {
       return Container(
           height: 40.0,
           width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image:
-                  DecorationImage(fit: BoxFit.fill, image: NetworkImage(Url))));
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(
+              outlet.logoUrl,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
-          height: 40.0,
-          width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: AssetImage('assets/images/placeholder_all.png'))));
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder(outlet.outletName),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
     }
+  }
+
+  String outletPlaceholder(String name) {
+    Constants value = Constants();
+    var placeholder = value.getInitialWords(name);
+    return placeholder;
   }
 
   Widget displaySearchedList(
       AsyncSnapshot<List<FavouriteOutletsList>> snapShot, int index) {
     return Card(
-        margin: EdgeInsets.only(top: 1.0),
+        margin: EdgeInsets.only(top: 2.0),
         child: Container(
             color: Colors.white,
             child: ListTile(
                 focusColor: Colors.white,
-                contentPadding: EdgeInsets.only(left: 15.0, right: 10.0),
-                leading: displayImage(snapShot.data[index].outlet.logoUrl),
+                contentPadding: EdgeInsets.only(left: 15.0, right: 3.0),
+                leading: displayImage(snapShot.data[index].outlet),
                 title: RichText(
                   text: TextSpan(
                     children: highlightOccurrences(
@@ -308,6 +327,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                 ),
                 subtitle: Text(
                   snapShot.data[index].outlet.company.companyName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12.0,
                     color: greyText,
@@ -337,7 +358,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                       MaterialPageRoute(
                           builder: (context) => new MarketListPage(
                               snapShot.data[index].outlet.outletId,
-                              snapShot.data[index].outlet.outletName,null)));
+                              snapShot.data[index].outlet.outletName,
+                              null)));
                 })));
   }
 

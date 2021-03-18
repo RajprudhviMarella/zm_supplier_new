@@ -20,6 +20,7 @@ class ViewOrdersPage extends StatefulWidget {
   static const String tag = 'ViewOrdersPage';
 
   final outletId;
+
   ViewOrdersPage(this.outletId);
 
   @override
@@ -32,7 +33,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     with TickerProviderStateMixin {
   Widget appBarTitle = new Text(
     Constants.txt_orders,
-    style: new TextStyle(color: Colors.black),
+    style: new TextStyle(
+        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 18.0),
   );
   Icon icon = new Icon(
     Icons.search,
@@ -55,7 +57,9 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   String searchedString;
 
   final outletId;
+
   ViewOrdersDesign(this.outletId);
+
   @override
   void initState() {
     controller = new ScrollController()..addListener(_scrollListener);
@@ -112,9 +116,12 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         backgroundColor: Colors.white,
         bottomOpacity: 0.0,
         elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         actions: <Widget>[
           new IconButton(
@@ -166,7 +173,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                 snapShot.data.isNotEmpty) {
               isPageLoading = false;
               return SizedBox(
-                  height: MediaQuery.of(context).size.height - 100,
+                  height: MediaQuery.of(context).size.height - 85,
                   child: GroupedListView<Orders, DateTime>(
                     controller: controller,
                     elements: snapShot.data,
@@ -184,34 +191,27 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                             .compareTo(element2.getTimeCompare()),
                     floatingHeader: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
-                      height: 50,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: 10.0, top: 5.0, bottom: 5.0),
-                          height: 70.0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(children: <Widget>[
-                              Text(DateFormat('d MMM yyyy').format(element),
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.black,
-                                      fontFamily: "SourceSansProBold")),
-                              Text(" " + DateFormat('EEE').format(element),
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: greyText,
-                                      fontFamily: "SourceSansProRegular")),
-                            ]),
-                          ),
-                        ),
+                      margin: EdgeInsets.only(top: 4.0),
+                      height: 50.0,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15.0, top: 5.0),
+                        child: Row(children: <Widget>[
+                          Text(DateFormat('d MMM yyyy').format(element),
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.black,
+                                  fontFamily: "SourceSansProBold")),
+                          Text(" " + DateFormat('EEE').format(element),
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: greyText,
+                                  fontFamily: "SourceSansProRegular")),
+                        ]),
                       ),
                     ),
                     itemBuilder: (context, element) {
                       return Card(
-                          margin: EdgeInsets.only(top: 1.0),
+                          margin: EdgeInsets.only(top: 2.0),
                           child: Container(
                               color: Colors.white,
                               child: ListTile(
@@ -223,7 +223,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                                     bottom: 10.0,
                                     left: 15.0,
                                     right: 10.0),
-                                leading: displayImage(element.outlet.logoURL),
+                                leading: displayImage(element.outlet),
                                 title: Text(
                                   element.outlet.outletName,
                                   style: TextStyle(
@@ -235,7 +235,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                                 // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
                                 subtitle: Container(
-                                  margin: EdgeInsets.only(top: 3.0),
+                                  margin: EdgeInsets.only(top: 2.0),
                                   child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -297,24 +297,33 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     });
   }
 
-  Widget displayImage(String Url) {
-    if (Url != null && Url.isNotEmpty) {
+  Widget displayImage(Outlet outlet) {
+    if (outlet != null && outlet.logoURL != null && outlet.logoURL.isNotEmpty) {
       return Container(
           height: 40.0,
           width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image:
-                  DecorationImage(fit: BoxFit.fill, image: NetworkImage(Url))));
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(
+              outlet.logoURL,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
-          height: 40.0,
-          width: 40.0,
-          decoration: new BoxDecoration(
-              shape: BoxShape.rectangle,
-              image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: AssetImage('assets/images/placeholder_all.png'))));
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder(outlet.outletName),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
     }
   }
 
@@ -389,10 +398,14 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     }
   }
 
+  String outletPlaceholder(String name) {
+    Constants value = Constants();
+    var placeholder = value.getInitialWords(name);
+    return placeholder;
+  }
+
   moveToOrderDetailsPage(Orders element) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => new OrderDetailsPage(element)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
 }

@@ -41,7 +41,8 @@ class InvoicesState extends State<InvoicesPage> {
     'outlet',
     'invoiceId',
     'paymentDueDate',
-    'totalCharge'
+    'totalCharge',
+    'paymentStatus'
   ];
   bool isFilterApplied = false;
   List<String> selectedFilters = [];
@@ -105,7 +106,7 @@ class InvoicesState extends State<InvoicesPage> {
       floatingActionButton: Stack(
         children: [
           Container(
-            width: 130,
+            width: selectedFilters.length > 0 ? 150:130,
             child: new FloatingActionButton.extended(
               backgroundColor: buttonBlue,
               foregroundColor: Colors.white,
@@ -146,7 +147,7 @@ class InvoicesState extends State<InvoicesPage> {
   Widget filterCount() {
     if (selectedFilters.length > 0) {
       return Padding(
-        padding: const EdgeInsets.only(left: 105.0, top: 15),
+        padding: const EdgeInsets.only(left: 115.0, top: 15),
         child: Container(
           width: 20,
           height: 20,
@@ -266,9 +267,10 @@ class InvoicesState extends State<InvoicesPage> {
                 snapShot.data.isNotEmpty) {
               // isPageLoading = false;
               return SizedBox(
-                  height: MediaQuery.of(context).size.height - (height + 120),
+                  height: MediaQuery.of(context).size.height - (height + 100),
                   child: GroupedListView<Invoices, DateTime>(
                     // controller: controller,
+
                     elements: snapShot.data,
                     physics: BouncingScrollPhysics(),
                     order: GroupedListOrder.DESC,
@@ -372,6 +374,7 @@ class InvoicesState extends State<InvoicesPage> {
                             height: 1.5,
                             color: faintGrey,
                           )
+
                         ],
                       );
                     },
@@ -418,7 +421,7 @@ class InvoicesState extends State<InvoicesPage> {
   }
 
   Widget checkPaymentStatus(Invoices inv) {
-    if (inv.status == 'Paid') {
+    if (inv.paymentStatus == 'Paid') {
      return Text('Paid', style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProRegular', color: lightGreen),);
     } else {
       if (inv.paymentDueDate != null) {
@@ -437,6 +440,11 @@ class InvoicesState extends State<InvoicesPage> {
   }
 
   bool isExpired(Invoices inv) {
+
+    if (inv.paymentStatus == 'Paid') {
+      return false;
+    }
+
     if (inv.paymentDueDate != null) {
       final now = DateTime.now();
       final expirationDate = inv.getPaymentDueDate();

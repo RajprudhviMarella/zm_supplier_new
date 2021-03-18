@@ -94,7 +94,7 @@ class OutletMarketList {
   List<Certifications> certifications;
   int timePriceUpdated;
   Color bgColor = faintGrey;
-  Color txtColor = Colors.blue;
+  Color txtColor = buttonBlue;
 
   var txtSize = 30.0;
 

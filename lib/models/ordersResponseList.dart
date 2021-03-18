@@ -102,7 +102,7 @@ class Orders {
   String getTimeDelivered() {
     DateTime dateTime =
         new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
-    return DateFormat('EEE, d MMM').format(dateTime);
+    return DateFormat('EEE d MMM').format(dateTime);
   }
 
   String getDeliveryDay() {
@@ -740,16 +740,19 @@ class DeliveryFee {
   int amount;
   var amountV1;
 
-  double getAmount() {
+  RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
+  dynamic getAmount() {
     if (amountV1 == null) {
       return 0.0;
     } else {
-      return amountV1;
+      return amountV1.toStringAsFixed(2).replaceAllMapped(
+          reg, (Match m) => '${m[1]},');
     }
   }
 
   String getDisplayValue() {
-    double amt = getAmount();
+    dynamic amt = getAmount();
     return "\$$amt";
   }
 

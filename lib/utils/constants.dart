@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -27,15 +28,17 @@ class Constants {
   static const String txt_ok = "OK";
   static const String txt_cancel = "Cancel";
   static const String txt_confirm_logout = "Are you sure you want to sign out?";
+  static const String txt_delete_draft = "Are you sure you want to delete the order?";
   static const String txt_place_this_order = "Place this order now?";
   static const String txt_select_from = "Change profile photo";
   static const String txt_take_photo = "Take photo";
   static const String txt_select_library = "Select from library";
 
   static const String txt_login = "Login";
-  static const String txt_reset_password = "Reset Password";
-  static const String txt_alert_message = "please enter valid email/password";
-  static const String txt_alert_email_message = "please enter valid email";
+  static const String invalid_details = 'Invalid email/password';
+  static const String txt_reset_password = "Invalid email address";
+  static const String txt_alert_message = "Please correct any mistakes and try again";
+  static const String txt_please_try_again = "Please try again";
   static const String login_Info = "loginInfo";
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
   static const String specific_user_info = "specificUserInfo";
@@ -97,7 +100,7 @@ class Constants {
     String status = orders.orderStatus;
     if (status == "Approving") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -118,7 +121,7 @@ class Constants {
       );
     } else if (status == "Cancelling") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -139,7 +142,7 @@ class Constants {
       );
     } else if (status == "Creating") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -160,7 +163,7 @@ class Constants {
       );
     } else if (status == "Rejecting") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: keyLineGrey,
           border: Border.all(
@@ -181,7 +184,7 @@ class Constants {
       );
     } else if (status == "Draft") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: chartBlue,
           border: Border.all(
@@ -202,7 +205,7 @@ class Constants {
       );
     } else if (status == "Created" || status == "PendingPayment") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: yellow,
           border: Border.all(
@@ -224,7 +227,7 @@ class Constants {
     } else if (status == "Placed" ||
         (orders.isInvoiced != null && orders.isInvoiced)) {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: green,
           border: Border.all(
@@ -248,7 +251,7 @@ class Constants {
         status == "Rejected" ||
         status == "Void") {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(
@@ -269,7 +272,7 @@ class Constants {
       );
     } else {
       return Container(
-        margin: EdgeInsets.only(top: 3),
+        margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
           color: pinkyRed,
           border: Border.all(
@@ -307,6 +310,13 @@ class Constants {
       bank_account_name.isNotEmpty
           ? bank_account_name.trim().split(' ').map((l) => l[0]).take(2).join()
           : '';
+
+  static Future<Mixpanel> initMixPanel() async {
+    //below is the project token from mixpanel.
+    Mixpanel mixPanel = await Mixpanel.init("b82a8f3697de395f8a83ff6c3949947f",
+        optOutTrackingDefault: false);
+    return mixPanel;
+  }
 }
 
 class SharedPref {
