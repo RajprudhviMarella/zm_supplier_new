@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/invoices/invoices_page.dart';
 import 'package:zm_supplier/models/buyerUserResponse.dart';
@@ -9,6 +10,7 @@ import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletResponse.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
 import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -16,6 +18,8 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
+
 
 class CustomerDetailsPage extends StatefulWidget {
   final outletName;
@@ -492,182 +496,226 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return new Column(children: <Widget>[
-                      ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Text(
-                              snapshot.data[index].outlet.outletName,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "SourceSansProSemiBold"),
+
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData &&
+                    snapshot.data.isNotEmpty) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return new Column(children: <Widget>[
+                        ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Text(
+                                snapshot.data[index].outlet.outletName,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: "SourceSansProSemiBold"),
+                              ),
                             ),
-                          ),
-                          //  isThreeLine: true,
+                            //  isThreeLine: true,
 
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    ImageIcon(
-                                      AssetImage(
-                                          "assets/images/Truck-black.png"),
-                                      size: 14,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      readTimestamp(
-                                          snapshot.data[index].timeDelivered),
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: "SourceSansProRegular",
-                                          color: Colors.black),
-                                    ),
-                                    SizedBox(width: 5),
-                                    Flexible(
-                                      child: Text(snapshot.data[index].orderId,
-                                          style: TextStyle(
-                                              fontSize: 12.0,
-                                              fontFamily:
-                                                  "SourceSansProRegular",
-                                              color: greyText),
-                                          maxLines: 1),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 2.0, bottom: 10),
-                                  child: Container(
-                                    height: (snapshot.data[index].orderStatus ==
-                                                "Void" ||
-                                            snapshot.data[index].orderStatus ==
-                                                "Cancelled" ||
-                                            snapshot.data[index].orderStatus ==
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      ImageIcon(
+                                        AssetImage(
+                                            "assets/images/Truck-black.png"),
+                                        size: 14,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        readTimestamp(
+                                            snapshot.data[index].timeDelivered),
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: "SourceSansProRegular",
+                                            color: Colors.black),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Flexible(
+                                        child: Text(
+                                            snapshot.data[index].orderId,
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontFamily:
+                                                "SourceSansProRegular",
+                                                color: greyText),
+                                            maxLines: 1),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 2.0, bottom: 10),
+                                    child: Container(
+                                      height: (snapshot.data[index]
+                                          .orderStatus ==
+                                          "Void" ||
+                                          snapshot.data[index].orderStatus ==
+                                              "Cancelled" ||
+                                          snapshot.data[index].orderStatus ==
+                                              "Invoiced")
+                                          ? 20
+                                          : 0,
+                                      //  margin: EdgeInsets.symmetric(horizontal: 5.0),
+
+                                      // color: Colors.blue,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: (snapshot.data[index]
+                                                .orderStatus ==
+                                                "Void")
+                                                ? 50
+                                                : 0,
+                                            margin:
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
+
+                                            decoration: BoxDecoration(
+                                                color: warningRed,
+                                                // border: Border.all(
+                                                //   color: Colors.red[500],
+                                                // ),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
+                                            child: Center(
+                                              child: Text(
+                                                '  Voided  '.toUpperCase(),
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                    fontFamily:
+                                                    "SourceSansProSemiBold"),
+                                              ),
+                                            ),
+                                            //  color: Colors.grey,
+                                          ),
+                                          Container(
+                                            width: (snapshot.data[index]
+                                                .orderStatus ==
+                                                "Cancelled")
+                                                ? 70
+                                                : 0,
+                                            margin:
+                                            EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                            decoration: BoxDecoration(
+                                                color: warningRed,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
+                                            child: Center(
+                                              child: Text(
+                                                '  cancelled  '.toUpperCase(),
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                    "SourceSansProSemiBold"),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: (snapshot.data[index]
+                                                .orderStatus ==
                                                 "Invoiced")
-                                        ? 20
-                                        : 0,
-                                    //  margin: EdgeInsets.symmetric(horizontal: 5.0),
-
-                                    // color: Colors.blue,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: (snapshot.data[index]
-                                                      .orderStatus ==
-                                                  "Void")
-                                              ? 50
-                                              : 0,
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 0, 10, 0),
-
-                                          decoration: BoxDecoration(
-                                              color: warningRed,
-                                              // border: Border.all(
-                                              //   color: Colors.red[500],
-                                              // ),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10))),
-                                          child: Center(
+                                                ? 50
+                                                : 0,
+                                            decoration: BoxDecoration(
+                                                color: lightGreen,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
                                             child: Text(
-                                              '  Voided  '.toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 10,
-                                                  fontFamily:
-                                                      "SourceSansProSemiBold"),
-                                            ),
-                                          ),
-                                          //  color: Colors.grey,
-                                        ),
-                                        Container(
-                                          width: (snapshot.data[index]
-                                                      .orderStatus ==
-                                                  "Cancelled")
-                                              ? 70
-                                              : 0,
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                          decoration: BoxDecoration(
-                                              color: warningRed,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10))),
-                                          child: Center(
-                                            child: Text(
-                                              '  cancelled  '.toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      "SourceSansProSemiBold"),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: (snapshot.data[index]
-                                                      .orderStatus ==
-                                                  "Invoiced")
-                                              ? 50
-                                              : 0,
-                                          decoration: BoxDecoration(
-                                              color: lightGreen,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10))),
-                                          child: Text(
-                                              '  Invoiced  '.toUpperCase(),
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      "SourceSansProSemiBold")),
-                                          // color: Colors.pink,
-                                        )
-                                      ],
+                                                '  Invoiced  '.toUpperCase(),
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                    "SourceSansProSemiBold")),
+                                            // color: Colors.pink,
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
+                              ),
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                    snapshot.data[index].amount.total
+                                        .getDisplayValue(),
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                        fontFamily: "SourceSansProRegular")),
                               ],
                             ),
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                  snapshot.data[index].amount.total
-                                      .getDisplayValue(),
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                      fontFamily: "SourceSansProRegular")),
-                            ],
-                          ),
 
-                          //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                          leading: leadingImage(snapshot.data[index]),
-                          tileColor: Colors.white,
-                          onTap: () {}),
-                      Divider(
-                        height: 1.5,
-                        color: faintGrey,
-                      ),
-                    ]);
-                  },
-                );
+                            //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
+                            leading: leadingImage(snapshot.data[index]),
+                            tileColor: Colors.white,
+                            onTap: () {
+                              moveToOrderDetailsPage(snapshot.data[index]);
+                            }),
+                        Divider(
+                          height: 1.5,
+                          color: faintGrey,
+                        ),
+                      ]);
+                    },
+                  );
+                } else {
+                  return Container(
+                    color: Colors.white,
+                    height: 230,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Image(
+                            image: new AssetImage(
+                                'assets/images/no_orders_icon.png'),
+                            width: 70,
+                            height: 70,
+                            color: null,
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.center,
+                          ),
+                        ),
+                        // ImageIcon(AssetImage('assets/images/orders_icon.png')),
+                        SizedBox(height: 10),
+                        Text(
+                          'No orders in past 3 months',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'SourceSansProRegular', color: greyText),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               }
             }),
       ],
     );
+  }
+
+  moveToOrderDetailsPage(Orders element) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
 
   String timestamp(int timestamp) {
@@ -903,120 +951,54 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   Widget showActionSheet(String email) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text(email,
-            style: TextStyle(
-                color: greyText,
-                fontSize: 14,
-                fontFamily: 'SourceSansProSemiBold')),
-        // message: const Text('Your options are '),
-        actions: <Widget>[
-          // CupertinoActionSheetAction(
-          //   child: Text('Email',
-          //       style: TextStyle(
-          //           color: buttonBlue,
-          //           fontSize: 20,
-          //           fontFamily: 'SourceSansProRegular')),
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
-          // CupertinoActionSheetAction(
-          //   child: Text('Email using Gmail',
-          //       style: TextStyle(
-          //           color: buttonBlue,
-          //           fontSize: 20,
-          //           fontFamily: 'SourceSansProRegular')),
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
-          CupertinoActionSheetAction(
-            child: Text('Copy address',
-                style: TextStyle(
-                    color: buttonBlue,
-                    fontSize: 20,
-                    fontFamily: 'SourceSansProRegular')),
-            onPressed: () {
-              Clipboard.setData(new ClipboardData(text: email));
-              Navigator.pop(context);
-            },
-          )
-        ],
 
-        cancelButton: CupertinoActionSheetAction(
-          child: Text('Cancel',
-              style: TextStyle(
-                  color: buttonBlue,
-                  fontSize: 20,
-                  fontFamily: 'SourceSansProSemiBold')),
-          isDefaultAction: true,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+
+    showAdaptiveActionSheet(
+      context: context,
+      title: Text(email, style: TextStyle(
+          color: greyText,
+          fontSize: 14,
+          fontFamily: 'SourceSansProSemiBold')),
+      actions: <BottomSheetAction>[
+        // BottomSheetAction(title: const Text('Email'), onPressed: () {}),
+        // BottomSheetAction(title: const Text('Email using Gmail'), onPressed: () {}),
+        BottomSheetAction(title: Text('Copy address', style: TextStyle(
+            color: buttonBlue,
+            fontSize: 20,
+            fontFamily: 'SourceSansProRegular')), onPressed: () {
+          Clipboard.setData(new ClipboardData(text: email));
+          Navigator.of(context, rootNavigator: true).pop();
+        }),
+      ],
+      cancelAction: CancelAction(title: Text('Cancel',style: TextStyle(
+          color: buttonBlue,
+          fontSize: 20,
+          fontFamily: 'SourceSansProSemiBold'))),// onPressed parameter is optional by default will dismiss the ActionSheet
     );
   }
 
   Widget showActionSheetPhone(String phone) {
-    showCupertinoModalPopup(
+    showAdaptiveActionSheet(
       context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text(phone,
-            style: TextStyle(
-                color: greyText,
-                fontSize: 14,
-                fontFamily: 'SourceSansProSemiBold')),
-        // message: const Text('Your options are '),
-        actions: <Widget>[
-          // CupertinoActionSheetAction(
-          //   child: Text('Call',
-          //       style: TextStyle(
-          //           color: buttonBlue,
-          //           fontSize: 20,
-          //           fontFamily: 'SourceSansProRegular')),
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
-          // CupertinoActionSheetAction(
-          //   child: Text('Message',
-          //       style: TextStyle(
-          //           color: buttonBlue,
-          //           fontSize: 20,
-          //           fontFamily: 'SourceSansProRegular')),
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
-          CupertinoActionSheetAction(
-            child: Text('Copy number',
-                style: TextStyle(
+      title: Text(phone, style: TextStyle(
+                    color: greyText,
+                    fontSize: 14,
+                    fontFamily: 'SourceSansProSemiBold')),
+      actions: <BottomSheetAction>[
+        // BottomSheetAction(title: const Text('Call'), onPressed: () {}),
+        // BottomSheetAction(title: const Text('Message'), onPressed: () {}),
+        BottomSheetAction(title: Text('Copy number', style: TextStyle(
                     color: buttonBlue,
                     fontSize: 20,
-                    fontFamily: 'SourceSansProRegular')),
-            onPressed: () {
-              Clipboard.setData(new ClipboardData(text: phone));
-              Navigator.pop(context);
-            },
-          )
-        ],
-
-        cancelButton: CupertinoActionSheetAction(
-          child: Text('Cancel',
-              style: TextStyle(
+                    fontFamily: 'SourceSansProRegular')), onPressed: () {
+          Clipboard.setData(new ClipboardData(text: phone));
+          Navigator.of(context, rootNavigator: true).pop();
+        }),
+      ],
+      cancelAction: CancelAction(title: Text('Cancel',style: TextStyle(
                   color: buttonBlue,
                   fontSize: 20,
-                  fontFamily: 'SourceSansProSemiBold')),
-          isDefaultAction: true,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+                  fontFamily: 'SourceSansProSemiBold'))),// onPressed parameter is optional by default will dismiss the ActionSheet
     );
   }
 

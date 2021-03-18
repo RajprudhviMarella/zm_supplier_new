@@ -70,6 +70,7 @@ class Invoices {
     this.invoiceId,
     this.status,
     this.ocrStatus,
+    this.paymentStatus,
     this.outlet,
     this.supplier,
     this.invoiceNum,
@@ -88,6 +89,7 @@ class Invoices {
   String invoiceId;
   String status;
   String ocrStatus;
+  String paymentStatus;
   Outlet outlet;
   Supplier supplier;
   String invoiceNum;
@@ -106,6 +108,7 @@ class Invoices {
     invoiceId: json["invoiceId"],
     status: json["status"],
     ocrStatus: json["ocrStatus"],
+    paymentStatus: json["paymentStatus"],
     outlet: Outlet.fromJson(json["outlet"]),
     supplier: Supplier.fromJson(json["supplier"]),
     invoiceNum: json["invoiceNum"],
@@ -125,6 +128,7 @@ class Invoices {
     "invoiceId": invoiceId,
     "status": status,
     "ocrStatus": ocrStatus,
+    "paymentStatus": paymentStatus,
     "outlet": outlet.toJson(),
     "supplier": supplier.toJson(),
     "invoiceNum": invoiceNum,
@@ -193,11 +197,14 @@ class TotalCharge {
   int amount;
   dynamic amountV1;
 
+  RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
   dynamic getAmount() {
     if (amountV1 == null) {
       return 0.0;
     } else {
-      return amountV1;
+      return amountV1.toStringAsFixed(2).replaceAllMapped(
+          reg, (Match m) => '${m[1]},');
     }
   }
 

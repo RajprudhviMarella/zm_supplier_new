@@ -9,6 +9,7 @@ import 'package:zm_supplier/models/customersResponse.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/SearchOrders.dart';
+import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 
@@ -80,7 +81,6 @@ class CustomerState extends State<CustomersPage> {
     customerDataList = customersReportResponse.data;
     if (isUpdating) {
       setState(() {
-
         customersData = updateData(customerDataList);
       });
     }
@@ -151,8 +151,23 @@ class CustomerState extends State<CustomersPage> {
     double height = MediaQuery.of(context).size.height;
     return new Scaffold(
       appBar: new AppBar(
+        toolbarHeight: 70,
         centerTitle: false,
-        title: appBarTitle,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 18.0),
+          child: Row(
+            children: [
+              Text(
+                "Customers",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: "SourceSansProBold",
+                    fontSize: 30),
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+        ),
         backgroundColor: faintGrey,
         elevation: 0,
       ),
@@ -170,7 +185,7 @@ class CustomerState extends State<CustomersPage> {
 
   Widget buildSearchBar(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(5.0),
+        padding: EdgeInsets.only(top: 5.0),
         color: faintGrey,
         height: 60,
         child: ListTile(
@@ -187,6 +202,8 @@ class CustomerState extends State<CustomersPage> {
             child: TextField(
               cursorColor: Colors.blue,
               maxLines: null,
+
+              focusNode: AlwaysDisabledFocusNode(),
               textInputAction: TextInputAction.go,
               // controller: _controller,
               // onSubmitted: searchOperation,
@@ -222,43 +239,83 @@ class CustomerState extends State<CustomersPage> {
 
   Widget Headers() {
     return Padding(
-      padding: const EdgeInsets.only(left: 21.0, right: 21, top: 20),
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Outlets',
-              style: TextStyle(fontSize: 18, fontFamily: "SourceSansProBold"),
-            ),
-            new RaisedButton(
-              color: Colors.transparent,
-              elevation: 0,
-              onPressed: () {},
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Image.asset(
-                    "assets/images/Sort-blue.png",
-                    width: 12,
-                    height: 12,
+        padding: const EdgeInsets.only(left: 17.0, right: 3, top: 20),
+        child: Container(
+          height: 50,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LeftRightAlign(
+                  left: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+
+                      'Outlets',
+                      style: TextStyle(fontSize: 18, fontFamily: "SourceSansProBold"),
+                    ),
                   ),
-                  SizedBox(width: 5),
-                  new Text(
-                    'Recently ordered',
-                    style: TextStyle(
-                        color: buttonBlue,
-                        fontSize: 12,
-                        fontFamily: 'SourceSansProRegular'),
+                  right: new RaisedButton(
+                    color: Colors.transparent,
+                    elevation: 0,
+                    onPressed: () {},
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Image.asset(
+                          "assets/images/Sort-blue.png",
+                          width: 12,
+                          height: 12,
+                        ),
+                        SizedBox(width: 5),
+                        new Text(
+                          'Recently ordered',
+                          style: TextStyle(
+                              color: buttonBlue,
+                              fontSize: 12,
+                              fontFamily: 'SourceSansProRegular'),
+                        ),
+                      ],
+                    ),
+                  )
+
+                  // child: Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Text(
+                  //       'Outlets',
+                  //       style: TextStyle(fontSize: 18, fontFamily: "SourceSansProBold"),
+                  //     ),
+                  //     new RaisedButton(
+                  //       color: Colors.transparent,
+                  //       elevation: 0,
+                  //       onPressed: () {},
+                  //       child: new Row(
+                  //         mainAxisAlignment: MainAxisAlignment.center,
+                  //         mainAxisSize: MainAxisSize.min,
+                  //         children: <Widget>[
+                  //           Image.asset(
+                  //             "assets/images/Sort-blue.png",
+                  //             width: 12,
+                  //             height: 12,
+                  //           ),
+                  //           SizedBox(width: 5),
+                  //           new Text(
+                  //             'Recently ordered',
+                  //             style: TextStyle(
+                  //                 color: buttonBlue,
+                  //                 fontSize: 12,
+                  //                 fontFamily: 'SourceSansProRegular'),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+            ],
+          ),
+        ));
   }
 
   Widget bannerList() {
@@ -429,10 +486,11 @@ class CustomerState extends State<CustomersPage> {
                                         fontSize: 12,
                                         fontFamily: 'SourceSansProRegular',
                                         color: timeDiff(snapshot
-                                                    .data
-                                                    .outlets[index]
-                                                    .lastOrdered) >
-                                                30
+                                                        .data
+                                                        .outlets[index]
+                                                        .lastOrdered) >
+                                                    30 ||
+                                                selectedIndex == 4
                                             ? warningRed
                                             : greyText),
                                   ),
@@ -441,7 +499,6 @@ class CustomerState extends State<CustomersPage> {
 
                           //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
                           leading: leadingImage(snapshot.data.outlets[index]),
-
                           trailing: IconButton(
                               icon: snapshot.data.outlets[index].isFavourite
                                   ? Image(
@@ -506,9 +563,11 @@ class CustomerState extends State<CustomersPage> {
           width: 40.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
-            child: Image.network(customer.outlet.logoURL, fit: BoxFit.fill,),
-          )
-      );
+            child: Image.network(
+              customer.outlet.logoURL,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
         height: 38,
@@ -566,4 +625,9 @@ class CustomerState extends State<CustomersPage> {
     var placeholder = value.getInitialWords(name);
     return placeholder;
   }
+}
+
+class AlwaysDisabledFocusNode extends FocusNode {
+  @override
+  bool get hasFocus => false;
 }
