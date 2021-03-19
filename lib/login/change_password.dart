@@ -217,7 +217,7 @@ class ChangePasswordDesign extends State<ChangePassword>
           obscureText: _currentPasswordToggle,
           // obscureText: true,
 
-          style: TextStyle(fontSize: 20, height: 1),
+          style: TextStyle(fontSize: 20, height: 1,fontFamily: "SourceSansProRegular"),
 
           //  cursorColor: Color(0xff999999),
           decoration: InputDecoration(
@@ -283,7 +283,7 @@ class ChangePasswordDesign extends State<ChangePassword>
           obscureText: _newPasswordToggle,
           // obscureText: true,
 
-          style: TextStyle(fontSize: 20, height: 1),
+          style: TextStyle(fontSize: 20, height: 1,fontFamily: "SourceSansProRegular"),
 
           //  cursorColor: Color(0xff999999),
           decoration: InputDecoration(
@@ -354,7 +354,7 @@ class ChangePasswordDesign extends State<ChangePassword>
           obscureText: _newPasswordAgainToggle,
           // obscureText: true,
 
-          style: TextStyle(fontSize: 20, height: 1),
+          style: TextStyle(fontSize: 20, height: 1,fontFamily: "SourceSansProRegular"),
 
           //  cursorColor: Color(0xff999999),
           decoration: InputDecoration(

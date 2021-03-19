@@ -22,6 +22,8 @@ import 'package:http_parser/http_parser.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
+import '../utils/color.dart';
+
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
  */
@@ -76,44 +78,44 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
               menuItem(
                   context,
                   Constants.txt_change_password,
-                  Icon(Icons.lock_outline_rounded, color: Colors.grey),
+                  ImageIcon(AssetImage('assets/images/icon_lock.png'),color: grey_text),
                   1.0,
                   Colors.black),
               Headers(context, Constants.txt_support, 18.0),
               menuItem(
                   context,
                   Constants.txt_help,
-                  Icon(Icons.help_outline_rounded, color: Colors.grey),
+                  ImageIcon(AssetImage('assets/images/icon_help.png'),color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_ask_zeemart,
-                  Icon(Icons.message_outlined, color: Colors.grey),
+                  ImageIcon(AssetImage('assets/images/icon_chat.png'),color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_send_feed_back,
-                  Icon(Icons.thumb_up_alt_outlined, color: Colors.grey),
+                  ImageIcon(AssetImage('assets/images/icon_feedback.png'),color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_terms_of_use,
-                  Icon(Icons.contact_page_outlined, color: Colors.grey),
+                  ImageIcon(AssetImage('assets/images/icon_terms.png'),color: grey_text),
                   20.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_privacy_policy,
-                  Icon(Icons.privacy_tip_outlined, color: Colors.grey),
+                  ImageIcon(AssetImage('assets/images/icon_privacy.png'),color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_log_out,
-                  Icon(Icons.lock_outline_rounded, color: Colors.pinkAccent),
+                  ImageIcon(AssetImage('assets/images/icon_signout.png'),color: Colors.pinkAccent),
                   20.0,
                   Colors.pinkAccent),
             ],
@@ -125,7 +127,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     return Container(
       color: Colors.white,
       width: MediaQuery.of(context).size.width,
-      height: 100.0,
+      height: 82.0,
       padding: EdgeInsets.all(20.0),
       child: Row(
         children: <Widget>[
@@ -136,14 +138,15 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                 children: <Widget>[
                   Text(_userID,
                       style: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 18.0,
                           color: Colors.black,
-                          fontFamily: 'SourceSansProSemiBold')),
+                          fontFamily: 'SourceSansProBold')),
                   Text(_email,
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 14.0,
                         color: greyText,
-                        // fontFamily: 'AvenirMedium'
+
+                        fontFamily: 'SourceSansProRegular'
                       ))
                 ],
               )),
@@ -170,7 +173,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     return Container(
       color: faintGrey,
       margin: EdgeInsets.only(top: 2.0),
-      padding: EdgeInsets.all(20.0),
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
       child: Text(name,
           style: TextStyle(
             fontFamily: "SourceSansProBold",
@@ -179,7 +182,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget menuItem(context, String name, Icon icon, double margin, Color color) {
+  Widget menuItem(context, String name, ImageIcon icon, double margin, Color color) {
     return InkWell(
       onTap: () => onItemSelect(name, context),
       child: Container(
@@ -198,7 +201,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: EdgeInsets.only(left: 15.0),
+                padding: EdgeInsets.only(left: 5.0),
                 child: Text(name,
                     style: TextStyle(
                       color: color,
