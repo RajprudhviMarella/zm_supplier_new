@@ -35,6 +35,8 @@ class ActivityState extends State<OrderActivityPage> {
   Future<List<ActivityData>> activityList;
   List<ActivityData> arrayActivityList;
 
+  List<Step> steps = [];
+
   SharedPref sharedPref = SharedPref();
 
   @override
@@ -46,7 +48,7 @@ class ActivityState extends State<OrderActivityPage> {
 
   Future<List<ActivityData>> _retriveActivityHistory() async {
     LoginResponse user =
-        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -84,33 +86,26 @@ class ActivityState extends State<OrderActivityPage> {
 
     arrayActivityList = activityRespone.data;
     print(arrayActivityList.length);
+    // stepper();
     return arrayActivityList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: faintGrey,
-      appBar: AppBar(
-        centerTitle: true,
-        title: appBarTitle,
-        backgroundColor: Colors.white,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: ListView(
-        children: <Widget>[
-          SizedBox(
-            height: 20,
+        backgroundColor: faintGrey,
+        appBar: AppBar(
+          centerTitle: true,
+          title: appBarTitle,
+          backgroundColor: Colors.white,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          activityInfo()
-          // displayList(context),
-        ],
-      ),
+        ),
+        body: activityInfo()
     );
   }
 
@@ -137,115 +132,178 @@ class ActivityState extends State<OrderActivityPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('failed to load'));
           } else {
+
+            steps = [];
+
+            for (var i = 0; i < arrayActivityList.length; i++) {
+              Step step =  Step(
+                title: Text(
+                  snapshot.data[i].activityMessage,
+                  style: TextStyle(
+                      fontSize: (i == 0) ? 18 : 16,
+                      fontFamily: (i == 0)
+                          ? "SourceSansProBold"
+                          : "SourceSansProRegular"),
+                ),
+                isActive: true,
+                state: StepState.complete,
+                content: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          readTimestamp(
+                              snapshot.data[i].timeActivity),
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: "SourceSansProRegular",
+                              color: greyText),
+                        ),
+                      ],
+                    ),
+
+                    checkRemark(snapshot.data[i]),
+                    checkActivityUser(snapshot.data[i])
+
+                  ],
+                ),
+              );
+              steps.add(step);
+            }
+            // return Column(children: <Widget>[
+            //    Expanded(
+            //      child: Stepper(
+            //        steps: steps,
+            //      ),
+            //    ),
+            //  ]);
+
+            return Stepper(
+                controlsBuilder: (BuildContext context,
+                    {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+                  return Row(
+                    children: <Widget>[
+                      Container(
+                        child: null,
+                      ),
+                      Container(
+                        child: null,
+                      ),
+                    ],
+                  );
+                },
+                steps: steps
+            );
             // if (snapshot.data == null) {
             //   return Center(child: Text('loading...'),);
             // } else {
             //   child:
-            return ListView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return new Column(children: <Widget>[
-                    // Theme(
-                    //   data: ThemeData(canvasColor: Colors.lightBlue),
-                    //   child: Container(
-                    //     // color: Colors.yellow,
-                    //     child: Stepper(
-                    //       controlsBuilder: (BuildContext context,
-                    //               {VoidCallback onStepContinue,
-                    //               VoidCallback onStepCancel}) =>
-                    //           Container(height: 0,),
-                    //       type: StepperType.vertical,
-                    //       physics: ClampingScrollPhysics(),
-                    //       steps: [
-                    //         Step(
-                    //
-                    //           isActive: (index == 0) ? true : false,
-                    //
-                    //           title: Column(
-                    //             children: [
-                    //               Text(snapshot.data[index].activityMessage),
-                    //             ],
-                    //           ),
-                    //
-                    //           subtitle: Text('yes'),
-                    //           content: Column(
-                    //             children: [
-                    //               Row(
-                    //                 children: [
-                    //                   Text(
-                    //                     readTimestamp(
-                    //                         snapshot.data[index].timeActivity),
-                    //                     textAlign: TextAlign.left,
-                    //                     style: TextStyle(
-                    //                         fontSize: 12,
-                    //                         fontFamily: "SourceSansProRegular",
-                    //                         color: greyText),
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //               Row(
-                    //                 children: [
-                    //                   Text(
-                    //                     snapshot
-                    //                         .data[index].activityUser.firstName,
-                    //                     style: TextStyle(
-                    //                         fontSize: 12,
-                    //                         fontFamily: "SourceSansProRegular",
-                    //                         color: greyText),
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ],
-                    //           ),
-                    //
-                    //
-                    //         )
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-
-                    ListTile(
-                      tileColor: Colors.white,
-                      title: Padding(
-                        padding: const EdgeInsets.only(top: 10.0, left: 20),
-                        child: Text(
-                          snapshot.data[index].activityMessage,
-                          style: TextStyle(
-                              fontSize: (index == 0) ? 18 : 16,
-                              fontFamily: (index == 0)
-                                  ? "SourceSansProBold"
-                                  : "SourceSansProRegular"),
-                        ),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  readTimestamp(
-                                      snapshot.data[index].timeActivity),
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontFamily: "SourceSansProRegular",
-                                      color: greyText),
-                                ),
-                              ],
-                            ),
-
-                            checkRemark(snapshot.data[index]),
-                            checkActivityUser(snapshot.data[index])
-
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]);
-                });
+            // return ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: snapshot.data.length,
+            //     itemBuilder: (BuildContext context, int index) {
+            //       return new Column(children: <Widget>[
+            //         // Theme(
+            //         //   data: ThemeData(canvasColor: Colors.lightBlue),
+            //         //   child: Container(
+            //         //     // color: Colors.yellow,
+            //         //     child: Stepper(
+            //         //       controlsBuilder: (BuildContext context,
+            //         //               {VoidCallback onStepContinue,
+            //         //               VoidCallback onStepCancel}) =>
+            //         //           Container(height: 0,),
+            //         //       type: StepperType.vertical,
+            //         //       physics: ClampingScrollPhysics(),
+            //         //       steps: [
+            //         //         Step(
+            //         //
+            //         //           isActive: (index == 0) ? true : false,
+            //         //
+            //         //           title: Column(
+            //         //             children: [
+            //         //               Text(snapshot.data[index].activityMessage),
+            //         //             ],
+            //         //           ),
+            //         //
+            //         //           subtitle: Text('yes'),
+            //         //           content: Column(
+            //         //             children: [
+            //         //               Row(
+            //         //                 children: [
+            //         //                   Text(
+            //         //                     readTimestamp(
+            //         //                         snapshot.data[index].timeActivity),
+            //         //                     textAlign: TextAlign.left,
+            //         //                     style: TextStyle(
+            //         //                         fontSize: 12,
+            //         //                         fontFamily: "SourceSansProRegular",
+            //         //                         color: greyText),
+            //         //                   ),
+            //         //                 ],
+            //         //               ),
+            //         //               Row(
+            //         //                 children: [
+            //         //                   Text(
+            //         //                     snapshot
+            //         //                         .data[index].activityUser.firstName,
+            //         //                     style: TextStyle(
+            //         //                         fontSize: 12,
+            //         //                         fontFamily: "SourceSansProRegular",
+            //         //                         color: greyText),
+            //         //                   ),
+            //         //                 ],
+            //         //               ),
+            //         //             ],
+            //         //           ),
+            //         //
+            //         //
+            //         //         )
+            //         //       ],
+            //         //     ),
+            //         //   ),
+            //         // ),
+            //
+            //         ListTile(
+            //           tileColor: Colors.white,
+            //           title: Padding(
+            //             padding: const EdgeInsets.only(top: 10.0, left: 20),
+            //             child: Text(
+            //               snapshot.data[index].activityMessage,
+            //               style: TextStyle(
+            //                   fontSize: (index == 0) ? 18 : 16,
+            //                   fontFamily: (index == 0)
+            //                       ? "SourceSansProBold"
+            //                       : "SourceSansProRegular"),
+            //             ),
+            //           ),
+            //           subtitle: Padding(
+            //             padding: const EdgeInsets.only(left: 20.0),
+            //             child: Column(
+            //               children: [
+            //                 Row(
+            //                   children: [
+            //                     Text(
+            //                       readTimestamp(
+            //                           snapshot.data[index].timeActivity),
+            //                       textAlign: TextAlign.left,
+            //                       style: TextStyle(
+            //                           fontSize: 12,
+            //                           fontFamily: "SourceSansProRegular",
+            //                           color: greyText),
+            //                     ),
+            //                   ],
+            //                 ),
+            //
+            //                 checkRemark(snapshot.data[index]),
+            //                 checkActivityUser(snapshot.data[index])
+            //
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+            //       ]);
+            //     });
           }
         });
   }

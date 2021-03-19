@@ -23,7 +23,7 @@ class _MyStatefulWidgetState extends State<HomePage> {
       style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProSemiBold', color: greyText),
     ),
     Text(
-      'Settings',
+      'Account',
       style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProSemiBold', color: greyText),
     ),
   ];
@@ -54,7 +54,7 @@ class _MyStatefulWidgetState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(AssetImage('assets/images/user_grey.png'), size: 22,),//Icon(Icons.account_circle_outlined),
-            label: 'Settings',
+            label: 'Account',
           ),
         ],
         currentIndex: _selectedIndex,
