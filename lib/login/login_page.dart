@@ -16,10 +16,6 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
-void main() {
-  runApp(LoginPage());
-}
-
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
 
@@ -68,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Mixpanel mixpanel;
+
   void mixPanelEvents() async {
     mixpanel = await Constants.initMixPanel();
   }
@@ -86,7 +83,6 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         getSpecificUser specificUser = new getSpecificUser();
 
-       
         specificUser
             .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
             .then((value) async {
@@ -122,7 +118,6 @@ class _LoginPageState extends State<LoginPage> {
           sharedPref.saveData(Constants.PASSWORD_ENCRYPTED, _password);
           getUserDetails();
         } else {
-
           _hideLoader();
           showAlert(context);
         }
@@ -142,8 +137,6 @@ class _LoginPageState extends State<LoginPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-
-
       body: ModalProgressHUD(
         inAsyncCall: _isShowLoader,
         child: Container(
@@ -152,9 +145,9 @@ class _LoginPageState extends State<LoginPage> {
           child: SingleChildScrollView(
             reverse: true,
             child: Column(
-           //   mainAxisSize: MainAxisSize.min,
+              //   mainAxisSize: MainAxisSize.min,
               //mainAxisAlignment: MainAxisAlignment.center,
-               crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
                   width: width,
@@ -162,10 +155,9 @@ class _LoginPageState extends State<LoginPage> {
                   // child: Container(child: Image.asset('assets/img_welcome_salmon.png', fit: BoxFit.fill,)),
 
                   child: Stack(
-
                     children: <Widget>[
-
-                      Image.asset('assets/images/img_welcome_salmon.png',
+                      Image.asset(
+                        'assets/images/img_welcome_salmon.png',
                         fit: BoxFit.fill,
                         height: double.infinity,
                         width: double.infinity,
@@ -181,7 +173,12 @@ class _LoginPageState extends State<LoginPage> {
                       // ),
                       Padding(
                         padding: const EdgeInsets.only(left: 23, top: 35),
-                        child: Image.asset('assets/images/zm_logo.png', width: 28, height:28, fit: BoxFit.fill,),
+                        child: Image.asset(
+                          'assets/images/zm_logo.png',
+                          width: 28,
+                          height: 28,
+                          fit: BoxFit.fill,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 60, top: 40),
@@ -352,11 +349,9 @@ class _LoginPageState extends State<LoginPage> {
                         ]),
                   ),
                 ),
-
                 SizedBox(
-                  height: height - (height*0.5 + 270),
+                  height: height - (height * 0.5 + 270),
                 ),
-
                 Container(
                   width: width,
                   height: 48,
@@ -368,9 +363,9 @@ class _LoginPageState extends State<LoginPage> {
                         : lightGreen.withOpacity(0.5),
                     onPressed: isEmailFilled && isPasswordFilled
                         ? () {
-                      FocusScope.of(context).unfocus();
+                            FocusScope.of(context).unfocus();
 
-                      setState(() {
+                            setState(() {
                               isApiCallingProcess = true;
                               validator();
                             });
@@ -404,9 +399,8 @@ void showAlert(context) {
   Widget okButton = FlatButton(
     child: Text(Constants.txt_ok),
     onPressed: () {
-    //  Navigator.pop(context);
+      //  Navigator.pop(context);
       Navigator.of(context, rootNavigator: true).pop();
-
     },
   );
 
