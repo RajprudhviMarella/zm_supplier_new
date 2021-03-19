@@ -90,7 +90,16 @@ flutter:
     - assets/images/orders_blue.png
     - assets/images/Customers_grey.png
     - assets/images/user_grey.png
-
+    - assets/images/icon_delivery_truck.png
+    - assets/images/icon_phone.png
+    - assets/images/icon_view_pdf.png
+    - assets/images/icon_lock.png
+    - assets/images/icon_help.png
+    - assets/images/icon_chat.png
+    - assets/images/icon_feedback.png
+    - assets/images/icon_terms.png
+    - assets/images/icon_privacy.png
+    - assets/images/icon_signout.png
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

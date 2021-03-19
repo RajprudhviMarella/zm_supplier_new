@@ -12,6 +12,9 @@ import 'dart:math' as math;
 
 import 'package:zm_supplier/utils/webview.dart';
 
+import '../utils/color.dart';
+import '../utils/color.dart';
+import '../utils/color.dart';
 import 'orderActivityPage.dart';
 
 class OrderDetailsPage extends StatefulWidget {
@@ -30,7 +33,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     with TickerProviderStateMixin {
   Widget appBarTitle = new Text(
     "Order details",
-    style: new TextStyle(color: Colors.black),
+    style: TextStyle(
+        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 18),
   );
   Icon icon = new Icon(
     Icons.more_horiz,
@@ -85,6 +89,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: buildAppBar(context),
       bottomNavigationBar: Container(
           height: 80.0,
           color: Colors.white,
@@ -94,6 +99,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                   padding: EdgeInsets.only(left: 15.0, right: 15.0),
                   child: Row(children: <Widget>[
                     FloatingActionButton.extended(
+                      heroTag: "btn1",
                       backgroundColor: faintGrey,
                       foregroundColor: Colors.white,
                       onPressed: () {
@@ -121,6 +127,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                     ),
                     new Spacer(),
                     FloatingActionButton.extended(
+                      heroTag: "btn2",
                       backgroundColor: azul_blue,
                       foregroundColor: Colors.white,
                       onPressed: () {},
@@ -137,7 +144,6 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
       backgroundColor: faintGrey,
       body: ListView(
         children: <Widget>[
-          buildAppBar(context),
           banner(context),
           deliveryBanner(context),
           skuBanner(context),
@@ -154,6 +160,27 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
       ),
     );
   }
+
+  // Widget buildAppBar(BuildContext context) {
+  //   return new AppBar(
+  //       centerTitle: true,
+  //       title: appBarTitle,
+  //       backgroundColor: Colors.white,
+  //       bottomOpacity: 0.0,
+  //       elevation: 0.0,
+  //       leading: IconButton(
+  //         icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+  //         onPressed: () => Navigator.of(context).pop(),
+  //       ),
+  //       actions: <Widget>[
+  //         new IconButton(
+  //           icon: icon,
+  //           onPressed: () {
+  //             _moreActionBottomSheet(context);
+  //           },
+  //         ),
+  //       ]);
+  // }
 
   Widget buildAppBar(BuildContext context) {
     return new AppBar(
@@ -179,7 +206,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   Widget banner(BuildContext context) {
     return new Container(
       padding:
-          new EdgeInsets.only(top: 20, left: 20.0, bottom: 8.0, right: 20.0),
+      new EdgeInsets.only(top: 20, left: 20.0, bottom: 8.0, right: 20.0),
       decoration: new BoxDecoration(color: faintGrey),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -192,8 +219,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                     child: Container(
                         padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
                         child: Text("#" + order.orderId,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 14,
                                 fontFamily: "SourceSansProSemiBold",
                                 color: greyText)))),
                 Center(
@@ -201,14 +229,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                         child: Text(order.outlet.outletName,
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 24,
                                 fontFamily: "SourceSansProBold")))),
                 Center(
                     child: Container(
                         padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                         child: Text("Placed: " + order.getDatePlaced(),
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontFamily: "SourceSansProRegular")))),
                 Constants.OrderStatusColor(order),
                 Center(
@@ -237,30 +265,35 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                 children: <Widget>[
                   Row(children: <Widget>[
                     Container(
-                      margin: EdgeInsets.fromLTRB(30.0, 10.0, 10.0, 5.0),
+                      margin: EdgeInsets.fromLTRB(20.0, 10.0, 10.0, 5.0),
+                      color: faintGrey,
                       height: 26.0,
                       width: 26.0,
-                      child: ImageIcon(AssetImage('assets/images/truck.png')),
+                      child: ImageIcon(AssetImage('assets/images/icon_delivery_truck.png')),
                     ),
                     Text(order.getDeliveryDay(),
                         style: TextStyle(
                             color: Colors.black,
-                            fontSize: 16.0,
+                            fontSize: 12.0,
                             fontFamily: "SourceSansProRegular")),
                   ]),
                   Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        Text("                     ",
+                        Text("                ",
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 16.0,
-                                fontFamily: "SourceSansProRegular")),
-                        Text(order.getDeliveryDateMonthYear(),
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16.0,
+                                fontSize: 18.0,
                                 fontFamily: "SourceSansProBold")),
+                          Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                    child: Text(order.getDeliveryDateMonthYear(),
+                    style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontFamily: "SourceSansProBold")),
+        ),
+
                       ]),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 5)),
                   if (order.deliveryInstruction != null &&
@@ -363,20 +396,19 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                         fontSize: 16.0,
                                         fontFamily: "SourceSansProBold")),
                                 right: Text(
-                                    products[index].quantity.toString() +
+                                    products[index].quantity.toString() + " " +
                                         products[index].unitSize,
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 16.0,
-                                        fontFamily: "SourceSansProBold"))),
+                                        fontFamily: "SourceSansProRegular"))),
                             Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 0)),
                             Row(children: <Widget>[
                               Text(
-                                  getAmountDisplayValue(
-                                      products[index].totalPrice.amountV1),
+                                      products[index].totalPrice.getDisplayValue(),
                                   style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14.0,
+                                      color: grey_text,
+                                      fontSize: 12.0,
                                       fontFamily: "SourceSansProRegular")),
                             ])
                           ]),
@@ -442,7 +474,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                               fontSize: 16.0,
                               fontFamily: "SourceSansProRegular")),
                       right: Text(
-                          getAmountDisplayValue(order.amount.subTotal.amountV1),
+                          order.amount.subTotal.getDisplayValue(),
                           style: TextStyle(
                               color: greyText,
                               fontSize: 16.0,
@@ -466,7 +498,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                 getAmountDisplayValue(
                                     order.amount.subTotal.amountV1),
                                 style: TextStyle(
-                                    color: greyText,
+                                    color: Colors.green,
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular"))),
                       )
@@ -486,8 +518,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
                             right: Text(
-                                getAmountDisplayValue(
-                                    order.amount.deliveryFee.amountV1),
+                                    order.amount.deliveryFee.getDisplayValue(),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -507,7 +538,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                   fontSize: 16.0,
                                   fontFamily: "SourceSansProRegular")),
                           right: Text(
-                              getAmountDisplayValue(order.amount.gst.amountV1),
+                              order.amount.gst.getDisplayValue(),
                               style: TextStyle(
                                   color: greyText,
                                   fontSize: 16.0,
@@ -527,7 +558,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                               fontSize: 16.0,
                               fontFamily: "SourceSansProBold")),
                       right: Text(
-                          getAmountDisplayValue(order.amount.total.amountV1),
+                          order.amount.total.getDisplayValue(),
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 16.0,
@@ -560,16 +591,13 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Icon(
-                        Icons.phone,
-                        color: buttonBlue,
-                      ),
+                      ImageIcon(AssetImage('assets/images/icon_phone.png'),color: buttonBlue),
                       Text(
                         ' Contact',
                         style: TextStyle(
                             color: buttonBlue,
                             fontSize: 16.0,
-                            fontFamily: "SourceSansProBold"),
+                            fontFamily: "SourceSansProSemiBold"),
                       ),
                     ],
                   ))),
@@ -583,16 +611,13 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Icon(
-                        Icons.picture_as_pdf,
-                        color: buttonBlue,
-                      ),
+                      ImageIcon(AssetImage('assets/images/icon_view_pdf.png'),color: buttonBlue),
                       Text(
-                        ' View as Pdf',
+                        ' View as PDF',
                         style: TextStyle(
                             color: buttonBlue,
                             fontSize: 16.0,
-                            fontFamily: "SourceSansProBold"),
+                            fontFamily: "SourceSansProSemiBold"),
                       ),
                     ],
                   )))
@@ -621,9 +646,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       leading: new Icon(Icons.email),
                       title: new Text(order.outlet.company.email),
                       onTap: () => {
-                            Clipboard.setData(new ClipboardData(
-                                text: order.outlet.company.email))
-                          }),
+                        Clipboard.setData(new ClipboardData(
+                            text: order.outlet.company.email))
+                      }),
                 if (order.outlet.company.phone != null &&
                     order.outlet.company.phone.isNotEmpty)
                   new ListTile(
@@ -648,14 +673,20 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           return Container(
             child: new Wrap(
               children: <Widget>[
-                new ListTile(title: new Text("More actions"), onTap: () => {}),
-                if (order.outlet.company.phone != null &&
-                    order.outlet.company.phone.isNotEmpty)
+                new ListTile(
+                  subtitle: new Text("More options",style: TextStyle(
+                      color: Colors.black, fontFamily: "SourceSansProSemiBold", fontSize: 14)),
+                ),
+                // new Text("More options", style: TextStyle(
+                //     color: Colors.black, fontFamily: "SourceSansProSemiBold", fontSize: 14)),
                   new ListTile(
-                    title: new Text("Activity history"),
-                    onTap: () => {moveToOrderActivityPage(order)},
+                    title: new Text("Activity history",style: TextStyle(
+                        color: Colors.black, fontFamily: "SourceSansProRegular", fontSize: 16)),
+                    onTap: () => {
+                      Navigator.pop(context),
+                      moveToOrderActivityPage(order)},
                   ),
-                Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
+                Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 20)),
               ],
             ),
           );
