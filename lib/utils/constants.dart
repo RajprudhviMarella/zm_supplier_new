@@ -311,9 +311,16 @@ class Constants {
           ? bank_account_name.trim().split(' ').map((l) => l[0]).take(2).join()
           : '';
 
+  Mixpanel mixpanel;
+
+  mixPanelEvents() async {
+    mixpanel = await Constants.initMixPanel();
+  }
+  // 727ea70267ae81d186a7365cc2befcf4   -- test app
+  // b82a8f3697de395f8a83ff6c3949947f
   static Future<Mixpanel> initMixPanel() async {
     //below is the project token from mixpanel.
-    Mixpanel mixPanel = await Mixpanel.init("b82a8f3697de395f8a83ff6c3949947f",
+    Mixpanel mixPanel = await Mixpanel.init("727ea70267ae81d186a7365cc2befcf4",
         optOutTrackingDefault: false);
     return mixPanel;
   }

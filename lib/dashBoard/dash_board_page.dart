@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/createOrder/outletSelection.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
@@ -14,6 +15,7 @@ import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import '../utils/color.dart';
 import 'package:intl/intl.dart';
@@ -39,12 +41,12 @@ class DashboardState extends State<DashboardPage> {
   List<Orders> arrayOrderList;
 
   var selectedTab = 'Today';
-  Widget appBarTitle = new Text(
-    "Orders",
-    style: TextStyle(
-        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
-    textAlign: TextAlign.left,
-  );
+  // Widget appBarTitle = new Text(
+  //   "Orders",
+  //   style: TextStyle(
+  //       color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
+  //   textAlign: TextAlign.left,
+  // );
   Icon actionIcon = new Icon(
     Icons.search,
     color: Colors.black,
@@ -60,13 +62,21 @@ class DashboardState extends State<DashboardPage> {
   Future<List<Orders>> draftOrdersFuture;
   List<Orders> draftOrdersList;
 
+
   @override
   void initState() {
     super.initState();
+    mixPanelEvents();
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
+  }
+
+  Mixpanel mixpanel;
+
+  void mixPanelEvents() async {
+    mixpanel = await Constants.initMixPanel();
   }
 
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
@@ -307,6 +317,8 @@ class DashboardState extends State<DashboardPage> {
             new IconButton(
               icon: actionIcon,
               onPressed: () {
+                mixpanel.track(Events.TAP_DASHBOARD_SEARCH);
+                mixpanel.flush();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -318,6 +330,8 @@ class DashboardState extends State<DashboardPage> {
         backgroundColor: buttonBlue,
         foregroundColor: Colors.white,
         onPressed: () {
+          mixpanel.track(Events.TAP_DASHBOARD_NEW_ORDER);
+          mixpanel.flush();
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -520,6 +534,8 @@ class DashboardState extends State<DashboardPage> {
                                                 left: 20, right: 10, top: 106),
                                             child: InkWell(
                                               onTap: () {
+                                                mixpanel.track(Events.TAP_DASHBOARD_VIEW_DELIVERIES);
+                                                mixpanel.flush();
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -688,6 +704,8 @@ class DashboardState extends State<DashboardPage> {
                                 : EdgeInsets.all(0),
                             child: GestureDetector(
                               onTap: () {
+                                mixpanel.track(Events.TAP_DASHBOARD_DRAFT_ORDERS);
+                                mixpanel.flush();
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -786,6 +804,7 @@ class DashboardState extends State<DashboardPage> {
             right: FlatButton(
               onPressed: () {
                 print('View all orders tapped');
+                mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -834,8 +853,10 @@ class DashboardState extends State<DashboardPage> {
               print('Tab index $index');
               setState(() {
                 if (index == 0) {
+                  mixpanel.track(Events.TAP_DASHBOARD_TODAY);
                   selectedTab = "Today";
                 } else {
+                  mixpanel.track(Events.TAP_DASHBOARD_YESTERDAY);
                   selectedTab = "Yesterday";
                 }
               });
@@ -1019,6 +1040,8 @@ class DashboardState extends State<DashboardPage> {
   }
 
   moveToOrderDetailsPage(Orders element) {
+    mixpanel.track(Events.TAP_DASHBOARD_ORDER_FOR_DETAILS);
+    mixpanel.flush();
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }

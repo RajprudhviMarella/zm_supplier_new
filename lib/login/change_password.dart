@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 
 import '../models/user.dart';
 import '../utils/color.dart';
@@ -38,10 +39,12 @@ class ChangePasswordDesign extends State<ChangePassword>
   RegExp regex = new RegExp(
       r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!#$%&()*+,-./:;<=>?@\^_`{|}~"\[\]]).{8,}$');
 
+  Constants events = Constants();
   @override
   void initState() {
     super.initState();
     loadSharedPrefs();
+    events.mixPanelEvents();
   }
 
   @override
@@ -146,6 +149,8 @@ class ChangePasswordDesign extends State<ChangePassword>
         height: 48.0,
         child: GestureDetector(
           onTap: () {
+            events.mixpanel.track(Events.TAP_SETTINGS_TAB_CHANGE_PASSWORD_SAVE);
+            events.mixpanel.flush();
             validator(context);
           },
           child: Container(

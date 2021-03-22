@@ -5,6 +5,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/login/forgot_password.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 
 import '../utils/color.dart';
 import '../utils/color.dart';
@@ -57,17 +58,13 @@ class _LoginPageState extends State<LoginPage> {
 
   SharedPref sharedPref = SharedPref();
 
+  Constants events = Constants();
   @override
   void initState() {
     super.initState();
-    mixPanelEvents();
+    events.mixPanelEvents();
   }
 
-  Mixpanel mixpanel;
-
-  void mixPanelEvents() async {
-    mixpanel = await Constants.initMixPanel();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +87,9 @@ class _LoginPageState extends State<LoginPage> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           isLogged = true;
           prefs.setBool(Constants.is_logged, isLogged);
+
+          events.mixpanel.track(Events.TAP_LOGIN, properties: {'email': _email});
+        //  mixpanel.flush();
 
           _hideLoader();
           Navigator.push(
@@ -327,9 +327,10 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {
                       print('forgot tapped');
 
-                      // mixpanel.timeEvent('Aquaman');
-                      // mixpanel.track('Aquaman');
-                      // mixpanel.flush();
+                     // mixpanel.timeEvent('Aquaman');
+
+                      events.mixpanel.track(Events.TAP_FORGOT_PASSWORD, properties: {'email': _email});
+                      events.mixpanel.flush();
 
                       Navigator.push(
                           context,

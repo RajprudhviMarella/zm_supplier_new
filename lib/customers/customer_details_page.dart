@@ -15,6 +15,7 @@ import 'package:zm_supplier/orders/viewOrder.dart';
 import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -61,9 +62,12 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   CustomerDetailsState(
       this.outletName, this.outletId, this.lastOrderd, this.isStarred);
 
+  Constants events = Constants();
   @override
   void initState() {
     super.initState();
+
+    events.mixPanelEvents();
     buyerDetailsFuture = _retrivePeople();
     orderSummaryData = getSummaryDataApiCalling();
     recentOrders = _retriveRecentOrders();
@@ -383,6 +387,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             color: Colors.transparent,
             elevation: 0,
             onPressed: () {
+
+              events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_VIEW_ALL_INVOICES);
+              events.mixpanel.flush();
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -426,6 +433,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             color: Colors.transparent,
             elevation: 0,
             onPressed: () {
+
+              events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_VIEW_ALL_ORDERS);
+              events.mixpanel.flush();
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -761,6 +771,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   tapOnFavourite() {
+    events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE);
+    events.mixpanel.flush();
     if (isStarred) {
       setState(() {
         isStarred = false;

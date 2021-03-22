@@ -14,6 +14,7 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:zm_supplier/login/change_password.dart';
 import 'package:zm_supplier/models/imageUploadResponse.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import '../login/login_page.dart';
 import '../models/response.dart';
 import 'package:zm_supplier/utils/webview.dart';
@@ -47,10 +48,12 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   NetworkImage _networkImage;
   bool _isShowLoader = false;
 
+  Constants events = Constants();
   @override
   void initState() {
     super.initState();
     loadSharedPrefs();
+    events.mixPanelEvents();
   }
 
   void _showLoader() {
@@ -161,6 +164,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                     DecorationImage(
                         fit: BoxFit.fill, image: _networkImage))),
             onTap: () {
+              sendEvent(Events.TAP_SETTINGS_TAB_PROFILE_PIC);
               showImagePickerAlert(context);
             },
           )
@@ -218,23 +222,34 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
 
   onItemSelect(String name, context) {
     if (name == Constants.txt_change_password) {
+      sendEvent(Events.TAP_SETTINGS_TAB_CHANGE_PASSWORD);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
     } else if (name == Constants.txt_help) {
+      sendEvent(Events.TAP_SETTINGS_TAB_HELP);
     } else if (name == Constants.txt_ask_zeemart) {
+      sendEvent(Events.TAP_SETTINGS_TAB_ASK_ZEEMART);
     } else if (name == Constants.txt_send_feed_back) {
+      sendEvent(Events.TAP_SETTINGS_TAB_SEND_FEEDBACK);
       _launchMailClient();
     } else if (name == Constants.txt_terms_of_use) {
+      sendEvent(Events.TAP_SETTINGS_TAB_TERMS_OF_USE);
       _handleURLButtonPress(
           context, Constants.termsUrl, Constants.txt_terms_of_use);
     } else if (name == Constants.txt_privacy_policy) {
+      sendEvent(Events.TAP_SETTINGS_TAB_PRIVACY_POLICY);
       _handleURLButtonPress(
           context, Constants.privacyUrl, Constants.txt_privacy_policy);
     } else if (name == Constants.txt_log_out) {
+      sendEvent(Events.TAP_SETTINGS_TAB_SIGN_OUT);
       showAlert(context);
     }
   }
 
+  sendEvent(String eventName) {
+    events.mixpanel.track(eventName);
+    events.mixpanel.flush();
+  }
   void _handleURLButtonPress(BuildContext context, String url, String title) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => WebViewContainer(url, title)));
@@ -253,6 +268,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     Widget okButton = FlatButton(
       child: Text(Constants.txt_ok),
       onPressed: () async {
+        sendEvent(Events.TAP_SETTINGS_TAB_SIGN_OUT_CONFIRM);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs?.clear();
         Navigator.of(context, rootNavigator: true).pop(context);
@@ -263,6 +279,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     Widget btnCancel = FlatButton(
       child: Text(Constants.txt_cancel),
       onPressed: () {
+        sendEvent(Events.TAP_SETTINGS_TAB_SIGN_OUT_CANCEL);
         Navigator.pop(dialogContext);
       },
     );

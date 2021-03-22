@@ -9,6 +9,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 
@@ -51,11 +52,14 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
   ScrollController controller;
   String searchedString;
 
+  Constants events = Constants();
+
   @override
   void initState() {
     controller = new ScrollController()..addListener(_scrollListener);
     loadSharedPrefs();
     super.initState();
+    events.mixPanelEvents();
   }
 
   @override
@@ -118,6 +122,8 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
             onPressed: () {
               setState(() {
                 if (this.icon.icon == Icons.search) {
+                  events.mixpanel.track(Events.TAP_VIEW_DELIVERIES_SEARCH);
+                  events.mixpanel.flush();
                   this.icon = new Icon(
                     Icons.close,
                     color: Colors.black,
@@ -373,6 +379,8 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
   }
 
   moveToOrderDetailsPage(Orders element) {
+    events.mixpanel.track(Events.TAP_VIEW_DELIVERIES_ORDER_FOR_DETAILS);
+    events.mixpanel.flush();
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }

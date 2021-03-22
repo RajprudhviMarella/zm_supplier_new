@@ -5,6 +5,7 @@ import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 import 'dart:ui';
@@ -47,10 +48,12 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
   String mudra;
   String searchedString;
 
+  Constants events = Constants();
   @override
   void initState() {
     loadSharedPrefs();
     super.initState();
+    events.mixPanelEvents();
   }
 
   SharedPref sharedPref = SharedPref();
@@ -123,6 +126,9 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
             onPressed: () {
               setState(() {
                 if (this.icon.icon == Icons.search) {
+                  events.mixpanel.track(Events.TAP_NEW_ORDER_SELECT_OUTLET_SEARCH);
+                  events.mixpanel.flush();
+
                   this.icon = new Icon(
                     Icons.close,
                     color: Colors.black,
@@ -353,6 +359,9 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                   },
                 ),
                 onTap: () {
+
+                  events.mixpanel.track(Events.TAP_NEW_ORDER_SELECT_OUTLET, properties: {'OutletId': snapShot.data[index].outlet.outletId, 'OutletName': snapShot.data[index].outlet.outletName});
+                  events.mixpanel.flush();
                   Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -11,6 +11,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/SearchOrders.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/services/favouritesApi.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 
 import '../utils/color.dart';
@@ -42,10 +43,12 @@ class CustomerState extends State<CustomersPage> {
   LoginResponse userData;
   int selectedIndex = 0;
 
+  Constants events = Constants();
   @override
   void initState() {
     super.initState();
 
+    events.mixPanelEvents();
     customersData = getCustomersReportApiCalling(false);
     selectedCustomersDataFuture = getCustomersListCalling(false);
   }
@@ -77,7 +80,6 @@ class CustomerState extends State<CustomersPage> {
     } else {
       print('failed get customers reports');
     }
-
     customerDataList = customersReportResponse.data;
     if (isUpdating) {
       setState(() {
@@ -112,7 +114,13 @@ class CustomerState extends State<CustomersPage> {
     }
 
     selectedCustomerData = customersReportResponse.data[selectedIndex];
+
+    var starredOutlets = customersReportResponse.data[1];
+    var noRecentOutlets = customersReportResponse.data[4];
     //refresh the list when tap on starred.
+    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB, properties: {'AllOutletsCount': selectedCustomerData.outlets.length, 'StarredCount': starredOutlets.outlets.length, 'NoRecentOrdersCount': noRecentOutlets.outlets.length});
+    events.mixpanel.flush();
+
     if (isUpdating) {
       setState(() {
         selectedCustomersDataFuture = selectedD(selectedCustomerData);
@@ -214,6 +222,8 @@ class CustomerState extends State<CustomersPage> {
                 color: Colors.black,
               ),
               onTap: () async {
+                events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_SEARCH);
+                events.mixpanel.flush();
                 final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -347,6 +357,18 @@ class CustomerState extends State<CustomersPage> {
                           print('tapped $index');
                           setState(() {
                             selectedIndex = index;
+                            if (index == 0) {
+                              events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_ALL_OUTLETS_TAB);
+                            } else if (index == 1) {
+                              events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_STARRED_OUTLETS_TAB);
+                            } else if (index == 2) {
+                              events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_THIS_WEEK_OUTLETS_TAB);
+                            } else if (index == 3) {
+                              events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_LAST_WEEK_OUTLETS_TAB);
+                            } else {
+                              events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_NO_RECENT_ORDERED_OUTLETS_TAB);
+                            }
+                            events.mixpanel.flush();
                             var a = snapshot.data[index];
                             selectedCustomersDataFuture = selectedD(a);
                           });
@@ -532,6 +554,9 @@ class CustomerState extends State<CustomersPage> {
                             var isStarred =
                                 snapshot.data.outlets[index].isFavourite;
                             print(snapshot.data.outlets[index].outlet.outletId);
+
+                            events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS);
+                            events.mixpanel.flush();
                             final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -587,6 +612,8 @@ class CustomerState extends State<CustomersPage> {
   }
 
   tapOnFavourite(int index, Customers customers) {
+    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_OUTLET_FAVOURITE);
+    events.mixpanel.flush();
     if (customers.isFavourite) {
       setState(() {
         customers.isFavourite = false;

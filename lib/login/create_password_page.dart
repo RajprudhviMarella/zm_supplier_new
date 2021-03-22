@@ -10,6 +10,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/services/editSupplierApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 
 class CreatePassword extends StatefulWidget {
   @override
@@ -34,9 +35,11 @@ class CreatePasswordState extends State<CreatePassword> {
   RegExp regex = new RegExp(
       r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!#$%&()*+,-./:;<=>?@\^_`{|}~"\[\]]).{8,}$');
 
+  Constants events = Constants();
   @override
   void initState() {
     super.initState();
+    events.mixPanelEvents();
     retriveVerificationCode();
   }
 
@@ -80,6 +83,8 @@ class CreatePasswordState extends State<CreatePassword> {
       }
       if (value.status == "success") {
 
+        events.mixpanel.track(Events.TAP_CHANGE_PASSWORD_CONTINUE);
+        events.mixpanel.flush();
         SharedPref sharedPref = SharedPref();
         sharedPref.saveData(Constants.PASSWORD_ENCRYPTED, newPassword);
 

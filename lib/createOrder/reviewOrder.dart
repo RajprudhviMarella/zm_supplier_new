@@ -13,6 +13,7 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:zm_supplier/utils/customDialog.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
@@ -62,6 +63,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
 
   ReviewOrderDesign(this.lstDeliveryDates);
 
+  Constants events = Constants();
+
   @override
   void initState() {
     loadSharedPrefs();
@@ -72,6 +75,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       _txtSpecialRequest.text = widget.orderNotes;
     }
     super.initState();
+    events.mixPanelEvents();
   }
 
   void _showLoader() {
@@ -117,10 +121,13 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               leading: Container(
                 padding: EdgeInsets.only(right: 12.0),
                 child: IconButton(
-                  icon:
-                      Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+                    icon: Icon(Icons.arrow_back_ios_outlined,
+                        color: Colors.black),
+                    onPressed: () {
+                      // events.mixpanel.track(Events.TAP_ORDER_REVIEW_BACK, properties: {'OrderId': widget.orderId});
+                      //events.mixpanel.flush();
+                      Navigator.of(context).pop();
+                    }),
               ),
               title: Container(
                 child: Column(
@@ -202,6 +209,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                         onPressed: () {
+                          events.mixpanel
+                              .track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
+                          events.mixpanel.flush();
+
                           if (widget.marketList != null &&
                               widget.marketList.isNotEmpty) {
                             showAlert(context);
@@ -413,6 +424,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             maxLength: 150,
             controller: _txtSpecialRequest,
             maxLines: null,
+            onTap: () {
+              events.mixpanel.track(Events.TAP_ORDER_REVIEW_SPECIAL_REQUEST);
+              events.mixpanel.flush();
+            },
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               fillColor: Colors.white,
@@ -830,6 +845,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     print("ms" + response.statusCode.toString());
     print("ms" + response.body.toString());
     if (response.statusCode == 200) {
+      events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
+      events.mixpanel.flush();
       showSuccessDialog();
     } else {
       showFailureDialog();
@@ -867,6 +884,18 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     Widget okButton = FlatButton(
       child: Text(Constants.txt_ok),
       onPressed: () {
+        events.mixpanel
+            .track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: {
+          'ItemCount': widget.marketList.length,
+          'OrderNotes': (widget.orderNotes != null &&
+              widget.orderNotes.isNotEmpty)
+              ? true
+              : false,
+          'OutletID': widget.outletId,
+          'OutletName': widget.outletName,
+          'isAddonOrder': isAddonOrder,
+        });
+        events.mixpanel.flush();
         Navigator.pop(dialogContext);
         createOrderAPI();
       },
@@ -875,6 +904,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     Widget btnCancel = FlatButton(
       child: Text(Constants.txt_cancel),
       onPressed: () {
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CANCEL);
+        events.mixpanel.flush();
         Navigator.pop(dialogContext);
       },
     );
@@ -903,6 +934,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       child: Text(Constants.txt_ok),
       onPressed: () {
         Navigator.pop(dialogContext);
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PAGE_DELETE_DRAFT);
+        events.mixpanel.flush();
+
         deleteOrderAPI();
       },
     );

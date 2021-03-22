@@ -8,6 +8,7 @@ import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'dart:math' as math;
 
 import 'package:zm_supplier/utils/webview.dart';
@@ -53,11 +54,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   ScrollController controller;
   String searchedString;
 
+  Constants events = Constants();
+
   @override
   void initState() {
     loadSharedPrefs();
     order = widget.order;
     super.initState();
+    events.mixPanelEvents();
   }
 
   @override
@@ -103,6 +107,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       backgroundColor: faintGrey,
                       foregroundColor: Colors.white,
                       onPressed: () {
+                        events.mixpanel.track(Events.TAP_ORDER_DETAILS_REPEAT_ORDER);
+                        events.mixpanel.flush();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -197,6 +203,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           new IconButton(
             icon: icon,
             onPressed: () {
+              events.mixpanel.track(Events.TAP_ORDER_DETAILS_MORE_OPTIONS);
+              events.mixpanel.flush();
               _moreActionBottomSheet(context);
             },
           ),
@@ -586,6 +594,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
               child: RaisedButton(
                   color: Colors.white,
                   onPressed: () {
+                    events.mixpanel.track(Events.TAP_ORDER_DETAILS_CONTACT);
+                    events.mixpanel.flush();
                     _newTaskModalBottomSheet(context);
                   },
                   child: Row(
@@ -606,6 +616,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
               child: RaisedButton(
                   color: Colors.white,
                   onPressed: () {
+                    events.mixpanel.track(Events.TAP_ORDER_DETAILS_VIEW_AS_PDF);
+                    events.mixpanel.flush();
                     openPdf(context);
                   },
                   child: Row(
@@ -694,6 +706,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   moveToOrderActivityPage(Orders element) {
+    events.mixpanel.track(Events.TAP_ORDER_DETAILS_ACTIVITY_HISTORY);
+    events.mixpanel.flush();
     Navigator.push(
         context,
         MaterialPageRoute(
