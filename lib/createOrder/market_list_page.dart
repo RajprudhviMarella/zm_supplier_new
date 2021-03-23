@@ -52,7 +52,7 @@ class MarketListDesign extends State<MarketListPage>
   String searchedString;
   bool _isSearching = false;
   String searchQuery = "";
-  int counter = 0;
+  var counter;
   bool _isShowLoader = false;
   List<DeliveryDateList> lstDeliveryDates;
   Future<List<DeliveryDateList>> deliveryDatesListFuture;
@@ -204,7 +204,8 @@ class MarketListDesign extends State<MarketListPage>
                                       events.mixpanel.track(
                                           Events.TAP_MARKET_LIST_NEXT,
                                           properties: {
-                                            'ItemCount': selectedMarketList.length,
+                                            'ItemCount':
+                                                selectedMarketList.length,
                                             'OrderNotes': (orderNotes != null &&
                                                     orderNotes.isNotEmpty &&
                                                     orderNotes != "Notes")
@@ -239,7 +240,7 @@ class MarketListDesign extends State<MarketListPage>
                                         globalKey.currentState.showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                'Please select atlease one product'),
+                                                'Please select at least one product'),
                                             duration: Duration(seconds: 1),
                                           ),
                                         );
@@ -493,12 +494,22 @@ class MarketListDesign extends State<MarketListPage>
           onTap: () {
             events.mixpanel.track(Events.TAP_MARKET_LIST_ADD_SKU);
             events.mixpanel.flush();
-
-            if (snapShot.data[index].quantity != 0) {
-              counter = snapShot.data[index].quantity;
+            if (snapShot.data[index].priceList[0].isDecimalAllowed) {
+              if (snapShot.data[index].quantity != null &&
+                  snapShot.data[index].quantity != 0) {
+                counter = snapShot.data[index].quantity.toDouble();
+              } else {
+                counter = snapShot.data[index].priceList[0].moq.toDouble();
+              }
             } else {
-              counter = snapShot.data[index].priceList[0].moq;
+              if (snapShot.data[index].quantity != null &&
+                  snapShot.data[index].quantity != 0) {
+                counter = snapShot.data[index].quantity;
+              } else {
+                counter = snapShot.data[index].priceList[0].moq;
+              }
             }
+
             _textEditingController.value = TextEditingValue(
               text: this.counter.toString(),
               selection: TextSelection.fromPosition(
@@ -526,17 +537,73 @@ class MarketListDesign extends State<MarketListPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Container(
-                          margin:
-                              EdgeInsets.only(top: 5, left: 20.0, bottom: 10.0),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(snapShot.data[index].productName,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                      fontFamily: "SourceSansProSemiBold"))),
+                        Row(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: 5, left: 20.0, bottom: 10.0),
+                              child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(snapShot.data[index].productName,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontFamily:
+                                              "SourceSansProSemiBold"))),
+                            ),
+                            new Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (snapShot.data[index].priceList[0]
+                                      .isDecimalAllowed) {
+                                    counter = snapShot
+                                        .data[index].priceList[0].moq
+                                        .toDouble();
+                                  } else {
+                                    counter =
+                                        snapShot.data[index].priceList[0].moq;
+                                  }
+                                  _txtSkuNotesEditController.text = "";
+                                  snapShot.data[index].skuNotes =
+                                      _txtSkuNotesEditController.text;
+                                  snapShot.data[index].selectedQuantity = "+";
+                                  snapShot.data[index].bgColor = faintGrey;
+                                  snapShot.data[index].txtColor = buttonBlue;
+                                  snapShot.data[index].txtSize = 30.0;
+                                  snapShot.data[index].isSelected = false;
+                                  if (selectedMarketList != null)
+                                    selectedMarketList.removeWhere((it) =>
+                                        it.productName.toLowerCase() ==
+                                            snapShot.data[index].productName
+                                                .toLowerCase() &&
+                                        it.sku.toLowerCase() ==
+                                            snapShot.data[index].sku
+                                                .toLowerCase() &&
+                                        snapShot.data[index].priceList[0]
+                                                .unitSize
+                                                .toLowerCase() ==
+                                            it.priceList[0].unitSize
+                                                .toLowerCase());
+                                  Navigator.pop(context);
+                                });
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                    top: 5, left: 20.0, bottom: 10.0),
+                                child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: Text("remove",
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: buttonBlue,
+                                            fontFamily:
+                                                "SourceSansProSemiBold"))),
+                              ),
+                            ),
+                          ],
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 10.0),
@@ -577,8 +644,9 @@ class MarketListDesign extends State<MarketListPage>
                                       autovalidate: true,
                                       validator: (value) => (value != null &&
                                               value.isNotEmpty &&
-                                              int.parse(_textEditingController
-                                                      .text) <
+                                              double.parse(
+                                                      _textEditingController
+                                                          .text) <
                                                   snapShot.data[index]
                                                       .priceList[0].moq)
                                           ? "quantity is below moq"
@@ -586,7 +654,7 @@ class MarketListDesign extends State<MarketListPage>
                                       controller: _textEditingController,
                                       keyboardType:
                                           TextInputType.numberWithOptions(
-                                              decimal: true),
+                                              signed: false, decimal: true),
                                       textInputAction: TextInputAction.go,
                                       cursorColor: Colors.blue,
                                       textAlign: TextAlign.center,
@@ -596,8 +664,9 @@ class MarketListDesign extends State<MarketListPage>
                                                     null &&
                                                 _textEditingController
                                                     .text.isNotEmpty &&
-                                                int.parse(_textEditingController
-                                                        .text) <
+                                                double.parse(
+                                                        _textEditingController
+                                                            .text) <
                                                     snapShot.data[index]
                                                         .priceList[0].moq)
                                             ? "quantity is below moq"
@@ -615,8 +684,14 @@ class MarketListDesign extends State<MarketListPage>
                                           fontSize: 16.0,
                                           fontFamily: "SourceSansProSemiBold"),
                                       onChanged: (query) {
-                                        if (query != null && query.isNotEmpty)
-                                          counter = int.parse(query);
+                                        if (query != null && query.isNotEmpty) {
+                                          if (snapShot.data[index].priceList[0]
+                                              .isDecimalAllowed) {
+                                            counter = double.parse(query);
+                                          } else {
+                                            counter = int.parse(query);
+                                          }
+                                        }
                                       })),
                               GestureDetector(
                                   onTap: () {
@@ -680,12 +755,34 @@ class MarketListDesign extends State<MarketListPage>
                               setState(() {
                                 _textEditingController.text =
                                     counter.toString();
-                                snapShot.data[index].quantity = counter;
                                 snapShot.data[index].skuNotes =
                                     _txtSkuNotesEditController.text;
 
                                 snapShot.data[index].isSelected = true;
-                                if (snapShot.data[index].quantity == 0) {
+                                if (counter != 0 ||
+                                    counter >
+                                        snapShot.data[index].priceList[0].moq) {
+                                  snapShot.data[index].quantity = counter;
+                                  snapShot.data[index].selectedQuantity =
+                                      counter.toString();
+                                  snapShot.data[index].bgColor = buttonBlue;
+                                  snapShot.data[index].txtColor = Colors.white;
+                                  snapShot.data[index].txtSize = 16.0;
+                                  selectedMarketList.removeWhere((it) =>
+                                      it.productName.toLowerCase() ==
+                                          snapShot.data[index].productName
+                                              .toLowerCase() &&
+                                      it.sku.toLowerCase() ==
+                                          snapShot.data[index].sku
+                                              .toLowerCase() &&
+                                      snapShot.data[index].priceList[0].unitSize
+                                              .toLowerCase() ==
+                                          it.priceList[0].unitSize
+                                              .toLowerCase());
+                                  selectedMarketList.add(snapShot.data[index]);
+                                } else {
+                                  snapShot.data[index].quantity =
+                                      snapShot.data[index].priceList[0].moq;
                                   snapShot.data[index].selectedQuantity = "+";
                                   snapShot.data[index].bgColor = faintGrey;
                                   snapShot.data[index].txtColor = buttonBlue;
@@ -704,24 +801,7 @@ class MarketListDesign extends State<MarketListPage>
                                                 .toLowerCase() ==
                                             it.priceList[0].unitSize
                                                 .toLowerCase());
-                                } else {
-                                  snapShot.data[index].selectedQuantity =
-                                      counter.toString();
-                                  snapShot.data[index].bgColor = buttonBlue;
-                                  snapShot.data[index].txtColor = Colors.white;
-                                  snapShot.data[index].txtSize = 16.0;
-                                  selectedMarketList.removeWhere((it) =>
-                                      it.productName.toLowerCase() ==
-                                          snapShot.data[index].productName
-                                              .toLowerCase() &&
-                                      it.sku.toLowerCase() ==
-                                          snapShot.data[index].sku
-                                              .toLowerCase() &&
-                                      snapShot.data[index].priceList[0].unitSize
-                                              .toLowerCase() ==
-                                          it.priceList[0].unitSize
-                                              .toLowerCase());
-                                  selectedMarketList.add(snapShot.data[index]);
+                                  snapShot.data[index].quantity = counter;
                                 }
                               });
                               Navigator.pop(context);
