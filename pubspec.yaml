@@ -43,7 +43,7 @@ dependencies:
   carousel_slider: ^3.0.0
   mixpanel_flutter: ^1.0.0
   adaptive_action_sheet: ^1.1.0
-
+  keyboard_visibility: any
 
 dev_dependencies:
   flutter_test:
