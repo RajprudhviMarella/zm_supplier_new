@@ -780,6 +780,7 @@ class Products {
   var quantity;
   String supplierProductCode;
   String unitSize;
+  String unitSizeAlias;
   DeliveryFee unitPrice;
   DeliveryFee totalPrice;
 
@@ -787,6 +788,7 @@ class Products {
       {this.sku,
       this.productName,
         this.notes,
+        this.unitSizeAlias,
       this.quantity,
       this.supplierProductCode,
       this.unitSize,
@@ -797,6 +799,7 @@ class Products {
     sku = json['sku'];
     productName = json['productName'];
     notes = json['notes'];
+    unitSizeAlias = json['unitSizeAlias'];
     quantity = json['quantity'];
     supplierProductCode = json['supplierProductCode'];
     unitSize = json['unitSize'];
@@ -814,6 +817,7 @@ class Products {
     data['productName'] = this.productName;
     data['notes'] = this.notes;
     data['quantity'] = this.quantity;
+    data['unitSizeAlias'] = this.unitSizeAlias;
     data['supplierProductCode'] = this.supplierProductCode;
     data['unitSize'] = this.unitSize;
     if (this.unitPrice != null) {
