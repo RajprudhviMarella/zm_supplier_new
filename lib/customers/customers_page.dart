@@ -53,7 +53,7 @@ class CustomerState extends State<CustomersPage> {
 
     events.mixPanelEvents();
     customersData = getCustomersReportApiCalling(false);
-    selectedCustomersDataFuture = getCustomersListCalling(false);
+    selectedCustomersDataFuture = getCustomersListCalling(false, false);
   }
 
   Future<List<CustomersData>> getCustomersReportApiCalling(
@@ -92,7 +92,8 @@ class CustomerState extends State<CustomersPage> {
     return customerDataList;
   }
 
-  Future<CustomersData> getCustomersListCalling(bool isUpdating) async {
+  Future<CustomersData> getCustomersListCalling(
+      bool isUpdating, bool isFilterApplied) async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
@@ -142,6 +143,12 @@ class CustomerState extends State<CustomersPage> {
       });
     }
 
+    if (isFilterApplied) {
+      setState(() {
+        selectedFilterType = selectedFilterType;
+      });
+    }
+
     return selectedCustomerData;
   }
 
@@ -160,12 +167,28 @@ class CustomerState extends State<CustomersPage> {
     return formattedDate;
   }
 
-  int timeDiff(int timeStamp) {
+  timeDiff(int timeStamp) {
     //the birthday's date
     final birthday = DateTime.parse(readTimestamp(timeStamp));
     final date2 = DateTime.now();
     final difference = date2.difference(birthday).inDays;
-    return difference;
+    return difference; //dispalyTime(difference);
+  }
+
+  String calculateTime(int timeStamp) {
+    final birthday = DateTime.parse(readTimestamp(timeStamp));
+    final date2 = DateTime.now();
+    final difference = date2.difference(birthday).inDays;
+    return dispalyTime(difference);
+  }
+  String dispalyTime(int diff) {
+    if (diff == 0) {
+      return 'Last ordered Today';
+    } else if (diff == 1) {
+      return 'Last ordered Yesterday';
+    } else {
+      return 'Last ordered ' + diff.toString() + ' days ago' ?? "";
+    }
   }
 
   @override
@@ -248,7 +271,7 @@ class CustomerState extends State<CustomersPage> {
                 print(result);
                 //  setState(() {
                 getCustomersReportApiCalling(true);
-                getCustomersListCalling(true);
+                getCustomersListCalling(true, false);
                 // });
               },
               decoration: new InputDecoration(
@@ -296,7 +319,9 @@ class CustomerState extends State<CustomersPage> {
                         ),
                         SizedBox(width: 5),
                         new Text(
-                          'Recently ordered',
+                          selectedFilterType == 'RecentOrdered'
+                              ? 'Recently ordered'
+                              : 'A-Z',
                           style: TextStyle(
                               color: buttonBlue,
                               fontSize: 12,
@@ -482,57 +507,58 @@ class CustomerState extends State<CustomersPage> {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return Container(
-                  child: new Wrap(
-                    children: <Widget>[
-                      new ListTile(
-                          title: new Text(
-                            'Sort by',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'SourceSansProSemibold'),
-                          ),
-                          onTap: () => {}),
-                      new ListTile(
-                        title: new Text('Recently ordered',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'SourceSansProRegular')),
-                        onTap: () {
-                          setState(() {
-                            selectedFilterType = 'RecentOrdered';
-                            // selectedCustomersDataFuture = getCustomersListCalling(false);
-                          });
-                        },
-                        trailing: selectedFilterType == 'RecentOrdered'
-                            ? trailingIcon('RecentOrdered')
-                            : null,
-                      ),
-                      Divider(
-                        thickness: 1.5,
-                        color: faintGrey,
-                      ),
-                      new ListTile(
-                        title: new Text('A-Z',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'SourceSansProRegular')),
-                        onTap: () {
-                          setState(() {
-                            selectedFilterType = 'A-Z';
-                            //  selectedCustomersDataFuture = getCustomersListCalling(false);
-                          });
-                        },
-                        trailing: selectedFilterType == 'A-Z' ? trailingIcon(
-                            'A-Z') : null,
-                      ),
-                      Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
-                    ],
-                  ),
-                );
-              }
+          // return StatefulBuilder(
+          // builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    title: new Text(
+                      'Sort by',
+                      style: TextStyle(
+                          fontSize: 14, fontFamily: 'SourceSansProSemibold'),
+                    ),
+                    onTap: () => {}),
+                new ListTile(
+                  title: new Text('Recently ordered',
+                      style: TextStyle(
+                          fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                  onTap: () {
+                    setState(() {
+                      selectedFilterType = 'RecentOrdered';
+
+                      selectedCustomersDataFuture =
+                          getCustomersListCalling(false, true);
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  trailing: selectedFilterType == 'RecentOrdered'
+                      ? trailingIcon('RecentOrdered')
+                      : null,
+                ),
+                Divider(
+                  thickness: 1.5,
+                  color: faintGrey,
+                ),
+                new ListTile(
+                  title: new Text('A-Z',
+                      style: TextStyle(
+                          fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                  onTap: () {
+                    setState(() {
+                      selectedFilterType = 'A-Z';
+                      selectedCustomersDataFuture =
+                          getCustomersListCalling(false, true);
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  trailing:
+                      selectedFilterType == 'A-Z' ? trailingIcon('A-Z') : null,
+                ),
+                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
+              ],
+            ),
+          // }
           );
         });
   }
@@ -595,13 +621,8 @@ class CustomerState extends State<CustomersPage> {
                               padding: const EdgeInsets.only(top: 2.0),
                               child: Row(
                                 children: [
-                                  Text(
-                                    'Last ordered ' +
-                                            timeDiff(snapshot.data
-                                                    .outlets[index].lastOrdered)
-                                                .toString() +
-                                            ' days ago' ??
-                                        "",
+                                  Text(calculateTime(snapshot.data
+                                                    .outlets[index].lastOrdered),
                                     style: TextStyle(
                                         fontSize: 12,
                                         fontFamily: 'SourceSansProRegular',
@@ -742,7 +763,7 @@ class CustomerState extends State<CustomersPage> {
             customers.outlet.outletId, customers.isFavourite)
         .then((value) async {
       getCustomersReportApiCalling(true);
-      getCustomersListCalling(true);
+      getCustomersListCalling(true, false);
     });
   }
 
