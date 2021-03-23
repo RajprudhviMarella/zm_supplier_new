@@ -128,7 +128,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       color: Colors.white,
       width: MediaQuery.of(context).size.width,
       height: 82.0,
-      padding: EdgeInsets.all(20.0),
+      padding: EdgeInsets.all(18.0),
       child: Row(
         children: <Widget>[
           Container(
@@ -173,7 +173,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     return Container(
       color: faintGrey,
       margin: EdgeInsets.only(top: 2.0),
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+      padding: EdgeInsets.fromLTRB(18, 10, 20, 10),
       child: Text(name,
           style: TextStyle(
             fontFamily: "SourceSansProBold",
@@ -188,7 +188,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       child: Container(
         color: Colors.white,
         margin: EdgeInsets.only(top: margin),
-        padding: EdgeInsets.all(20.0),
+        padding: EdgeInsets.all(18.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
