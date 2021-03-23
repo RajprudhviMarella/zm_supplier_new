@@ -254,7 +254,7 @@ class InvoicesState extends State<InvoicesPage> {
                   border: InputBorder.none,
                   prefixIcon: new Icon(Icons.search, color: Colors.grey),
                   hintText: 'Search invoice number',
-                  hintStyle: new TextStyle(color: greyText)),
+                  hintStyle: new TextStyle(color: greyText, fontFamily: 'SourceSansProRegular', fontSize: 16)),
               // onChanged: searchOperation,
             ),
           ),

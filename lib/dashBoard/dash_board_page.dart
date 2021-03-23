@@ -41,6 +41,7 @@ class DashboardState extends State<DashboardPage> {
   List<Orders> arrayOrderList;
 
   var selectedTab = 'Today';
+  bool isDraftsAvailable = true;
   // Widget appBarTitle = new Text(
   //   "Orders",
   //   style: TextStyle(
@@ -293,7 +294,7 @@ class DashboardState extends State<DashboardPage> {
         toolbarHeight: 70,
           centerTitle: false,
           title: Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 1.0),
             child: InteractiveViewer(
               panEnabled: false, // Set it to false to prevent panning.
               boundaryMargin: EdgeInsets.all(80),
@@ -357,7 +358,7 @@ class DashboardState extends State<DashboardPage> {
             banner(context),
             //dots(context),
 
-            // draftsHeader(),
+            draftsHeader(),
             draftBannersList(),
             Header(),
             tabs(),
@@ -657,21 +658,25 @@ class DashboardState extends State<DashboardPage> {
   }
 
   Widget draftsHeader() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0, top: 20, right: 15),
-      child: Container(
-        height: 30,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Continue ordering',
-              style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
-            ),
-          ],
+    if (isDraftsAvailable) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
+        child: Container(
+          height: 30,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Continue ordering',
+                style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget draftBannersList() {
@@ -686,21 +691,22 @@ class DashboardState extends State<DashboardPage> {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
                 snapshot.data.isNotEmpty) {
+                isDraftsAvailable = true;
               return SizedBox(
-                height: 130,
+                height: 90,
                 child: ListView.builder(
                     itemCount: snapshot.data.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
-                      bool last = 5 == (index + 1);
+                      bool last = snapshot.data.length == (index + 1);
                       bool first = -1 == (index - 1);
                       bool second = 0 == (index - 1);
                       return Column(
                         children: [
-                          draftsHeader(),
+                         // draftsHeader(),
                           Padding(
                             padding: first
-                                ? EdgeInsets.only(left: 15)
+                                ? EdgeInsets.only(left: 14)
                                 : EdgeInsets.all(0),
                             child: GestureDetector(
                               onTap: () {
@@ -722,7 +728,7 @@ class DashboardState extends State<DashboardPage> {
                                 children: [
                                   Padding(
                                     padding: last
-                                        ? EdgeInsets.only(right: 15)
+                                        ? EdgeInsets.only(right: 14)
                                         : EdgeInsets.all(0),
                                     child: Container(
 
@@ -781,6 +787,9 @@ class DashboardState extends State<DashboardPage> {
                     }),
               );
             } else {
+              setState(() {
+                isDraftsAvailable = false;
+              });
               return Container();
             }
           }
@@ -789,7 +798,7 @@ class DashboardState extends State<DashboardPage> {
 
   Widget Header() {
     return Padding(
-      padding: const EdgeInsets.only(left: 17.0, top: 20, right: 2),
+      padding: const EdgeInsets.only(left: 17.0, top: 5, right: 2),
       child: Container(
         height: 30,
         child: LeftRightAlign(
