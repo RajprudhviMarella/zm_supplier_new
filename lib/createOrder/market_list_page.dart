@@ -253,7 +253,7 @@ class MarketListDesign extends State<MarketListPage>
                           centerTitle: true,
                           backgroundColor: Colors.white,
                           bottomOpacity: 0.0,
-                          elevation: 0.0,
+                          elevation: 2.0,
                           leading: Container(
                             padding: EdgeInsets.only(right: 12.0),
                             child: IconButton(
@@ -541,7 +541,7 @@ class MarketListDesign extends State<MarketListPage>
                           children: [
                             Container(
                               margin: EdgeInsets.only(
-                                  top: 5, left: 20.0, bottom: 10.0),
+                                  top: 5, left: 10.0, bottom: 10.0),
                               child: Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(snapShot.data[index].productName,
@@ -591,7 +591,10 @@ class MarketListDesign extends State<MarketListPage>
                               },
                               child: Container(
                                 margin: EdgeInsets.only(
-                                    top: 5, left: 20.0, bottom: 10.0),
+                                    top: 5,
+                                    left: 20.0,
+                                    right: 10.0,
+                                    bottom: 10.0),
                                 child: Align(
                                     alignment: Alignment.topRight,
                                     child: Text("remove",
@@ -721,7 +724,7 @@ class MarketListDesign extends State<MarketListPage>
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
                           margin: EdgeInsets.only(top: 20.0),
                           child: TextField(
                             controller: _txtSkuNotesEditController,
@@ -740,12 +743,12 @@ class MarketListDesign extends State<MarketListPage>
                               hintText: Constants.txt_add_notes,
                               hintStyle: new TextStyle(
                                   color: greyText,
-                                  fontSize: 16.0,
+                                  fontSize: 14.0,
                                   fontFamily: "SourceSansProRegular"),
                             ),
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 16.0,
+                                fontSize: 14.0,
                                 fontFamily: "SourceSansProRegular"),
                           ),
                         ),
@@ -808,9 +811,9 @@ class MarketListDesign extends State<MarketListPage>
                             },
                             child: Container(
                                 padding:
-                                    EdgeInsets.only(left: 20.0, right: 20.0),
+                                    EdgeInsets.only(left: 10.0, right: 10.0),
                                 margin: EdgeInsets.only(
-                                    top: 20.0, right: 20.0, left: 20.0),
+                                    top: 20.0, right: 10.0, left: 10.0),
                                 height: 47.0,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
