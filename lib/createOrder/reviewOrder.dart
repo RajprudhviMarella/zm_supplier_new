@@ -308,8 +308,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   Widget priceDetails(BuildContext context) {
     return Container(
       color: Colors.white,
-      margin: EdgeInsets.only(top: 30),
-      padding: EdgeInsets.fromLTRB(15, 25, 10, 10),
+      margin: EdgeInsets.only(top: 20),
+      padding: EdgeInsets.fromLTRB(15, 15, 10, 15),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -317,26 +317,24 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: <Widget>[
-                        Expanded(
-                          child: LeftRightAlign(
-                              left: Text("Subtotal",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily: "SourceSansProRegular")),
-                              right: Text(
-                                  "\$${totalSkusPrice.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily: "SourceSansProRegular"))),
-                        )
-                      ])
-                    ]),
+                Container(
+                    margin: EdgeInsets.only(top: 3.0),
+                    child: Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text("Subtotal",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text(
+                                "\$${totalSkusPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])),
                 // if (order.promoCode != null && order.promoCode.isNotEmpty)
                 //   Column(
                 //       crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,56 +359,51 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 //       ]),
                 if (lstDeliveryDates[0].deliveryFeePolicy.type == "APPLY_FEE" &&
                     !isAddonOrder)
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(children: <Widget>[
-                          Expanded(
-                            child: LeftRightAlign(
-                                left: Text("Delivery fee",
-                                    style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular")),
-                                right: Text(
-                                    "\$${totalDeliveryPrice.toStringAsFixed(2)}",
-                                    style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular"))),
-                          )
-                        ])
-                      ]),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.only(top: 3.0),
+                      child: Row(children: <Widget>[
                         Expanded(
                           child: LeftRightAlign(
-                              left: Text(
-                                  "Gst " +
-                                      lstDeliveryDates[0]
-                                          .supplier
-                                          .settings
-                                          .gst
-                                          .percent
-                                          .toString() +
-                                      "%",
+                              left: Text("Delivery fee",
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  "\$${totalGstPrice.toStringAsFixed(2)}",
+                                  "\$${totalDeliveryPrice.toStringAsFixed(2)}",
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular"))),
                         )
-                      ])
-                    ]),
+                      ])),
+                Container(
+                    margin: EdgeInsets.only(top: 3.0),
+                    child: Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text(
+                                "Gst " +
+                                    lstDeliveryDates[0]
+                                        .supplier
+                                        .settings
+                                        .gst
+                                        .percent
+                                        .toString() +
+                                    "%",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text("\$${totalGstPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])),
               ]),
-          Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
+          Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 0)),
         ],
       ),
     );
