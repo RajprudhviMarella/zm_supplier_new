@@ -153,8 +153,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           skuDetails(context),
           spaceBanner(context),
           priceDetails(context),
-          spaceBanner(context),
+          smallSpaceBanner(context),
           contactDetails(context),
+          smallSpaceBanner(context),
           // displayList(context),
         ],
       ),
@@ -206,7 +207,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   Widget banner(BuildContext context) {
     return new Container(
       padding:
-      new EdgeInsets.only(top: 20, left: 20.0, bottom: 8.0, right: 20.0),
+      new EdgeInsets.only(top: 20, left: 10.0, bottom: 8.0, right: 10.0),
       decoration: new BoxDecoration(color: faintGrey),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -217,23 +218,24 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
               children: <Widget>[
                 Center(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                        padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                         child: Text("#" + order.orderId,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 14,
-                                fontFamily: "SourceSansProSemiBold",
+                                fontFamily: "SourceSansProBold",
                                 color: greyText)))),
                 Center(
                     child: Container(
                         padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                         child: Text(order.outlet.outletName,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 24,
                                 fontFamily: "SourceSansProBold")))),
                 Center(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                         child: Text("Placed: " + order.getDatePlaced(),
                             style: TextStyle(
                                 fontSize: 12,
@@ -241,7 +243,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                 Constants.OrderStatusColor(order),
                 Center(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                         child: Text('', style: TextStyle(fontSize: 4)))),
               ],
             ),
@@ -310,7 +312,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                               Text("    Delivery instructions",
                                   style: TextStyle(
                                       color: greyText,
-                                      fontSize: 16.0,
+                                      fontSize: 10.0,
                                       fontFamily: "SourceSansProBold")),
                             ]),
                             Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),
@@ -350,20 +352,24 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(children: <Widget>[
-              Text("    Notes or Special request",
+              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+              Text("       Notes or Special request",
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 16.0,
+                      fontSize: 10.0,
                       fontFamily: "SourceSansProBold")),
             ]),
-            Padding(padding: EdgeInsets.fromLTRB(20, 10, 20, 0)),
             Row(children: <Widget>[
+              Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
               Text("     " + order.notes,
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 14.0,
                       fontFamily: "SourceSansProRegular")),
-            ])
+
+            ]),
+            Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 5)),
+
           ]),
     );
   }
@@ -378,7 +384,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         itemBuilder: (context, index) {
           return Container(
             color: Colors.white,
-            padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+            padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
             child: new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -397,7 +403,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                         fontFamily: "SourceSansProBold")),
                                 right: Text(
                                     products[index].quantity.toString() + " " +
-                                        products[index].unitSize,
+                                        products[index].unitSizeAlias,
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 16.0,
@@ -416,26 +422,28 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                           products[index].notes.isNotEmpty)
                         new Card(
                           margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          color: yellow,
+                          color: faintGrey,
                           child: new Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Row(children: <Widget>[
-                                  Text("    Special notes",
+                                  Padding(padding: EdgeInsets.fromLTRB(0, 15, 0, 10)),
+                                  Text("      Special notes",
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 16.0,
+                                          fontSize: 10.0,
                                           fontFamily: "SourceSansProBold")),
                                 ]),
                                 Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),
+                                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0)),
                                 Row(children: <Widget>[
                                   Text("     " + products[index].notes,
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 14.0,
                                           fontFamily: "SourceSansProRegular")),
-                                ])
+                                ]),
+                                Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 5)),
                               ]),
                         ),
                       Divider(color: greyText)
@@ -452,7 +460,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   Widget spaceBanner(BuildContext context) {
     return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20));
   }
-
+  Widget smallSpaceBanner(BuildContext context) {
+    return Padding(padding: EdgeInsets.fromLTRB(10, 5, 10, 5));
+  }
   Widget priceDetails(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -482,6 +492,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                 )
               ])
             ]),
+            Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 5)),
             if (order.promoCode != null && order.promoCode.isNotEmpty)
               Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -526,13 +537,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       )
                     ])
                   ]),
+            Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 5)),
             Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(children: <Widget>[
                     Expanded(
                       child: LeftRightAlign(
-                          left: Text("Gst ",
+                          left: Text("GST ",
                               style: TextStyle(
                                   color: greyText,
                                   fontSize: 16.0,
@@ -555,13 +567,13 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       left: Text("Total ",
                           style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16.0,
+                              fontSize: 18.0,
                               fontFamily: "SourceSansProBold")),
                       right: Text(
                           order.amount.total.getDisplayValue(),
                           style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16.0,
+                              fontSize: 18.0,
                               fontFamily: "SourceSansProBold"))),
                 )
               ])
@@ -585,6 +597,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           Expanded(
               child: RaisedButton(
                   color: Colors.white,
+                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                   onPressed: () {
                     _newTaskModalBottomSheet(context);
                   },
@@ -605,6 +618,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           Expanded(
               child: RaisedButton(
                   color: Colors.white,
+                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                   onPressed: () {
                     openPdf(context);
                   },
@@ -673,10 +687,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           return Container(
             child: new Wrap(
               children: <Widget>[
-                new ListTile(
-                  subtitle: new Text("More options",style: TextStyle(
+                Padding(padding: EdgeInsets.fromLTRB(15, 5, 0, 0)),
+               new Text("More options",style: TextStyle(
                       color: Colors.black, fontFamily: "SourceSansProSemiBold", fontSize: 14)),
-                ),
+
                 // new Text("More options", style: TextStyle(
                 //     color: Colors.black, fontFamily: "SourceSansProSemiBold", fontSize: 14)),
                   new ListTile(
@@ -686,7 +700,6 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       Navigator.pop(context),
                       moveToOrderActivityPage(order)},
                   ),
-                Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 20)),
               ],
             ),
           );

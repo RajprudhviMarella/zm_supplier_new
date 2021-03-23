@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';
@@ -42,6 +43,11 @@ class ChangePasswordDesign extends State<ChangePassword>
   void initState() {
     super.initState();
     loadSharedPrefs();
+    KeyboardVisibilityNotification().addNewListener(
+      onHide: () {
+
+      },
+    );
   }
 
   @override
