@@ -559,7 +559,7 @@ class CustomerState extends State<CustomersPage> {
               ],
             ),
           // }
-          // );
+          );
         });
   }
 
