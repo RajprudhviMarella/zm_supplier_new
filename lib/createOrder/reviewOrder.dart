@@ -42,7 +42,7 @@ class ReviewOrderPage extends StatefulWidget {
 
 class ReviewOrderDesign extends State<ReviewOrderPage>
     with TickerProviderStateMixin {
-  int counter = 0;
+  var counter;
   final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _textEditingController =
       new TextEditingController();
@@ -117,7 +117,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               centerTitle: true,
               backgroundColor: Colors.white,
               bottomOpacity: 0.0,
-              elevation: 0.0,
+              elevation: 2.0,
               leading: Container(
                 padding: EdgeInsets.only(right: 12.0),
                 child: IconButton(
@@ -153,7 +153,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                   onPressed: () =>
                       (widget.orderId != null && widget.orderId.isNotEmpty)
                           ? showDraftAlert(context)
-                          : Navigator.of(context).pop(),
+                          : Navigator.pushNamed(context, '/home'),
                 ),
               ],
             ),
@@ -179,7 +179,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(top: 2.0, left: 2),
+                                margin: EdgeInsets.only(left: 2),
                                 child: Text(
                                   "\$${totalPrice.toStringAsFixed(2)}",
                                   style: TextStyle(
@@ -205,6 +205,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               ),
                             )),
                         color: lightGreen,
+                        elevation: 0.0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -307,8 +308,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   Widget priceDetails(BuildContext context) {
     return Container(
       color: Colors.white,
-      margin: EdgeInsets.only(top: 30),
-      padding: EdgeInsets.fromLTRB(15, 25, 20, 10),
+      margin: EdgeInsets.only(top: 20),
+      padding: EdgeInsets.fromLTRB(15, 15, 10, 15),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -316,26 +317,24 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: <Widget>[
-                        Expanded(
-                          child: LeftRightAlign(
-                              left: Text("Subtotal",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily: "SourceSansProRegular")),
-                              right: Text(
-                                  "\$${totalSkusPrice.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily: "SourceSansProRegular"))),
-                        )
-                      ])
-                    ]),
+                Container(
+                    margin: EdgeInsets.only(top: 3.0),
+                    child: Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text("Subtotal",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text(
+                                "\$${totalSkusPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])),
                 // if (order.promoCode != null && order.promoCode.isNotEmpty)
                 //   Column(
                 //       crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,56 +359,51 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 //       ]),
                 if (lstDeliveryDates[0].deliveryFeePolicy.type == "APPLY_FEE" &&
                     !isAddonOrder)
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(children: <Widget>[
-                          Expanded(
-                            child: LeftRightAlign(
-                                left: Text("Delivery fee",
-                                    style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular")),
-                                right: Text(
-                                    "\$${totalDeliveryPrice.toStringAsFixed(2)}",
-                                    style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular"))),
-                          )
-                        ])
-                      ]),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.only(top: 3.0),
+                      child: Row(children: <Widget>[
                         Expanded(
                           child: LeftRightAlign(
-                              left: Text(
-                                  "Gst" +
-                                      lstDeliveryDates[0]
-                                          .supplier
-                                          .settings
-                                          .gst
-                                          .percent
-                                          .toString() +
-                                      "%",
+                              left: Text("Delivery fee",
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  "\$${totalGstPrice.toStringAsFixed(2)}",
+                                  "\$${totalDeliveryPrice.toStringAsFixed(2)}",
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular"))),
                         )
-                      ])
-                    ]),
+                      ])),
+                Container(
+                    margin: EdgeInsets.only(top: 3.0),
+                    child: Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text(
+                                "Gst " +
+                                    lstDeliveryDates[0]
+                                        .supplier
+                                        .settings
+                                        .gst
+                                        .percent
+                                        .toString() +
+                                    "%",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text("\$${totalGstPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])),
               ]),
-          Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
+          Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 0)),
         ],
       ),
     );
@@ -417,7 +411,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
 
   Widget EditNotes() {
     return Container(
-        padding: EdgeInsets.only(left: 4, top: 5.0, bottom: 10.0),
+        padding: EdgeInsets.only(left: 4, bottom: 10.0),
         color: Colors.white,
         margin: EdgeInsets.only(top: 2.0),
         child: TextField(
@@ -446,10 +440,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             style: TextStyle(
                 color: Colors.black,
                 fontSize: 16.0,
-                fontFamily: "SourceSansProSemiBold"),
-            onChanged: (query) {
-              counter = int.parse(query);
-            }));
+                fontFamily: "SourceSansProRegular"),
+            onChanged: (query) {}));
   }
 
   Widget displayList(BuildContext context) {
@@ -464,10 +456,22 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 margin: EdgeInsets.only(top: 1.0),
                 child: GestureDetector(
                   onTap: () {
-                    if (widget.marketList[index].quantity != 0) {
-                      counter = widget.marketList[index].quantity;
+                    if (widget
+                        .marketList[index].priceList[0].isDecimalAllowed) {
+                      if (widget.marketList[index].quantity != null &&
+                          widget.marketList[index].quantity != 0) {
+                        counter = widget.marketList[index].quantity.toDouble();
+                      } else {
+                        counter = widget.marketList[index].priceList[0].moq
+                            .toDouble();
+                      }
                     } else {
-                      counter = widget.marketList[index].priceList[0].moq;
+                      if (widget.marketList[index].quantity != null &&
+                          widget.marketList[index].quantity != 0) {
+                        counter = widget.marketList[index].quantity;
+                      } else {
+                        counter = widget.marketList[index].priceList[0].moq;
+                      }
                     }
                     _textEditingController.value = TextEditingValue(
                       text: this.counter.toString(),
@@ -497,19 +501,83 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: 5, left: 20.0, bottom: 10.0),
-                                  child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          widget.marketList[index].productName,
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.black,
-                                              fontFamily:
-                                                  "SourceSansProSemiBold"))),
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: 5, left: 10.0, bottom: 10.0),
+                                      child: Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Text(
+                                              widget.marketList[index]
+                                                  .productName,
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  color: Colors.black,
+                                                  fontFamily:
+                                                      "SourceSansProSemiBold"))),
+                                    ),
+                                    new Spacer(),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          if (widget.marketList[index]
+                                              .priceList[0].isDecimalAllowed) {
+                                            counter = widget.marketList[index]
+                                                .priceList[0].moq
+                                                .toDouble();
+                                          } else {
+                                            counter = widget.marketList[index]
+                                                .priceList[0].moq;
+                                          }
+                                          _txtSkuNotesEditController.text = "";
+                                          widget.marketList[index].skuNotes =
+                                              _txtSkuNotesEditController.text;
+                                          widget.marketList[index]
+                                              .selectedQuantity = "+";
+                                          widget.marketList[index].bgColor =
+                                              faintGrey;
+                                          widget.marketList[index].txtColor =
+                                              buttonBlue;
+                                          widget.marketList[index].txtSize =
+                                              30.0;
+                                          widget.marketList[index].isSelected =
+                                              false;
+                                          widget.marketList.removeWhere((it) =>
+                                              it.productName.toLowerCase() ==
+                                                  widget.marketList[index]
+                                                      .productName
+                                                      .toLowerCase() &&
+                                              it.sku.toLowerCase() ==
+                                                  widget.marketList[index].sku
+                                                      .toLowerCase() &&
+                                              widget.marketList[index]
+                                                      .priceList[0].unitSize
+                                                      .toLowerCase() ==
+                                                  it.priceList[0].unitSize
+                                                      .toLowerCase());
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            top: 5,
+                                            left: 20.0,
+                                            right: 10.0,
+                                            bottom: 10.0),
+                                        child: Align(
+                                            alignment: Alignment.topRight,
+                                            child: Text("remove",
+                                                textAlign: TextAlign.start,
+                                                style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    color: buttonBlue,
+                                                    fontFamily:
+                                                        "SourceSansProSemiBold"))),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 Container(
                                   margin: const EdgeInsets.only(top: 10.0),
@@ -548,40 +616,74 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                               ))),
                                       Container(
                                           width: 200.0,
-                                          height: 40.0,
-                                          child: TextField(
+                                          child: TextFormField(
                                               autofocus: true,
+                                              autovalidate: true,
+                                              validator: (value) => (value !=
+                                                          null &&
+                                                      value.isNotEmpty &&
+                                                      double.parse(
+                                                              _textEditingController
+                                                                  .text) <
+                                                          widget
+                                                              .marketList[index]
+                                                              .priceList[0]
+                                                              .moq)
+                                                  ? "quantity is below moq"
+                                                  : null,
                                               controller:
                                                   _textEditingController,
                                               keyboardType: TextInputType
                                                   .numberWithOptions(
+                                                      signed: false,
                                                       decimal: true),
                                               textInputAction:
                                                   TextInputAction.go,
                                               cursorColor: Colors.blue,
                                               textAlign: TextAlign.center,
                                               decoration: InputDecoration(
+                                                errorText: (_textEditingController
+                                                                .text !=
+                                                            null &&
+                                                        _textEditingController
+                                                            .text.isNotEmpty &&
+                                                        double.parse(
+                                                                _textEditingController
+                                                                    .text) <
+                                                            widget
+                                                                .marketList[
+                                                                    index]
+                                                                .priceList[0]
+                                                                .moq)
+                                                    ? "quantity is below moq"
+                                                    : null,
                                                 fillColor: faintGrey,
                                                 filled: true,
-                                                border: InputBorder.none,
                                                 focusedBorder: InputBorder.none,
-                                                enabledBorder: InputBorder.none,
-                                                errorBorder: InputBorder.none,
-                                                disabledBorder:
-                                                    InputBorder.none,
                                                 hintStyle: new TextStyle(
                                                     color: greyText,
-                                                    fontSize: 16.0,
+                                                    fontSize: 14.0,
                                                     fontFamily:
                                                         "SourceSansProRegular"),
                                               ),
                                               style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 16.0,
+                                                  fontSize: 14.0,
                                                   fontFamily:
                                                       "SourceSansProSemiBold"),
                                               onChanged: (query) {
-                                                counter = int.parse(query);
+                                                if (query != null &&
+                                                    query.isNotEmpty) {
+                                                  if (widget
+                                                      .marketList[index]
+                                                      .priceList[0]
+                                                      .isDecimalAllowed) {
+                                                    counter =
+                                                        double.parse(query);
+                                                  } else {
+                                                    counter = int.parse(query);
+                                                  }
+                                                }
                                               })),
                                       GestureDetector(
                                           onTap: () {
@@ -613,7 +715,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                 ),
                                 Container(
                                   padding:
-                                      EdgeInsets.only(left: 15.0, right: 15.0),
+                                      EdgeInsets.only(left: 10.0, right: 10.0),
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: TextField(
                                     controller: _txtSkuNotesEditController,
@@ -647,10 +749,14 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                       setState(() {
                                         _textEditingController.text =
                                             counter.toString();
-                                        widget.marketList[index].quantity =
-                                            counter;
+
                                         if (widget.marketList[index].quantity ==
-                                            0) {
+                                                0 ||
+                                            widget.marketList[index].quantity <
+                                                widget.marketList[index]
+                                                    .priceList[0].moq) {
+                                          widget.marketList[index].quantity =
+                                              counter;
                                           widget.marketList[index]
                                               .selectedQuantity = "+";
                                           widget.marketList[index].bgColor =
@@ -675,6 +781,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                   it.priceList[0].unitSize
                                                       .toLowerCase());
                                         } else {
+                                          widget.marketList[index].quantity =
+                                              widget.marketList[index]
+                                                  .priceList[0].moq;
                                           widget.marketList[index]
                                                   .selectedQuantity =
                                               counter.toString();
@@ -695,9 +804,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     },
                                     child: Container(
                                         padding: EdgeInsets.only(
-                                            left: 20.0, right: 20.0),
+                                            left: 10.0, right: 10.0),
                                         margin: EdgeInsets.only(
-                                            top: 20.0, right: 20.0, left: 20.0),
+                                            top: 20.0, right: 10.0, left: 10.0),
                                         height: 47.0,
                                         width:
                                             MediaQuery.of(context).size.width,
@@ -863,7 +972,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     };
     Map<String, String> queryParams = {
       'supplierId': supplierID,
-      'outletId': widget.outletId,
       'orderId': widget.orderId,
     };
 
@@ -871,8 +979,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
     print("url" + requestUrl);
     http.Response response = await http.delete(requestUrl, headers: headers);
-    _hideLoader();
-    Navigator.of(context).pop();
+    Navigator.pushNamed(context, '/home');
     print("url" + requestUrl);
     print("ms" + response.statusCode.toString());
   }
@@ -884,20 +991,20 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     Widget okButton = FlatButton(
       child: Text(Constants.txt_ok),
       onPressed: () {
+        Navigator.pop(dialogContext);
+        createOrderAPI();
         events.mixpanel
             .track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: {
           'ItemCount': widget.marketList.length,
-          'OrderNotes': (widget.orderNotes != null &&
-              widget.orderNotes.isNotEmpty)
-              ? true
-              : false,
+          'OrderNotes':
+              (widget.orderNotes != null && widget.orderNotes.isNotEmpty)
+                  ? true
+                  : false,
           'OutletID': widget.outletId,
           'OutletName': widget.outletName,
           'isAddonOrder': isAddonOrder,
         });
         events.mixpanel.flush();
-        Navigator.pop(dialogContext);
-        createOrderAPI();
       },
     );
     // set up the button
@@ -936,7 +1043,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         Navigator.pop(dialogContext);
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PAGE_DELETE_DRAFT);
         events.mixpanel.flush();
-
         deleteOrderAPI();
       },
     );
@@ -1119,8 +1225,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         context: context,
         builder: (BuildContext dialogContext) {
           Future.delayed(Duration(seconds: 2), () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.of(context, rootNavigator: true).pop();
           });
           return CustomDialogBox(
             title: "Can’t create this order",
@@ -1135,10 +1240,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         context: context,
         builder: (BuildContext dialogContext) {
           Future.delayed(Duration(seconds: 2), () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HomePage(), fullscreenDialog: true));
+            setState(() {
+              Navigator.pop(dialogContext);
+              Navigator.of(context, rootNavigator: true).pop();
+            });
           });
           return CustomDialogBox(
             title: "Order created",
