@@ -558,7 +558,6 @@ class CustomerState extends State<CustomersPage> {
                 Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
               ],
             ),
-          );
           // }
           // );
         });

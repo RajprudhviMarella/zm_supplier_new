@@ -152,12 +152,16 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                     onSubmitted: searchOperation,
                     autofocus: true,
                     style: new TextStyle(
-                      color: Colors.black,
-                    ),
+                        color: Colors.black,
+                        fontSize: 16.0,
+                        fontFamily: "SourceSansProRegular"),
                     decoration: new InputDecoration(
                         prefixIcon: new Icon(Icons.search, color: Colors.black),
                         hintText: Constants.txt_Search_order_number,
-                        hintStyle: new TextStyle(color: greyText)),
+                        hintStyle: new TextStyle(
+                            color: greyText,
+                            fontSize: 16.0,
+                            fontFamily: "SourceSansProRegular")),
                     // onChanged: searchOperation,
                   );
                   _handleSearchStart();
