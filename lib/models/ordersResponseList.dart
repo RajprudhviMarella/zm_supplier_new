@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:zm_supplier/models/unitSizeAlias.dart';
 
 class OrdersBaseResponse {
   OrdersBaseResponse({
@@ -780,7 +781,7 @@ class Products {
   var quantity;
   String supplierProductCode;
   String unitSize;
-  String unitSizeAlias;
+  UnitSizeAlias unitSizeAlias;
   DeliveryFee unitPrice;
   DeliveryFee totalPrice;
 
@@ -799,12 +800,14 @@ class Products {
     sku = json['sku'];
     productName = json['productName'];
     notes = json['notes'];
-    unitSizeAlias = json['unitSizeAlias'];
     quantity = json['quantity'];
     supplierProductCode = json['supplierProductCode'];
     unitSize = json['unitSize'];
     unitPrice = json['unitPrice'] != null
         ? new DeliveryFee.fromJson(json['unitPrice'])
+        : null;
+    unitSizeAlias = json['unitSizeAlias'] != null
+        ? new UnitSizeAlias.fromJson(json['unitSizeAlias'])
         : null;
     totalPrice = json['totalPrice'] != null
         ? new DeliveryFee.fromJson(json['totalPrice'])
@@ -817,11 +820,12 @@ class Products {
     data['productName'] = this.productName;
     data['notes'] = this.notes;
     data['quantity'] = this.quantity;
-    data['unitSizeAlias'] = this.unitSizeAlias;
     data['supplierProductCode'] = this.supplierProductCode;
     data['unitSize'] = this.unitSize;
     if (this.unitPrice != null) {
       data['unitPrice'] = this.unitPrice.toJson();
+    } if (this.unitSizeAlias != null) {
+      data['unitSizeAlias'] = this.unitSizeAlias.toJson();
     }
     if (this.totalPrice != null) {
       data['totalPrice'] = this.totalPrice.toJson();
@@ -829,6 +833,8 @@ class Products {
     return data;
   }
 }
+
+
 
 class OrderDetailsResponse {
   OrderDetailsResponse({
