@@ -456,8 +456,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 margin: EdgeInsets.only(top: 1.0),
                 child: GestureDetector(
                   onTap: () {
-                    if (widget
-                        .marketList[index].priceList[0].isDecimalAllowed) {
+                    if (widget.marketList[index].priceList[0].unitSizeAlias
+                        .isDecimalAllowed) {
                       if (widget.marketList[index].quantity != null &&
                           widget.marketList[index].quantity != 0) {
                         counter = widget.marketList[index].quantity.toDouble();
@@ -522,8 +522,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          if (widget.marketList[index]
-                                              .priceList[0].isDecimalAllowed) {
+                                          if (widget
+                                              .marketList[index]
+                                              .priceList[0]
+                                              .unitSizeAlias
+                                              .isDecimalAllowed) {
                                             counter = widget.marketList[index]
                                                 .priceList[0].moq
                                                 .toDouble();
@@ -677,6 +680,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                   if (widget
                                                       .marketList[index]
                                                       .priceList[0]
+                                                      .unitSizeAlias
                                                       .isDecimalAllowed) {
                                                     counter =
                                                         double.parse(query);
@@ -784,9 +788,19 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                           widget.marketList[index].quantity =
                                               widget.marketList[index]
                                                   .priceList[0].moq;
-                                          widget.marketList[index]
-                                                  .selectedQuantity =
-                                              counter.toString();
+                                          if (widget
+                                              .marketList[index]
+                                              .priceList[0]
+                                              .unitSizeAlias
+                                              .isDecimalAllowed) {
+                                            widget.marketList[index]
+                                                    .selectedQuantity =
+                                                counter.toStringAsFixed(2);
+                                          } else {
+                                            widget.marketList[index]
+                                                    .selectedQuantity =
+                                                counter.toString();
+                                          }
                                           widget.marketList[index].bgColor =
                                               buttonBlue;
                                           widget.marketList[index].txtColor =
@@ -853,7 +867,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               widget.marketList[index].selectedQuantity +
                                   " " +
                                   widget.marketList[index].priceList[0]
-                                      .unitSizeAlias,
+                                      .unitSizeAlias.shortName,
                               textAlign: TextAlign.right,
                               style: TextStyle(
                                   fontSize: 16,
@@ -880,7 +894,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               ),
             ),
             Text(
-              marketList.priceList[0].unitSizeAlias,
+              marketList.priceList[0].unitSizeAlias.shortName,
               style: TextStyle(
                 fontSize: 12.0,
                 color: azul_blue,
@@ -973,6 +987,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     Map<String, String> queryParams = {
       'supplierId': supplierID,
       'orderId': widget.orderId,
+      'outletId': widget.outletId,
     };
 
     String queryString = Uri(queryParameters: queryParams).query;
