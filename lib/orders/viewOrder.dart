@@ -376,7 +376,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       'pageSize': pageSize.toString(),
       'sortBy': 'timeUpdated',
       'sortOrder': 'DESC',
-      'orderStatus': 'Placed,Cancelled,Rejected,Void',
+      'orderStatus': 'Placed,Void',
       if (searchedString != null && searchedString.isNotEmpty)
         'orderIdText': searchedString,
     };
