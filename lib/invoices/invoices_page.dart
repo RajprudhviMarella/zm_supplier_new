@@ -205,18 +205,21 @@ class InvoicesState extends State<InvoicesPage> {
         onPressed: () => Navigator.of(context).pop(),
       ),
     );
+
+
   }
 
   Widget buildSearchBar(BuildContext context) {
     return Container(
         // padding: EdgeInsets.all(5.0),
-        color: Colors.white,
+       // color: Colors.white,
         height: 60,
         child: ListTile(
           leading: null,
           title: Container(
             margin: EdgeInsets.only(top: 3, bottom: 15),
             decoration: BoxDecoration(
+
               color: keyLineGrey,
               border: Border.all(
                 color: keyLineGrey,
@@ -258,7 +261,19 @@ class InvoicesState extends State<InvoicesPage> {
               // onChanged: searchOperation,
             ),
           ),
-        ));
+        ),
+
+        decoration: BoxDecoration(
+    boxShadow: <BoxShadow>[
+    BoxShadow(
+        color: faintGrey,
+        blurRadius: 6.0,
+        offset: Offset(0.0, 0.75)
+    )
+    ],
+    color: Colors.white
+    ),
+    );
   }
 
   Widget invoicesList() {
@@ -330,52 +345,61 @@ class InvoicesState extends State<InvoicesPage> {
                             //     left: 15.0,
                             //     right: 10.0),
                             leading: leadingImage(element),
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  element.outlet.outletName,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontFamily: "SourceSansProSemiBold",
-                                  ),
-                                ),
-                                Text(
-                                    DateFormat('d MMM')
-                                        .format(element.getInvoiceDate()),
+                            title: Transform.translate(
+                              offset: Offset(-5, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+
+                                  Text(
+                                    element.outlet.outletName,
                                     style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: greyText,
-                                        fontFamily: "SourceSansProRegular")),
-                              ],
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                      fontFamily: "SourceSansProSemiBold",
+                                    ),
+                                  ),
+                                  Text(
+                                      DateFormat('d MMM')
+                                          .format(element.getInvoiceDate()),
+                                      style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: greyText,
+                                          fontFamily: "SourceSansProRegular")),
+                                ],
+
+                              ),
                             ),
 
-                            subtitle: Column(
-                              children: [
-                                Row(children: <Widget>[
-                                  checkPaymentStatus(element),
+                            subtitle: Transform.translate(
+                              offset: Offset(-5, 0),
+                              child: Column(
+                                children: [
+                                  Row(children: <Widget>[
+                                    checkPaymentStatus(element),
 
-                                  Text(
-                                    " " + '#${element.invoiceNum}',
-                                    style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 12.0,
-                                        fontFamily: "SourceSansProRegular"),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    totalAmount(element.totalCharge),
-                                    style: TextStyle(
-                                        color: isExpired(element) ? warningRed : Colors.black,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular"),
-                                  ),
-                                ]),
+                                    Text(
+                                      " " + '#${element.invoiceNum}',
+                                      style: TextStyle(
+                                          color: greyText,
+                                          fontSize: 12.0,
+                                          fontFamily: "SourceSansProRegular"),
+                                    ),
+                                    Spacer(),
+                                  //  SizedBox(width: 5,),
+                                    Text(
+                                      totalAmount(element.totalCharge),
+                                      style: TextStyle(
+                                          color: isExpired(element) ? warningRed : Colors.black,
+                                          fontSize: 16.0,
+                                          fontFamily: "SourceSansProRegular"),
+                                    ),
+                                  ]),
 
-                                checkInvoiceStatus(element),
-                                //Container(height: 20, color: Colors.yellow,)
-                              ],
+                                  checkInvoiceStatus(element),
+                                  //Container(height: 20, color: Colors.yellow,)
+                                ],
+                              ),
                             ),
 
                           ),

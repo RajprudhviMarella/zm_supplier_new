@@ -44,6 +44,7 @@ class CustomerState extends State<CustomersPage> {
   int selectedIndex = 0;
 
   String selectedFilterType = 'RecentOrdered';
+
   Constants events = Constants();
 
   @override
@@ -173,10 +174,10 @@ class CustomerState extends State<CustomersPage> {
     double height = MediaQuery.of(context).size.height;
     return new Scaffold(
       appBar: new AppBar(
-        toolbarHeight: 70,
+        toolbarHeight: 60,
         centerTitle: false,
         title: Padding(
-          padding: const EdgeInsets.only(top: 18.0),
+          padding: const EdgeInsets.only(top: 1.0),
           child: Row(
             children: [
               Text(
@@ -213,7 +214,7 @@ class CustomerState extends State<CustomersPage> {
         child: ListTile(
           leading: null,
           title: Container(
-            margin: EdgeInsets.only(top: 3),
+            margin: EdgeInsets.only(top: 3, bottom: 15),
             decoration: BoxDecoration(
               color: keyLineGrey,
               border: Border.all(
@@ -263,7 +264,7 @@ class CustomerState extends State<CustomersPage> {
 
   Widget Headers() {
     return Padding(
-        padding: const EdgeInsets.only(left: 17.0, right: 3, top: 20),
+        padding: const EdgeInsets.only(left: 17.0, right: 3, top: 5),
         child: Container(
           height: 50,
           child: Column(
@@ -481,51 +482,57 @@ class CustomerState extends State<CustomersPage> {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
-          return Container(
-            child: new Wrap(
-              children: <Widget>[
-                new ListTile(
-                    title: new Text(
-                      'Sort by',
-                      style: TextStyle(
-                          fontSize: 14, fontFamily: 'SourceSansProSemibold'),
-                    ),
-                    onTap: () => {}),
-                new ListTile(
-                  title: new Text('Recently ordered',
-                      style: TextStyle(
-                          fontSize: 16, fontFamily: 'SourceSansProRegular')),
-                  onTap: () {
-
-                      setState(() {
-                        selectedFilterType = 'RecentOrdered';
-
-                    //  selectedCustomersDataFuture = getCustomersListCalling(false);
-                    });
-                  },
-                  trailing: selectedFilterType == 'RecentOrdered' ? trailingIcon('RecentOrdered'):trailingIcon('A-Z1'),
-                ),
-                Divider(
-                  thickness: 1.5,
-                  color: faintGrey,
-                ),
-                new ListTile(
-                  title: new Text('A-Z',
-                      style: TextStyle(
-                          fontSize: 16, fontFamily: 'SourceSansProRegular')),
-                  onTap: () {
-
-                      setState(() {
-                        selectedFilterType = 'A-Z';
-                    //  trailingIcon(selectedFilterType);
-                   //   selectedCustomersDataFuture = getCustomersListCalling(false);
-                    });
-                  },
-                  trailing: selectedFilterType == 'A-Z' ? trailingIcon('A-Z') : trailingIcon('A-Z1'),
-                ),
-                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
-              ],
-            ),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  child: new Wrap(
+                    children: <Widget>[
+                      new ListTile(
+                          title: new Text(
+                            'Sort by',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'SourceSansProSemibold'),
+                          ),
+                          onTap: () => {}),
+                      new ListTile(
+                        title: new Text('Recently ordered',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'SourceSansProRegular')),
+                        onTap: () {
+                          setState(() {
+                            selectedFilterType = 'RecentOrdered';
+                            // selectedCustomersDataFuture = getCustomersListCalling(false);
+                          });
+                        },
+                        trailing: selectedFilterType == 'RecentOrdered'
+                            ? trailingIcon('RecentOrdered')
+                            : null,
+                      ),
+                      Divider(
+                        thickness: 1.5,
+                        color: faintGrey,
+                      ),
+                      new ListTile(
+                        title: new Text('A-Z',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'SourceSansProRegular')),
+                        onTap: () {
+                          setState(() {
+                            selectedFilterType = 'A-Z';
+                            //  selectedCustomersDataFuture = getCustomersListCalling(false);
+                          });
+                        },
+                        trailing: selectedFilterType == 'A-Z' ? trailingIcon(
+                            'A-Z') : null,
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
+                    ],
+                  ),
+                );
+              }
           );
         });
   }
