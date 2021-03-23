@@ -10,6 +10,7 @@ import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -61,10 +62,13 @@ class MarketListDesign extends State<MarketListPage>
 
   MarketListDesign(this.repeatOrderProducts);
 
+  Constants events = Constants();
+
   @override
   void initState() {
     loadSharedPrefs();
     super.initState();
+    events.mixPanelEvents();
   }
 
   SharedPref sharedPref = SharedPref();
@@ -132,6 +136,9 @@ class MarketListDesign extends State<MarketListPage>
                                         : buttonBlue,
                                     foregroundColor: Colors.white,
                                     onPressed: () {
+                                      events.mixpanel.track(Events
+                                          .TAP_MARKET_LIST_SELECT_ORDER_NOTES);
+                                      events.mixpanel.flush();
                                       createAddNotesOrder();
                                     },
                                     label: Container(
@@ -194,6 +201,20 @@ class MarketListDesign extends State<MarketListPage>
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
                                     onPressed: () {
+                                      events.mixpanel.track(
+                                          Events.TAP_MARKET_LIST_NEXT,
+                                          properties: {
+                                            'ItemCount': selectedMarketList.length,
+                                            'OrderNotes': (orderNotes != null &&
+                                                    orderNotes.isNotEmpty &&
+                                                    orderNotes != "Notes")
+                                                ? true
+                                                : false,
+                                            'OutletID': widget.outletId,
+                                            'OutletName': widget.outletName
+                                          });
+                                      events.mixpanel.flush();
+
                                       if (selectedMarketList != null &&
                                           selectedMarketList.isNotEmpty) {
                                         print(jsonEncode(selectedMarketList));
@@ -348,6 +369,8 @@ class MarketListDesign extends State<MarketListPage>
     ModalRoute.of(context)
         .addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
 
+    events.mixpanel.track(Events.TAP_MARKET_LIST_SEARCH);
+    events.mixpanel.flush();
     setState(() {
       _isSearching = true;
     });
@@ -468,6 +491,9 @@ class MarketListDesign extends State<MarketListPage>
       margin: EdgeInsets.only(top: 2.0),
       child: GestureDetector(
           onTap: () {
+            events.mixpanel.track(Events.TAP_MARKET_LIST_ADD_SKU);
+            events.mixpanel.flush();
+
             if (snapShot.data[index].quantity != 0) {
               counter = snapShot.data[index].quantity;
             } else {

@@ -11,6 +11,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/SearchOrders.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/services/favouritesApi.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 
 import '../utils/color.dart';
@@ -42,10 +43,14 @@ class CustomerState extends State<CustomersPage> {
   LoginResponse userData;
   int selectedIndex = 0;
 
+  String selectedFilterType = 'RecentOrdered';
+  Constants events = Constants();
+
   @override
   void initState() {
     super.initState();
 
+    events.mixPanelEvents();
     customersData = getCustomersReportApiCalling(false);
     selectedCustomersDataFuture = getCustomersListCalling(false);
   }
@@ -77,7 +82,6 @@ class CustomerState extends State<CustomersPage> {
     } else {
       print('failed get customers reports');
     }
-
     customerDataList = customersReportResponse.data;
     if (isUpdating) {
       setState(() {
@@ -98,21 +102,39 @@ class CustomerState extends State<CustomersPage> {
       'supplierId': userData.supplier.first.supplierId
     };
 
-    var url = URLEndPoints.customers_report_data;
+    Map<String, String> queryParams = {
+      'sortBy': selectedFilterType,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.customers_report_data + '?' + queryString;
     print(headers);
     print(url);
     var response = await http.get(url, headers: headers);
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
+      print('response available');
       customersReportResponse =
           CustomersReportResponse.fromJson(json.decode(response.body));
+      print(customersReportResponse.data.first.outlets.length);
     } else {
       print('failed get customers reports');
     }
 
     selectedCustomerData = customersReportResponse.data[selectedIndex];
+
+    var starredOutlets = customersReportResponse.data[1];
+    var noRecentOutlets = customersReportResponse.data[4];
     //refresh the list when tap on starred.
+    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB, properties: {
+      'AllOutletsCount': selectedCustomerData.outlets.length,
+      'StarredCount': starredOutlets.outlets.length,
+      'NoRecentOrdersCount': noRecentOutlets.outlets.length
+    });
+    events.mixpanel.flush();
+
     if (isUpdating) {
       setState(() {
         selectedCustomersDataFuture = selectedD(selectedCustomerData);
@@ -214,6 +236,8 @@ class CustomerState extends State<CustomersPage> {
                 color: Colors.black,
               ),
               onTap: () async {
+                events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_SEARCH);
+                events.mixpanel.flush();
                 final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -249,15 +273,17 @@ class CustomerState extends State<CustomersPage> {
                   left: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
-
                       'Outlets',
-                      style: TextStyle(fontSize: 18, fontFamily: "SourceSansProBold"),
+                      style: TextStyle(
+                          fontSize: 18, fontFamily: "SourceSansProBold"),
                     ),
                   ),
                   right: new RaisedButton(
                     color: Colors.transparent,
                     elevation: 0,
-                    onPressed: () {},
+                    onPressed: () {
+                      _openBottomSheet();
+                    },
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
@@ -347,6 +373,23 @@ class CustomerState extends State<CustomersPage> {
                           print('tapped $index');
                           setState(() {
                             selectedIndex = index;
+                            if (index == 0) {
+                              events.mixpanel.track(
+                                  Events.TAP_CUSTOMERS_TAB_ALL_OUTLETS_TAB);
+                            } else if (index == 1) {
+                              events.mixpanel.track(
+                                  Events.TAP_CUSTOMERS_TAB_STARRED_OUTLETS_TAB);
+                            } else if (index == 2) {
+                              events.mixpanel.track(Events
+                                  .TAP_CUSTOMERS_TAB_THIS_WEEK_OUTLETS_TAB);
+                            } else if (index == 3) {
+                              events.mixpanel.track(Events
+                                  .TAP_CUSTOMERS_TAB_LAST_WEEK_OUTLETS_TAB);
+                            } else {
+                              events.mixpanel.track(Events
+                                  .TAP_CUSTOMERS_TAB_NO_RECENT_ORDERED_OUTLETS_TAB);
+                            }
+                            events.mixpanel.flush();
                             var a = snapshot.data[index];
                             selectedCustomersDataFuture = selectedD(a);
                           });
@@ -434,6 +477,76 @@ class CustomerState extends State<CustomersPage> {
         });
   }
 
+  void _openBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    title: new Text(
+                      'Sort by',
+                      style: TextStyle(
+                          fontSize: 14, fontFamily: 'SourceSansProSemibold'),
+                    ),
+                    onTap: () => {}),
+                new ListTile(
+                  title: new Text('Recently ordered',
+                      style: TextStyle(
+                          fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                  onTap: () {
+
+                      setState(() {
+                        selectedFilterType = 'RecentOrdered';
+
+                    //  selectedCustomersDataFuture = getCustomersListCalling(false);
+                    });
+                  },
+                  trailing: selectedFilterType == 'RecentOrdered' ? trailingIcon('RecentOrdered'):trailingIcon('A-Z1'),
+                ),
+                Divider(
+                  thickness: 1.5,
+                  color: faintGrey,
+                ),
+                new ListTile(
+                  title: new Text('A-Z',
+                      style: TextStyle(
+                          fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                  onTap: () {
+
+                      setState(() {
+                        selectedFilterType = 'A-Z';
+                    //  trailingIcon(selectedFilterType);
+                   //   selectedCustomersDataFuture = getCustomersListCalling(false);
+                    });
+                  },
+                  trailing: selectedFilterType == 'A-Z' ? trailingIcon('A-Z') : trailingIcon('A-Z1'),
+                ),
+                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
+              ],
+            ),
+          );
+        });
+  }
+
+  Widget trailingIcon(String selected) {
+    print(selectedFilterType);
+    print(selected);
+    if (selectedFilterType == selected) {
+      return Container(
+          height: 20,
+          width: 20,
+          child: ImageIcon(
+            AssetImage('assets/images/icon-tick-green.png'),
+            size: 22,
+            color: buttonBlue,
+          ));
+    } else {
+      return Container(height: 20, width: 20);
+    }
+  }
+
   Color selectedColor(int index) {
     if (index == selectedIndex) {
       return buttonBlue;
@@ -450,8 +563,8 @@ class CustomerState extends State<CustomersPage> {
                 (BuildContext context, AsyncSnapshot<CustomersData> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('failed to load'));
+                // } else if (snapshot.hasError) {
+                //   return Center(child: Text('failed to load'));
               } else {
                 return ListView.builder(
                   shrinkWrap: true,
@@ -532,6 +645,10 @@ class CustomerState extends State<CustomersPage> {
                             var isStarred =
                                 snapshot.data.outlets[index].isFavourite;
                             print(snapshot.data.outlets[index].outlet.outletId);
+
+                            events.mixpanel.track(
+                                Events.TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS);
+                            events.mixpanel.flush();
                             final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -587,6 +704,8 @@ class CustomerState extends State<CustomersPage> {
   }
 
   tapOnFavourite(int index, Customers customers) {
+    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_OUTLET_FAVOURITE);
+    events.mixpanel.flush();
     if (customers.isFavourite) {
       setState(() {
         customers.isFavourite = false;

@@ -49,14 +49,15 @@ class Customers {
     this.orderDisabled,
     this.disableCancel,
     this.paymentDue,
-    //this.customFields,
+    this.customFields,
     this.invoiceSettings,
-    //this.supplierSetting,
+  //  this.supplierSetting,
     this.linkedUsers,
-   // this.teams,
+    this.teams,
     this.isFavourite,
     this.odpId,
    // this.payments,
+    this.bulkOrderHistory,
   });
 
   int timeCreated;
@@ -72,14 +73,15 @@ class Customers {
   bool orderDisabled;
   bool disableCancel;
   double paymentDue;
- // CustomFields customFields;
+  CustomFields customFields;
   InvoiceSettings invoiceSettings;
  // SupplierSetting supplierSetting;
   List<LinkedUser> linkedUsers;
- // List<Team> teams;
+  List<Team> teams;
   bool isFavourite;
   String odpId;
-  //Payments payments;
+ // Payments payments;
+  dynamic bulkOrderHistory;
 
   factory Customers.fromJson(Map<String, dynamic> json) => Customers(
     timeCreated: json["timeCreated"],
@@ -95,14 +97,15 @@ class Customers {
     orderDisabled: json["orderDisabled"],
     disableCancel: json["disableCancel"],
     paymentDue: json["paymentDue"] == null ? null : json["paymentDue"].toDouble(),
-   // customFields: json["customFields"] == null ? null : CustomFields.fromJson(json["customFields"]),
+    customFields: json["customFields"] == null ? null : CustomFields.fromJson(json["customFields"]),
     invoiceSettings: json["invoiceSettings"] == null ? null : InvoiceSettings.fromJson(json["invoiceSettings"]),
-    //supplierSetting: SupplierSetting.fromJson(json["supplierSetting"]),
+  //  supplierSetting: SupplierSetting.fromJson(json["supplierSetting"]),
     linkedUsers: json["linkedUsers"] == null ? null : List<LinkedUser>.from(json["linkedUsers"].map((x) => LinkedUser.fromJson(x))),
-    //teams: json["teams"] == null ? null : List<Team>.from(json["teams"].map((x) => Team.fromJson(x))),
+    teams: json["teams"] == null ? null : List<Team>.from(json["teams"].map((x) => Team.fromJson(x))),
     isFavourite: json["isFavourite"],
     odpId: json["odpId"],
    // payments: json["payments"] == null ? null : Payments.fromJson(json["payments"]),
+    bulkOrderHistory: json["bulkOrderHistory"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -119,14 +122,15 @@ class Customers {
     "orderDisabled": orderDisabled,
     "disableCancel": disableCancel,
     "paymentDue": paymentDue == null ? null : paymentDue,
-   // "customFields": customFields == null ? null : customFields.toJson(),
+    "customFields": customFields == null ? null : customFields.toJson(),
     "invoiceSettings": invoiceSettings == null ? null : invoiceSettings.toJson(),
     //"supplierSetting": supplierSetting.toJson(),
     "linkedUsers": linkedUsers == null ? null : List<dynamic>.from(linkedUsers.map((x) => x.toJson())),
-    //"teams": teams == null ? null : List<dynamic>.from(teams.map((x) => x.toJson())),
+    "teams": teams == null ? null : List<dynamic>.from(teams.map((x) => x.toJson())),
     "isFavourite": isFavourite,
     "odpId": odpId,
     //"payments": payments == null ? null : payments.toJson(),
+    "bulkOrderHistory": bulkOrderHistory,
   };
 }
 
@@ -206,7 +210,7 @@ class LinkedUser {
     lastName: json["lastName"],
     imageUrl: json["imageURL"] == null ? null : json["imageURL"],
     phone: json["phone"],
-    roles: List<String>.from(json["roles"].map((x) => x)),
+    roles: json["roles"] == null ? null : List<String>.from(json["roles"].map((x) => x)),
     roleGroup: json["roleGroup"],
     supplierRoleGroup: json["supplierRoleGroup"],
     supplierRoles: json["supplierRoles"] == null ? null : List<String>.from(json["supplierRoles"].map((x) => x)),
@@ -280,6 +284,44 @@ class CustomersData {
     "outlets": List<dynamic>.from(outlets.map((x) => x.toJson())),
   };
 }
+
+class CustomFields {
+  CustomFields({
+    this.vehicleNo,
+  });
+
+  String vehicleNo;
+
+  factory CustomFields.fromJson(Map<String, dynamic> json) => CustomFields(
+    vehicleNo: json["vehicleNo"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "vehicleNo": vehicleNo,
+  };
+}
+
+class Team {
+  Team({
+    this.teamId,
+    this.name,
+  });
+
+  String teamId;
+  String name;
+
+  factory Team.fromJson(Map<String, dynamic> json) => Team(
+    teamId: json["teamId"],
+    name:  json["name"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "teamId": teamId,
+    "name": name,
+  };
+}
+
+
 /*
 class CustomersData {
   CustomersData({
