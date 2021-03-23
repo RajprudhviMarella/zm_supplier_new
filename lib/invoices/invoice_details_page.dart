@@ -206,11 +206,15 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                       SizedBox(
                         height: 1,
                       ),
-                      Text(invoice.outlet.outletName,
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontFamily: 'SourceSansProBold',
-                              color: Colors.black)),
+                      Flexible(
+                        child: Text(invoice.outlet.outletName,overflow:
+                        TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                                fontSize: 22,
+                                fontFamily: 'SourceSansProBold',
+                                color: Colors.black)),
+                      ),
                       SizedBox(
                         height: 5,
                       ),

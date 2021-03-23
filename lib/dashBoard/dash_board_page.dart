@@ -394,7 +394,7 @@ class DashboardState extends State<DashboardPage> {
 
                           viewportFraction: 0.94,
                           enableInfiniteScroll: false,
-                          height: 145,
+                          height: 150,
                           // aspectRatio: 2.6,
                           initialPage: 0,
                           onPageChanged: (index, reason) {
@@ -440,68 +440,71 @@ class DashboardState extends State<DashboardPage> {
                                                 MaterialPageRoute(
                                                     builder: (context) => ViewOrdersPage(null)));
                                           },
-                                          child: Container(
-                                            color: Colors.white,
-                                            child: Column(children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20, top: 15),
-                                                child: Align(
-                                                    alignment: Alignment.topLeft,
-                                                    child: new Text(
-                                                      currentIndex == 0
-                                                          ? "Total orders"
-                                                              .toUpperCase()
-                                                          : 'East coast team'
-                                                              .toUpperCase(),
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                              "SourceSansProBold"),
-                                                    )),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20, top: 0),
-                                                child: Align(
-                                                    alignment: Alignment.topLeft,
-                                                    child: new Text(
-                                                      currentIndex == 0
-                                                          ? '\$' +
-                                                                  snapshot
-                                                                      .data
-                                                                      .data
-                                                                      .totalSpendingCurrMonth
-                                                                      .toString()
-                                                                      .replaceAllMapped(
-                                                                          reg,
-                                                                          (Match m) =>
-                                                                              '${m[1]},') ??
-                                                              ""
-                                                          : '',
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 30,
-                                                          fontFamily:
-                                                              "SourceSansProBold"),
-                                                    )),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20, top: 0),
-                                                child: Align(
-                                                    alignment: Alignment.topLeft,
-                                                    child: new Text(
-                                                      "this month",
-                                                      style: TextStyle(
-                                                          color: greyText,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                              "SourceSansProSemiBold"),
-                                                    )),
-                                              ),
-                                            ]),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: 8.0),
+                                            child: Container(
+                                              color: Colors.white,
+                                              child: Column(children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 20, top: 15),
+                                                  child: Align(
+                                                      alignment: Alignment.topLeft,
+                                                      child: new Text(
+                                                        currentIndex == 0
+                                                            ? "Total orders"
+                                                                .toUpperCase()
+                                                            : 'East coast team'
+                                                                .toUpperCase(),
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                            fontFamily:
+                                                                "SourceSansProBold"),
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 20, top: 0),
+                                                  child: Align(
+                                                      alignment: Alignment.topLeft,
+                                                      child: new Text(
+                                                        currentIndex == 0
+                                                            ? '\$' +
+                                                                    snapshot
+                                                                        .data
+                                                                        .data
+                                                                        .totalSpendingCurrMonth
+                                                                        .toString()
+                                                                        .replaceAllMapped(
+                                                                            reg,
+                                                                            (Match m) =>
+                                                                                '${m[1]},') ??
+                                                                ""
+                                                            : '',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 30,
+                                                            fontFamily:
+                                                                "SourceSansProBold"),
+                                                      )),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 20, top: 0),
+                                                  child: Align(
+                                                      alignment: Alignment.topLeft,
+                                                      child: new Text(
+                                                        "this month",
+                                                        style: TextStyle(
+                                                            color: greyText,
+                                                            fontSize: 14,
+                                                            fontFamily:
+                                                                "SourceSansProSemiBold"),
+                                                      )),
+                                                ),
+                                              ]),
+                                            ),
                                           ),
                                         ),
                                         /*
@@ -540,14 +543,14 @@ class DashboardState extends State<DashboardPage> {
 
                                         Padding(
                                             padding: const EdgeInsets.only(
-                                                left: 20, right: 20, top: 100),
+                                                left: 20, right: 20, top: 108),
                                             child: Container(
                                               height: 1.5,
                                               color: faintGrey,
                                             )),
                                         Padding(
                                             padding: const EdgeInsets.only(
-                                                left: 20, right: 10, top: 106),
+                                                left: 20, right: 10, top: 112),
                                             child: InkWell(
                                               onTap: () {
                                                 mixpanel.track(Events
