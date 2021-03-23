@@ -42,6 +42,7 @@ class DashboardState extends State<DashboardPage> {
 
   var selectedTab = 'Today';
   bool isDraftsAvailable = true;
+
   // Widget appBarTitle = new Text(
   //   "Orders",
   //   style: TextStyle(
@@ -62,7 +63,6 @@ class DashboardState extends State<DashboardPage> {
 
   Future<List<Orders>> draftOrdersFuture;
   List<Orders> draftOrdersList;
-
 
   @override
   void initState() {
@@ -291,13 +291,14 @@ class DashboardState extends State<DashboardPage> {
     height = MediaQuery.of(context).size.height;
     return new Scaffold(
       appBar: new AppBar(
-        toolbarHeight: 70,
+          //toolbarHeight: 60,
           centerTitle: false,
           title: Padding(
-            padding: const EdgeInsets.only(top: 1.0),
+            padding: const EdgeInsets.only(top: 5.0),
             child: InteractiveViewer(
-              panEnabled: false, // Set it to false to prevent panning.
-              boundaryMargin: EdgeInsets.all(80),
+              panEnabled: false,
+              // Set it to false to prevent panning.
+              boundaryMargin: EdgeInsets.all(10),
               minScale: 0.5,
               maxScale: 4,
               child: Row(
@@ -305,7 +306,9 @@ class DashboardState extends State<DashboardPage> {
                   Text(
                     "Orders",
                     style: TextStyle(
-                        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
+                        color: Colors.black,
+                        fontFamily: "SourceSansProBold",
+                        fontSize: 30),
                     textAlign: TextAlign.left,
                   ),
                 ],
@@ -358,7 +361,7 @@ class DashboardState extends State<DashboardPage> {
             banner(context),
             //dots(context),
 
-            draftsHeader(),
+            draftHeader(),
             draftBannersList(),
             Header(),
             tabs(),
@@ -371,7 +374,7 @@ class DashboardState extends State<DashboardPage> {
 
   Widget banner(context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 13),
+      padding: const EdgeInsets.only(top: 10, bottom: 13),
       child: FutureBuilder<OrderSummaryResponse>(
           future: orderSummaryData,
           builder: (context, AsyncSnapshot<OrderSummaryResponse> snapshot) {
@@ -381,21 +384,18 @@ class DashboardState extends State<DashboardPage> {
               return Center(child: Text('failed to load'));
             } else {
               return Container(
-
                 child: Column(
                   children: <Widget>[
                     CarouselSlider(
                       //  height: 200,
 
-
                       options: CarouselOptions(
                           //autoPlay: true,
 
                           viewportFraction: 0.94,
-
                           enableInfiniteScroll: false,
-                         height: 145,
-                         // aspectRatio: 2.6,
+                          height: 145,
+                          // aspectRatio: 2.6,
                           initialPage: 0,
                           onPageChanged: (index, reason) {
                             setState(() {
@@ -418,7 +418,8 @@ class DashboardState extends State<DashboardPage> {
                                     color: Colors.grey.withOpacity(0.2),
                                     spreadRadius: 1,
                                     blurRadius: 5,
-                                    offset: Offset(0, 3), // changes position of shadow
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
                                   ),
                                 ],
                               ),
@@ -432,62 +433,77 @@ class DashboardState extends State<DashboardPage> {
                                   Container(
                                     child: Stack(
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, top: 15),
-                                          child: Align(
-                                              alignment: Alignment.topLeft,
-                                              child: new Text(
-                                                currentIndex == 0
-                                                    ? "Total orders".toUpperCase()
-                                                    : 'East coast team'
-                                                        .toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        "SourceSansProBold"),
-                                              )),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => ViewOrdersPage(null)));
+                                          },
+                                          child: Container(
+                                            color: Colors.white,
+                                            child: Column(children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20, top: 15),
+                                                child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: new Text(
+                                                      currentIndex == 0
+                                                          ? "Total orders"
+                                                              .toUpperCase()
+                                                          : 'East coast team'
+                                                              .toUpperCase(),
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14,
+                                                          fontFamily:
+                                                              "SourceSansProBold"),
+                                                    )),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20, top: 0),
+                                                child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: new Text(
+                                                      currentIndex == 0
+                                                          ? '\$' +
+                                                                  snapshot
+                                                                      .data
+                                                                      .data
+                                                                      .totalSpendingCurrMonth
+                                                                      .toString()
+                                                                      .replaceAllMapped(
+                                                                          reg,
+                                                                          (Match m) =>
+                                                                              '${m[1]},') ??
+                                                              ""
+                                                          : '',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 30,
+                                                          fontFamily:
+                                                              "SourceSansProBold"),
+                                                    )),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 20, top: 0),
+                                                child: Align(
+                                                    alignment: Alignment.topLeft,
+                                                    child: new Text(
+                                                      "this month",
+                                                      style: TextStyle(
+                                                          color: greyText,
+                                                          fontSize: 14,
+                                                          fontFamily:
+                                                              "SourceSansProSemiBold"),
+                                                    )),
+                                              ),
+                                            ]),
+                                          ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, top: 30),
-                                          child: Align(
-                                              alignment: Alignment.topLeft,
-                                              child: new Text(
-                                                currentIndex == 0
-                                                    ? '\$' +
-                                                            snapshot.data.data
-                                                                .totalSpendingCurrMonth
-                                                                .toString()
-                                                                .replaceAllMapped(
-                                                                    reg,
-                                                                    (Match m) =>
-                                                                        '${m[1]},') ??
-                                                        ""
-                                                    : '',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 30,
-                                                    fontFamily:
-                                                        "SourceSansProBold"),
-                                              )),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, top: 65),
-                                          child: Align(
-                                              alignment: Alignment.topLeft,
-                                              child: new Text(
-                                                "this month",
-                                                style: TextStyle(
-                                                    color: greyText,
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        "SourceSansProSemiBold"),
-                                              )),
-                                        ),
-
                                         /*
                                     Padding(
                                       padding: const EdgeInsets.only(
@@ -527,7 +543,6 @@ class DashboardState extends State<DashboardPage> {
                                                 left: 20, right: 20, top: 100),
                                             child: Container(
                                               height: 1.5,
-
                                               color: faintGrey,
                                             )),
                                         Padding(
@@ -535,7 +550,8 @@ class DashboardState extends State<DashboardPage> {
                                                 left: 20, right: 10, top: 106),
                                             child: InkWell(
                                               onTap: () {
-                                                mixpanel.track(Events.TAP_DASHBOARD_VIEW_DELIVERIES);
+                                                mixpanel.track(Events
+                                                    .TAP_DASHBOARD_VIEW_DELIVERIES);
                                                 mixpanel.flush();
                                                 Navigator.push(
                                                     context,
@@ -657,26 +673,39 @@ class DashboardState extends State<DashboardPage> {
     return placeholder;
   }
 
-  Widget draftsHeader() {
-    if (isDraftsAvailable) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
-        child: Container(
-          height: 30,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Continue ordering',
-                style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return Container();
-    }
+  Widget draftHeader() {
+    return FutureBuilder<List<Orders>>(
+        future: draftOrdersFuture,
+        builder: (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container();
+          } else if (snapshot.hasError) {
+            return Center(child: Text('failed to load'));
+          } else {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData &&
+                snapshot.data.isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
+                child: Container(
+                  height: 30,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Continue ordering',
+                        style: TextStyle(
+                            fontFamily: 'SourceSansProBold', fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return Container();
+            }
+          }
+        });
   }
 
   Widget draftBannersList() {
@@ -691,7 +720,7 @@ class DashboardState extends State<DashboardPage> {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
                 snapshot.data.isNotEmpty) {
-                isDraftsAvailable = true;
+              // isDraftsAvailable = true;
               return SizedBox(
                 height: 90,
                 child: ListView.builder(
@@ -703,14 +732,15 @@ class DashboardState extends State<DashboardPage> {
                       bool second = 0 == (index - 1);
                       return Column(
                         children: [
-                         // draftsHeader(),
+                          // draftsHeader(),
                           Padding(
                             padding: first
                                 ? EdgeInsets.only(left: 14)
                                 : EdgeInsets.all(0),
                             child: GestureDetector(
                               onTap: () {
-                                mixpanel.track(Events.TAP_DASHBOARD_DRAFT_ORDERS);
+                                mixpanel
+                                    .track(Events.TAP_DASHBOARD_DRAFT_ORDERS);
                                 mixpanel.flush();
                                 Navigator.push(
                                     context,
@@ -744,6 +774,8 @@ class DashboardState extends State<DashboardPage> {
                                         child: Column(
                                           children: [
                                             Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: [
                                                 Padding(
                                                   padding:
@@ -754,16 +786,19 @@ class DashboardState extends State<DashboardPage> {
                                                   child: leadingImage(
                                                       snapshot.data[index]),
                                                 ),
-                                                Expanded(
+                                                Flexible(
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 8.0,
                                                             top: 12,
-                                                            right: 15),
+                                                            right: 6),
                                                     child: Text(
                                                       snapshot.data[index]
                                                           .outlet.outletName,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                       style: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily:
@@ -787,9 +822,6 @@ class DashboardState extends State<DashboardPage> {
                     }),
               );
             } else {
-              setState(() {
-                isDraftsAvailable = false;
-              });
               return Container();
             }
           }
@@ -807,7 +839,7 @@ class DashboardState extends State<DashboardPage> {
               child: Text('Recent orders',
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 16.0,
+                      fontSize: 18.0,
                       fontFamily: "SourceSansProBold")),
             ),
             right: FlatButton(
@@ -826,8 +858,7 @@ class DashboardState extends State<DashboardPage> {
                     fontFamily: "SourceSansProRegular",
                     fontSize: 12),
               ),
-            )
-        ),
+            )),
       ),
     );
   }
@@ -902,7 +933,6 @@ class DashboardState extends State<DashboardPage> {
                   return ListView.builder(
                     key: PageStorageKey(selectedTab == "Today" ? 'a' : 'b'),
                     shrinkWrap: true,
-
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -962,6 +992,19 @@ class DashboardState extends State<DashboardPage> {
                                           ),
                                         ),
                                       ),
+                                    Spacer(),
+                                    Text(
+                                        '\$' +
+                                            snapshot.data[index].amount.total
+                                                .amountV1
+                                                .toStringAsFixed(2)
+                                                .replaceAllMapped(reg,
+                                                    (Match m) => '${m[1]},'),
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "SourceSansProRegular",
+                                            color: Colors.black)),
                                   ]),
                                   if (snapshot.data[index].orderStatus !=
                                       'Placed')
@@ -970,26 +1013,26 @@ class DashboardState extends State<DashboardPage> {
                                 ]),
                           ),
 
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 100,
-                                child: Text(
-                                    '\$' +
-                                        snapshot
-                                            .data[index].amount.total.amountV1
-                                            .toStringAsFixed(2)
-                                            .replaceAllMapped(
-                                                reg, (Match m) => '${m[1]},'),
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: "SourceSansProRegular",
-                                        color: Colors.black)),
-                              ),
-                            ],
-                          ),
+                          // trailing: Column(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Container(
+                          //       width: 100,
+                          //       child: Text(
+                          //           '\$' +
+                          //               snapshot
+                          //                   .data[index].amount.total.amountV1
+                          //                   .toStringAsFixed(2)
+                          //                   .replaceAllMapped(
+                          //                       reg, (Match m) => '${m[1]},'),
+                          //           textAlign: TextAlign.end,
+                          //           style: TextStyle(
+                          //               fontSize: 16,
+                          //               fontFamily: "SourceSansProRegular",
+                          //               color: Colors.black)),
+                          //     ),
+                          //   ],
+                          // ),
 
                           //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
                           leading: leadingImage(snapshot.data[index]),
@@ -1036,7 +1079,8 @@ class DashboardState extends State<DashboardPage> {
                           'No orders',
                           style: TextStyle(
                               fontSize: 14,
-                              fontFamily: 'SourceSansProRegular', color: greyText),
+                              fontFamily: 'SourceSansProRegular',
+                              color: greyText),
                         ),
                       ],
                     ),
