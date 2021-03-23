@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/login/verification_code_page.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/response.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 
 import '../utils/color.dart';
 import '../utils/color.dart';
@@ -36,9 +38,12 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
 
   SharedPref sharedPref = SharedPref();
 
+  Constants events = Constants();
   @override
   void initState() {
     super.initState();
+   events.mixPanelEvents();
+
   }
 
   void _showLoader() {
@@ -51,6 +56,12 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
     setState(() {
       _isShowLoader = false;
     });
+  }
+
+  Mixpanel mixpanel;
+
+  void mixPanelEvents() async {
+    mixpanel = await Constants.initMixPanel();
   }
 
   @override
@@ -92,6 +103,8 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString(Constants.user_email, _email);
 
+          events.mixpanel.track(Events.TAP_REQUEST_RESET_PASSWORD);
+          mixpanel.flush();
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -243,6 +256,8 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                     padding: const EdgeInsets.only(left: 20, right: 20),
                     child: GestureDetector(
                       onTap: () {
+                        events.mixpanel.track(Events.TAP_CANCEL_RESET_PASSWORD);
+                      //  mixpanel.flush();
                         print('Back to login');
                         Navigator.pop(context);
                       },

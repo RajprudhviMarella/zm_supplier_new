@@ -2,7 +2,7 @@
  * Created by RajPrudhviMarella on 16/Mar/2021.
  */
 
-class Constants {
+class Events {
   /*Login Events*/
   static final String TAP_LOGIN = "TAP_LOGIN ";
   static final String TAP_FORGOT_PASSWORD = "TAP_FORGOT_PASSWORD";
@@ -14,6 +14,7 @@ class Constants {
       "TAP_CHANGE_PASSWORD_CONTINUE";
 
   /*DashBoard Events*/
+  static final String TAP_ORDERS_TAB = "TAP_ORDERS_TAB";
   static final String TAP_DASHBOARD_NEW_ORDER = "TAP_DASHBOARD_NEW_ORDER";
   static final String TAP_DASHBOARD_VIEW_ORDERS = "TAP_DASHBOARD_VIEW_ORDERS";
   static final String TAP_DASHBOARD_VIEW_DELIVERIES =
@@ -84,6 +85,7 @@ class Constants {
       "TAP_VIEW_DELIVERIES_ORDER_FOR_DETAILS";
 
   /*OrderDetails Events*/
+  static final String TAP_ORDER_DETAILS_CONTACT = "TAP_ORDER_DETAILS_CONTACT";
   static final String TAP_ORDER_DETAILS_MORE_OPTIONS =
       "TAP_ORDER_DETAILS_MORE_OPTIONS";
   static final String TAP_ORDER_DETAILS_CANCEL_ORDER =
@@ -112,6 +114,7 @@ class Constants {
   static final String TAP_MARKET_LIST_SELECT_ORDER_NOTES =
       "TAP_MARKET_LIST_SELECT_ORDER_NOTES";
   static final String TAP_MARKET_LIST_NEXT = "TAP_MARKET_LIST_NEXT";
+  static final String TAP_ORDER_REVIEW_BACK = "TAP_ORDER_REVIEW_BACK";
   static final String TAP_ORDER_REVIEW_DELIVER_ON =
       "TAP_ORDER_REVIEW_DELIVER_ON";
   static final String TAP_ORDER_REVIEW_SPECIAL_REQUEST =
@@ -128,4 +131,6 @@ class Constants {
   /*Invoices Events*/
   static final String TAP_INVOICES_SEARCH = "TAP_INVOICES_SEARCH";
   static final String TAP_INVOICES_FILTER = "TAP_INVOICES_FILTER";
+  static final String TAP_INVOICES_LINKED_ORDER = "TAP_INVOICES_LINKED_ORDER";
+  static final String TAP_INVOICES_VIEW_AS_PDF = "TAP_INVOICES_VIEW_AS_PDF";
 }

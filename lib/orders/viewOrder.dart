@@ -4,11 +4,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 
@@ -60,12 +62,19 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
 
   ViewOrdersDesign(this.outletId);
 
+  Mixpanel mixpanel;
+
+  void mixPanelEvents() async {
+    mixpanel = await Constants.initMixPanel();
+  }
+
   @override
   void initState() {
     controller = new ScrollController()..addListener(_scrollListener);
     loadSharedPrefs();
     super.initState();
 
+    mixPanelEvents();
     print('outletid --- $outletId');
   }
 
@@ -129,6 +138,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
             onPressed: () {
               setState(() {
                 if (this.icon.icon == Icons.search) {
+                  mixpanel.track(Events.TAP_VIEW_ORDERS_SEARCH);
+                  mixpanel.flush();
                   this.icon = new Icon(
                     Icons.close,
                     color: Colors.black,
@@ -405,6 +416,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   }
 
   moveToOrderDetailsPage(Orders element) {
+    mixpanel.track(Events.TAP_VIEW_ORDERS_ORDER_FOR_DETAILS);
+    mixpanel.flush();
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }

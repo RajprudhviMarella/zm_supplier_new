@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:zm_supplier/settings/settings_page.dart';
 import 'package:zm_supplier/dashBoard/dash_board_page.dart';
 import 'package:zm_supplier/customers/customers_page.dart';
 import 'package:zm_supplier/utils/color.dart';
+import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,9 +32,29 @@ class _MyStatefulWidgetState extends State<HomePage> {
   ];
   final _pageOptions = [DashboardPage(), CustomersPage(), SettingsPage()];
 
+  Mixpanel mixpanel;
+
+  void mixPanelEvents() async {
+    mixpanel = await Constants.initMixPanel();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    mixPanelEvents();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (index == 0) {
+        mixpanel.track(Events.TAP_ORDERS_TAB);
+      } else if (index == 1) {
+       // mixpanel.track(Events.TAP_CUSTOMERS_TAB);
+      } else {
+        mixpanel.track(Events.TAP_SETTINGS_TAB);
+      }
+      mixpanel.flush();
     });
   }
 

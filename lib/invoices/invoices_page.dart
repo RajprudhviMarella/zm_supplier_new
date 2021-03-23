@@ -8,6 +8,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'dart:convert';
 
 import 'package:zm_supplier/models/customersResponse.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 
 import '../utils/color.dart';
@@ -54,10 +55,13 @@ class InvoicesState extends State<InvoicesPage> {
 
   SharedPref sharedPref = SharedPref();
 
+  Constants events = Constants();
+  
   @override
   void initState() {
     super.initState();
 
+    events.mixPanelEvents();
     invoicesFuture = retriveInvoices();
   }
 
@@ -112,6 +116,9 @@ class InvoicesState extends State<InvoicesPage> {
               foregroundColor: Colors.white,
               onPressed: () async {
                 print(selectedFilters);
+                events.mixpanel.track(Events.TAP_INVOICES_FILTER);
+                events.mixpanel.flush();
+
                 final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -229,6 +236,9 @@ class InvoicesState extends State<InvoicesPage> {
                 color: Colors.black,
               ),
               onTap: () async {
+                
+                events.mixpanel.track(Events.TAP_INVOICES_SEARCH);
+                events.mixpanel.flush();
                 final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -244,7 +254,7 @@ class InvoicesState extends State<InvoicesPage> {
                   border: InputBorder.none,
                   prefixIcon: new Icon(Icons.search, color: Colors.grey),
                   hintText: 'Search invoice number',
-                  hintStyle: new TextStyle(color: greyText)),
+                  hintStyle: new TextStyle(color: greyText, fontFamily: 'SourceSansProRegular', fontSize: 16)),
               // onChanged: searchOperation,
             ),
           ),

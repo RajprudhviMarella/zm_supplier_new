@@ -8,6 +8,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:zm_supplier/utils/webview.dart';
@@ -36,11 +37,14 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   Orders order;
   String pdfUrl;
 
+  Constants events = Constants();
+
   @override
   void initState() {
     invoice = widget.invoice;
     super.initState();
 
+    events.mixPanelEvents();
     invoiceDetailsFuture = retriveInvoiceDetails();
   }
 
@@ -326,6 +330,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
         Expanded(
             child: GestureDetector(
               onTap: () {
+                events.mixpanel.track(Events.TAP_INVOICES_LINKED_ORDER);
+                events.mixpanel.flush();
                 goToOrderDetails(i);
               },
               child: Text('Order #' + i + '\n',
@@ -338,6 +344,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
     } else {
       return GestureDetector(
         onTap: () {
+          events.mixpanel.track(Events.TAP_INVOICES_LINKED_ORDER);
+          events.mixpanel.flush();
           goToOrderDetails(inv.orderIds.first);
         },
         child: Text('Order #' + inv.orderIds.first,
@@ -776,6 +784,9 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                   color: Colors.white,
                   onPressed: () {
                     //  _newTaskModalBottomSheet(context);
+
+                    events.mixpanel.track(Events.TAP_INVOICES_VIEW_AS_PDF);
+                    events.mixpanel.flush();
 
                     openPdf(pdfUrl);
                   },

@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/createOrder/outletSelection.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
@@ -14,6 +15,7 @@ import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
+import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import '../utils/color.dart';
 import 'package:intl/intl.dart';
@@ -39,12 +41,13 @@ class DashboardState extends State<DashboardPage> {
   List<Orders> arrayOrderList;
 
   var selectedTab = 'Today';
-  Widget appBarTitle = new Text(
-    "Orders",
-    style: TextStyle(
-        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
-    textAlign: TextAlign.left,
-  );
+  bool isDraftsAvailable = true;
+  // Widget appBarTitle = new Text(
+  //   "Orders",
+  //   style: TextStyle(
+  //       color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
+  //   textAlign: TextAlign.left,
+  // );
   Icon actionIcon = new Icon(
     Icons.search,
     color: Colors.black,
@@ -60,13 +63,21 @@ class DashboardState extends State<DashboardPage> {
   Future<List<Orders>> draftOrdersFuture;
   List<Orders> draftOrdersList;
 
+
   @override
   void initState() {
     super.initState();
+    mixPanelEvents();
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
+  }
+
+  Mixpanel mixpanel;
+
+  void mixPanelEvents() async {
+    mixpanel = await Constants.initMixPanel();
   }
 
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
@@ -283,7 +294,7 @@ class DashboardState extends State<DashboardPage> {
         toolbarHeight: 70,
           centerTitle: false,
           title: Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 1.0),
             child: InteractiveViewer(
               panEnabled: false, // Set it to false to prevent panning.
               boundaryMargin: EdgeInsets.all(80),
@@ -307,6 +318,8 @@ class DashboardState extends State<DashboardPage> {
             new IconButton(
               icon: actionIcon,
               onPressed: () {
+                mixpanel.track(Events.TAP_DASHBOARD_SEARCH);
+                mixpanel.flush();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -318,6 +331,8 @@ class DashboardState extends State<DashboardPage> {
         backgroundColor: buttonBlue,
         foregroundColor: Colors.white,
         onPressed: () {
+          mixpanel.track(Events.TAP_DASHBOARD_NEW_ORDER);
+          mixpanel.flush();
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -343,7 +358,7 @@ class DashboardState extends State<DashboardPage> {
             banner(context),
             //dots(context),
 
-            // draftsHeader(),
+            draftsHeader(),
             draftBannersList(),
             Header(),
             tabs(),
@@ -520,6 +535,8 @@ class DashboardState extends State<DashboardPage> {
                                                 left: 20, right: 10, top: 106),
                                             child: InkWell(
                                               onTap: () {
+                                                mixpanel.track(Events.TAP_DASHBOARD_VIEW_DELIVERIES);
+                                                mixpanel.flush();
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -641,21 +658,25 @@ class DashboardState extends State<DashboardPage> {
   }
 
   Widget draftsHeader() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10.0, top: 20, right: 15),
-      child: Container(
-        height: 30,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Continue ordering',
-              style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
-            ),
-          ],
+    if (isDraftsAvailable) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
+        child: Container(
+          height: 30,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Continue ordering',
+                style: TextStyle(fontFamily: 'SourceSansProBold', fontSize: 18),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget draftBannersList() {
@@ -670,24 +691,27 @@ class DashboardState extends State<DashboardPage> {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
                 snapshot.data.isNotEmpty) {
+                isDraftsAvailable = true;
               return SizedBox(
-                height: 130,
+                height: 90,
                 child: ListView.builder(
                     itemCount: snapshot.data.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
-                      bool last = 5 == (index + 1);
+                      bool last = snapshot.data.length == (index + 1);
                       bool first = -1 == (index - 1);
                       bool second = 0 == (index - 1);
                       return Column(
                         children: [
-                          draftsHeader(),
+                         // draftsHeader(),
                           Padding(
                             padding: first
-                                ? EdgeInsets.only(left: 15)
+                                ? EdgeInsets.only(left: 14)
                                 : EdgeInsets.all(0),
                             child: GestureDetector(
                               onTap: () {
+                                mixpanel.track(Events.TAP_DASHBOARD_DRAFT_ORDERS);
+                                mixpanel.flush();
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -704,7 +728,7 @@ class DashboardState extends State<DashboardPage> {
                                 children: [
                                   Padding(
                                     padding: last
-                                        ? EdgeInsets.only(right: 15)
+                                        ? EdgeInsets.only(right: 14)
                                         : EdgeInsets.all(0),
                                     child: Container(
 
@@ -763,6 +787,9 @@ class DashboardState extends State<DashboardPage> {
                     }),
               );
             } else {
+              setState(() {
+                isDraftsAvailable = false;
+              });
               return Container();
             }
           }
@@ -771,7 +798,7 @@ class DashboardState extends State<DashboardPage> {
 
   Widget Header() {
     return Padding(
-      padding: const EdgeInsets.only(left: 17.0, top: 20, right: 2),
+      padding: const EdgeInsets.only(left: 17.0, top: 5, right: 2),
       child: Container(
         height: 30,
         child: LeftRightAlign(
@@ -786,6 +813,7 @@ class DashboardState extends State<DashboardPage> {
             right: FlatButton(
               onPressed: () {
                 print('View all orders tapped');
+                mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -834,8 +862,10 @@ class DashboardState extends State<DashboardPage> {
               print('Tab index $index');
               setState(() {
                 if (index == 0) {
+                  mixpanel.track(Events.TAP_DASHBOARD_TODAY);
                   selectedTab = "Today";
                 } else {
+                  mixpanel.track(Events.TAP_DASHBOARD_YESTERDAY);
                   selectedTab = "Yesterday";
                 }
               });
@@ -1019,6 +1049,8 @@ class DashboardState extends State<DashboardPage> {
   }
 
   moveToOrderDetailsPage(Orders element) {
+    mixpanel.track(Events.TAP_DASHBOARD_ORDER_FOR_DETAILS);
+    mixpanel.flush();
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
