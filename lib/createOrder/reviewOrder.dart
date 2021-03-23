@@ -914,7 +914,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     }
   }
 
-  createOrderAPI(context) async {
+  createOrderAPI() async {
     _showLoader();
     CreateOrderModel createOrderModel = new CreateOrderModel();
     createOrderModel.timeDelivered = selectedDate;
@@ -959,7 +959,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     if (response.statusCode == 200) {
       events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
       events.mixpanel.flush();
-      showSuccessDialog(context);
+      showSuccessDialog();
     } else {
       showFailureDialog();
     }
@@ -995,7 +995,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       child: Text(Constants.txt_ok),
       onPressed: () {
         Navigator.pop(dialogContext);
-        createOrderAPI(context);
+        createOrderAPI();
         events.mixpanel
             .track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: {
           'ItemCount': widget.marketList.length,
@@ -1228,7 +1228,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         context: context,
         builder: (BuildContext dialogContext) {
           Future.delayed(Duration(seconds: 2), () {
-            Navigator.pushNamed(context, '/home');
+            Navigator.of(context, rootNavigator: true).pop();
           });
           return CustomDialogBox(
             title: "Can’t create this order",
@@ -1237,7 +1237,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         });
   }
 
-  void showSuccessDialog(context) {
+  void showSuccessDialog() {
     _hideLoader();
     showDialog(
         context: context,
@@ -1245,12 +1245,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           Future.delayed(Duration(seconds: 2), () {
             setState(() {
               Navigator.pop(dialogContext);
-              Navigator.pushNamed(context, '/home');
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(), fullscreenDialog: true));
-
+              Navigator.of(context, rootNavigator: true).pop();
             });
           });
           return CustomDialogBox(
