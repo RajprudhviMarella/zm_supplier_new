@@ -102,7 +102,7 @@ class OutletMarketList {
 
   String skuNotes = "";
 
-  int quantity = 0;
+  var quantity;
   bool isSelected = false;
 
   OutletMarketList(
@@ -272,8 +272,14 @@ class PriceList {
   String status;
   String unitSize;
   String unitSizeAlias;
+  bool isDecimalAllowed = false;
 
-  PriceList({this.moq, this.price, this.status, this.unitSize});
+  PriceList(
+      {this.moq,
+      this.price,
+      this.status,
+      this.unitSize,
+      this.isDecimalAllowed});
 
   PriceList.fromJson(Map<String, dynamic> json) {
     moq = json['moq'];
