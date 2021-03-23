@@ -49,6 +49,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
   String searchedString;
 
   Constants events = Constants();
+
   @override
   void initState() {
     loadSharedPrefs();
@@ -112,7 +113,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
         title: appBarTitle,
         backgroundColor: Colors.white,
         bottomOpacity: 0.0,
-        elevation: 0.0,
+        elevation: 2.0,
         leading: Container(
           padding: EdgeInsets.only(right: 8.0),
           child: IconButton(
@@ -126,7 +127,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
             onPressed: () {
               setState(() {
                 if (this.icon.icon == Icons.search) {
-                  events.mixpanel.track(Events.TAP_NEW_ORDER_SELECT_OUTLET_SEARCH);
+                  events.mixpanel
+                      .track(Events.TAP_NEW_ORDER_SELECT_OUTLET_SEARCH);
                   events.mixpanel.flush();
 
                   this.icon = new Icon(
@@ -143,12 +145,16 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                     cursorColor: Colors.blue,
                     autofocus: true,
                     style: new TextStyle(
-                      color: Colors.black,
-                    ),
+                        color: Colors.black,
+                        fontSize: 16.0,
+                        fontFamily: "SourceSansProRegular"),
                     decoration: new InputDecoration(
                         prefixIcon: new Icon(Icons.search, color: Colors.black),
                         hintText: Constants.txt_Search_outlet,
-                        hintStyle: new TextStyle(color: greyText)),
+                        hintStyle: new TextStyle(
+                            color: greyText,
+                            fontSize: 16.0,
+                            fontFamily: "SourceSansProRegular")),
                   );
                 } else {
                   _handleSearchEnd();
@@ -359,8 +365,11 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                   },
                 ),
                 onTap: () {
-
-                  events.mixpanel.track(Events.TAP_NEW_ORDER_SELECT_OUTLET, properties: {'OutletId': snapShot.data[index].outlet.outletId, 'OutletName': snapShot.data[index].outlet.outletName});
+                  events.mixpanel
+                      .track(Events.TAP_NEW_ORDER_SELECT_OUTLET, properties: {
+                    'OutletId': snapShot.data[index].outlet.outletId,
+                    'OutletName': snapShot.data[index].outlet.outletName
+                  });
                   events.mixpanel.flush();
                   Navigator.push(
                       context,

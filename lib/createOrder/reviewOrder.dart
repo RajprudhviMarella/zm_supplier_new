@@ -117,7 +117,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               centerTitle: true,
               backgroundColor: Colors.white,
               bottomOpacity: 0.0,
-              elevation: 0.0,
+              elevation: 2.0,
               leading: Container(
                 padding: EdgeInsets.only(right: 12.0),
                 child: IconButton(
@@ -179,7 +179,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(top: 2.0, left: 2),
+                                margin: EdgeInsets.only(left: 2),
                                 child: Text(
                                   "\$${totalPrice.toStringAsFixed(2)}",
                                   style: TextStyle(
@@ -205,6 +205,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               ),
                             )),
                         color: lightGreen,
+                        elevation: 0.0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -307,8 +308,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   Widget priceDetails(BuildContext context) {
     return Container(
       color: Colors.white,
-      margin: EdgeInsets.only(top: 30),
-      padding: EdgeInsets.fromLTRB(15, 25, 20, 10),
+      margin: EdgeInsets.only(top: 20),
+      padding: EdgeInsets.fromLTRB(15, 15, 10, 15),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -316,26 +317,24 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: <Widget>[
-                        Expanded(
-                          child: LeftRightAlign(
-                              left: Text("Subtotal",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily: "SourceSansProRegular")),
-                              right: Text(
-                                  "\$${totalSkusPrice.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                      color: greyText,
-                                      fontSize: 16.0,
-                                      fontFamily: "SourceSansProRegular"))),
-                        )
-                      ])
-                    ]),
+                Container(
+                    margin: EdgeInsets.only(top: 3.0),
+                    child: Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text("Subtotal",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text(
+                                "\$${totalSkusPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])),
                 // if (order.promoCode != null && order.promoCode.isNotEmpty)
                 //   Column(
                 //       crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,56 +359,51 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 //       ]),
                 if (lstDeliveryDates[0].deliveryFeePolicy.type == "APPLY_FEE" &&
                     !isAddonOrder)
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(children: <Widget>[
-                          Expanded(
-                            child: LeftRightAlign(
-                                left: Text("Delivery fee",
-                                    style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular")),
-                                right: Text(
-                                    "\$${totalDeliveryPrice.toStringAsFixed(2)}",
-                                    style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular"))),
-                          )
-                        ])
-                      ]),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.only(top: 3.0),
+                      child: Row(children: <Widget>[
                         Expanded(
                           child: LeftRightAlign(
-                              left: Text(
-                                  "Gst" +
-                                      lstDeliveryDates[0]
-                                          .supplier
-                                          .settings
-                                          .gst
-                                          .percent
-                                          .toString() +
-                                      "%",
+                              left: Text("Delivery fee",
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  "\$${totalGstPrice.toStringAsFixed(2)}",
+                                  "\$${totalDeliveryPrice.toStringAsFixed(2)}",
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular"))),
                         )
-                      ])
-                    ]),
+                      ])),
+                Container(
+                    margin: EdgeInsets.only(top: 3.0),
+                    child: Row(children: <Widget>[
+                      Expanded(
+                        child: LeftRightAlign(
+                            left: Text(
+                                "Gst " +
+                                    lstDeliveryDates[0]
+                                        .supplier
+                                        .settings
+                                        .gst
+                                        .percent
+                                        .toString() +
+                                    "%",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular")),
+                            right: Text("\$${totalGstPrice.toStringAsFixed(2)}",
+                                style: TextStyle(
+                                    color: greyText,
+                                    fontSize: 16.0,
+                                    fontFamily: "SourceSansProRegular"))),
+                      )
+                    ])),
               ]),
-          Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
+          Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 0)),
         ],
       ),
     );
@@ -417,7 +411,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
 
   Widget EditNotes() {
     return Container(
-        padding: EdgeInsets.only(left: 4, top: 5.0, bottom: 10.0),
+        padding: EdgeInsets.only(left: 4, bottom: 10.0),
         color: Colors.white,
         margin: EdgeInsets.only(top: 2.0),
         child: TextField(
@@ -446,7 +440,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             style: TextStyle(
                 color: Colors.black,
                 fontSize: 16.0,
-                fontFamily: "SourceSansProSemiBold"),
+                fontFamily: "SourceSansProRegular"),
             onChanged: (query) {}));
   }
 
@@ -511,7 +505,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                   children: [
                                     Container(
                                       margin: EdgeInsets.only(
-                                          top: 5, left: 20.0, bottom: 10.0),
+                                          top: 5, left: 10.0, bottom: 10.0),
                                       child: Align(
                                           alignment: Alignment.topLeft,
                                           child: Text(
@@ -568,7 +562,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                       },
                                       child: Container(
                                         margin: EdgeInsets.only(
-                                            top: 5, left: 20.0, bottom: 10.0),
+                                            top: 5,
+                                            left: 20.0,
+                                            right: 10.0,
+                                            bottom: 10.0),
                                         child: Align(
                                             alignment: Alignment.topRight,
                                             child: Text("remove",
@@ -665,13 +662,13 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                 focusedBorder: InputBorder.none,
                                                 hintStyle: new TextStyle(
                                                     color: greyText,
-                                                    fontSize: 16.0,
+                                                    fontSize: 14.0,
                                                     fontFamily:
                                                         "SourceSansProRegular"),
                                               ),
                                               style: TextStyle(
                                                   color: Colors.black,
-                                                  fontSize: 16.0,
+                                                  fontSize: 14.0,
                                                   fontFamily:
                                                       "SourceSansProSemiBold"),
                                               onChanged: (query) {
@@ -718,7 +715,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                 ),
                                 Container(
                                   padding:
-                                      EdgeInsets.only(left: 15.0, right: 15.0),
+                                      EdgeInsets.only(left: 10.0, right: 10.0),
                                   margin: EdgeInsets.only(top: 20.0),
                                   child: TextField(
                                     controller: _txtSkuNotesEditController,
@@ -807,9 +804,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     },
                                     child: Container(
                                         padding: EdgeInsets.only(
-                                            left: 20.0, right: 20.0),
+                                            left: 10.0, right: 10.0),
                                         margin: EdgeInsets.only(
-                                            top: 20.0, right: 20.0, left: 20.0),
+                                            top: 20.0, right: 10.0, left: 10.0),
                                         height: 47.0,
                                         width:
                                             MediaQuery.of(context).size.width,
