@@ -455,7 +455,7 @@ class MarketListDesign extends State<MarketListPage>
               ),
             ),
             Text(
-              marketList.priceList[0].unitSizeAlias,
+              marketList.priceList[0].unitSizeAlias.shortName,
               style: TextStyle(
                 fontSize: 12.0,
                 color: buttonBlue,
@@ -494,7 +494,8 @@ class MarketListDesign extends State<MarketListPage>
           onTap: () {
             events.mixpanel.track(Events.TAP_MARKET_LIST_ADD_SKU);
             events.mixpanel.flush();
-            if (snapShot.data[index].priceList[0].isDecimalAllowed) {
+            if (snapShot
+                .data[index].priceList[0].unitSizeAlias.isDecimalAllowed) {
               if (snapShot.data[index].quantity != null &&
                   snapShot.data[index].quantity != 0) {
                 counter = snapShot.data[index].quantity.toDouble();
@@ -557,7 +558,7 @@ class MarketListDesign extends State<MarketListPage>
                               onTap: () {
                                 setState(() {
                                   if (snapShot.data[index].priceList[0]
-                                      .isDecimalAllowed) {
+                                      .unitSizeAlias.isDecimalAllowed) {
                                     counter = snapShot
                                         .data[index].priceList[0].moq
                                         .toDouble();
@@ -689,7 +690,7 @@ class MarketListDesign extends State<MarketListPage>
                                       onChanged: (query) {
                                         if (query != null && query.isNotEmpty) {
                                           if (snapShot.data[index].priceList[0]
-                                              .isDecimalAllowed) {
+                                              .unitSizeAlias.isDecimalAllowed) {
                                             counter = double.parse(query);
                                           } else {
                                             counter = int.parse(query);
@@ -766,8 +767,14 @@ class MarketListDesign extends State<MarketListPage>
                                     counter >
                                         snapShot.data[index].priceList[0].moq) {
                                   snapShot.data[index].quantity = counter;
-                                  snapShot.data[index].selectedQuantity =
-                                      counter.toString();
+                                  if (snapShot.data[index].priceList[0]
+                                      .unitSizeAlias.isDecimalAllowed) {
+                                    snapShot.data[index].selectedQuantity =
+                                        counter.toStringAsFixed(2);
+                                  } else {
+                                    snapShot.data[index].selectedQuantity =
+                                        counter.toString();
+                                  }
                                   snapShot.data[index].bgColor = buttonBlue;
                                   snapShot.data[index].txtColor = Colors.white;
                                   snapShot.data[index].txtSize = 16.0;
@@ -973,7 +980,11 @@ class MarketListDesign extends State<MarketListPage>
             elements.skuNotes = element.notes;
             elements.txtColor = Colors.white;
             elements.txtSize = 16.0;
-            elements.selectedQuantity = element.quantity.toString();
+            if (element.unitSizeAlias.isDecimalAllowed) {
+              elements.selectedQuantity = element.quantity.toString();
+            } else {
+              elements.selectedQuantity = element.quantity.toStringAsFixed(2);
+            }
 
             selectedMarketList.removeWhere((it) =>
                 it.productName.toLowerCase() ==

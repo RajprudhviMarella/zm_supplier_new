@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zm_supplier/models/unitSizeAlias.dart';
 import 'package:zm_supplier/utils/color.dart';
 
 class OutletMarketBaseResponse {
@@ -271,22 +272,18 @@ class PriceList {
   Price price;
   String status;
   String unitSize;
-  String unitSizeAlias;
-  bool isDecimalAllowed = false;
+  UnitSizeAlias unitSizeAlias;
 
-  PriceList(
-      {this.moq,
-      this.price,
-      this.status,
-      this.unitSize,
-      this.isDecimalAllowed});
+  PriceList({this.moq, this.price, this.status, this.unitSize});
 
   PriceList.fromJson(Map<String, dynamic> json) {
     moq = json['moq'];
     price = json['price'] != null ? new Price.fromJson(json['price']) : null;
     status = json['status'];
     unitSize = json['unitSize'];
-    unitSizeAlias = json['unitSizeAlias'];
+    unitSizeAlias = json['unitSizeAlias'] != null
+        ? new UnitSizeAlias.fromJson(json['unitSizeAlias'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -297,7 +294,9 @@ class PriceList {
     }
     data['status'] = this.status;
     data['unitSize'] = this.unitSize;
-    data['unitSizeAlias'] = this.unitSizeAlias;
+    if (this.unitSizeAlias != null) {
+      data['unitSizeAlias'] = this.unitSizeAlias.toJson();
+    }
     return data;
   }
 }

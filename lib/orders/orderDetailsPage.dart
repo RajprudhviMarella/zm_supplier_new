@@ -411,7 +411,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                         fontFamily: "SourceSansProBold")),
                                 right: Text(
                                     products[index].quantity.toString() + " " +
-                                        products[index].unitSizeAlias,
+                                        products[index].unitSizeAlias.shortName,
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 16.0,
