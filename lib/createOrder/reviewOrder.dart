@@ -71,8 +71,17 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   @override
   void initState() {
     loadSharedPrefs();
-    lstDeliveryDates[0].deliveryDates[0].isSelected = true;
-    selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+    bool isAnyDateSelected = false;
+    for (var i = 0; i < lstDeliveryDates[0].deliveryDates.length; i++) {
+      if (lstDeliveryDates[0].deliveryDates[i].isSelected) {
+        isAnyDateSelected = true;
+      }
+    }
+    if (!isAnyDateSelected) {
+      lstDeliveryDates[0].deliveryDates[0].isSelected = true;
+      selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+    }
+
     calculatePrice();
     if (widget.orderNotes != null && widget.orderNotes.isNotEmpty) {
       _txtSpecialRequest.text = widget.orderNotes;
@@ -470,10 +479,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                         counter = widget.marketList[index].priceList[0].moq
                             .toDouble();
                       }
-                      keyboard =
-                          TextInputType.numberWithOptions(signed: false, decimal: true);
-                      regExp =
-                          WhitelistingTextInputFormatter(RegExp(r'^\d+\.?\d{0,2}'));
+                      keyboard = TextInputType.numberWithOptions(
+                          signed: false, decimal: true);
+                      regExp = WhitelistingTextInputFormatter(
+                          RegExp(r'^\d+\.?\d{0,2}'));
                     } else {
                       if (widget.marketList[index].quantity != null &&
                           widget.marketList[index].quantity != 0) {
@@ -481,9 +490,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       } else {
                         counter = widget.marketList[index].priceList[0].moq;
                       }
-                      keyboard =
-                          TextInputType.numberWithOptions(signed: true, decimal: false);
-                      regExp = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
+                      keyboard = TextInputType.numberWithOptions(
+                          signed: true, decimal: false);
+                      regExp =
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
                     }
                     _textEditingController.value = TextEditingValue(
                       text: this.counter.toString(),
@@ -589,7 +599,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                     fontSize: 12.0,
                                                     color: buttonBlue,
                                                     fontFamily:
-                                                    "SourceSansProRegular"))),
+                                                        "SourceSansProRegular"))),
                                       ),
                                     ),
                                   ],
@@ -649,7 +659,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                               controller:
                                                   _textEditingController,
                                               keyboardType: keyboard,
-                                              inputFormatters: <TextInputFormatter>[
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
                                                 regExp,
                                               ],
                                               textInputAction:
@@ -676,7 +687,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                 filled: true,
                                                 errorStyle: TextStyle(
                                                     fontSize: 12.0,
-                                                    fontFamily: "SourceSansProRegular"),
+                                                    fontFamily:
+                                                        "SourceSansProRegular"),
                                                 focusedBorder: InputBorder.none,
                                                 hintStyle: new TextStyle(
                                                     color: greyText,
