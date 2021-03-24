@@ -538,10 +538,13 @@ class MarketListDesign extends State<MarketListPage>
                             Container(
                               margin: EdgeInsets.only(
                                   top: 5, left: 10.0, bottom: 10.0),
-                              child: Align(
-                                  alignment: Alignment.topLeft,
+                              child: SizedBox(
+                                  width: 250.0,
                                   child: Text(snapShot.data[index].productName,
                                       textAlign: TextAlign.start,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      softWrap: false,
                                       style: TextStyle(
                                           fontSize: 16.0,
                                           color: Colors.black,

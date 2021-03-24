@@ -528,12 +528,15 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     Container(
                                       margin: EdgeInsets.only(
                                           top: 5, left: 10.0, bottom: 10.0),
-                                      child: Align(
-                                          alignment: Alignment.topLeft,
+                                      child: SizedBox(
+                                          width: 250.0,
                                           child: Text(
                                               widget.marketList[index]
                                                   .productName,
                                               textAlign: TextAlign.start,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              softWrap: false,
                                               style: TextStyle(
                                                   fontSize: 16.0,
                                                   color: Colors.black,
