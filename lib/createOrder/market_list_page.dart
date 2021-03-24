@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -1186,6 +1187,7 @@ class MarketListDesign extends State<MarketListPage>
       print("ms" + response.statusCode.toString());
       print("ms" + response.body.toString());
       if (response.statusCode == 200) {
+        DartNotificationCenter.post(channel: Constants.draft_notifier);
         _hideLoader();
         Navigator.of(context).pop();
       } else {

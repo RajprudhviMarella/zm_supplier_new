@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -63,17 +64,62 @@ class DashboardState extends State<DashboardPage> {
 
   Future<List<Orders>> draftOrdersFuture;
   List<Orders> draftOrdersList;
+  int i = 1;
+
+
+  ScrollController _scrollController;
+  double _scrollPosition;
+
+  bool isScrolled = false;
+  _scrollListener() {
+    setState(() {
+      _scrollPosition = _scrollController.position.pixels;
+      if (_scrollPosition > 20) {
+        isScrolled = true;
+      } else {
+        isScrolled = false;
+      }
+    });
+  }
 
   @override
   void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+
     super.initState();
     mixPanelEvents();
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
+
+    DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
+    DartNotificationCenter.subscribe(
+      channel: Constants.draft_notifier,
+      observer: i,
+      onNotification: (result) {
+        print('listener called');
+        setState(() {
+          draftOrdersFuture = getDraftOrders();
+          Future.delayed(const Duration(milliseconds: 3000), ()
+          {
+            ordersListToday = _retriveTodayOrders();
+          });
+        });
+
+      },
+    );
   }
 
+  @override
+  void dispose(){
+    _scrollController.removeListener(_scrollListener);
+    super.dispose();
+    // DartNotificationCenter.post(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
+    DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+  }
   Mixpanel mixpanel;
 
   void mixPanelEvents() async {
@@ -251,6 +297,7 @@ class DashboardState extends State<DashboardPage> {
       print('failed get orders data');
     }
 
+    print(ordersData.data.data.length);
     arrayOrderList = ordersData.data.data;
     return arrayOrderList;
   }
@@ -289,45 +336,40 @@ class DashboardState extends State<DashboardPage> {
 
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+
+
     return new Scaffold(
       appBar: new AppBar(
           //toolbarHeight: 60,
-          centerTitle: false,
+          centerTitle: isScrolled ? true : false,
+          automaticallyImplyLeading: false,
           title: Padding(
             padding: const EdgeInsets.only(top: 5.0),
-            child: InteractiveViewer(
-              panEnabled: false,
-              // Set it to false to prevent panning.
-              boundaryMargin: EdgeInsets.all(10),
-              minScale: 0.5,
-              maxScale: 4,
-              child: Row(
-                children: [
-                  Text(
-                    "Orders",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "SourceSansProBold",
-                        fontSize: 30),
-                    textAlign: TextAlign.left,
-                  ),
-                ],
-              ),
+            child: Text(
+              "Orders",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "SourceSansProBold",
+                  fontSize: isScrolled ? 18 : 30),
+              textAlign: TextAlign.left,
             ),
           ),
           backgroundColor: faintGrey,
           elevation: 0,
           actions: <Widget>[
-            new IconButton(
-              icon: actionIcon,
-              onPressed: () {
-                mixpanel.track(Events.TAP_DASHBOARD_SEARCH);
-                mixpanel.flush();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => new SearchOrderPage()));
-              },
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: new IconButton(
+                icon: actionIcon,
+                onPressed: () {
+                  mixpanel.track(Events.TAP_DASHBOARD_SEARCH);
+                  mixpanel.flush();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => new SearchOrderPage()));
+                },
+              ),
             ),
           ]),
       floatingActionButton: new FloatingActionButton.extended(
@@ -357,6 +399,7 @@ class DashboardState extends State<DashboardPage> {
       body: Container(
         color: faintGrey,
         child: ListView(
+          controller: _scrollController,
           children: [
             banner(context),
             //dots(context),
@@ -683,7 +726,7 @@ class DashboardState extends State<DashboardPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container();
           } else if (snapshot.hasError) {
-            return Center(child: Text('failed to load'));
+            return Container();
           } else {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
@@ -718,7 +761,7 @@ class DashboardState extends State<DashboardPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container();
           } else if (snapshot.hasError) {
-            return Center(child: Text('failed to load'));
+            return Container();
           } else {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
@@ -895,6 +938,7 @@ class DashboardState extends State<DashboardPage> {
             onTap: (index) {
               print('Tab index $index');
               setState(() {
+                isScrolled = false;
                 if (index == 0) {
                   mixpanel.track(Events.TAP_DASHBOARD_TODAY);
                   selectedTab = "Today";

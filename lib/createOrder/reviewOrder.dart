@@ -18,6 +18,7 @@ import 'package:zm_supplier/utils/eventsList.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
+import 'package:dart_notification_center/dart_notification_center.dart';
 
 /**
  * Created by RajPrudhviMarella on 04/Mar/2021.
@@ -1282,6 +1283,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   void showSuccessDialog() {
+    DartNotificationCenter.post(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
+    DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
     _hideLoader();
     showDialog(
         context: context,

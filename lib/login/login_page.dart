@@ -151,14 +151,16 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                   width: width,
-                  height: height * 0.5,
+                  height: height > 667 ? height * 0.55 : height * 0.5,
                   // child: Container(child: Image.asset('assets/img_welcome_salmon.png', fit: BoxFit.fill,)),
 
                   child: Stack(
                     children: <Widget>[
                       Image.asset(
                         'assets/images/img_welcome_salmon.png',
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
+                        // height: height,//double.infinity,
+                        // width: width,//double.infinity,
                         height: double.infinity,
                         width: double.infinity,
                       ),
@@ -172,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                       //   width: double.infinity,
                       // ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 23, top: 35),
+                        padding: const EdgeInsets.only(left: 20, top: 40),
                         child: Image.asset(
                           'assets/images/zm_logo.png',
                           width: 28,
@@ -181,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 60, top: 40),
+                        padding: const EdgeInsets.only(left: 57, top: 45),
                         child: Text(
                           "Supplier",
                           style: TextStyle(
@@ -351,7 +353,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(
-                  height: height - (height * 0.5 + 270),
+                  height: height > 667 ? height - (height * 0.55 + 270) : height - (height * 0.5 + 270),
                 ),
                 Container(
                   width: width,

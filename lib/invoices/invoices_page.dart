@@ -20,8 +20,9 @@ import 'invoices_search_page.dart';
 class InvoicesPage extends StatefulWidget {
   final outletId;
   final outletName;
+  final selectedFilters;
 
-  InvoicesPage(this.outletId, this.outletName);
+  InvoicesPage(this.outletId, this.outletName, this.selectedFilters);
 
   @override
   State<StatefulWidget> createState() =>
@@ -61,8 +62,12 @@ class InvoicesState extends State<InvoicesPage> {
   void initState() {
     super.initState();
 
+    if (selectedFilters != null && selectedFilters != [])
+    selectedFilters = widget.selectedFilters;
+    print(selectedFilters);
     events.mixPanelEvents();
     invoicesFuture = retriveInvoices();
+
   }
 
   Future<List<Invoices>> retriveInvoices() async {
@@ -92,11 +97,13 @@ class InvoicesState extends State<InvoicesPage> {
         response.statusCode == 201 ||
         response.statusCode == 202) {
       invoicesResponse = InvoicesResponse.fromJson(json.decode(response.body));
+      invoices = invoicesResponse.data.data;
     } else {
       print('failed get invoices');
+      invoices = [];
     }
 
-    invoices = invoicesResponse.data.data;
+
 
     return invoices;
   }
@@ -128,8 +135,10 @@ class InvoicesState extends State<InvoicesPage> {
 
                 selectedFilters = result;
                 // isFilterApplied = true;
-                invoicesFuture = retriveInvoices();
-                setState(() {});
+
+                setState(() {
+                  invoicesFuture = retriveInvoices();
+                });
               },
               icon: ImageIcon(AssetImage('assets/images/filter_white.png'),
                   size: 22),
@@ -215,6 +224,7 @@ class InvoicesState extends State<InvoicesPage> {
        // color: Colors.white,
         height: 60,
         child: ListTile(
+
           leading: null,
           title: Container(
             margin: EdgeInsets.only(top: 3, bottom: 15),
@@ -282,11 +292,13 @@ class InvoicesState extends State<InvoicesPage> {
     return FutureBuilder<List<Invoices>>(
         future: invoicesFuture,
         builder: (context, snapShot) {
+          print('load');
           if (snapShot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(),
             );
           } else {
+            print('load1');
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
                 snapShot.data.isNotEmpty) {

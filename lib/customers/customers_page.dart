@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
@@ -23,13 +24,6 @@ class CustomersPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => new CustomerState();
 }
-
-Widget appBarTitle = new Text(
-  "  Customers",
-  style: TextStyle(
-      color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 30),
-  textAlign: TextAlign.left,
-);
 
 class CustomerState extends State<CustomersPage> {
   CustomersReportResponse customersReportResponse;
@@ -183,9 +177,9 @@ class CustomerState extends State<CustomersPage> {
   }
   String dispalyTime(int diff) {
     if (diff == 0) {
-      return 'Last ordered Today';
+      return 'Last ordered today';
     } else if (diff == 1) {
-      return 'Last ordered Yesterday';
+      return 'Last ordered yesterday';
     } else {
       return 'Last ordered ' + diff.toString() + ' days ago' ?? "";
     }
@@ -199,6 +193,7 @@ class CustomerState extends State<CustomersPage> {
       appBar: new AppBar(
         toolbarHeight: 60,
         centerTitle: false,
+        automaticallyImplyLeading: false,
         title: Padding(
           padding: const EdgeInsets.only(top: 1.0),
           child: Row(
@@ -223,6 +218,7 @@ class CustomerState extends State<CustomersPage> {
           buildSearchBar(context),
           Headers(),
           bannerList(),
+          spaceBanner(),
           list()
         ]),
       ),
@@ -231,7 +227,7 @@ class CustomerState extends State<CustomersPage> {
 
   Widget buildSearchBar(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: 5.0),
+        //padding: EdgeInsets.only(top: 5.0),
         color: faintGrey,
         height: 60,
         child: ListTile(
@@ -278,7 +274,7 @@ class CustomerState extends State<CustomersPage> {
                   border: InputBorder.none,
                   prefixIcon: new Icon(Icons.search, color: Colors.grey),
                   hintText: Constants.txt_search_outlet,
-                  hintStyle: new TextStyle(color: greyText)),
+                  hintStyle: new TextStyle(color: greyText, fontSize: 16, fontFamily: 'SourceSansProRegular')),
               // onChanged: searchOperation,
             ),
           ),
@@ -287,47 +283,50 @@ class CustomerState extends State<CustomersPage> {
 
   Widget Headers() {
     return Padding(
-        padding: const EdgeInsets.only(left: 17.0, right: 3, top: 5),
+        padding: const EdgeInsets.only(left: 17.0, right: 0, top: 5),
         child: Container(
-          height: 50,
+          height: 35,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               LeftRightAlign(
                   left: Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                    padding: const EdgeInsets.only(top: 5.0),
                     child: Text(
                       'Outlets',
                       style: TextStyle(
                           fontSize: 18, fontFamily: "SourceSansProBold"),
                     ),
                   ),
-                  right: new RaisedButton(
-                    color: Colors.transparent,
-                    elevation: 0,
-                    onPressed: () {
-                      _openBottomSheet();
-                    },
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Image.asset(
-                          "assets/images/Sort-blue.png",
-                          width: 12,
-                          height: 12,
-                        ),
-                        SizedBox(width: 5),
-                        new Text(
-                          selectedFilterType == 'RecentOrdered'
-                              ? 'Recently ordered'
-                              : 'A-Z',
-                          style: TextStyle(
-                              color: buttonBlue,
-                              fontSize: 12,
-                              fontFamily: 'SourceSansProRegular'),
-                        ),
-                      ],
+                  right: Container(
+                    height: 35,
+                    child: new RaisedButton(
+                      elevation: 0,
+                      color: Colors.transparent,
+                      onPressed: () {
+                        _openBottomSheet();
+                      },
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Image.asset(
+                            "assets/images/Sort-blue.png",
+                            width: 12,
+                            height: 12,
+                          ),
+                          SizedBox(width: 5),
+                          new Text(
+                            selectedFilterType == 'RecentOrdered'
+                                ? 'Recently ordered'
+                                : 'A-Z',
+                            style: TextStyle(
+                                color: buttonBlue,
+                                fontSize: 12,
+                                fontFamily: 'SourceSansProRegular'),
+                          ),
+                        ],
+                      ),
                     ),
                   )
 
@@ -381,7 +380,7 @@ class CustomerState extends State<CustomersPage> {
             return Center(child: Text('failed to load'));
           } else {
             return SizedBox(
-              height: 130,
+              height: 110,
               child: ListView.builder(
                   key: const PageStorageKey<String>('scrollPosition'),
                   itemCount: 5,
@@ -427,6 +426,7 @@ class CustomerState extends State<CustomersPage> {
                                   ? EdgeInsets.only(right: 15)
                                   : EdgeInsets.all(0),
                               child: Container(
+
 
                                   //  padding: last ? EdgeInsets.only(left: 20): null,
                                   width: 110,
@@ -586,7 +586,9 @@ class CustomerState extends State<CustomersPage> {
     }
     return greyText;
   }
-
+  Widget spaceBanner() {
+    return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 5));
+  }
   Widget list() {
     return Column(
       children: [
@@ -606,70 +608,75 @@ class CustomerState extends State<CustomersPage> {
                   itemBuilder: (BuildContext context, int index) {
                     return new Column(children: <Widget>[
                       ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Text(
-                              snapshot.data.outlets[index].outlet.outletName,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "SourceSansProSemiBold"),
+                          title: Transform.translate(
+                            offset: Offset(-5, 0),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Text(index == 0 ? 'snapshot.data.outlets[index].outlet.outletName snapshot.data.outlets[index].outlet.outletName' :
+                                snapshot.data.outlets[index].outlet.outletName,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: "SourceSansProSemiBold"),
+                              ),
                             ),
                           ),
                           //  isThreeLine: true,
 
-                          subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 2.0),
-                              child: Row(
-                                children: [
-                                  Text(calculateTime(snapshot.data
-                                                    .outlets[index].lastOrdered),
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: 'SourceSansProRegular',
-                                        color: timeDiff(snapshot
-                                                        .data
-                                                        .outlets[index]
-                                                        .lastOrdered) >
-                                                    30 ||
-                                                selectedIndex == 4
-                                            ? warningRed
-                                            : greyText),
-                                  ),
-                                ],
-                              )),
+                          subtitle: Transform.translate(
+                            offset: Offset(-5, 0),
+                            child: Padding(
+                                padding: const EdgeInsets.only(top: 2.0, bottom: 10),
+                                child: Row(
+                                  children: [
+                                    Text(calculateTime(snapshot.data
+                                                      .outlets[index].lastOrdered),
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: 'SourceSansProRegular',
+                                          color: timeDiff(snapshot
+                                                          .data
+                                                          .outlets[index]
+                                                          .lastOrdered) >
+                                                      30 ||
+                                                  selectedIndex == 4
+                                              ? warningRed
+                                              : greyText),
+                                    ),
+                                  ],
+                                )),
+                          ),
 
                           //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
                           leading: leadingImage(snapshot.data.outlets[index]),
-                          trailing: IconButton(
-                              icon: snapshot.data.outlets[index].isFavourite
-                                  ? Image(
-                                      image: AssetImage(
-                                          'assets/images/Star_yellow.png'),
-                                      fit: BoxFit.fill,
-                                      width: 25,
-                                      height: 25,
-                                    )
-                                  : ImageIcon(
-                                      AssetImage(
-                                          'assets/images/Star_light_grey.png'),
-                                    ),
-                              onPressed: () {
-                                print('tapped $index');
-                                tapOnFavourite(
-                                    index, snapshot.data.outlets[index]);
-                              }),
+                          trailing: Transform.translate(
+                            offset: Offset(10, 0),
+                            child: IconButton(
+                                icon: snapshot.data.outlets[index].isFavourite
+                                    ? Image(
+                                        image: AssetImage(
+                                            'assets/images/Star_yellow.png'),
+                                        fit: BoxFit.fill,
+                                        width: 22,
+                                        height: 22,
+                                      )
+                                    : ImageIcon(
+                                        AssetImage(
+                                            'assets/images/Star_light_grey.png'),
+                                      ),
+                                onPressed: () {
+                                  print('tapped $index');
+                                  tapOnFavourite(
+                                      index, snapshot.data.outlets[index]);
+                                }),
+                          ),
                           tileColor: Colors.white,
                           onTap: () async {
                             var outletName =
                                 snapshot.data.outlets[index].outlet.outletName;
                             var outletId =
                                 snapshot.data.outlets[index].outlet.outletId;
-                            var lastOrderd = 'Last ordered ' +
-                                    timeDiff(snapshot
-                                            .data.outlets[index].lastOrdered)
-                                        .toString() +
-                                    ' days ago' ??
-                                "";
+                            var lastOrderd = calculateTime(snapshot
+                                            .data.outlets[index].lastOrdered);
                             var isStarred =
                                 snapshot.data.outlets[index].isFavourite;
                             print(snapshot.data.outlets[index].outlet.outletId);
