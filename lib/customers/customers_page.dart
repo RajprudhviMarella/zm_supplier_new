@@ -612,8 +612,7 @@ class CustomerState extends State<CustomersPage> {
                             offset: Offset(-5, 0),
                             child: Padding(
                               padding: const EdgeInsets.only(top: 10.0),
-                              child: Text(index == 0 ? 'snapshot.data.outlets[index].outlet.outletName snapshot.data.outlets[index].outlet.outletName' :
-                                snapshot.data.outlets[index].outlet.outletName,
+                              child: Text(snapshot.data.outlets[index].outlet.outletName,
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontFamily: "SourceSansProSemiBold"),
@@ -648,8 +647,11 @@ class CustomerState extends State<CustomersPage> {
 
                           //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
                           leading: leadingImage(snapshot.data.outlets[index]),
+
                           trailing: Transform.translate(
+
                             offset: Offset(10, 0),
+
                             child: IconButton(
                                 icon: snapshot.data.outlets[index].isFavourite
                                     ? Image(
