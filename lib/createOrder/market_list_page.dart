@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/createOrder/reviewOrder.dart';
@@ -7,14 +11,11 @@ import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
-import 'package:zm_supplier/utils/constants.dart';
-import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/utils/color.dart';
+import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:ui';
 
 /**
  * Created by RajPrudhviMarella on 02/Mar/2021.
@@ -863,25 +864,7 @@ class MarketListDesign extends State<MarketListPage>
                     ),
                   ),
                   subtitle: displayPriceWithShortNames(snapShot.data[index]),
-                  trailing: Container(
-                      margin: EdgeInsets.only(right: 5.0),
-                      height: 40.0,
-                      width: 40.0,
-                      child: Center(
-                        child: Text(
-                          snapShot.data[index].selectedQuantity,
-                          style: TextStyle(
-                              fontSize: snapShot.data[index].txtSize,
-                              color: snapShot.data[index].txtColor,
-                              fontFamily: "SourceSansProSemiBold"),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(200),
-                        ),
-                        color: snapShot.data[index].bgColor,
-                      ))))),
+                  trailing: displayAddOrder(snapShot.data[index])))),
     );
   }
 
@@ -1262,5 +1245,73 @@ class MarketListDesign extends State<MarketListPage>
 
       _txtOrderNotesEditController.text = orderNotes;
     });
+  }
+
+  Widget displayAddOrder(OutletMarketList snapShot) {
+    if (snapShot.isSelected) {
+      if (snapShot.selectedQuantity.length < 4) {
+        return Container(
+            margin: EdgeInsets.only(right: 5.0),
+            height: 40.0,
+            width: 40.0,
+            child: Center(
+              child: Text(
+                snapShot.selectedQuantity,
+                style: TextStyle(
+                    fontSize: snapShot.txtSize,
+                    color: snapShot.txtColor,
+                    fontFamily: "SourceSansProSemiBold"),
+              ),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(200),
+              ),
+              color: snapShot.bgColor,
+            ));
+      } else {
+        return UnconstrainedBox(
+            child: Container(
+                margin: EdgeInsets.only(right: 5.0),
+                height: 40.0,
+                padding: EdgeInsets.only(right: 10.0, left: 10.0),
+                child: Expanded(
+                    child: Center(
+                        child: Text(
+                  snapShot.selectedQuantity,
+                  maxLines: 1,
+                  style: TextStyle(
+                      fontSize: snapShot.txtSize,
+                      color: snapShot.txtColor,
+                      fontFamily: "SourceSansProSemiBold"),
+                ))),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(200),
+                  ),
+                  color: snapShot.bgColor,
+                )));
+      }
+    } else {
+      return Container(
+          margin: EdgeInsets.only(right: 5.0),
+          height: 40.0,
+          width: 40.0,
+          child: Center(
+            child: Text(
+              snapShot.selectedQuantity,
+              style: TextStyle(
+                  fontSize: snapShot.txtSize,
+                  color: snapShot.txtColor,
+                  fontFamily: "SourceSansProSemiBold"),
+            ),
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(200),
+            ),
+            color: snapShot.bgColor,
+          ));
+    }
   }
 }
