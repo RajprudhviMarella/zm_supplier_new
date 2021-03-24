@@ -68,6 +68,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   Constants events = Constants();
   TextInputType keyboard;
   TextInputFormatter regExp;
+  bool isValid = false;
 
   @override
   void initState() {
@@ -509,176 +510,189 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                             offset: widget.marketList[index].skuNotes.length),
                       ),
                     );
-
+                    setState(() {
+                      if (counter > 0 &&
+                          counter >
+                              widget.marketList[index].priceList[0].moq - 1) {
+                        isValid = true;
+                        // btnColor = lightGreen;
+                      } else {
+                        isValid = false;
+                        //btnColor = lightGreen.withOpacity(0.5);
+                      }
+                    });
                     showModalBottomSheet<void>(
                       context: context,
                       isScrollControlled: true,
                       builder: (context) {
-                        return SingleChildScrollView(
-                            child: Container(
-                          padding: EdgeInsets.only(
-                              top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
-                          color: Colors.white,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Row(
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          top: 5, left: 10.0, bottom: 10.0),
-                                      child: SizedBox(
-                                          width: 250.0,
-                                          child: Text(
-                                              widget.marketList[index]
-                                                  .productName,
-                                              textAlign: TextAlign.start,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              softWrap: false,
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  color: Colors.black,
-                                                  fontFamily:
-                                                      "SourceSansProSemiBold"))),
-                                    ),
-                                    new Spacer(),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          if (widget
-                                              .marketList[index]
-                                              .priceList[0]
-                                              .unitSizeAlias
-                                              .isDecimalAllowed) {
-                                            counter = widget.marketList[index]
-                                                .priceList[0].moq
-                                                .toDouble();
-                                          } else {
-                                            counter = widget.marketList[index]
-                                                .priceList[0].moq;
-                                          }
-                                          _txtSkuNotesEditController.text = "";
-                                          widget.marketList[index].skuNotes =
-                                              _txtSkuNotesEditController.text;
-                                          widget.marketList[index]
-                                              .selectedQuantity = "+";
-                                          widget.marketList[index].bgColor =
-                                              faintGrey;
-                                          widget.marketList[index].txtColor =
-                                              buttonBlue;
-                                          widget.marketList[index].txtSize =
-                                              30.0;
-                                          widget.marketList[index].isSelected =
-                                              false;
-                                          widget.marketList.removeWhere((it) =>
-                                              it.productName.toLowerCase() ==
-                                                  widget.marketList[index]
-                                                      .productName
-                                                      .toLowerCase() &&
-                                              it.sku.toLowerCase() ==
-                                                  widget.marketList[index].sku
-                                                      .toLowerCase() &&
-                                              widget.marketList[index]
-                                                      .priceList[0].unitSize
-                                                      .toLowerCase() ==
-                                                  it.priceList[0].unitSize
-                                                      .toLowerCase());
-                                          Navigator.pop(context);
-                                        });
-                                      },
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                            top: 5,
-                                            left: 20.0,
-                                            right: 10.0,
-                                            bottom: 10.0),
-                                        child: Align(
-                                            alignment: Alignment.topRight,
-                                            child: Text("Remove",
-                                                textAlign: TextAlign.start,
-                                                style: TextStyle(
-                                                    fontSize: 12.0,
-                                                    color: buttonBlue,
-                                                    fontFamily:
-                                                        "SourceSansProRegular"))),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              if (counter > 0) this.counter--;
-                                              _textEditingController.text =
-                                                  counter.toString();
-                                              _txtSkuNotesEditController.text =
-                                                  widget.marketList[index]
-                                                      .skuNotes
-                                                      .toString();
-                                            });
-                                          },
-                                          child: Container(
-                                              margin:
-                                                  EdgeInsets.only(right: 5.0),
-                                              height: 40.0,
-                                              width: 40.0,
-                                              child: Center(
-                                                child: Icon(
-                                                  Icons.remove,
-                                                  color: buttonBlue,
-                                                ),
-                                              ),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(200),
-                                                ),
-                                                color: faintGrey,
-                                              ))),
+                        return StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setStates) {
+                          return SingleChildScrollView(
+                              child: Container(
+                            padding: EdgeInsets.only(
+                                top: 15.0,
+                                right: 10.0,
+                                left: 10.0,
+                                bottom: 15.0),
+                            color: Colors.white,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
                                       Container(
-                                          width: 200.0,
-                                          child: TextFormField(
-                                              autofocus: true,
-                                              autovalidate: true,
-                                              validator: (value) => (value !=
-                                                          null &&
-                                                      value.isNotEmpty &&
-                                                      double.parse(
-                                                              _textEditingController
-                                                                  .text) <
+                                        margin: EdgeInsets.only(
+                                            top: 5, left: 10.0, bottom: 10.0),
+                                        child: SizedBox(
+                                            width: 250.0,
+                                            child: Text(
+                                                widget.marketList[index]
+                                                    .productName,
+                                                textAlign: TextAlign.start,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                softWrap: false,
+                                                style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    color: Colors.black,
+                                                    fontFamily:
+                                                        "SourceSansProSemiBold"))),
+                                      ),
+                                      new Spacer(),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            if (widget
+                                                .marketList[index]
+                                                .priceList[0]
+                                                .unitSizeAlias
+                                                .isDecimalAllowed) {
+                                              counter = widget.marketList[index]
+                                                  .priceList[0].moq
+                                                  .toDouble();
+                                            } else {
+                                              counter = widget.marketList[index]
+                                                  .priceList[0].moq;
+                                            }
+                                            widget.marketList[index].quantity =
+                                                counter;
+                                            _txtSkuNotesEditController.text =
+                                                "";
+                                            widget.marketList[index].skuNotes =
+                                                _txtSkuNotesEditController.text;
+                                            widget.marketList[index]
+                                                .selectedQuantity = "+";
+                                            widget.marketList[index].bgColor =
+                                                faintGrey;
+                                            widget.marketList[index].txtColor =
+                                                buttonBlue;
+                                            widget.marketList[index].txtSize =
+                                                30.0;
+                                            widget.marketList[index]
+                                                .isSelected = false;
+                                            widget.marketList.removeWhere(
+                                                (it) =>
+                                                    it.productName
+                                                            .toLowerCase() ==
+                                                        widget.marketList[index]
+                                                            .productName
+                                                            .toLowerCase() &&
+                                                    it.sku.toLowerCase() ==
+                                                        widget.marketList[index]
+                                                            .sku
+                                                            .toLowerCase() &&
+                                                    widget
+                                                            .marketList[index]
+                                                            .priceList[0]
+                                                            .unitSize
+                                                            .toLowerCase() ==
+                                                        it.priceList[0].unitSize
+                                                            .toLowerCase());
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(
+                                              top: 5,
+                                              left: 20.0,
+                                              right: 10.0,
+                                              bottom: 10.0),
+                                          child: Align(
+                                              alignment: Alignment.topRight,
+                                              child: Text("Remove",
+                                                  textAlign: TextAlign.start,
+                                                  style: TextStyle(
+                                                      fontSize: 12.0,
+                                                      color: buttonBlue,
+                                                      fontFamily:
+                                                          "SourceSansProRegular"))),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: <Widget>[
+                                        GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                if (counter > 0) this.counter--;
+                                                _textEditingController.text =
+                                                    counter.toString();
+                                                _txtSkuNotesEditController
+                                                        .text =
+                                                    widget.marketList[index]
+                                                        .skuNotes
+                                                        .toString();
+                                                setStates(() {
+                                                  if (counter > 0 &&
+                                                      counter >
                                                           widget
-                                                              .marketList[index]
-                                                              .priceList[0]
-                                                              .moq)
-                                                  ? "Quantity is below MOQ"
-                                                  : null,
-                                              controller:
-                                                  _textEditingController,
-                                              keyboardType: keyboard,
-                                              inputFormatters: <
-                                                  TextInputFormatter>[
-                                                regExp,
-                                              ],
-                                              maxLength: 7,
-                                              textInputAction:
-                                                  TextInputAction.go,
-                                              cursorColor: Colors.blue,
-                                              textAlign: TextAlign.center,
-                                              decoration: InputDecoration(
-                                                counterText: "",
-                                                errorText: (_textEditingController
-                                                                .text !=
+                                                                  .marketList[
+                                                                      index]
+                                                                  .priceList[0]
+                                                                  .moq -
+                                                              1) {
+                                                    isValid = true;
+                                                    // btnColor = lightGreen;
+                                                  } else {
+                                                    isValid = false;
+                                                    //btnColor = lightGreen.withOpacity(0.5);
+                                                  }
+                                                });
+                                              });
+                                            },
+                                            child: Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 5.0),
+                                                height: 40.0,
+                                                width: 40.0,
+                                                child: Center(
+                                                  child: Icon(
+                                                    Icons.remove,
+                                                    color: buttonBlue,
+                                                  ),
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(200),
+                                                  ),
+                                                  color: faintGrey,
+                                                ))),
+                                        Container(
+                                            width: 200.0,
+                                            child: TextFormField(
+                                                autofocus: true,
+                                                autovalidate: true,
+                                                validator: (value) => (value !=
                                                             null &&
-                                                        _textEditingController
-                                                            .text.isNotEmpty &&
+                                                        value.isNotEmpty &&
                                                         double.parse(
                                                                 _textEditingController
                                                                     .text) <
@@ -689,191 +703,291 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                                 .moq)
                                                     ? "Quantity is below MOQ"
                                                     : null,
-                                                fillColor: faintGrey,
-                                                filled: true,
-                                                errorStyle: TextStyle(
-                                                    fontSize: 12.0,
-                                                    fontFamily:
-                                                        "SourceSansProRegular"),
-                                                focusedBorder: InputBorder.none,
-                                                hintStyle: new TextStyle(
-                                                    color: greyText,
+                                                controller:
+                                                    _textEditingController,
+                                                keyboardType: keyboard,
+                                                inputFormatters: <
+                                                    TextInputFormatter>[
+                                                  regExp,
+                                                ],
+                                                maxLength: 7,
+                                                textInputAction:
+                                                    TextInputAction.go,
+                                                cursorColor: Colors.blue,
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(
+                                                  counterText: "",
+                                                  errorText: (_textEditingController
+                                                                  .text !=
+                                                              null &&
+                                                          _textEditingController
+                                                              .text
+                                                              .isNotEmpty &&
+                                                          double.parse(
+                                                                  _textEditingController
+                                                                      .text) <
+                                                              widget
+                                                                  .marketList[
+                                                                      index]
+                                                                  .priceList[0]
+                                                                  .moq)
+                                                      ? "Quantity is below MOQ"
+                                                      : null,
+                                                  fillColor: faintGrey,
+                                                  filled: true,
+                                                  errorStyle: TextStyle(
+                                                      fontSize: 12.0,
+                                                      fontFamily:
+                                                          "SourceSansProRegular"),
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  hintStyle: new TextStyle(
+                                                      color: greyText,
+                                                      fontSize: 14.0,
+                                                      fontFamily:
+                                                          "SourceSansProRegular"),
+                                                ),
+                                                style: TextStyle(
+                                                    color: Colors.black,
                                                     fontSize: 14.0,
                                                     fontFamily:
-                                                        "SourceSansProRegular"),
-                                              ),
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 14.0,
-                                                  fontFamily:
-                                                      "SourceSansProSemiBold"),
-                                              onChanged: (query) {
-                                                if (query != null &&
-                                                    query.isNotEmpty) {
+                                                        "SourceSansProSemiBold"),
+                                                onChanged: (query) {
+                                                  if (query != null &&
+                                                      query.isNotEmpty) {
+                                                    if (widget
+                                                        .marketList[index]
+                                                        .priceList[0]
+                                                        .unitSizeAlias
+                                                        .isDecimalAllowed) {
+                                                      counter =
+                                                          double.parse(query);
+                                                      setStates(() {
+                                                        if (counter > 0 &&
+                                                            counter >
+                                                                widget
+                                                                        .marketList[
+                                                                            index]
+                                                                        .priceList[
+                                                                            0]
+                                                                        .moq -
+                                                                    1) {
+                                                          isValid = true;
+                                                          // btnColor = lightGreen;
+                                                        } else {
+                                                          isValid = false;
+                                                          //btnColor = lightGreen.withOpacity(0.5);
+                                                        }
+                                                      });
+                                                    } else {
+                                                      counter =
+                                                          int.parse(query);
+                                                      setStates(() {
+                                                        if (counter > 0 &&
+                                                            counter >
+                                                                widget
+                                                                        .marketList[
+                                                                            index]
+                                                                        .priceList[
+                                                                            0]
+                                                                        .moq -
+                                                                    1) {
+                                                          isValid = true;
+                                                          // btnColor = lightGreen;
+                                                        } else {
+                                                          isValid = false;
+                                                          //btnColor = lightGreen.withOpacity(0.5);
+                                                        }
+                                                      });
+                                                    }
+                                                  }
+                                                })),
+                                        GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                this.counter++;
+                                                _textEditingController.text =
+                                                    counter.toString();
+                                                setStates(() {
+                                                  if (counter > 0 &&
+                                                      counter >
+                                                          widget
+                                                                  .marketList[
+                                                                      index]
+                                                                  .priceList[0]
+                                                                  .moq -
+                                                              1) {
+                                                    isValid = true;
+                                                    // btnColor = lightGreen;
+                                                  } else {
+                                                    isValid = false;
+                                                    //btnColor = lightGreen.withOpacity(0.5);
+                                                  }
+                                                });
+                                              });
+                                            },
+                                            child: Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 5.0),
+                                                height: 40.0,
+                                                width: 40.0,
+                                                child: Center(
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: buttonBlue,
+                                                  ),
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(200),
+                                                  ),
+                                                  color: faintGrey,
+                                                )))
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: 10.0, right: 10.0),
+                                    margin: EdgeInsets.only(top: 20.0),
+                                    child: TextField(
+                                      controller: _txtSkuNotesEditController,
+                                      keyboardType: TextInputType.text,
+                                      maxLines: null,
+                                      maxLength: 150,
+                                      cursorColor: Colors.blue,
+                                      decoration: InputDecoration(
+                                        fillColor: faintGrey,
+                                        filled: true,
+                                        border: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        hintText: Constants.txt_add_notes,
+                                        hintStyle: new TextStyle(
+                                            color: greyText,
+                                            fontSize: 16.0,
+                                            fontFamily: "SourceSansProRegular"),
+                                      ),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16.0,
+                                          fontFamily: "SourceSansProRegular"),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 20.0, right: 10.0, left: 10.0),
+                                    height: 47.0,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: FlatButton(
+                                      disabledColor: faintGrey,
+                                      color: (isValid) ? buttonBlue : faintGrey,
+                                      onPressed: isValid
+                                          ? () {
+                                              FocusScope.of(context).unfocus();
+                                              setState(() {
+                                                _textEditingController.text =
+                                                    counter.toString();
+
+                                                if (widget.marketList[index]
+                                                            .quantity ==
+                                                        0 ||
+                                                    widget.marketList[index]
+                                                            .quantity <
+                                                        widget.marketList[index]
+                                                            .priceList[0].moq) {
+                                                  widget.marketList[index]
+                                                          .quantity =
+                                                      widget.marketList[index]
+                                                          .priceList[0].moq;
+                                                  widget.marketList[index]
+                                                      .selectedQuantity = "+";
+                                                  widget.marketList[index]
+                                                      .bgColor = faintGrey;
+                                                  widget.marketList[index]
+                                                      .txtColor = buttonBlue;
+                                                  widget.marketList[index]
+                                                      .txtSize = 30.0;
+                                                  widget.marketList[index]
+                                                      .isSelected = false;
+                                                  widget.marketList.removeWhere((it) =>
+                                                      it.productName
+                                                              .toLowerCase() ==
+                                                          widget
+                                                              .marketList[index]
+                                                              .productName
+                                                              .toLowerCase() &&
+                                                      it.sku.toLowerCase() ==
+                                                          widget
+                                                              .marketList[index]
+                                                              .sku
+                                                              .toLowerCase() &&
+                                                      widget
+                                                              .marketList[index]
+                                                              .priceList[0]
+                                                              .unitSize
+                                                              .toLowerCase() ==
+                                                          it.priceList[0]
+                                                              .unitSize
+                                                              .toLowerCase());
+                                                } else {
+                                                  widget.marketList[index]
+                                                      .quantity = counter;
                                                   if (widget
                                                       .marketList[index]
                                                       .priceList[0]
                                                       .unitSizeAlias
                                                       .isDecimalAllowed) {
-                                                    counter =
-                                                        double.parse(query);
+                                                    widget.marketList[index]
+                                                            .selectedQuantity =
+                                                        counter
+                                                            .toStringAsFixed(2);
                                                   } else {
-                                                    counter = int.parse(query);
+                                                    widget.marketList[index]
+                                                            .selectedQuantity =
+                                                        counter.toString();
                                                   }
-                                                }
-                                              })),
-                                      GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              this.counter++;
-                                              _textEditingController.text =
-                                                  counter.toString();
-                                            });
-                                          },
-                                          child: Container(
-                                              margin:
-                                                  EdgeInsets.only(right: 5.0),
-                                              height: 40.0,
-                                              width: 40.0,
-                                              child: Center(
-                                                child: Icon(
-                                                  Icons.add,
-                                                  color: buttonBlue,
-                                                ),
-                                              ),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(200),
-                                                ),
-                                                color: faintGrey,
-                                              )))
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 10.0),
-                                  margin: EdgeInsets.only(top: 20.0),
-                                  child: TextField(
-                                    controller: _txtSkuNotesEditController,
-                                    keyboardType: TextInputType.text,
-                                    maxLines: null,
-                                    maxLength: 150,
-                                    cursorColor: Colors.blue,
-                                    decoration: InputDecoration(
-                                      fillColor: faintGrey,
-                                      filled: true,
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      hintText: Constants.txt_add_notes,
-                                      hintStyle: new TextStyle(
-                                          color: greyText,
-                                          fontSize: 16.0,
-                                          fontFamily: "SourceSansProRegular"),
-                                    ),
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular"),
-                                  ),
-                                ),
-                                GestureDetector(
-                                    onTap: () {
-                                      print("$counter");
-                                      setState(() {
-                                        _textEditingController.text =
-                                            counter.toString();
-
-                                        if (widget.marketList[index].quantity ==
-                                                0 ||
-                                            widget.marketList[index].quantity <
-                                                widget.marketList[index]
-                                                    .priceList[0].moq) {
-                                          widget.marketList[index].quantity =
-                                              widget.marketList[index]
-                                                  .priceList[0].moq;
-                                          widget.marketList[index]
-                                              .selectedQuantity = "+";
-                                          widget.marketList[index].bgColor =
-                                              faintGrey;
-                                          widget.marketList[index].txtColor =
-                                              buttonBlue;
-                                          widget.marketList[index].txtSize =
-                                              30.0;
-                                          widget.marketList[index].isSelected =
-                                              false;
-                                          widget.marketList.removeWhere((it) =>
-                                              it.productName.toLowerCase() ==
                                                   widget.marketList[index]
-                                                      .productName
-                                                      .toLowerCase() &&
-                                              it.sku.toLowerCase() ==
-                                                  widget.marketList[index].sku
-                                                      .toLowerCase() &&
-                                              widget.marketList[index]
-                                                      .priceList[0].unitSize
-                                                      .toLowerCase() ==
-                                                  it.priceList[0].unitSize
-                                                      .toLowerCase());
-                                        } else {
-                                          widget.marketList[index].quantity =
-                                              counter;
-                                          if (widget
-                                              .marketList[index]
-                                              .priceList[0]
-                                              .unitSizeAlias
-                                              .isDecimalAllowed) {
-                                            widget.marketList[index]
-                                                    .selectedQuantity =
-                                                counter.toStringAsFixed(2);
-                                          } else {
-                                            widget.marketList[index]
-                                                    .selectedQuantity =
-                                                counter.toString();
-                                          }
-                                          widget.marketList[index].bgColor =
-                                              buttonBlue;
-                                          widget.marketList[index].txtColor =
-                                              Colors.white;
-                                          widget.marketList[index].txtSize =
-                                              16.0;
-                                          widget.marketList[index].skuNotes =
-                                              _txtSkuNotesEditController.text;
-                                          widget.marketList[index].isSelected =
-                                              true;
-                                        }
-                                        calculatePrice();
-                                        Navigator.pop(context);
-                                      });
-                                    },
-                                    child: Container(
-                                        padding: EdgeInsets.only(
-                                            left: 10.0, right: 10.0),
-                                        margin: EdgeInsets.only(
-                                            top: 20.0, right: 10.0, left: 10.0),
-                                        height: 47.0,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                            color: buttonBlue,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(30))),
-                                        child: Center(
-                                            child: Text(
-                                          "Done",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontFamily:
-                                                  "SourceSansProSemiBold"),
-                                        ))))
-                              ],
+                                                      .bgColor = buttonBlue;
+                                                  widget.marketList[index]
+                                                      .txtColor = Colors.white;
+                                                  widget.marketList[index]
+                                                      .txtSize = 16.0;
+                                                  widget.marketList[index]
+                                                          .skuNotes =
+                                                      _txtSkuNotesEditController
+                                                          .text;
+                                                  widget.marketList[index]
+                                                      .isSelected = true;
+                                                }
+                                                calculatePrice();
+                                                Navigator.pop(context);
+                                              });
+                                            }
+                                          : null,
+                                      child: Text(
+                                        "Done",
+                                        style: TextStyle(
+                                            color: (isValid)
+                                                ? Colors.white
+                                                : greyText,
+                                            fontSize: 16,
+                                            fontFamily:
+                                                "SourceSansProSemiBold"),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30)),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ));
+                          ));
+                        });
                       },
                     );
                   },
