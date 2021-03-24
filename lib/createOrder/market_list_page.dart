@@ -1,6 +1,10 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/createOrder/reviewOrder.dart';
@@ -8,14 +12,11 @@ import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
-import 'package:zm_supplier/utils/constants.dart';
-import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/utils/color.dart';
+import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:ui';
 
 /**
  * Created by RajPrudhviMarella on 02/Mar/2021.
@@ -64,6 +65,8 @@ class MarketListDesign extends State<MarketListPage>
   MarketListDesign(this.repeatOrderProducts);
 
   Constants events = Constants();
+  TextInputType keyboard;
+  TextInputFormatter regExp;
 
   @override
   void initState() {
@@ -219,24 +222,8 @@ class MarketListDesign extends State<MarketListPage>
 
                                       if (selectedMarketList != null &&
                                           selectedMarketList.isNotEmpty) {
+                                        moveToReviewOrdersScreen();
                                         print(jsonEncode(selectedMarketList));
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    new ReviewOrderPage(
-                                                        selectedMarketList,
-                                                        widget.outletId,
-                                                        widget.outletName,
-                                                        (orderNotes != null &&
-                                                                orderNotes
-                                                                    .isNotEmpty &&
-                                                                orderNotes !=
-                                                                    "Notes")
-                                                            ? orderNotes
-                                                            : "",
-                                                        lstDeliveryDates,
-                                                        orderID)));
                                       } else {
                                         globalKey.currentState.showSnackBar(
                                           SnackBar(
@@ -497,12 +484,18 @@ class MarketListDesign extends State<MarketListPage>
             events.mixpanel.flush();
             if (snapShot
                 .data[index].priceList[0].unitSizeAlias.isDecimalAllowed) {
+              print(snapShot
+                  .data[index].priceList[0].unitSizeAlias.isDecimalAllowed);
               if (snapShot.data[index].quantity != null &&
                   snapShot.data[index].quantity != 0) {
                 counter = snapShot.data[index].quantity.toDouble();
               } else {
                 counter = snapShot.data[index].priceList[0].moq.toDouble();
               }
+              keyboard =
+                  TextInputType.numberWithOptions(signed: false, decimal: true);
+              regExp =
+                  WhitelistingTextInputFormatter(RegExp(r'^\d+\.?\d{0,2}'));
             } else {
               if (snapShot.data[index].quantity != null &&
                   snapShot.data[index].quantity != 0) {
@@ -510,6 +503,9 @@ class MarketListDesign extends State<MarketListPage>
               } else {
                 counter = snapShot.data[index].priceList[0].moq;
               }
+              keyboard =
+                  TextInputType.numberWithOptions(signed: true, decimal: false);
+              regExp = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
             }
 
             _textEditingController.value = TextEditingValue(
@@ -544,10 +540,13 @@ class MarketListDesign extends State<MarketListPage>
                             Container(
                               margin: EdgeInsets.only(
                                   top: 5, left: 10.0, bottom: 10.0),
-                              child: Align(
-                                  alignment: Alignment.topLeft,
+                              child: SizedBox(
+                                  width: 250.0,
                                   child: Text(snapShot.data[index].productName,
                                       textAlign: TextAlign.start,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      softWrap: false,
                                       style: TextStyle(
                                           fontSize: 16.0,
                                           color: Colors.black,
@@ -599,13 +598,13 @@ class MarketListDesign extends State<MarketListPage>
                                     bottom: 10.0),
                                 child: Align(
                                     alignment: Alignment.topRight,
-                                    child: Text("remove",
+                                    child: Text("Remove",
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 12.0,
                                             color: buttonBlue,
                                             fontFamily:
-                                                "SourceSansProSemiBold"))),
+                                                "SourceSansProRegular"))),
                               ),
                             ),
                           ],
@@ -654,16 +653,19 @@ class MarketListDesign extends State<MarketListPage>
                                                           .text) <
                                                   snapShot.data[index]
                                                       .priceList[0].moq)
-                                          ? "quantity is below moq"
+                                          ? "Quantity is below MOQ"
                                           : null,
                                       controller: _textEditingController,
-                                      keyboardType:
-                                          TextInputType.numberWithOptions(
-                                              signed: false, decimal: true),
+                                      keyboardType: keyboard,
+                                      inputFormatters: <TextInputFormatter>[
+                                        regExp,
+                                      ],
                                       textInputAction: TextInputAction.go,
                                       cursorColor: Colors.blue,
+                                      maxLength: 7,
                                       textAlign: TextAlign.center,
                                       decoration: InputDecoration(
+                                        counterText: "",
                                         errorText: (_textEditingController
                                                         .text !=
                                                     null &&
@@ -674,11 +676,14 @@ class MarketListDesign extends State<MarketListPage>
                                                             .text) <
                                                     snapShot.data[index]
                                                         .priceList[0].moq)
-                                            ? "quantity is below moq"
+                                            ? "Quantity is below MOQ"
                                             : null,
                                         fillColor: faintGrey,
                                         filled: true,
                                         focusedBorder: InputBorder.none,
+                                        errorStyle: TextStyle(
+                                            fontSize: 12.0,
+                                            fontFamily: "SourceSansProRegular"),
                                         hintStyle: new TextStyle(
                                             color: greyText,
                                             fontSize: 16.0,
@@ -860,25 +865,7 @@ class MarketListDesign extends State<MarketListPage>
                     ),
                   ),
                   subtitle: displayPriceWithShortNames(snapShot.data[index]),
-                  trailing: Container(
-                      margin: EdgeInsets.only(right: 5.0),
-                      height: 40.0,
-                      width: 40.0,
-                      child: Center(
-                        child: Text(
-                          snapShot.data[index].selectedQuantity,
-                          style: TextStyle(
-                              fontSize: snapShot.data[index].txtSize,
-                              color: snapShot.data[index].txtColor,
-                              fontFamily: "SourceSansProSemiBold"),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(200),
-                        ),
-                        color: snapShot.data[index].bgColor,
-                      ))))),
+                  trailing: displayAddOrder(snapShot.data[index])))),
     );
   }
 
@@ -981,12 +968,14 @@ class MarketListDesign extends State<MarketListPage>
             elements.skuNotes = element.notes;
             elements.txtColor = Colors.white;
             elements.txtSize = 16.0;
-            if (element.unitSizeAlias.isDecimalAllowed) {
-              elements.selectedQuantity = element.quantity.toString();
-            } else {
+            print(elements.priceList[0].unitSizeAlias.isDecimalAllowed);
+            print(element.unitSizeAlias.isDecimalAllowed);
+            print(element.quantity);
+            if (elements.priceList[0].unitSizeAlias.isDecimalAllowed) {
               elements.selectedQuantity = element.quantity.toStringAsFixed(2);
+            } else {
+              elements.selectedQuantity = element.quantity.toString();
             }
-
             selectedMarketList.removeWhere((it) =>
                 it.productName.toLowerCase() ==
                     elements.productName.toLowerCase() &&
@@ -1023,6 +1012,11 @@ class MarketListDesign extends State<MarketListPage>
             ordersData.data.data.length > 0) {
           draftOrdersList = ordersData.data.data[0].products;
           orderID = ordersData.data.data[0].orderId;
+          if (ordersData.data.data[0].notes != null &&
+              ordersData.data.data[0].notes.isNotEmpty) {
+            orderNotes = ordersData.data.data[0].notes;
+            _txtOrderNotesEditController.text = ordersData.data.data[0].notes;
+          }
         }
       } else {
         print('failed get customers reports');
@@ -1039,8 +1033,11 @@ class MarketListDesign extends State<MarketListPage>
               elements.skuNotes = element.notes;
               elements.txtColor = Colors.white;
               elements.txtSize = 16.0;
-              elements.selectedQuantity = element.quantity.toString();
-
+              if (elements.priceList[0].unitSizeAlias.isDecimalAllowed) {
+                elements.selectedQuantity = element.quantity.toStringAsFixed(2);
+              } else {
+                elements.selectedQuantity = element.quantity.toString();
+              }
               selectedMarketList.removeWhere((it) =>
                   it.productName.toLowerCase() ==
                       elements.productName.toLowerCase() &&
@@ -1155,7 +1152,7 @@ class MarketListDesign extends State<MarketListPage>
     if (selectedMarketList != null && selectedMarketList.length > 0) {
       _showLoader();
       CreateOrderModel createOrderModel = new CreateOrderModel();
-      createOrderModel.notes = _txtSkuNotesEditController.text;
+      createOrderModel.notes = _txtOrderNotesEditController.text.toString();
       createOrderModel.timeDelivered =
           lstDeliveryDates[0].deliveryDates[0].deliveryDate;
       List<Product> productslist = [];
@@ -1227,5 +1224,100 @@ class MarketListDesign extends State<MarketListPage>
     lstDeliveryDates = deliveryDateList.data;
     _hideLoader();
     return lstDeliveryDates;
+  }
+
+  Future<void> moveToReviewOrdersScreen() async {
+    // start the SecondScreen and wait for it to finish with a result
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => new ReviewOrderPage(
+                selectedMarketList,
+                widget.outletId,
+                widget.outletName,
+                (orderNotes != null &&
+                        orderNotes.isNotEmpty &&
+                        orderNotes != "Notes")
+                    ? orderNotes
+                    : "",
+                lstDeliveryDates,
+                orderID)));
+    setState(() {
+      String notes = result as String;
+      if (notes != null && notes.isNotEmpty) {
+        orderNotes = result as String;
+      } else {
+        orderNotes = "Notes";
+      }
+      _txtOrderNotesEditController.text = orderNotes;
+    });
+  }
+
+  Widget displayAddOrder(OutletMarketList snapShot) {
+    if (snapShot.isSelected) {
+      if (snapShot.selectedQuantity.length < 4) {
+        return Container(
+            margin: EdgeInsets.only(right: 5.0),
+            height: 40.0,
+            width: 40.0,
+            child: Center(
+              child: Text(
+                snapShot.selectedQuantity,
+                style: TextStyle(
+                    fontSize: snapShot.txtSize,
+                    color: snapShot.txtColor,
+                    fontFamily: "SourceSansProSemiBold"),
+              ),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(200),
+              ),
+              color: snapShot.bgColor,
+            ));
+      } else {
+        return UnconstrainedBox(
+            child: Container(
+                margin: EdgeInsets.only(right: 5.0),
+                height: 40.0,
+                padding: EdgeInsets.only(right: 10.0, left: 10.0),
+                child: Expanded(
+                    child: Center(
+                        child: Text(
+                  snapShot.selectedQuantity,
+                  maxLines: 1,
+                  style: TextStyle(
+                      fontSize: snapShot.txtSize,
+                      color: snapShot.txtColor,
+                      fontFamily: "SourceSansProSemiBold"),
+                ))),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(200),
+                  ),
+                  color: snapShot.bgColor,
+                )));
+      }
+    } else {
+      return Container(
+          margin: EdgeInsets.only(right: 5.0),
+          height: 40.0,
+          width: 40.0,
+          child: Center(
+            child: Text(
+              snapShot.selectedQuantity,
+              style: TextStyle(
+                  fontSize: snapShot.txtSize,
+                  color: snapShot.txtColor,
+                  fontFamily: "SourceSansProSemiBold"),
+            ),
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(200),
+            ),
+            color: snapShot.bgColor,
+          ));
+    }
   }
 }

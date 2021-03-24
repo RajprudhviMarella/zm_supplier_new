@@ -40,15 +40,16 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   File _image;
-  String _email;
-  String _userID;
-  String _image_Url;
-  String supplierID;
+  String _email = "";
+  String _userID = "";
+  String _image_Url = "";
+  String supplierID = "";
   String mudra;
   NetworkImage _networkImage;
   bool _isShowLoader = false;
 
   Constants events = Constants();
+
   @override
   void initState() {
     super.initState();
@@ -81,44 +82,51 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
               menuItem(
                   context,
                   Constants.txt_change_password,
-                  ImageIcon(AssetImage('assets/images/icon_lock.png'),color: grey_text),
+                  ImageIcon(AssetImage('assets/images/icon_lock.png'),
+                      color: grey_text),
                   1.0,
                   Colors.black),
               Headers(context, Constants.txt_support, 18.0),
               menuItem(
                   context,
                   Constants.txt_help,
-                  ImageIcon(AssetImage('assets/images/icon_help.png'),color: grey_text),
+                  ImageIcon(AssetImage('assets/images/icon_help.png'),
+                      color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_ask_zeemart,
-                  ImageIcon(AssetImage('assets/images/icon_chat.png'),color: grey_text),
+                  ImageIcon(AssetImage('assets/images/icon_chat.png'),
+                      color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_send_feed_back,
-                  ImageIcon(AssetImage('assets/images/icon_feedback.png'),color: grey_text),
+                  ImageIcon(AssetImage('assets/images/icon_feedback.png'),
+                      color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_terms_of_use,
-                  ImageIcon(AssetImage('assets/images/icon_terms.png'),color: grey_text),
+                  ImageIcon(AssetImage('assets/images/icon_terms.png'),
+                      color: grey_text),
                   20.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_privacy_policy,
-                  ImageIcon(AssetImage('assets/images/icon_privacy.png'),color: grey_text),
+                  ImageIcon(AssetImage('assets/images/icon_privacy.png'),
+                      color: grey_text),
                   1.0,
                   Colors.black),
               menuItem(
                   context,
                   Constants.txt_log_out,
-                  ImageIcon(AssetImage('assets/images/icon_signout.png'),color: Colors.pinkAccent),
+                  ImageIcon(AssetImage('assets/images/icon_signout.png'),
+                      color: Colors.pinkAccent),
                   20.0,
                   Colors.pinkAccent),
             ],
@@ -128,49 +136,38 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
 
   Widget profileView(context) {
     return Container(
-      color: Colors.white,
-      width: MediaQuery.of(context).size.width,
-      height: 82.0,
-      padding: EdgeInsets.all(18.0),
-      child: Row(
-        children: <Widget>[
-          Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(_userID,
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black,
-                          fontFamily: 'SourceSansProBold')),
-                  Text(_email,
-                      style: TextStyle(
+        color: Colors.white,
+        child: Center(
+            child: ListTile(
+                focusColor: Colors.white,
+                contentPadding: EdgeInsets.only(
+                    left: 18.0, right: 15.0, top: 5.0, bottom: 5.0),
+                title: Text(_userID,
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.black,
+                        fontFamily: 'SourceSansProBold')),
+                subtitle: Text(_email,
+                    style: TextStyle(
                         fontSize: 14.0,
                         color: greyText,
-
-                        fontFamily: 'SourceSansProRegular'
-                      ))
-                ],
-              )),
-          GestureDetector(
-            child: Container(
-                width: 50.0,
-                height: 50.0,
-                margin: EdgeInsets.only(left: 100.0),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image:
-                    DecorationImage(
-                        fit: BoxFit.fill, image: _networkImage))),
-            onTap: () {
-              sendEvent(Events.TAP_SETTINGS_TAB_PROFILE_PIC);
-              showImagePickerAlert(context);
-            },
-          )
-        ],
-      ),
-    );
+                        fontFamily: 'SourceSansProRegular')),
+                trailing: GestureDetector(
+                  child: Container(
+                      width: 50.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: (_networkImage != null)
+                                  ? _networkImage
+                                  : new NetworkImage(_image_Url)))),
+                  onTap: () {
+                    sendEvent(Events.TAP_SETTINGS_TAB_PROFILE_PIC);
+                    showImagePickerAlert(context);
+                  },
+                ))));
   }
 
   Widget Headers(context, String name, double size) {
@@ -186,7 +183,8 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget menuItem(context, String name, ImageIcon icon, double margin, Color color) {
+  Widget menuItem(
+      context, String name, ImageIcon icon, double margin, Color color) {
     return InkWell(
       onTap: () => onItemSelect(name, context),
       child: Container(
@@ -250,6 +248,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     events.mixpanel.track(eventName);
     events.mixpanel.flush();
   }
+
   void _handleURLButtonPress(BuildContext context, String url, String title) {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => WebViewContainer(url, title)));
@@ -430,8 +429,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       } else {
         _hideLoader();
       }
-    }
-    else{
+    } else {
       _hideLoader();
     }
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -65,12 +66,23 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   ReviewOrderDesign(this.lstDeliveryDates);
 
   Constants events = Constants();
+  TextInputType keyboard;
+  TextInputFormatter regExp;
 
   @override
   void initState() {
     loadSharedPrefs();
-    lstDeliveryDates[0].deliveryDates[0].isSelected = true;
-    selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+    bool isAnyDateSelected = false;
+    for (var i = 0; i < lstDeliveryDates[0].deliveryDates.length; i++) {
+      if (lstDeliveryDates[0].deliveryDates[i].isSelected) {
+        isAnyDateSelected = true;
+      }
+    }
+    if (!isAnyDateSelected) {
+      lstDeliveryDates[0].deliveryDates[0].isSelected = true;
+      selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+    }
+
     calculatePrice();
     if (widget.orderNotes != null && widget.orderNotes.isNotEmpty) {
       _txtSpecialRequest.text = widget.orderNotes;
@@ -125,9 +137,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                     icon: Icon(Icons.arrow_back_ios_outlined,
                         color: Colors.black),
                     onPressed: () {
+                      String textToSendBack = _txtSpecialRequest.text;
+                      Navigator.pop(context, textToSendBack);
                       // events.mixpanel.track(Events.TAP_ORDER_REVIEW_BACK, properties: {'OrderId': widget.orderId});
                       //events.mixpanel.flush();
-                      Navigator.of(context).pop();
+                      // Navigator.of(context).pop();
                     }),
               ),
               title: Container(
@@ -466,6 +480,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                         counter = widget.marketList[index].priceList[0].moq
                             .toDouble();
                       }
+                      keyboard = TextInputType.numberWithOptions(
+                          signed: false, decimal: true);
+                      regExp = WhitelistingTextInputFormatter(
+                          RegExp(r'^\d+\.?\d{0,2}'));
                     } else {
                       if (widget.marketList[index].quantity != null &&
                           widget.marketList[index].quantity != 0) {
@@ -473,6 +491,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       } else {
                         counter = widget.marketList[index].priceList[0].moq;
                       }
+                      keyboard = TextInputType.numberWithOptions(
+                          signed: true, decimal: false);
+                      regExp =
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
                     }
                     _textEditingController.value = TextEditingValue(
                       text: this.counter.toString(),
@@ -507,12 +529,15 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     Container(
                                       margin: EdgeInsets.only(
                                           top: 5, left: 10.0, bottom: 10.0),
-                                      child: Align(
-                                          alignment: Alignment.topLeft,
+                                      child: SizedBox(
+                                          width: 250.0,
                                           child: Text(
                                               widget.marketList[index]
                                                   .productName,
                                               textAlign: TextAlign.start,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              softWrap: false,
                                               style: TextStyle(
                                                   fontSize: 16.0,
                                                   color: Colors.black,
@@ -572,13 +597,13 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                             bottom: 10.0),
                                         child: Align(
                                             alignment: Alignment.topRight,
-                                            child: Text("remove",
+                                            child: Text("Remove",
                                                 textAlign: TextAlign.start,
                                                 style: TextStyle(
-                                                    fontSize: 16.0,
+                                                    fontSize: 12.0,
                                                     color: buttonBlue,
                                                     fontFamily:
-                                                        "SourceSansProSemiBold"))),
+                                                        "SourceSansProRegular"))),
                                       ),
                                     ),
                                   ],
@@ -633,19 +658,22 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                               .marketList[index]
                                                               .priceList[0]
                                                               .moq)
-                                                  ? "quantity is below moq"
+                                                  ? "Quantity is below MOQ"
                                                   : null,
                                               controller:
                                                   _textEditingController,
-                                              keyboardType: TextInputType
-                                                  .numberWithOptions(
-                                                      signed: false,
-                                                      decimal: true),
+                                              keyboardType: keyboard,
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                regExp,
+                                              ],
+                                              maxLength: 7,
                                               textInputAction:
                                                   TextInputAction.go,
                                               cursorColor: Colors.blue,
                                               textAlign: TextAlign.center,
                                               decoration: InputDecoration(
+                                                counterText: "",
                                                 errorText: (_textEditingController
                                                                 .text !=
                                                             null &&
@@ -659,10 +687,14 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                                     index]
                                                                 .priceList[0]
                                                                 .moq)
-                                                    ? "quantity is below moq"
+                                                    ? "Quantity is below MOQ"
                                                     : null,
                                                 fillColor: faintGrey,
                                                 filled: true,
+                                                errorStyle: TextStyle(
+                                                    fontSize: 12.0,
+                                                    fontFamily:
+                                                        "SourceSansProRegular"),
                                                 focusedBorder: InputBorder.none,
                                                 hintStyle: new TextStyle(
                                                     color: greyText,
@@ -761,7 +793,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                 widget.marketList[index]
                                                     .priceList[0].moq) {
                                           widget.marketList[index].quantity =
-                                              counter;
+                                              widget.marketList[index]
+                                                  .priceList[0].moq;
                                           widget.marketList[index]
                                               .selectedQuantity = "+";
                                           widget.marketList[index].bgColor =
@@ -787,8 +820,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                       .toLowerCase());
                                         } else {
                                           widget.marketList[index].quantity =
-                                              widget.marketList[index]
-                                                  .priceList[0].moq;
+                                              counter;
                                           if (widget
                                               .marketList[index]
                                               .priceList[0]
