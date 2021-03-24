@@ -39,11 +39,11 @@ class MarketListDesign extends State<MarketListPage>
   final globalKey = new GlobalKey<ScaffoldState>();
   final TextEditingController _controller = new TextEditingController();
   final TextEditingController _textEditingController =
-  new TextEditingController();
+      new TextEditingController();
   final TextEditingController _txtSkuNotesEditController =
-  new TextEditingController();
+      new TextEditingController();
   final TextEditingController _txtOrderNotesEditController =
-  new TextEditingController();
+      new TextEditingController();
   Future<List<OutletMarketList>> favouriteOutletMarketListFuture;
   List<OutletMarketList> allOutletMarketList = [];
   List<OutletMarketList> selectedMarketList = [];
@@ -63,6 +63,8 @@ class MarketListDesign extends State<MarketListPage>
   MarketListDesign(this.repeatOrderProducts);
 
   Constants events = Constants();
+  TextInputType keyboard;
+  TextInputFormatter regExp;
 
   @override
   void initState() {
@@ -81,12 +83,8 @@ class MarketListDesign extends State<MarketListPage>
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
         }
-        if (loginResponse.user.supplier
-            .elementAt(0)
-            .supplierId != null) {
-          supplierID = loginResponse.user.supplier
-              .elementAt(0)
-              .supplierId;
+        if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
+          supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
           deliveryDatesListFuture = callDeliveryDatesApi();
           favouriteOutletMarketListFuture = callOutletsMarket();
         }
@@ -130,12 +128,12 @@ class MarketListDesign extends State<MarketListPage>
                             color: Colors.white,
                             child: Container(
                                 padding:
-                                EdgeInsets.only(left: 15.0, right: 15.0),
+                                    EdgeInsets.only(left: 15.0, right: 15.0),
                                 child: Row(children: <Widget>[
                                   FloatingActionButton.extended(
                                     backgroundColor: (orderNotes != null &&
-                                        orderNotes.isNotEmpty &&
-                                        orderNotes == "Notes")
+                                            orderNotes.isNotEmpty &&
+                                            orderNotes == "Notes")
                                         ? faintGrey
                                         : buttonBlue,
                                     foregroundColor: Colors.white,
@@ -155,16 +153,16 @@ class MarketListDesign extends State<MarketListPage>
                                             letterSpacing: 0,
                                             fontFamily: 'SourceSansProSemiBold',
                                             color: (orderNotes != null &&
-                                                orderNotes.isNotEmpty &&
-                                                orderNotes == "Notes")
+                                                    orderNotes.isNotEmpty &&
+                                                    orderNotes == "Notes")
                                                 ? greyText
                                                 : Colors.white),
                                       ),
                                     ),
                                     icon: Image(
                                       image: AssetImage((orderNotes != null &&
-                                          orderNotes.isNotEmpty &&
-                                          orderNotes == "Notes")
+                                              orderNotes.isNotEmpty &&
+                                              orderNotes == "Notes")
                                           ? "assets/images/ic_notes.png"
                                           : "assets/images/icon_notes_white.png"),
                                     ),
@@ -185,7 +183,7 @@ class MarketListDesign extends State<MarketListPage>
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   fontFamily:
-                                                  'SourceSansProSemiBold',
+                                                      'SourceSansProSemiBold',
                                                   color: Colors.white),
                                             ),
                                             Container(
@@ -209,10 +207,10 @@ class MarketListDesign extends State<MarketListPage>
                                           Events.TAP_MARKET_LIST_NEXT,
                                           properties: {
                                             'ItemCount':
-                                            selectedMarketList.length,
+                                                selectedMarketList.length,
                                             'OrderNotes': (orderNotes != null &&
-                                                orderNotes.isNotEmpty &&
-                                                orderNotes != "Notes")
+                                                    orderNotes.isNotEmpty &&
+                                                    orderNotes != "Notes")
                                                 ? true
                                                 : false,
                                             'OutletID': widget.outletId,
@@ -253,33 +251,33 @@ class MarketListDesign extends State<MarketListPage>
                           title: _isSearching
                               ? _buildSearchField()
                               : Container(
-                            child: Column(
-                              children: [
-                                Text(
-                                  widget.outletName,
-                                  style: new TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18.0,
-                                      fontFamily: "SourceSansProBold"),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        widget.outletName,
+                                        style: new TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18.0,
+                                            fontFamily: "SourceSansProBold"),
+                                      ),
+                                      Text(
+                                        "Cutoff for earliest delivery: " +
+                                            DateFormat('d MMM, hh:mm a').format(
+                                                DateTime
+                                                    .fromMillisecondsSinceEpoch(
+                                                        lstDeliveryDates[0]
+                                                                .deliveryDates[
+                                                                    0]
+                                                                .cutOffDate *
+                                                            1000)),
+                                        style: new TextStyle(
+                                            color: grey_text,
+                                            fontSize: 12.0,
+                                            fontFamily: "SourceSansProRegular"),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Text(
-                                  "Cutoff for earliest delivery: " +
-                                      DateFormat('d MMM, hh:mm a').format(
-                                          DateTime
-                                              .fromMillisecondsSinceEpoch(
-                                              lstDeliveryDates[0]
-                                                  .deliveryDates[
-                                              0]
-                                                  .cutOffDate *
-                                                  1000)),
-                                  style: new TextStyle(
-                                      color: grey_text,
-                                      fontSize: 12.0,
-                                      fontFamily: "SourceSansProRegular"),
-                                ),
-                              ],
-                            ),
-                          ),
                           actions: _buildActions(),
                         ),
                       );
@@ -295,7 +293,7 @@ class MarketListDesign extends State<MarketListPage>
       color: faintGrey,
       margin: EdgeInsets.only(top: 2.0),
       padding:
-      EdgeInsets.only(left: 15.0, right: 20.0, top: 15.0, bottom: 10.0),
+          EdgeInsets.only(left: 15.0, right: 20.0, top: 15.0, bottom: 10.0),
       child: Text(name,
           style: TextStyle(
             fontFamily: "SourceSansProBold",
@@ -399,14 +397,8 @@ class MarketListDesign extends State<MarketListPage>
                 snapShot.hasData &&
                 snapShot.data.isNotEmpty) {
               return Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
                   child: ListView(
                     children: <Widget>[
                       headers(context,
@@ -480,8 +472,8 @@ class MarketListDesign extends State<MarketListPage>
     }
   }
 
-  Widget displaySearchedList(AsyncSnapshot<List<OutletMarketList>> snapShot,
-      int index) {
+  Widget displaySearchedList(
+      AsyncSnapshot<List<OutletMarketList>> snapShot, int index) {
     return Card(
       margin: EdgeInsets.only(top: 2.0),
       child: GestureDetector(
@@ -490,12 +482,18 @@ class MarketListDesign extends State<MarketListPage>
             events.mixpanel.flush();
             if (snapShot
                 .data[index].priceList[0].unitSizeAlias.isDecimalAllowed) {
+              print(snapShot
+                  .data[index].priceList[0].unitSizeAlias.isDecimalAllowed);
               if (snapShot.data[index].quantity != null &&
                   snapShot.data[index].quantity != 0) {
                 counter = snapShot.data[index].quantity.toDouble();
               } else {
                 counter = snapShot.data[index].priceList[0].moq.toDouble();
               }
+              keyboard =
+                  TextInputType.numberWithOptions(signed: false, decimal: true);
+              regExp =
+                  WhitelistingTextInputFormatter(RegExp(r'^\d+\.?\d{0,2}'));
             } else {
               if (snapShot.data[index].quantity != null &&
                   snapShot.data[index].quantity != 0) {
@@ -503,14 +501,15 @@ class MarketListDesign extends State<MarketListPage>
               } else {
                 counter = snapShot.data[index].priceList[0].moq;
               }
+              keyboard =
+                  TextInputType.numberWithOptions(signed: true, decimal: false);
+              regExp = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
             }
 
             _textEditingController.value = TextEditingValue(
               text: this.counter.toString(),
               selection: TextSelection.fromPosition(
-                TextPosition(offset: this.counter
-                    .toString()
-                    .length),
+                TextPosition(offset: this.counter.toString().length),
               ),
             );
             _txtSkuNotesEditController.value = TextEditingValue(
@@ -526,334 +525,316 @@ class MarketListDesign extends State<MarketListPage>
               builder: (context) {
                 return SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.only(
-                          top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
-                      color: Colors.white,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: 5, left: 10.0, bottom: 10.0),
-                                  child: Align(
-                                      alignment: Alignment.topLeft,
-                                      child: Text(
-                                          snapShot.data[index].productName,
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.black,
-                                              fontFamily:
+                  padding: EdgeInsets.only(
+                      top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                  color: Colors.white,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Row(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: 5, left: 10.0, bottom: 10.0),
+                              child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(snapShot.data[index].productName,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontFamily:
                                               "SourceSansProSemiBold"))),
-                                ),
-                                new Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (snapShot.data[index].priceList[0]
-                                          .unitSizeAlias.isDecimalAllowed) {
-                                        counter = snapShot
-                                            .data[index].priceList[0].moq
-                                            .toDouble();
-                                      } else {
-                                        counter =
-                                            snapShot.data[index].priceList[0]
-                                                .moq;
-                                      }
-                                      _txtSkuNotesEditController.text = "";
-                                      snapShot.data[index].skuNotes =
-                                          _txtSkuNotesEditController.text;
-                                      snapShot.data[index].selectedQuantity =
-                                      "+";
-                                      snapShot.data[index].bgColor = faintGrey;
-                                      snapShot.data[index].txtColor =
-                                          buttonBlue;
-                                      snapShot.data[index].txtSize = 30.0;
-                                      snapShot.data[index].isSelected = false;
-                                      if (selectedMarketList != null)
-                                        selectedMarketList.removeWhere((it) =>
+                            ),
+                            new Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (snapShot.data[index].priceList[0]
+                                      .unitSizeAlias.isDecimalAllowed) {
+                                    counter = snapShot
+                                        .data[index].priceList[0].moq
+                                        .toDouble();
+                                  } else {
+                                    counter =
+                                        snapShot.data[index].priceList[0].moq;
+                                  }
+                                  _txtSkuNotesEditController.text = "";
+                                  snapShot.data[index].skuNotes =
+                                      _txtSkuNotesEditController.text;
+                                  snapShot.data[index].selectedQuantity = "+";
+                                  snapShot.data[index].bgColor = faintGrey;
+                                  snapShot.data[index].txtColor = buttonBlue;
+                                  snapShot.data[index].txtSize = 30.0;
+                                  snapShot.data[index].isSelected = false;
+                                  if (selectedMarketList != null)
+                                    selectedMarketList.removeWhere((it) =>
                                         it.productName.toLowerCase() ==
                                             snapShot.data[index].productName
                                                 .toLowerCase() &&
-                                            it.sku.toLowerCase() ==
-                                                snapShot.data[index].sku
-                                                    .toLowerCase() &&
-                                            snapShot.data[index].priceList[0]
+                                        it.sku.toLowerCase() ==
+                                            snapShot.data[index].sku
+                                                .toLowerCase() &&
+                                        snapShot.data[index].priceList[0]
                                                 .unitSize
                                                 .toLowerCase() ==
-                                                it.priceList[0].unitSize
-                                                    .toLowerCase());
-                                      Navigator.pop(context);
+                                            it.priceList[0].unitSize
+                                                .toLowerCase());
+                                  Navigator.pop(context);
+                                });
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                    top: 5,
+                                    left: 20.0,
+                                    right: 10.0,
+                                    bottom: 10.0),
+                                child: Align(
+                                    alignment: Alignment.topRight,
+                                    child: Text("remove",
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: buttonBlue,
+                                            fontFamily:
+                                                "SourceSansProSemiBold"))),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (counter > 0) this.counter--;
+                                      _textEditingController.text =
+                                          counter.toString();
+                                      _txtSkuNotesEditController.text = snapShot
+                                          .data[index].skuNotes
+                                          .toString();
                                     });
                                   },
                                   child: Container(
-                                    margin: EdgeInsets.only(
-                                        top: 5,
-                                        left: 20.0,
-                                        right: 10.0,
-                                        bottom: 10.0),
-                                    child: Align(
-                                        alignment: Alignment.topRight,
-                                        child: Text("remove",
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                                fontSize: 16.0,
-                                                color: buttonBlue,
-                                                fontFamily:
-                                                "SourceSansProSemiBold"))),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 10.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceAround,
-                                children: <Widget>[
-                                  GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          if (counter > 0) this.counter--;
-                                          _textEditingController.text =
-                                              counter.toString();
-                                          _txtSkuNotesEditController.text =
-                                              snapShot
-                                                  .data[index].skuNotes
-                                                  .toString();
-                                        });
-                                      },
-                                      child: Container(
-                                          margin: EdgeInsets.only(right: 5.0),
-                                          height: 40.0,
-                                          width: 40.0,
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.remove,
-                                              color: buttonBlue,
-                                            ),
-                                          ),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(200),
-                                            ),
-                                            color: faintGrey,
-                                          ))),
-                                  Container(
-                                      width: 200.0,
-                                      child: TextFormField(
-                                          autofocus: true,
-                                          autovalidate: true,
-                                          validator: (value) =>
-                                          (value != null &&
+                                      margin: EdgeInsets.only(right: 5.0),
+                                      height: 40.0,
+                                      width: 40.0,
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: buttonBlue,
+                                        ),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(200),
+                                        ),
+                                        color: faintGrey,
+                                      ))),
+                              Container(
+                                  width: 200.0,
+                                  child: TextFormField(
+                                      autofocus: true,
+                                      autovalidate: true,
+                                      validator: (value) => (value != null &&
                                               value.isNotEmpty &&
                                               double.parse(
-                                                  _textEditingController
-                                                      .text) <
+                                                      _textEditingController
+                                                          .text) <
                                                   snapShot.data[index]
                                                       .priceList[0].moq)
-                                              ? "quantity is below moq"
-                                              : null,
-                                          controller: _textEditingController,
-                                          keyboardType:
-                                          TextInputType.numberWithOptions(
-                                              signed: false, decimal: true),
-                                          textInputAction: TextInputAction.go,
-                                          cursorColor: Colors.blue,
-                                          textAlign: TextAlign.center,
-                                          decoration: InputDecoration(
-                                            errorText: (_textEditingController
-                                                .text !=
-                                                null &&
+                                          ? "quantity is below moq"
+                                          : null,
+                                      controller: _textEditingController,
+                                      keyboardType: keyboard,
+                                      inputFormatters: <TextInputFormatter>[
+                                        regExp,
+                                      ],
+                                      textInputAction: TextInputAction.go,
+                                      cursorColor: Colors.blue,
+                                      textAlign: TextAlign.center,
+                                      decoration: InputDecoration(
+                                        errorText: (_textEditingController
+                                                        .text !=
+                                                    null &&
                                                 _textEditingController
                                                     .text.isNotEmpty &&
                                                 double.parse(
-                                                    _textEditingController
-                                                        .text) <
+                                                        _textEditingController
+                                                            .text) <
                                                     snapShot.data[index]
                                                         .priceList[0].moq)
-                                                ? "quantity is below moq"
-                                                : null,
-                                            fillColor: faintGrey,
-                                            filled: true,
-                                            focusedBorder: InputBorder.none,
-                                            hintStyle: new TextStyle(
-                                                color: greyText,
-                                                fontSize: 16.0,
-                                                fontFamily: "SourceSansProRegular"),
-                                          ),
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16.0,
-                                              fontFamily: "SourceSansProSemiBold"),
-                                          onChanged: (query) {
-                                            if (query != null &&
-                                                query.isNotEmpty) {
-                                              if (snapShot.data[index]
-                                                  .priceList[0]
-                                                  .unitSizeAlias
-                                                  .isDecimalAllowed) {
-                                                counter = double.parse(query);
-                                              } else {
-                                                counter = int.parse(query);
-                                              }
-                                            }
-                                          })),
-                                  GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          this.counter++;
-                                          _textEditingController.text =
-                                              counter.toString();
-                                        });
-                                      },
-                                      child: Container(
-                                          margin: EdgeInsets.only(right: 5.0),
-                                          height: 40.0,
-                                          width: 40.0,
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.add,
-                                              color: buttonBlue,
-                                            ),
-                                          ),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(200),
-                                            ),
-                                            color: faintGrey,
-                                          )))
-                                ],
-                              ),
+                                            ? "quantity is below moq"
+                                            : null,
+                                        fillColor: faintGrey,
+                                        filled: true,
+                                        focusedBorder: InputBorder.none,
+                                        hintStyle: new TextStyle(
+                                            color: greyText,
+                                            fontSize: 16.0,
+                                            fontFamily: "SourceSansProRegular"),
+                                      ),
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16.0,
+                                          fontFamily: "SourceSansProSemiBold"),
+                                      onChanged: (query) {
+                                        if (query != null && query.isNotEmpty) {
+                                          if (snapShot.data[index].priceList[0]
+                                              .unitSizeAlias.isDecimalAllowed) {
+                                            counter = double.parse(query);
+                                          } else {
+                                            counter = int.parse(query);
+                                          }
+                                        }
+                                      })),
+                              GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      this.counter++;
+                                      _textEditingController.text =
+                                          counter.toString();
+                                    });
+                                  },
+                                  child: Container(
+                                      margin: EdgeInsets.only(right: 5.0),
+                                      height: 40.0,
+                                      width: 40.0,
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.add,
+                                          color: buttonBlue,
+                                        ),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(200),
+                                        ),
+                                        color: faintGrey,
+                                      )))
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: TextField(
+                            controller: _txtSkuNotesEditController,
+                            keyboardType: TextInputType.text,
+                            maxLines: null,
+                            maxLength: 150,
+                            cursorColor: Colors.blue,
+                            decoration: InputDecoration(
+                              fillColor: faintGrey,
+                              filled: true,
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              hintText: Constants.txt_add_notes,
+                              hintStyle: new TextStyle(
+                                  color: greyText,
+                                  fontSize: 14.0,
+                                  fontFamily: "SourceSansProRegular"),
                             ),
-                            Container(
-                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              margin: EdgeInsets.only(top: 20.0),
-                              child: TextField(
-                                controller: _txtSkuNotesEditController,
-                                keyboardType: TextInputType.text,
-                                maxLines: null,
-                                maxLength: 150,
-                                cursorColor: Colors.blue,
-                                decoration: InputDecoration(
-                                  fillColor: faintGrey,
-                                  filled: true,
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  hintText: Constants.txt_add_notes,
-                                  hintStyle: new TextStyle(
-                                      color: greyText,
-                                      fontSize: 14.0,
-                                      fontFamily: "SourceSansProRegular"),
-                                ),
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14.0,
-                                    fontFamily: "SourceSansProRegular"),
-                              ),
-                            ),
-                            GestureDetector(
-                                onTap: () {
-                                  print("$counter");
-                                  setState(() {
-                                    _textEditingController.text =
-                                        counter.toString();
-                                    snapShot.data[index].skuNotes =
-                                        _txtSkuNotesEditController.text;
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.0,
+                                fontFamily: "SourceSansProRegular"),
+                          ),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              print("$counter");
+                              setState(() {
+                                _textEditingController.text =
+                                    counter.toString();
+                                snapShot.data[index].skuNotes =
+                                    _txtSkuNotesEditController.text;
 
-                                    snapShot.data[index].isSelected = true;
-                                    if (counter != 0 ||
-                                        counter >
-                                            snapShot.data[index].priceList[0]
-                                                .moq) {
-                                      snapShot.data[index].quantity = counter;
-                                      if (snapShot.data[index].priceList[0]
-                                          .unitSizeAlias.isDecimalAllowed) {
-                                        snapShot.data[index].selectedQuantity =
-                                            counter.toStringAsFixed(2);
-                                      } else {
-                                        snapShot.data[index].selectedQuantity =
-                                            counter.toString();
-                                      }
-                                      snapShot.data[index].bgColor = buttonBlue;
-                                      snapShot.data[index].txtColor =
-                                          Colors.white;
-                                      snapShot.data[index].txtSize = 16.0;
-                                      selectedMarketList.removeWhere((it) =>
+                                snapShot.data[index].isSelected = true;
+                                if (counter != 0 ||
+                                    counter >
+                                        snapShot.data[index].priceList[0].moq) {
+                                  snapShot.data[index].quantity = counter;
+                                  if (snapShot.data[index].priceList[0]
+                                      .unitSizeAlias.isDecimalAllowed) {
+                                    snapShot.data[index].selectedQuantity =
+                                        counter.toStringAsFixed(2);
+                                  } else {
+                                    snapShot.data[index].selectedQuantity =
+                                        counter.toString();
+                                  }
+                                  snapShot.data[index].bgColor = buttonBlue;
+                                  snapShot.data[index].txtColor = Colors.white;
+                                  snapShot.data[index].txtSize = 16.0;
+                                  selectedMarketList.removeWhere((it) =>
                                       it.productName.toLowerCase() ==
                                           snapShot.data[index].productName
                                               .toLowerCase() &&
-                                          it.sku.toLowerCase() ==
-                                              snapShot.data[index].sku
-                                                  .toLowerCase() &&
-                                          snapShot.data[index].priceList[0]
-                                              .unitSize
+                                      it.sku.toLowerCase() ==
+                                          snapShot.data[index].sku
+                                              .toLowerCase() &&
+                                      snapShot.data[index].priceList[0].unitSize
                                               .toLowerCase() ==
-                                              it.priceList[0].unitSize
-                                                  .toLowerCase());
-                                      selectedMarketList.add(
-                                          snapShot.data[index]);
-                                    } else {
-                                      snapShot.data[index].quantity =
-                                          snapShot.data[index].priceList[0].moq;
-                                      snapShot.data[index].selectedQuantity =
-                                      "+";
-                                      snapShot.data[index].bgColor = faintGrey;
-                                      snapShot.data[index].txtColor =
-                                          buttonBlue;
-                                      snapShot.data[index].txtSize = 30.0;
-                                      snapShot.data[index].isSelected = false;
-                                      if (selectedMarketList != null)
-                                        selectedMarketList.removeWhere((it) =>
+                                          it.priceList[0].unitSize
+                                              .toLowerCase());
+                                  selectedMarketList.add(snapShot.data[index]);
+                                } else {
+                                  snapShot.data[index].quantity =
+                                      snapShot.data[index].priceList[0].moq;
+                                  snapShot.data[index].selectedQuantity = "+";
+                                  snapShot.data[index].bgColor = faintGrey;
+                                  snapShot.data[index].txtColor = buttonBlue;
+                                  snapShot.data[index].txtSize = 30.0;
+                                  snapShot.data[index].isSelected = false;
+                                  if (selectedMarketList != null)
+                                    selectedMarketList.removeWhere((it) =>
                                         it.productName.toLowerCase() ==
                                             snapShot.data[index].productName
                                                 .toLowerCase() &&
-                                            it.sku.toLowerCase() ==
-                                                snapShot.data[index].sku
-                                                    .toLowerCase() &&
-                                            snapShot.data[index].priceList[0]
+                                        it.sku.toLowerCase() ==
+                                            snapShot.data[index].sku
+                                                .toLowerCase() &&
+                                        snapShot.data[index].priceList[0]
                                                 .unitSize
                                                 .toLowerCase() ==
-                                                it.priceList[0].unitSize
-                                                    .toLowerCase());
-                                      snapShot.data[index].quantity = counter;
-                                    }
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                    padding:
+                                            it.priceList[0].unitSize
+                                                .toLowerCase());
+                                  snapShot.data[index].quantity = counter;
+                                }
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                                padding:
                                     EdgeInsets.only(left: 10.0, right: 10.0),
-                                    margin: EdgeInsets.only(
-                                        top: 20.0, right: 10.0, left: 10.0),
-                                    height: 47.0,
-                                    width: MediaQuery
-                                        .of(context)
-                                        .size
-                                        .width,
-                                    decoration: BoxDecoration(
-                                        color: buttonBlue,
-                                        borderRadius:
+                                margin: EdgeInsets.only(
+                                    top: 20.0, right: 10.0, left: 10.0),
+                                height: 47.0,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                    color: buttonBlue,
+                                    borderRadius:
                                         BorderRadius.all(Radius.circular(30))),
-                                    child: Center(
-                                        child: Text(
-                                          "Done",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontFamily: "SourceSansProSemiBold"),
-                                        ))))
-                          ],
-                        ),
-                      ),
-                    ));
+                                child: Center(
+                                    child: Text(
+                                  "Done",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontFamily: "SourceSansProSemiBold"),
+                                ))))
+                      ],
+                    ),
+                  ),
+                ));
               },
             );
           },
@@ -965,7 +946,7 @@ class MarketListDesign extends State<MarketListPage>
         for (var j = 0; j < outletMarketList[i].priceList.length; j++) {
           if (outletMarketList[i].priceList[j].status == ("visible")) {
             OutletMarketList productUom =
-            OutletMarketList.fromJson(outletMarketList[i].toJson());
+                OutletMarketList.fromJson(outletMarketList[i].toJson());
             List<PriceList> productPriceLists = [];
             productPriceLists.add(outletMarketList[i].priceList[j]);
             productUom.priceList = productPriceLists;
@@ -975,7 +956,7 @@ class MarketListDesign extends State<MarketListPage>
       } else {
         if (outletMarketList[i].priceList[0].status == ("visible")) {
           OutletMarketList productUom =
-          OutletMarketList.fromJson(outletMarketList[i].toJson());
+              OutletMarketList.fromJson(outletMarketList[i].toJson());
           List<PriceList> productPriceLists = [];
           productPriceLists.add(outletMarketList[i].priceList[0]);
           productUom.priceList = productPriceLists;
@@ -1002,8 +983,8 @@ class MarketListDesign extends State<MarketListPage>
             }
 
             selectedMarketList.removeWhere((it) =>
-            it.productName.toLowerCase() ==
-                elements.productName.toLowerCase() &&
+                it.productName.toLowerCase() ==
+                    elements.productName.toLowerCase() &&
                 it.sku.toLowerCase() == elements.sku.toLowerCase() &&
                 elements.priceList[0].unitSize.toLowerCase() ==
                     it.priceList[0].unitSize.toLowerCase());
@@ -1056,8 +1037,8 @@ class MarketListDesign extends State<MarketListPage>
               elements.selectedQuantity = element.quantity.toString();
 
               selectedMarketList.removeWhere((it) =>
-              it.productName.toLowerCase() ==
-                  elements.productName.toLowerCase() &&
+                  it.productName.toLowerCase() ==
+                      elements.productName.toLowerCase() &&
                   it.sku.toLowerCase() == elements.sku.toLowerCase() &&
                   elements.priceList[0].unitSize.toLowerCase() ==
                       it.priceList[0].unitSize.toLowerCase());
@@ -1077,95 +1058,91 @@ class MarketListDesign extends State<MarketListPage>
         builder: (context) {
           return SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.only(
-                    top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
-                color: Colors.white,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(
-                            top: 5, left: 20.0, bottom: 10.0),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("Notes or special requests",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontFamily: "SourceSansProSemiBold"))),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                        margin: EdgeInsets.only(top: 20.0),
-                        child: TextField(
-                          controller: _txtOrderNotesEditController,
-                          keyboardType: TextInputType.text,
-                          maxLines: null,
-                          maxLength: 150,
-                          autofocus: true,
-                          cursorColor: Colors.blue,
-                          decoration: InputDecoration(
-                            fillColor: faintGrey,
-                            filled: true,
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            hintText: Constants.txt_add_notes,
-                            hintStyle: new TextStyle(
-                                color: greyText,
+            padding: EdgeInsets.only(
+                top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+            color: Colors.white,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(top: 5, left: 20.0, bottom: 10.0),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Notes or special requests",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
                                 fontSize: 16.0,
-                                fontFamily: "SourceSansProRegular"),
-                          ),
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16.0,
-                              fontFamily: "SourceSansProRegular"),
-                        ),
-                      ),
-                      GestureDetector(
-                          onTap: () {
-                            if (_txtOrderNotesEditController.text != null &&
-                                _txtOrderNotesEditController.text.isNotEmpty) {
-                              setState(() {
-                                orderNotes = _txtOrderNotesEditController.text;
-                              });
-                            } else {
-                              setState(() {
-                                orderNotes = "Notes";
-                              });
-                            }
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                              padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                              margin: EdgeInsets.only(
-                                  top: 20.0, right: 20.0, left: 20.0),
-                              height: 47.0,
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
-                              decoration: BoxDecoration(
-                                  color: buttonBlue,
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(30))),
-                              child: Center(
-                                  child: Text(
-                                    "Done",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontFamily: "SourceSansProSemiBold"),
-                                  ))))
-                    ],
+                                color: Colors.black,
+                                fontFamily: "SourceSansProSemiBold"))),
                   ),
-                ),
-              ));
+                  Container(
+                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: TextField(
+                      controller: _txtOrderNotesEditController,
+                      keyboardType: TextInputType.text,
+                      maxLines: null,
+                      maxLength: 150,
+                      autofocus: true,
+                      cursorColor: Colors.blue,
+                      decoration: InputDecoration(
+                        fillColor: faintGrey,
+                        filled: true,
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        hintText: Constants.txt_add_notes,
+                        hintStyle: new TextStyle(
+                            color: greyText,
+                            fontSize: 16.0,
+                            fontFamily: "SourceSansProRegular"),
+                      ),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontFamily: "SourceSansProRegular"),
+                    ),
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        if (_txtOrderNotesEditController.text != null &&
+                            _txtOrderNotesEditController.text.isNotEmpty) {
+                          setState(() {
+                            orderNotes = _txtOrderNotesEditController.text;
+                          });
+                        } else {
+                          setState(() {
+                            orderNotes = "Notes";
+                          });
+                        }
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          margin: EdgeInsets.only(
+                              top: 20.0, right: 20.0, left: 20.0),
+                          height: 47.0,
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              color: buttonBlue,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30))),
+                          child: Center(
+                              child: Text(
+                            "Done",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: "SourceSansProSemiBold"),
+                          ))))
+                ],
+              ),
+            ),
+          ));
         });
   }
 
@@ -1204,7 +1181,7 @@ class MarketListDesign extends State<MarketListPage>
       final msg = jsonEncode(createOrderModel);
 
       http.Response response =
-      await http.post(requestUrl, headers: headers, body: msg);
+          await http.post(requestUrl, headers: headers, body: msg);
       print("ms" + response.statusCode.toString());
       print("ms" + response.body.toString());
       if (response.statusCode == 200) {
@@ -1248,17 +1225,16 @@ class MarketListDesign extends State<MarketListPage>
 
   Future<void> moveToReviewOrdersScreen() async {
     // start the SecondScreen and wait for it to finish with a result
-    final result =await Navigator.push(
+    final result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-            new ReviewOrderPage(
+            builder: (context) => new ReviewOrderPage(
                 selectedMarketList,
                 widget.outletId,
                 widget.outletName,
                 (orderNotes != null &&
-                    orderNotes.isNotEmpty &&
-                    orderNotes != "Notes")
+                        orderNotes.isNotEmpty &&
+                        orderNotes != "Notes")
                     ? orderNotes
                     : "",
                 lstDeliveryDates,
