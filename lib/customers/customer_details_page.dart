@@ -163,7 +163,10 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
+      print('retrived people');
+      print(response.body);
       buyerResponse = BuyerUserResponse.fromJson(json.decode(response.body));
+      print(buyerResponse.data.data.length);
     } else {
       print('failed get people');
     }
@@ -181,7 +184,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       body: ListView(
         children: <Widget>[
           orderSummaryBanner(),
-          Invoicesheader(context),
+          InvocesPanel(),
+          // Invoicesheader(context),
           headers(context),
           list(),
           header(context),
@@ -261,7 +265,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                           ),
                           Text(
                             '\$' +
-                                snapshot.data.totalSpendingCurrMonth.toString(),
+                                snapshot.data.totalSpendingCurrMonth.toString().replaceAllMapped(
+                                    reg,
+                                        (Match m) =>
+                                    '${m[1]},') ??
+                                "",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30,
@@ -293,7 +301,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                     Text(
                                       '\$' +
                                           snapshot.data.totalSpendingLastMonth
-                                              .toString(),
+                                              .toString().replaceAllMapped(
+                                              reg,
+                                                  (Match m) =>
+                                              '${m[1]},') ??
+                                          "",
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 18,
@@ -314,7 +326,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                       '\$' +
                                           snapshot
                                               .data.totalSpendingLastTwoMonths
-                                              .toString(),
+                                              .toString().replaceAllMapped(
+                                              reg,
+                                                  (Match m) =>
+                                              '${m[1]},') ??
+                                          "",
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 18,
@@ -374,6 +390,119 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     }
   }
 
+  Widget InvocesPanel() {
+
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Container(
+
+        height: 150,
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          color: Colors.white,
+        ),
+
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+
+                var  selectedFilters = ['Not yet due', 'Overdue'];
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InvoicesPage(outletId, outletName, selectedFilters)));
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        Image(
+                          image: new AssetImage('assets/images/invoices_icon.png'),
+                          width: 50,
+                          height: 50,
+                          color: null,
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.center,
+                        ),
+
+                        SizedBox(width: 5,),
+                        Column(
+                          children: [
+                            Text('Unpaid invoices', style: TextStyle(fontSize: 14, color: buttonBlue, fontFamily: 'SourceSansProSemiBold'),),
+                            Text('\$530.00',style: TextStyle(fontSize: 30, color: Colors.black, fontFamily: 'SourceSansProBold'),)
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Container(
+                height: 2,
+                color: faintGrey,
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(left :20.0, top: 15, right: 20),
+              child: Row(
+
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width * 0.5,
+                  //   height: 50,
+                  //   color: Colors.yellow,
+                  // )
+
+                  GestureDetector(
+                    onTap: () {
+                      var selectedFilters = ['Overdue'];
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InvoicesPage(outletId, outletName, selectedFilters)));
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(text: '\$120.50 ', style: TextStyle(fontFamily: "SourceSansProBold", fontSize: 18, color: warningRed)),
+                          TextSpan(text: ' overdue', style: TextStyle(fontFamily: "SourceSansProRegular", color: warningRed, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        List<String> selectedFilters = [];
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => InvoicesPage(outletId, outletName, selectedFilters)));
+                      },
+                      child: Text('View all invoices',
+                        style: TextStyle(fontSize: 12, color: buttonBlue, fontFamily: 'SourceSansProRegular'),))
+                ],
+              ),
+            )
+          ],
+        ),
+
+      ),
+    );
+  }
+
   Widget Invoicesheader(context) {
     return Container(
       color: faintGrey,
@@ -390,10 +519,10 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
               events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_VIEW_ALL_INVOICES);
               events.mixpanel.flush();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => InvoicesPage(outletId, outletName)));
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => InvoicesPage(outletId, outletName)));
             },
             child: new Row(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -420,7 +549,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       color: faintGrey,
       margin: EdgeInsets.only(top: 2.0),
       padding:
-          EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0, bottom: 10.0),
+          EdgeInsets.only(left: 20.0, right: 10.0, top: 0, bottom: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -735,11 +864,21 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     return formattedDate;
   }
 
-  int timeDiff(int timeStamp) {
+  String timeDiff(int timeStamp) {
     final birthday = DateTime.parse(timestamp(timeStamp));
     final date2 = DateTime.now();
     final difference = date2.difference(birthday).inDays;
-    return difference;
+    return dispalyTime(difference);
+  }
+
+  String dispalyTime(int diff) {
+    if (diff == 0) {
+      return 'Last ordered today';
+    } else if (diff == 1) {
+      return 'Last ordered yesterday';
+    } else {
+      return 'Last ordered ' + diff.toString() + ' days ago' ?? "";
+    }
   }
 
   Widget leadingImage(Orders img) {
@@ -837,11 +976,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                         subtitle: Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
-                            'Last ordered ' +
-                                    timeDiff(snapshot.data[index].lastOrdered)
-                                        .toString() +
-                                    ' days ago' ??
-                                "",
+                                    timeDiff(snapshot.data[index].lastOrdered),
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: 'SourceSansProRegular',
@@ -1019,4 +1154,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     var placeholder = value.getInitialWords(name);
     return placeholder;
   }
+
+  RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
 }

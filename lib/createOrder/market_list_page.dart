@@ -1,3 +1,4 @@
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -66,6 +67,7 @@ class MarketListDesign extends State<MarketListPage>
   Constants events = Constants();
   TextInputType keyboard;
   TextInputFormatter regExp;
+  bool isValid = false;
 
   @override
   void initState() {
@@ -519,157 +521,160 @@ class MarketListDesign extends State<MarketListPage>
                 TextPosition(offset: snapShot.data[index].skuNotes.length),
               ),
             );
-
+            setState(() {
+              if (counter > 0 &&
+                  counter > snapShot.data[index].priceList[0].moq - 1) {
+                isValid = true;
+                // btnColor = lightGreen;
+              } else {
+                isValid = false;
+                //btnColor = lightGreen.withOpacity(0.5);
+              }
+            });
             showModalBottomSheet<void>(
               context: context,
               isScrollControlled: true,
               builder: (context) {
-                return SingleChildScrollView(
-                    child: Container(
-                  padding: EdgeInsets.only(
-                      top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
-                  color: Colors.white,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Row(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: 5, left: 10.0, bottom: 10.0),
-                              child: SizedBox(
-                                  width: 250.0,
-                                  child: Text(snapShot.data[index].productName,
-                                      textAlign: TextAlign.start,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      softWrap: false,
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: Colors.black,
-                                          fontFamily:
-                                              "SourceSansProSemiBold"))),
-                            ),
-                            new Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (snapShot.data[index].priceList[0]
-                                      .unitSizeAlias.isDecimalAllowed) {
-                                    counter = snapShot
-                                        .data[index].priceList[0].moq
-                                        .toDouble();
-                                  } else {
-                                    counter =
-                                        snapShot.data[index].priceList[0].moq;
-                                  }
-                                  _txtSkuNotesEditController.text = "";
-                                  snapShot.data[index].skuNotes =
-                                      _txtSkuNotesEditController.text;
-                                  snapShot.data[index].selectedQuantity = "+";
-                                  snapShot.data[index].bgColor = faintGrey;
-                                  snapShot.data[index].txtColor = buttonBlue;
-                                  snapShot.data[index].txtSize = 30.0;
-                                  snapShot.data[index].isSelected = false;
-                                  if (selectedMarketList != null)
-                                    selectedMarketList.removeWhere((it) =>
-                                        it.productName.toLowerCase() ==
-                                            snapShot.data[index].productName
-                                                .toLowerCase() &&
-                                        it.sku.toLowerCase() ==
-                                            snapShot.data[index].sku
-                                                .toLowerCase() &&
-                                        snapShot.data[index].priceList[0]
-                                                .unitSize
-                                                .toLowerCase() ==
-                                            it.priceList[0].unitSize
-                                                .toLowerCase());
-                                  Navigator.pop(context);
-                                });
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                    top: 5,
-                                    left: 20.0,
-                                    right: 10.0,
-                                    bottom: 10.0),
-                                child: Align(
-                                    alignment: Alignment.topRight,
-                                    child: Text("Remove",
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            fontSize: 12.0,
-                                            color: buttonBlue,
-                                            fontFamily:
-                                                "SourceSansProRegular"))),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (counter > 0) this.counter--;
-                                      _textEditingController.text =
-                                          counter.toString();
-                                      _txtSkuNotesEditController.text = snapShot
-                                          .data[index].skuNotes
-                                          .toString();
-                                    });
-                                  },
-                                  child: Container(
-                                      margin: EdgeInsets.only(right: 5.0),
-                                      height: 40.0,
-                                      width: 40.0,
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: buttonBlue,
-                                        ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(200),
-                                        ),
-                                        color: faintGrey,
-                                      ))),
+                return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setStates) {
+                  return SingleChildScrollView(
+                      child: Container(
+                    padding: EdgeInsets.only(
+                        top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                    color: Colors.white,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Row(
+                            children: [
                               Container(
-                                  width: 200.0,
-                                  child: TextFormField(
-                                      autofocus: true,
-                                      autovalidate: true,
-                                      validator: (value) => (value != null &&
-                                              value.isNotEmpty &&
-                                              double.parse(
-                                                      _textEditingController
-                                                          .text) <
+                                margin: EdgeInsets.only(
+                                    top: 5, left: 10.0, bottom: 10.0),
+                                child: SizedBox(
+                                    width: 250.0,
+                                    child: Text(
+                                        snapShot.data[index].productName,
+                                        textAlign: TextAlign.start,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: Colors.black,
+                                            fontFamily:
+                                                "SourceSansProSemiBold"))),
+                              ),
+                              new Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (snapShot.data[index].priceList[0]
+                                        .unitSizeAlias.isDecimalAllowed) {
+                                      counter = snapShot
+                                          .data[index].priceList[0].moq
+                                          .toDouble();
+                                    } else {
+                                      counter =
+                                          snapShot.data[index].priceList[0].moq;
+                                    }
+                                    _txtSkuNotesEditController.text = "";
+                                    snapShot.data[index].skuNotes =
+                                        _txtSkuNotesEditController.text;
+                                    snapShot.data[index].selectedQuantity = "+";
+                                    snapShot.data[index].quantity = counter;
+                                    snapShot.data[index].bgColor = faintGrey;
+                                    snapShot.data[index].txtColor = buttonBlue;
+                                    snapShot.data[index].txtSize = 30.0;
+                                    snapShot.data[index].isSelected = false;
+                                    if (selectedMarketList != null)
+                                      selectedMarketList.removeWhere((it) =>
+                                          it.productName.toLowerCase() ==
+                                              snapShot.data[index].productName
+                                                  .toLowerCase() &&
+                                          it.sku.toLowerCase() ==
+                                              snapShot.data[index].sku
+                                                  .toLowerCase() &&
+                                          snapShot.data[index].priceList[0]
+                                                  .unitSize
+                                                  .toLowerCase() ==
+                                              it.priceList[0].unitSize
+                                                  .toLowerCase());
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      top: 5,
+                                      left: 20.0,
+                                      right: 10.0,
+                                      bottom: 10.0),
+                                  child: Align(
+                                      alignment: Alignment.topRight,
+                                      child: Text("Remove",
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 12.0,
+                                              color: buttonBlue,
+                                              fontFamily:
+                                                  "SourceSansProRegular"))),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (counter > 0) this.counter--;
+                                        _textEditingController.text =
+                                            counter.toString();
+                                        _txtSkuNotesEditController.text =
+                                            snapShot.data[index].skuNotes
+                                                .toString();
+                                        setStates(() {
+                                          if (counter > 0 &&
+                                              counter >
                                                   snapShot.data[index]
-                                                      .priceList[0].moq)
-                                          ? "Quantity is below MOQ"
-                                          : null,
-                                      controller: _textEditingController,
-                                      keyboardType: keyboard,
-                                      inputFormatters: <TextInputFormatter>[
-                                        regExp,
-                                      ],
-                                      textInputAction: TextInputAction.go,
-                                      cursorColor: Colors.blue,
-                                      maxLength: 7,
-                                      textAlign: TextAlign.center,
-                                      decoration: InputDecoration(
-                                        counterText: "",
-                                        errorText: (_textEditingController
-                                                        .text !=
-                                                    null &&
-                                                _textEditingController
-                                                    .text.isNotEmpty &&
+                                                          .priceList[0].moq -
+                                                      1) {
+                                            isValid = true;
+                                            // btnColor = lightGreen;
+                                          } else {
+                                            isValid = false;
+                                            //btnColor = lightGreen.withOpacity(0.5);
+                                          }
+                                        });
+                                      });
+                                    },
+                                    child: Container(
+                                        margin: EdgeInsets.only(right: 5.0),
+                                        height: 40.0,
+                                        width: 40.0,
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.remove,
+                                            color: buttonBlue,
+                                          ),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(200),
+                                          ),
+                                          color: faintGrey,
+                                        ))),
+                                Container(
+                                    width: 200.0,
+                                    child: TextFormField(
+                                        autofocus: true,
+                                        autovalidate: true,
+                                        validator: (value) => (value != null &&
+                                                value.isNotEmpty &&
                                                 double.parse(
                                                         _textEditingController
                                                             .text) <
@@ -677,173 +682,268 @@ class MarketListDesign extends State<MarketListPage>
                                                         .priceList[0].moq)
                                             ? "Quantity is below MOQ"
                                             : null,
-                                        fillColor: faintGrey,
-                                        filled: true,
-                                        focusedBorder: InputBorder.none,
-                                        errorStyle: TextStyle(
-                                            fontSize: 12.0,
-                                            fontFamily: "SourceSansProRegular"),
-                                        hintStyle: new TextStyle(
-                                            color: greyText,
+                                        controller: _textEditingController,
+                                        keyboardType: keyboard,
+                                        inputFormatters: <TextInputFormatter>[
+                                          regExp,
+                                        ],
+                                        textInputAction: TextInputAction.go,
+                                        cursorColor: Colors.blue,
+                                        maxLength: 7,
+                                        textAlign: TextAlign.center,
+                                        decoration: InputDecoration(
+                                          counterText: "",
+                                          errorText: (_textEditingController
+                                                          .text !=
+                                                      null &&
+                                                  _textEditingController
+                                                      .text.isNotEmpty &&
+                                                  double.parse(
+                                                          _textEditingController
+                                                              .text) <
+                                                      snapShot.data[index]
+                                                          .priceList[0].moq)
+                                              ? "Quantity is below MOQ"
+                                              : null,
+                                          fillColor: faintGrey,
+                                          filled: true,
+                                          focusedBorder: InputBorder.none,
+                                          errorStyle: TextStyle(
+                                              fontSize: 12.0,
+                                              fontFamily:
+                                                  "SourceSansProRegular"),
+                                          hintStyle: new TextStyle(
+                                              color: greyText,
+                                              fontSize: 16.0,
+                                              fontFamily:
+                                                  "SourceSansProRegular"),
+                                        ),
+                                        style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontFamily: "SourceSansProRegular"),
-                                      ),
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16.0,
-                                          fontFamily: "SourceSansProSemiBold"),
-                                      onChanged: (query) {
-                                        if (query != null && query.isNotEmpty) {
-                                          if (snapShot.data[index].priceList[0]
-                                              .unitSizeAlias.isDecimalAllowed) {
-                                            counter = double.parse(query);
-                                          } else {
-                                            counter = int.parse(query);
+                                            fontFamily:
+                                                "SourceSansProSemiBold"),
+                                        onChanged: (query) {
+                                          if (query != null &&
+                                              query.isNotEmpty) {
+                                            if (snapShot
+                                                .data[index]
+                                                .priceList[0]
+                                                .unitSizeAlias
+                                                .isDecimalAllowed) {
+                                              counter = double.parse(query);
+                                              setStates(() {
+                                                if (counter > 0 &&
+                                                    counter >
+                                                        snapShot
+                                                                .data[index]
+                                                                .priceList[0]
+                                                                .moq -
+                                                            1) {
+                                                  isValid = true;
+                                                  // btnColor = lightGreen;
+                                                } else {
+                                                  isValid = false;
+                                                  //btnColor = lightGreen.withOpacity(0.5);
+                                                }
+                                              });
+                                            } else {
+                                              counter = int.parse(query);
+                                              setStates(() {
+                                                if (counter > 0 &&
+                                                    counter >
+                                                        snapShot
+                                                                .data[index]
+                                                                .priceList[0]
+                                                                .moq -
+                                                            1) {
+                                                  isValid = true;
+                                                  // btnColor = lightGreen;
+                                                } else {
+                                                  isValid = false;
+                                                  //btnColor = lightGreen.withOpacity(0.5);
+                                                }
+                                              });
+                                            }
                                           }
-                                        }
-                                      })),
-                              GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      this.counter++;
-                                      _textEditingController.text =
-                                          counter.toString();
-                                    });
-                                  },
-                                  child: Container(
-                                      margin: EdgeInsets.only(right: 5.0),
-                                      height: 40.0,
-                                      width: 40.0,
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.add,
-                                          color: buttonBlue,
+                                        })),
+                                GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        this.counter++;
+                                        _textEditingController.text =
+                                            counter.toString();
+                                        setStates(() {
+                                          if (counter > 0 &&
+                                              counter >
+                                                  snapShot.data[index]
+                                                          .priceList[0].moq -
+                                                      1) {
+                                            isValid = true;
+                                            // btnColor = lightGreen;
+                                          } else {
+                                            isValid = false;
+                                            //btnColor = lightGreen.withOpacity(0.5);
+                                          }
+                                        });
+                                      });
+                                    },
+                                    child: Container(
+                                        margin: EdgeInsets.only(right: 5.0),
+                                        height: 40.0,
+                                        width: 40.0,
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.add,
+                                            color: buttonBlue,
+                                          ),
                                         ),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(200),
-                                        ),
-                                        color: faintGrey,
-                                      )))
-                            ],
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(200),
+                                          ),
+                                          color: faintGrey,
+                                        )))
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                          margin: EdgeInsets.only(top: 20.0),
-                          child: TextField(
-                            controller: _txtSkuNotesEditController,
-                            keyboardType: TextInputType.text,
-                            maxLines: null,
-                            maxLength: 150,
-                            cursorColor: Colors.blue,
-                            decoration: InputDecoration(
-                              fillColor: faintGrey,
-                              filled: true,
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              hintText: Constants.txt_add_notes,
-                              hintStyle: new TextStyle(
-                                  color: greyText,
+                          Container(
+                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                            margin: EdgeInsets.only(top: 20.0),
+                            child: TextField(
+                              controller: _txtSkuNotesEditController,
+                              keyboardType: TextInputType.text,
+                              maxLines: null,
+                              maxLength: 150,
+                              cursorColor: Colors.blue,
+                              decoration: InputDecoration(
+                                fillColor: faintGrey,
+                                filled: true,
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                hintText: Constants.txt_add_notes,
+                                hintStyle: new TextStyle(
+                                    color: greyText,
+                                    fontSize: 14.0,
+                                    fontFamily: "SourceSansProRegular"),
+                              ),
+                              style: TextStyle(
+                                  color: Colors.black,
                                   fontSize: 14.0,
                                   fontFamily: "SourceSansProRegular"),
                             ),
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14.0,
-                                fontFamily: "SourceSansProRegular"),
                           ),
-                        ),
-                        GestureDetector(
-                            onTap: () {
-                              print("$counter");
-                              setState(() {
-                                _textEditingController.text =
-                                    counter.toString();
-                                snapShot.data[index].skuNotes =
-                                    _txtSkuNotesEditController.text;
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: 20.0, right: 10.0, left: 10.0),
+                            height: 47.0,
+                            width: MediaQuery.of(context).size.width,
+                            child: FlatButton(
+                              disabledColor: faintGrey,
+                              color: (isValid) ? buttonBlue : faintGrey,
+                              onPressed: isValid
+                                  ? () {
+                                      FocusScope.of(context).unfocus();
+                                      setState(() {
+                                        _textEditingController.text =
+                                            counter.toString();
+                                        snapShot.data[index].skuNotes =
+                                            _txtSkuNotesEditController.text;
 
-                                snapShot.data[index].isSelected = true;
-                                if (counter != 0 ||
-                                    counter >
-                                        snapShot.data[index].priceList[0].moq) {
-                                  snapShot.data[index].quantity = counter;
-                                  if (snapShot.data[index].priceList[0]
-                                      .unitSizeAlias.isDecimalAllowed) {
-                                    snapShot.data[index].selectedQuantity =
-                                        counter.toStringAsFixed(2);
-                                  } else {
-                                    snapShot.data[index].selectedQuantity =
-                                        counter.toString();
-                                  }
-                                  snapShot.data[index].bgColor = buttonBlue;
-                                  snapShot.data[index].txtColor = Colors.white;
-                                  snapShot.data[index].txtSize = 16.0;
-                                  selectedMarketList.removeWhere((it) =>
-                                      it.productName.toLowerCase() ==
-                                          snapShot.data[index].productName
-                                              .toLowerCase() &&
-                                      it.sku.toLowerCase() ==
-                                          snapShot.data[index].sku
-                                              .toLowerCase() &&
-                                      snapShot.data[index].priceList[0].unitSize
-                                              .toLowerCase() ==
-                                          it.priceList[0].unitSize
-                                              .toLowerCase());
-                                  selectedMarketList.add(snapShot.data[index]);
-                                } else {
-                                  snapShot.data[index].quantity =
-                                      snapShot.data[index].priceList[0].moq;
-                                  snapShot.data[index].selectedQuantity = "+";
-                                  snapShot.data[index].bgColor = faintGrey;
-                                  snapShot.data[index].txtColor = buttonBlue;
-                                  snapShot.data[index].txtSize = 30.0;
-                                  snapShot.data[index].isSelected = false;
-                                  if (selectedMarketList != null)
-                                    selectedMarketList.removeWhere((it) =>
-                                        it.productName.toLowerCase() ==
-                                            snapShot.data[index].productName
-                                                .toLowerCase() &&
-                                        it.sku.toLowerCase() ==
-                                            snapShot.data[index].sku
-                                                .toLowerCase() &&
-                                        snapShot.data[index].priceList[0]
-                                                .unitSize
-                                                .toLowerCase() ==
-                                            it.priceList[0].unitSize
-                                                .toLowerCase());
-                                  snapShot.data[index].quantity = counter;
-                                }
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                                padding:
-                                    EdgeInsets.only(left: 10.0, right: 10.0),
-                                margin: EdgeInsets.only(
-                                    top: 20.0, right: 10.0, left: 10.0),
-                                height: 47.0,
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                    color: buttonBlue,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                child: Center(
-                                    child: Text(
-                                  "Done",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontFamily: "SourceSansProSemiBold"),
-                                ))))
-                      ],
+                                        snapShot.data[index].isSelected = true;
+                                        if (counter != 0 ||
+                                            counter >
+                                                snapShot.data[index]
+                                                    .priceList[0].moq) {
+                                          snapShot.data[index].quantity =
+                                              counter;
+                                          if (snapShot.data[index].priceList[0]
+                                              .unitSizeAlias.isDecimalAllowed) {
+                                            snapShot.data[index]
+                                                    .selectedQuantity =
+                                                counter.toStringAsFixed(2);
+                                          } else {
+                                            snapShot.data[index]
+                                                    .selectedQuantity =
+                                                counter.toString();
+                                          }
+                                          snapShot.data[index].bgColor =
+                                              buttonBlue;
+                                          snapShot.data[index].txtColor =
+                                              Colors.white;
+                                          snapShot.data[index].txtSize = 16.0;
+                                          selectedMarketList.removeWhere((it) =>
+                                              it.productName.toLowerCase() ==
+                                                  snapShot
+                                                      .data[index].productName
+                                                      .toLowerCase() &&
+                                              it.sku.toLowerCase() ==
+                                                  snapShot.data[index].sku
+                                                      .toLowerCase() &&
+                                              snapShot.data[index].priceList[0]
+                                                      .unitSize
+                                                      .toLowerCase() ==
+                                                  it.priceList[0].unitSize
+                                                      .toLowerCase());
+                                          selectedMarketList
+                                              .add(snapShot.data[index]);
+                                        } else {
+                                          snapShot.data[index].quantity =
+                                              snapShot
+                                                  .data[index].priceList[0].moq;
+                                          snapShot.data[index]
+                                              .selectedQuantity = "+";
+                                          snapShot.data[index].bgColor =
+                                              faintGrey;
+                                          snapShot.data[index].txtColor =
+                                              buttonBlue;
+                                          snapShot.data[index].txtSize = 30.0;
+                                          snapShot.data[index].isSelected =
+                                              false;
+                                          if (selectedMarketList != null)
+                                            selectedMarketList.removeWhere(
+                                                (it) =>
+                                                    it.productName
+                                                            .toLowerCase() ==
+                                                        snapShot.data[index]
+                                                            .productName
+                                                            .toLowerCase() &&
+                                                    it.sku.toLowerCase() ==
+                                                        snapShot.data[index].sku
+                                                            .toLowerCase() &&
+                                                    snapShot
+                                                            .data[index]
+                                                            .priceList[0]
+                                                            .unitSize
+                                                            .toLowerCase() ==
+                                                        it.priceList[0].unitSize
+                                                            .toLowerCase());
+                                          snapShot.data[index].quantity =
+                                              counter;
+                                        }
+                                        Navigator.pop(context);
+                                      });
+                                    }
+                                  : null,
+                              child: Text(
+                                "Done",
+                                style: TextStyle(
+                                    color: (isValid) ? Colors.white : greyText,
+                                    fontSize: 16,
+                                    fontFamily: "SourceSansProSemiBold"),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ));
+                  ));
+                });
               },
             );
           },
@@ -1186,6 +1286,7 @@ class MarketListDesign extends State<MarketListPage>
       print("ms" + response.statusCode.toString());
       print("ms" + response.body.toString());
       if (response.statusCode == 200) {
+        DartNotificationCenter.post(channel: Constants.draft_notifier);
         _hideLoader();
         Navigator.of(context).pop();
       } else {

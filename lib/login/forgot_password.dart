@@ -39,11 +39,11 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
   SharedPref sharedPref = SharedPref();
 
   Constants events = Constants();
+
   @override
   void initState() {
     super.initState();
-   events.mixPanelEvents();
-
+    events.mixPanelEvents();
   }
 
   void _showLoader() {
@@ -66,7 +66,6 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-
 /*
     getUserDetails() async {
       try {
@@ -90,7 +89,6 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
       _showLoader();
       UserApi login = new UserApi();
 
-
       login.forgotPassword(_email).then((value) async {
         print('value.toJson()');
         _hideLoader();
@@ -109,7 +107,6 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => VerificationCode(_email)));
-
         } else {
           showAlert(context);
         }
@@ -130,52 +127,54 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-
-
-     // resizeToAvoidBottomInset: false,
-    //  resizeToAvoidBottomPadding: false;
+      // resizeToAvoidBottomInset: false,
+      //  resizeToAvoidBottomPadding: false;
       body: ModalProgressHUD(
         inAsyncCall: _isShowLoader,
         child: Container(
           height: height,
           width: width,
           child: SingleChildScrollView(
-           // physics: ClampingScrollPhysics(),
+            // physics: ClampingScrollPhysics(),
 
             reverse: true,
 
-         //   physics: NeverScrollableScrollPhysics(),
+            //   physics: NeverScrollableScrollPhysics(),
             child: ConstrainedBox(
-
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height,
               ),
               child: Column(
-              //  mainAxisAlignment: MainAxisAlignment.center,
-              //   mainAxisSize: MainAxisSize.min,
-              //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                //  mainAxisAlignment: MainAxisAlignment.center,
+                //   mainAxisSize: MainAxisSize.min,
+                //   crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     width: width,
-                    height: height * 0.5,
+                    height: height > 667 ? height * 0.55 : height * 0.5,
                     // child: Container(child: Image.asset('assets/img_welcome_salmon.png', fit: BoxFit.fill,)),
 
                     child: Stack(
                       children: <Widget>[
                         FadeInImage(
                           placeholder: AssetImage("assets/images/blackdot.png"),
-                          image:
-                              AssetImage("assets/images/img_welcome_salmon.png"),
-                          fit: BoxFit.fill,
+                          image: AssetImage(
+                              "assets/images/img_welcome_salmon.png"),
+                          fit: BoxFit.cover,
                           height: double.infinity,
                           width: double.infinity,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 23, top: 35),
-                          child: Image.asset('assets/images/ZM_logo_white.png'),
+                          padding: const EdgeInsets.only(left: 20, top: 40),
+                          child: Image.asset(
+                            'assets/images/zm_logo.png',
+                            width: 28,
+                            height: 28,
+                            fit: BoxFit.fill,
+                          ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 60, top: 40),
+                          padding: const EdgeInsets.only(left: 57, top: 45),
                           child: Text(
                             "Supplier",
                             style: TextStyle(
@@ -188,7 +187,8 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, top: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -257,7 +257,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                     child: GestureDetector(
                       onTap: () {
                         events.mixpanel.track(Events.TAP_CANCEL_RESET_PASSWORD);
-                      //  mixpanel.flush();
+                        //  mixpanel.flush();
                         print('Back to login');
                         Navigator.pop(context);
                       },
@@ -279,7 +279,9 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                   // ),
 
                   SizedBox(
-                    height: height - (height*0.5 + 220),
+                    height: height > 667
+                        ? height - (height * 0.55 + 220)
+                        : height - (height * 0.5 + 220),
                   ),
                   Container(
                     width: width,
@@ -292,9 +294,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                           : buttonBlue.withOpacity(0.5),
                       onPressed: isEmailFilled
                           ? () {
-
-                        validator();
-
+                              validator();
                             }
                           : null,
                       child: Text(
@@ -313,7 +313,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                     height: 10,
                   ),
 
-                //  Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom))
+                  //  Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom))
                 ],
               ),
             ),

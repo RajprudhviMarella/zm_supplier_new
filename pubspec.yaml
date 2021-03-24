@@ -44,6 +44,7 @@ dependencies:
   mixpanel_flutter: ^1.0.0
   adaptive_action_sheet: ^1.1.0
   keyboard_visibility: any
+  dart_notification_center: ^1.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -100,6 +101,7 @@ flutter:
     - assets/images/icon_terms.png
     - assets/images/icon_privacy.png
     - assets/images/icon_signout.png
+    - assets/images/invoices_icon.png
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
