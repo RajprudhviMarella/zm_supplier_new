@@ -124,9 +124,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                     icon: Icon(Icons.arrow_back_ios_outlined,
                         color: Colors.black),
                     onPressed: () {
+                      String textToSendBack = _txtSpecialRequest.text;
+                      Navigator.pop(context, textToSendBack);
                       // events.mixpanel.track(Events.TAP_ORDER_REVIEW_BACK, properties: {'OrderId': widget.orderId});
                       //events.mixpanel.flush();
-                      Navigator.of(context).pop();
+                      // Navigator.of(context).pop();
                     }),
               ),
               title: Container(
