@@ -1011,6 +1011,11 @@ class MarketListDesign extends State<MarketListPage>
             ordersData.data.data.length > 0) {
           draftOrdersList = ordersData.data.data[0].products;
           orderID = ordersData.data.data[0].orderId;
+          if (ordersData.data.data[0].notes != null &&
+              ordersData.data.data[0].notes.isNotEmpty) {
+            orderNotes = ordersData.data.data[0].notes;
+            _txtOrderNotesEditController.text = ordersData.data.data[0].notes;
+          }
         }
       } else {
         print('failed get customers reports');
@@ -1146,7 +1151,7 @@ class MarketListDesign extends State<MarketListPage>
     if (selectedMarketList != null && selectedMarketList.length > 0) {
       _showLoader();
       CreateOrderModel createOrderModel = new CreateOrderModel();
-      createOrderModel.notes = _txtSkuNotesEditController.text;
+      createOrderModel.notes = _txtOrderNotesEditController.text.toString();
       createOrderModel.timeDelivered =
           lstDeliveryDates[0].deliveryDates[0].deliveryDate;
       List<Product> productslist = [];
@@ -1242,7 +1247,6 @@ class MarketListDesign extends State<MarketListPage>
       } else {
         orderNotes = "Notes";
       }
-
       _txtOrderNotesEditController.text = orderNotes;
     });
   }
