@@ -593,13 +593,13 @@ class MarketListDesign extends State<MarketListPage>
                                     bottom: 10.0),
                                 child: Align(
                                     alignment: Alignment.topRight,
-                                    child: Text("remove",
+                                    child: Text("Remove",
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 12.0,
                                             color: buttonBlue,
                                             fontFamily:
-                                                "SourceSansProSemiBold"))),
+                                                "SourceSansProRegular"))),
                               ),
                             ),
                           ],
@@ -648,7 +648,7 @@ class MarketListDesign extends State<MarketListPage>
                                                           .text) <
                                                   snapShot.data[index]
                                                       .priceList[0].moq)
-                                          ? "quantity is below moq"
+                                          ? "Quantity is below MOQ"
                                           : null,
                                       controller: _textEditingController,
                                       keyboardType: keyboard,
@@ -669,11 +669,14 @@ class MarketListDesign extends State<MarketListPage>
                                                             .text) <
                                                     snapShot.data[index]
                                                         .priceList[0].moq)
-                                            ? "quantity is below moq"
+                                            ? "Quantity is below MOQ"
                                             : null,
                                         fillColor: faintGrey,
                                         filled: true,
                                         focusedBorder: InputBorder.none,
+                                        errorStyle: TextStyle(
+                                            fontSize: 12.0,
+                                            fontFamily: "SourceSansProRegular"),
                                         hintStyle: new TextStyle(
                                             color: greyText,
                                             fontSize: 16.0,
@@ -1245,7 +1248,13 @@ class MarketListDesign extends State<MarketListPage>
                 lstDeliveryDates,
                 orderID)));
     setState(() {
-      orderNotes = result as String;
+      String notes = result as String;
+      if (notes != null && notes.isNotEmpty) {
+        orderNotes = result as String;
+      } else {
+        orderNotes = "Notes";
+      }
+
       _txtOrderNotesEditController.text = orderNotes;
     });
   }
