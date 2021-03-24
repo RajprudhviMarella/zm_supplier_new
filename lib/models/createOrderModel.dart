@@ -40,7 +40,7 @@ class CreateOrderModel {
 
 class Product {
   String sku;
-  int quantity;
+  var quantity;
   String unitSize;
   String notes;
 
