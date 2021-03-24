@@ -976,12 +976,14 @@ class MarketListDesign extends State<MarketListPage>
             elements.skuNotes = element.notes;
             elements.txtColor = Colors.white;
             elements.txtSize = 16.0;
-            if (element.unitSizeAlias.isDecimalAllowed) {
-              elements.selectedQuantity = element.quantity.toString();
-            } else {
+            print(elements.priceList[0].unitSizeAlias.isDecimalAllowed);
+            print(element.unitSizeAlias.isDecimalAllowed);
+            print(element.quantity);
+            if (elements.priceList[0].unitSizeAlias.isDecimalAllowed) {
               elements.selectedQuantity = element.quantity.toStringAsFixed(2);
+            } else {
+              elements.selectedQuantity = element.quantity.toString();
             }
-
             selectedMarketList.removeWhere((it) =>
                 it.productName.toLowerCase() ==
                     elements.productName.toLowerCase() &&
@@ -1034,8 +1036,11 @@ class MarketListDesign extends State<MarketListPage>
               elements.skuNotes = element.notes;
               elements.txtColor = Colors.white;
               elements.txtSize = 16.0;
-              elements.selectedQuantity = element.quantity.toString();
-
+              if (elements.priceList[0].unitSizeAlias.isDecimalAllowed) {
+                elements.selectedQuantity = element.quantity.toStringAsFixed(2);
+              } else {
+                elements.selectedQuantity = element.quantity.toString();
+              }
               selectedMarketList.removeWhere((it) =>
                   it.productName.toLowerCase() ==
                       elements.productName.toLowerCase() &&
