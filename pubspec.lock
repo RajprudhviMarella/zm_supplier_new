@@ -77,7 +77,14 @@ packages:
       name: cupertino_icons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.2"
+  dart_notification_center:
+    dependency: "direct main"
+    description:
+      name: dart_notification_center
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0+1"
   fake_async:
     dependency: transitive
     description:
@@ -246,7 +253,7 @@ packages:
       name: pedantic
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.2"
+    version: "1.11.0"
   pin_code_fields:
     dependency: "direct main"
     description:
@@ -260,7 +267,7 @@ packages:
       name: platform
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.1"
+    version: "3.0.0"
   plugin_platform_interface:
     dependency: transitive
     description:
