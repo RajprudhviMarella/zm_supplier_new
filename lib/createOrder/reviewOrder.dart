@@ -663,11 +663,13 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                   TextInputFormatter>[
                                                 regExp,
                                               ],
+                                              maxLength: 7,
                                               textInputAction:
                                                   TextInputAction.go,
                                               cursorColor: Colors.blue,
                                               textAlign: TextAlign.center,
                                               decoration: InputDecoration(
+                                                counterText: "",
                                                 errorText: (_textEditingController
                                                                 .text !=
                                                             null &&

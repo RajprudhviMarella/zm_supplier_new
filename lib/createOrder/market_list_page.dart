@@ -657,8 +657,10 @@ class MarketListDesign extends State<MarketListPage>
                                       ],
                                       textInputAction: TextInputAction.go,
                                       cursorColor: Colors.blue,
+                                      maxLength: 7,
                                       textAlign: TextAlign.center,
                                       decoration: InputDecoration(
+                                        counterText: "",
                                         errorText: (_textEditingController
                                                         .text !=
                                                     null &&
