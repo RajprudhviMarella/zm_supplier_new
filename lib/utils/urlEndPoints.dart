@@ -37,6 +37,7 @@ class URLEndPoints {
       report_management_server + "reports/order/summary";
   static const String retrive_paginated_orders_url =
       order_management_server + "orders/po";
+  static const String acknowledge_order = order_management_server + 'orders/po/acknowledge';
   static const String order_activity_url =
       order_management_server + "orders/activitylogs";
 
@@ -57,4 +58,6 @@ class URLEndPoints {
 
   static const String retrive_specific_invoice = invoice_management_server + 'invoice';
   static const String retrive_specific_order_details = order_management_server + '/orders/po/orderById';
+
+  static const String retrive_invoices_summary = report_management_server + 'reports/invoices/summary';
 }

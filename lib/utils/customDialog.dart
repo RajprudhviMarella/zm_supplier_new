@@ -36,7 +36,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
     return Stack(children: <Widget>[
       Center(
           child: Container(
-              height: 120,
+              height: 100,
               width: 160,
               padding: EdgeInsets.only(top: 10, left: 20, right: 20),
               decoration: BoxDecoration(
