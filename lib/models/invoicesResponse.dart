@@ -229,3 +229,60 @@ class TotalCharge {
     return data;
   }
 }
+
+class InvoiceSummaryResponse {
+  InvoiceSummaryResponse({
+    this.path,
+    this.timestamp,
+    this.status,
+    this.message,
+    this.data,
+  });
+
+  String path;
+  DateTime timestamp;
+  int status;
+  String message;
+  InvoiceSummaryData data;
+
+  factory InvoiceSummaryResponse.fromJson(Map<String, dynamic> json) => InvoiceSummaryResponse(
+    path: json["path"],
+    timestamp: DateTime.parse(json["timestamp"]),
+    status: json["status"],
+    message: json["message"],
+    data: InvoiceSummaryData.fromJson(json["data"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "path": path,
+    "timestamp": timestamp.toIso8601String(),
+    "status": status,
+    "message": message,
+    "data": data.toJson(),
+  };
+}
+
+
+class InvoiceSummaryData {
+  InvoiceSummaryData({
+    this.totalOverDue,
+    this.totalUnpaid,
+
+  });
+
+  dynamic totalOverDue;
+  dynamic totalUnpaid;
+
+
+  factory InvoiceSummaryData.fromJson(Map<String, dynamic> json) => InvoiceSummaryData(
+    totalOverDue: json["totalOverDue"],
+    totalUnpaid: json["totalUnpaid"],
+
+  );
+
+  Map<String, dynamic> toJson() => {
+    "totalOverDue": totalOverDue,
+    "totalUnpaid": totalUnpaid,
+
+  };
+}

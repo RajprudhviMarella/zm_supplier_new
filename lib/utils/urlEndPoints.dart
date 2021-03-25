@@ -57,4 +57,6 @@ class URLEndPoints {
 
   static const String retrive_specific_invoice = invoice_management_server + 'invoice';
   static const String retrive_specific_order_details = order_management_server + '/orders/po/orderById';
+
+  static const String retrive_invoices_summary = report_management_server + 'reports/invoices/summary';
 }
