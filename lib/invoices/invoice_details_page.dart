@@ -72,7 +72,6 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      // Map results = json.decode(response.body);
       invoicesDetailsResponse =
           InvoiceDetailsResponse.fromJson(json.decode(response.body));
       pdfUrl = invoicesDetailsResponse.data.pdfUrl;
@@ -87,7 +86,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
   goToOrderDetails(String orderId) async {
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -110,8 +109,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
         response.statusCode == 201 ||
         response.statusCode == 202) {
       // Map results = json.decode(response.body);
-      orderResponse =
-          OrderDetailsResponse.fromJson(json.decode(response.body));
+      orderResponse = OrderDetailsResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get invoices');
     }
@@ -120,7 +118,6 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => OrderDetailsPage(order)));
-
 
     //return order;
   }
@@ -150,7 +147,6 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
   Widget buildAppBar(BuildContext context) {
     return PreferredSize(
-
       child: Container(
         decoration: BoxDecoration(boxShadow: [
           BoxShadow(
@@ -163,10 +159,12 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
           backgroundColor: Colors.white,
           elevation: 0.0,
           title: Text(
-        'Invoice details',
-        style: TextStyle(
-            color: Colors.black, fontSize: 18, fontFamily: 'SourceSansProBold'),
-      ),
+            'Invoice details',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontFamily: 'SourceSansProBold'),
+          ),
         ),
       ),
       preferredSize: Size.fromHeight(kToolbarHeight),
@@ -207,8 +205,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                         height: 1,
                       ),
                       Flexible(
-                        child: Text(invoice.outlet.outletName,overflow:
-                        TextOverflow.ellipsis,
+                        child: Text(invoice.outlet.outletName,
+                            overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: TextStyle(
                                 fontSize: 22,
@@ -317,11 +315,13 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                   color: greyText,
                                   fontSize: 14.0,
                                   fontFamily: "SourceSansProRegular")),
-                          if (snapShot.data.orderIds != null)
-                            Container(
-                                margin:
-                                    EdgeInsets.fromLTRB(30.0, 10.0, 10.0, 5.0),
-                                child: linkedOrders(snapShot.data))
+                          Container(
+                              margin:
+                                  EdgeInsets.fromLTRB(30.0, 10.0, 10.0, 5.0),
+                              child: (snapShot.data.orderIds != null &&
+                                      snapShot.data.orderIds.length > 0)
+                                  ? linkedOrders(snapShot.data)
+                                  : linkedInvoices(snapShot.data))
                         ],
                       ),
                     ],
@@ -335,23 +335,42 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
         });
   }
 
+  Widget linkedInvoices(InvoiceDetails inv) {
+    print(inv.linkedInvoice.invoiceNum);
+    return Container(
+      // child: GestureDetector(
+      //   onTap: () {
+      //     events.mixpanel.track(Events.TAP_INVOICES_LINKED_ORDER);
+      //     events.mixpanel.flush();
+      //     // Navigator.push(context,dmdnd
+      //     //     MaterialPageRoute(builder: (context) => OrderDetailsPage(order)));
+      //   },
+      child: Text('Invoice #' + inv.linkedInvoice.invoiceNum,
+          style: TextStyle(
+              fontSize: 14,
+              color: buttonBlue,
+              fontFamily: 'SourceSansProSemiBold')),
+    );
+    // );
+  }
+
   Widget linkedOrders(InvoiceDetails inv) {
-    print(inv.orderIds.length);
+    print(inv.orderIds);
     if (inv.orderIds.length > 1) {
       for (var i in inv.orderIds) {
         Expanded(
             child: GestureDetector(
-              onTap: () {
-                events.mixpanel.track(Events.TAP_INVOICES_LINKED_ORDER);
-                events.mixpanel.flush();
-                goToOrderDetails(i);
-              },
-              child: Text('Order #' + i + '\n',
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: buttonBlue,
-                      fontFamily: 'SourceSansProSemiBold')),
-            ));
+          onTap: () {
+            events.mixpanel.track(Events.TAP_INVOICES_LINKED_ORDER);
+            events.mixpanel.flush();
+            goToOrderDetails(i);
+          },
+          child: Text('Order #' + i + '\n',
+              style: TextStyle(
+                  fontSize: 14,
+                  color: buttonBlue,
+                  fontFamily: 'SourceSansProSemiBold')),
+        ));
       }
     } else {
       return GestureDetector(
@@ -384,8 +403,12 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
               if (snapShot.data.products != null) {
                 return Container(
                   margin: EdgeInsets.only(left: 20, bottom: 10),
-                  child: Text(snapShot.data.products.length > 1 ?
-                    (snapShot.data.products.length ?? 0).toString() + ' Items' : (snapShot.data.products.length ?? 0).toString() + ' Item',
+                  child: Text(
+                    snapShot.data.products.length > 1
+                        ? (snapShot.data.products.length ?? 0).toString() +
+                            ' Items'
+                        : (snapShot.data.products.length ?? 0).toString() +
+                            ' Item',
                     style: TextStyle(
                         fontSize: 18,
                         fontFamily: 'SourceSansProBold',
@@ -420,7 +443,6 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
   Widget checkNotes(InvoiceDetails inv) {
     if (inv.notes != null && inv.notes != "") {
-
       return Container(
         height: 60,
         decoration: BoxDecoration(
@@ -437,11 +459,11 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left : 10.0),
+                  padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
                     'NOTES',
-                    style:
-                        TextStyle(fontSize: 10, fontFamily: 'SourceSansProBold'),
+                    style: TextStyle(
+                        fontSize: 10, fontFamily: 'SourceSansProBold'),
                   ),
                 ),
               ],
@@ -454,7 +476,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(inv.notes,
+                  child: Text(
+                    inv.notes,
                     style: TextStyle(
                         fontSize: 14, fontFamily: 'SourceSansProRegular'),
                   ),
@@ -508,8 +531,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProBold")),
                               right: Text(
-                                  getAmountDisplayValue(snapshot.data
-                                      .products[index].totalPrice),
+                                  getAmountDisplayValue(
+                                      snapshot.data.products[index].totalPrice),
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16.0,
@@ -590,8 +613,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                                 fontFamily:
                                                     "SourceSansProRegular")),
                                         right: Text(
-                                            getAmountDisplayValue(snapshot
-                                                .data.subTotal),
+                                            getAmountDisplayValue(
+                                                snapshot.data.subTotal),
                                             style: TextStyle(
                                                 color: greyText,
                                                 fontSize: 16.0,
@@ -616,9 +639,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                                 fontFamily:
                                                     "SourceSansProRegular")),
                                         right: Text(
-                                            getAmountDisplayValue(snapshot.data
-                                                    .deliveryFee ??
-                                                0),
+                                            getAmountDisplayValue(
+                                                snapshot.data.deliveryFee ?? 0),
                                             style: TextStyle(
                                                 color: greyText,
                                                 fontSize: 16.0,
@@ -627,7 +649,6 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                   )
                                 ])
                               ]),
-
                         Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
                         if (snapshot.data.promoCodeDiscount != null &&
                             snapshot.data.promoCodeDiscount.amountV1 != null)
@@ -642,20 +663,19 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                                 color: greyText,
                                                 fontSize: 16.0,
                                                 fontFamily:
-                                                "SourceSansProRegular")),
+                                                    "SourceSansProRegular")),
                                         right: Text(
-                                            getAmountDisplayValue(snapshot.data
-                                                .promoCodeDiscount ??
+                                            getAmountDisplayValue(snapshot
+                                                    .data.promoCodeDiscount ??
                                                 0),
                                             style: TextStyle(
                                                 color: greyText,
                                                 fontSize: 16.0,
                                                 fontFamily:
-                                                "SourceSansProRegular"))),
+                                                    "SourceSansProRegular"))),
                                   )
                                 ])
                               ]),
-
                         Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
                         if (snapshot.data.discount != null &&
                             snapshot.data.discount.amountV1 != null)
@@ -672,8 +692,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                                 fontFamily:
                                                     "SourceSansProRegular")),
                                         right: Text(
-                                            getAmountDisplayValue(snapshot
-                                                .data.discount),
+                                            getAmountDisplayValue(
+                                                snapshot.data.discount),
                                             style: TextStyle(
                                                 color: greyText,
                                                 fontSize: 16.0,
@@ -699,8 +719,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                                 fontFamily:
                                                     "SourceSansProRegular")),
                                         right: Text(
-                                            getAmountDisplayValue(snapshot
-                                                .data.others.charge),
+                                            getAmountDisplayValue(
+                                                snapshot.data.others.charge),
                                             style: TextStyle(
                                                 color: greyText,
                                                 fontSize: 16.0,
@@ -739,7 +759,9 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                   )
                                 ])
                               ]),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Divider(
                           color: faintGrey,
                           thickness: 2,
@@ -747,7 +769,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                         if (snapshot.data.totalCharge != null &&
                             snapshot.data.totalCharge.amountV1 != null)
                           Padding(
-                            padding: const EdgeInsets.only(top:5.0),
+                            padding: const EdgeInsets.only(top: 5.0),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
@@ -761,8 +783,8 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                                                   fontFamily:
                                                       "SourceSansProBold")),
                                           right: Text(
-                                              getAmountDisplayValue(snapshot
-                                                  .data.totalCharge),
+                                              getAmountDisplayValue(
+                                                  snapshot.data.totalCharge),
                                               style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16.0,
