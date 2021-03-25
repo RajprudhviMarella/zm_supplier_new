@@ -102,6 +102,8 @@ flutter:
     - assets/images/icon_privacy.png
     - assets/images/icon_signout.png
     - assets/images/invoices_icon.png
+    - assets/images/icon_tick_grey.png
+    - assets/images/icon_close-red.png
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

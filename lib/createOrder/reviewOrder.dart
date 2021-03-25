@@ -1397,9 +1397,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   void showSuccessDialog() {
+  //  DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
-    DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+    // DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
+    // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
     _hideLoader();
     showDialog(
         context: context,

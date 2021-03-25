@@ -261,6 +261,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     } catch (e) {}
   }
 
+
   void showAlert(context) {
     BuildContext dialogContext;
     // set up the button
@@ -270,8 +271,8 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         sendEvent(Events.TAP_SETTINGS_TAB_SIGN_OUT_CONFIRM);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs?.clear();
-        Navigator.of(dialogContext).pop();
         Navigator.of(context, rootNavigator: true).pop(context);
+        Navigator.of(dialogContext).pop();
 
       },
     );

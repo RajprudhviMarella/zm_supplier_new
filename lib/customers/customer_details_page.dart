@@ -121,7 +121,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       'supplierId': userData.supplier.first.supplierId
     };
 
-    Map<String, String> queryParams = {'supplierId': userData.supplier.first.supplierId};
+    Map<String, String> queryParams = {
+      'supplierId': userData.supplier.first.supplierId,
+      'outletId': outletId
+    };
+
     String queryString = Uri(queryParameters: queryParams).query;
 
     var url = URLEndPoints.retrive_invoices_summary + '?' + queryString;
