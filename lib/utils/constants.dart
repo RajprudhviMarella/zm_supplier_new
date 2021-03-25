@@ -97,6 +97,7 @@ class Constants {
   static const String txt_search_outlet = "Search outlet or people";
 
   static const String draft_notifier = "Draft_Notifier";
+  static const String acknowledge_notifier = "Acknowledge_notifiler";
   static Widget OrderStatusColor(Orders orders) {
     String status = orders.orderStatus;
     if (status == "Approving") {

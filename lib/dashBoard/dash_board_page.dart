@@ -94,7 +94,7 @@ class DashboardState extends State<DashboardPage> {
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
-    DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
+   // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.subscribe(
       channel: Constants.draft_notifier,
       observer: i,
@@ -104,12 +104,31 @@ class DashboardState extends State<DashboardPage> {
           draftOrdersFuture = getDraftOrders();
           Future.delayed(const Duration(milliseconds: 3000), ()
           {
+            print('listener called with delay');
             ordersListToday = _retriveTodayOrders();
           });
         });
 
       },
     );
+
+    DartNotificationCenter.subscribe(
+      channel: Constants.acknowledge_notifier,
+      observer: i,
+      onNotification: (result) {
+        print('listener called');
+        setState(() {
+          Future.delayed(const Duration(milliseconds: 500), ()
+          {
+            print('acknowledge listener called with delay');
+            ordersListToday = _retriveTodayOrders();
+            ordersListYesterday = _retriveYesterdayOrders();
+          });
+        });
+
+      },
+    );
+
   }
 
   @override
@@ -118,7 +137,8 @@ class DashboardState extends State<DashboardPage> {
     super.dispose();
     // DartNotificationCenter.post(channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
-    DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+   // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.acknowledge_notifier);
   }
   Mixpanel mixpanel;
 
@@ -388,6 +408,7 @@ class DashboardState extends State<DashboardPage> {
           size: 22,
         ),
         elevation: 0,
+        heroTag: "NewOrder",
         label: Text(
           'New order',
           style: TextStyle(
