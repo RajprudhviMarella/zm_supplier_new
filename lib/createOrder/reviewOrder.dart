@@ -169,7 +169,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                   onPressed: () =>
                       (widget.orderId != null && widget.orderId.isNotEmpty)
                           ? showDraftAlert(context)
-                          : Navigator.pushNamed(context, '/home'),
+                          : moveToDashBoard(),
                 ),
               ],
             ),
@@ -1154,9 +1154,17 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
     print("url" + requestUrl);
     http.Response response = await http.delete(requestUrl, headers: headers);
-    Navigator.pushNamed(context, '/home');
+    moveToDashBoard();
     print("url" + requestUrl);
     print("ms" + response.statusCode.toString());
+  }
+
+  void moveToDashBoard() {
+    DartNotificationCenter.post(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.draft_notifier);
+    DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+    Navigator.pushNamed(context, '/home');
   }
 
   void showAlert(context) {
@@ -1395,7 +1403,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   Future<void> showFailureDialog() async {
-  _hideLoader();
+    _hideLoader();
     await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -1407,15 +1415,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/img_exclaimation_red.png',
           );
         }).then((value) {
-      Navigator.pushNamed(context, '/home');
+      moveToDashBoard();
     });
   }
 
   Future<void> showSuccessDialog() async {
-    DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.draft_notifier);
-    DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
     _hideLoader();
     await showDialog(
         context: context,
@@ -1428,8 +1432,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
-      print("came to push dashboard");
-      Navigator.pushNamed(context, '/home');
+      moveToDashBoard();
     });
   }
 }
