@@ -825,6 +825,8 @@ class MarketListDesign extends State<MarketListPage>
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
                                 hintText: Constants.txt_add_notes,
+                                counterStyle: TextStyle(
+                                    fontFamily: "SourceSansProRegular"),
                                 hintStyle: new TextStyle(
                                     color: greyText,
                                     fontSize: 14.0,
@@ -1115,6 +1117,14 @@ class MarketListDesign extends State<MarketListPage>
               ordersData.data.data[0].notes.isNotEmpty) {
             orderNotes = ordersData.data.data[0].notes;
             _txtOrderNotesEditController.text = ordersData.data.data[0].notes;
+            if (lstDeliveryDates != null && lstDeliveryDates.length > 0) {
+              lstDeliveryDates[0].deliveryDates.forEach((deliveryDate) {
+                if (ordersData.data.data[0].timeDelivered ==
+                    deliveryDate.deliveryDate) {
+                  deliveryDate.isSelected = true;
+                }
+              });
+            }
           }
         }
       } else {
@@ -1252,8 +1262,20 @@ class MarketListDesign extends State<MarketListPage>
       _showLoader();
       CreateOrderModel createOrderModel = new CreateOrderModel();
       createOrderModel.notes = _txtOrderNotesEditController.text.toString();
-      createOrderModel.timeDelivered =
-          lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+      bool isAnyDateSelected = false;
+      int selectedDate = 0;
+      for (var i = 0; i < lstDeliveryDates[0].deliveryDates.length; i++) {
+        if (lstDeliveryDates[0].deliveryDates[i].isSelected) {
+          isAnyDateSelected = true;
+          selectedDate = lstDeliveryDates[0].deliveryDates[i].deliveryDate;
+        }
+      }
+      if (!isAnyDateSelected) {
+        lstDeliveryDates[0].deliveryDates[0].isSelected = true;
+        selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
+      }
+
+      createOrderModel.timeDelivered = selectedDate;
       List<Product> productslist = [];
       for (var i = 0; i < selectedMarketList.length; i++) {
         Product products = new Product();
