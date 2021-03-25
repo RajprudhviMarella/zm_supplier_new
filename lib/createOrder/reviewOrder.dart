@@ -1163,7 +1163,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     DartNotificationCenter.post(channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(
         observer: 1, channel: Constants.draft_notifier);
-    DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.acknowledge_notifier);
     Navigator.pushNamed(context, '/home');
   }
 
@@ -1418,7 +1419,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       moveToDashBoard();
     });
   }
-
 
   Future<void> showSuccessDialog() async {
     _hideLoader();
