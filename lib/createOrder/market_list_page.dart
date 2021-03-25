@@ -825,6 +825,7 @@ class MarketListDesign extends State<MarketListPage>
                                 errorBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
                                 hintText: Constants.txt_add_notes,
+                                counterStyle: TextStyle(fontFamily: "SourceSansProRegular"),
                                 hintStyle: new TextStyle(
                                     color: greyText,
                                     fontSize: 14.0,
