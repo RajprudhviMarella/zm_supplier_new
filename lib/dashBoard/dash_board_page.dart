@@ -104,7 +104,6 @@ class DashboardState extends State<DashboardPage> {
           draftOrdersFuture = getDraftOrders();
           Future.delayed(const Duration(milliseconds: 3000), ()
           {
-            print('listener called with delay');
             ordersListToday = _retriveTodayOrders();
           });
         });
@@ -120,7 +119,6 @@ class DashboardState extends State<DashboardPage> {
         setState(() {
           Future.delayed(const Duration(milliseconds: 500), ()
           {
-            print('acknowledge listener called with delay');
             ordersListToday = _retriveTodayOrders();
             ordersListYesterday = _retriveYesterdayOrders();
           });

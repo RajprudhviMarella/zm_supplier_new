@@ -43,4 +43,37 @@ class OrderApi {
     }
     return status;
   }
+
+  Future<String> voidOrder(
+      String mudra, String supplierId, String orderId, String outletId, String reason) async {
+    String status;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierId
+    };
+
+    Map<String, String> queryParams = {
+      'outletId': outletId,
+    };
+    String queryString = Uri(queryParameters: queryParams).query;
+    var url = URLEndPoints.void_order + '?' + queryString;
+
+    final body = jsonEncode({
+      "orderId": orderId,
+      "rejectedRemark": reason
+    });
+
+    print(url);
+    print(body);
+    var response = await http.put(url, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      status = Constants.status_success;
+    } else {
+      print('failed to acknowledge');
+      status = '';
+    }
+    return status;
+  }
 }

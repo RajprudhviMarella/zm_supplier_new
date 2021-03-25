@@ -166,10 +166,17 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               actions: [
                 IconButton(
                   icon: Image.asset("assets/images/icon_trash.png"),
-                  onPressed: () =>
-                      (widget.orderId != null && widget.orderId.isNotEmpty)
-                          ? showDraftAlert(context)
-                          : Navigator.pushNamed(context, '/home'),
+                  onPressed: () {
+
+                    DartNotificationCenter.post(channel: Constants.draft_notifier);
+                    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
+
+                    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.acknowledge_notifier);
+
+                    (widget.orderId != null && widget.orderId.isNotEmpty)
+                        ? showDraftAlert(context)
+                        : Navigator.pushNamed(context, '/home');
+                  },
                 ),
               ],
             ),
@@ -1141,6 +1148,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
     print("url" + requestUrl);
     http.Response response = await http.delete(requestUrl, headers: headers);
+    DartNotificationCenter.post(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.acknowledge_notifier);
+
     Navigator.pushNamed(context, '/home');
     print("url" + requestUrl);
     print("ms" + response.statusCode.toString());

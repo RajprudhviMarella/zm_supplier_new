@@ -38,6 +38,7 @@ class URLEndPoints {
   static const String retrive_paginated_orders_url =
       order_management_server + "orders/po";
   static const String acknowledge_order = order_management_server + 'orders/po/acknowledge';
+  static const String void_order = order_management_server + 'orders/po/reject';
   static const String order_activity_url =
       order_management_server + "orders/activitylogs";
 
