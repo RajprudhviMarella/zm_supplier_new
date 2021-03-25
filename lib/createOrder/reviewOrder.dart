@@ -166,17 +166,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               actions: [
                 IconButton(
                   icon: Image.asset("assets/images/icon_trash.png"),
-                  onPressed: () {
-
-                    DartNotificationCenter.post(channel: Constants.draft_notifier);
-                    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
-
-                    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.acknowledge_notifier);
-
-                    (widget.orderId != null && widget.orderId.isNotEmpty)
-                        ? showDraftAlert(context)
-                        : Navigator.pushNamed(context, '/home');
-                  },
+                  onPressed: () =>
+                      (widget.orderId != null && widget.orderId.isNotEmpty)
+                          ? showDraftAlert(context)
+                          : moveToDashBoard(),
                 ),
               ],
             ),
@@ -184,17 +177,18 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                 height: 80.0,
                 color: Colors.white,
                 child: Container(
-                    padding: EdgeInsets.only(left: 15.0, right: 20.0),
+                    padding: EdgeInsets.only(left: 15.0, right: 10.0),
                     child: Row(children: <Widget>[
                       Container(
                         height: 50,
                         child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Container(
-                                padding: EdgeInsets.only(right: 22.0),
                                 child: Text(
                                   'Total',
+                                  textAlign: TextAlign.start,
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontFamily: 'SourceSansProRegular',
@@ -204,7 +198,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               Container(
                                 margin: EdgeInsets.only(left: 2),
                                 child: Text(
-                                  "\$${totalPrice.toStringAsFixed(2)}",
+                                  NumberFormat.simpleCurrency()
+                                      .format(totalPrice)
+                                      .toString(),
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontFamily: 'SourceSansProBold',
@@ -216,7 +212,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       new Spacer(),
                       RaisedButton(
                         child: Container(
-                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                            padding: EdgeInsets.only(left: 10.0),
                             height: 50,
                             child: Center(
                               child: Text(
@@ -351,7 +347,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
                             right: Text(
-                                "\$${totalSkusPrice.toStringAsFixed(2)}",
+                                NumberFormat.simpleCurrency()
+                                    .format(totalSkusPrice)
+                                    .toString(),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -393,7 +391,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  "\$${totalDeliveryPrice.toStringAsFixed(2)}",
+                                  NumberFormat.simpleCurrency()
+                                      .format(totalDeliveryPrice)
+                                      .toString(),
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
@@ -406,7 +406,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       Expanded(
                         child: LeftRightAlign(
                             left: Text(
-                                "Gst " +
+                                "GST " +
                                     lstDeliveryDates[0]
                                         .supplier
                                         .settings
@@ -418,7 +418,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     color: greyText,
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
-                            right: Text("\$${totalGstPrice.toStringAsFixed(2)}",
+                            right: Text(
+                                NumberFormat.simpleCurrency()
+                                    .format(totalGstPrice)
+                                    .toString(),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -455,6 +458,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               enabledBorder: InputBorder.none,
               errorBorder: InputBorder.none,
               disabledBorder: InputBorder.none,
+              counterStyle: TextStyle(fontFamily: "SourceSansProRegular"),
               hintStyle: new TextStyle(
                   color: greyText,
                   fontSize: 16.0,
@@ -873,6 +877,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                         errorBorder: InputBorder.none,
                                         disabledBorder: InputBorder.none,
                                         hintText: Constants.txt_add_notes,
+                                        counterStyle: TextStyle(
+                                            fontFamily: "SourceSansProRegular"),
                                         hintStyle: new TextStyle(
                                             color: greyText,
                                             fontSize: 16.0,
@@ -1148,13 +1154,18 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     var requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
     print("url" + requestUrl);
     http.Response response = await http.delete(requestUrl, headers: headers);
-    DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.acknowledge_notifier);
-
-    Navigator.pushNamed(context, '/home');
+    moveToDashBoard();
     print("url" + requestUrl);
     print("ms" + response.statusCode.toString());
+  }
+
+  void moveToDashBoard() {
+    DartNotificationCenter.post(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.acknowledge_notifier);
+    Navigator.pushNamed(context, '/home');
   }
 
   void showAlert(context) {
@@ -1392,40 +1403,37 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             }));
   }
 
-  void showFailureDialog() {
+  Future<void> showFailureDialog() async {
     _hideLoader();
-    showDialog(
+    await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
           Future.delayed(Duration(seconds: 2), () {
-            Navigator.of(context, rootNavigator: true).pop();
+            Navigator.pop(dialogContext);
           });
           return CustomDialogBox(
             title: "Can’t create this order",
             imageAssets: 'assets/images/img_exclaimation_red.png',
           );
-        });
+        }).then((value) {
+      moveToDashBoard();
+    });
   }
 
-  void showSuccessDialog() {
-  //  DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
-    DartNotificationCenter.post(channel: Constants.draft_notifier);
-    // DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
-    // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+  Future<void> showSuccessDialog() async {
     _hideLoader();
-    showDialog(
+    await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
           Future.delayed(Duration(seconds: 2), () {
-            setState(() {
-              Navigator.pop(dialogContext);
-              Navigator.of(context, rootNavigator: true).pop();
-            });
+            Navigator.pop(dialogContext);
           });
           return CustomDialogBox(
             title: "Order created",
             imageAssets: 'assets/images/tick_receive_big.png',
           );
-        });
+        }).then((value) {
+      moveToDashBoard();
+    });
   }
 }
