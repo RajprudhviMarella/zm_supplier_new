@@ -1,4 +1,3 @@
-import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:zm_supplier/settings/settings_page.dart';

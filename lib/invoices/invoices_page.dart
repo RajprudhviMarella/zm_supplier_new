@@ -292,13 +292,11 @@ class InvoicesState extends State<InvoicesPage> {
     return FutureBuilder<List<Invoices>>(
         future: invoicesFuture,
         builder: (context, snapShot) {
-          print('load');
           if (snapShot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(),
             );
           } else {
-            print('load1');
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
                 snapShot.data.isNotEmpty) {
