@@ -1,6 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
@@ -141,22 +142,24 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       elevation: 0,
                     ),
                     new Spacer(),
-                    FloatingActionButton.extended(
-                      heroTag: "btn2",
-                      backgroundColor: azul_blue,
-                      foregroundColor: Colors.white,
-                      onPressed: () {
-                        _openBottomSheet();
-                      },
-                      label: Text(
-                        'Respond',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'SourceSansProSemiBold',
-                            color: Colors.white),
+                    if (order.isAcknowledged == null ||
+                        order.orderStatus != 'Void')
+                      FloatingActionButton.extended(
+                        heroTag: "btn2",
+                        backgroundColor: azul_blue,
+                        foregroundColor: Colors.white,
+                        onPressed: () {
+                          _openBottomSheet();
+                        },
+                        label: Text(
+                          'Respond',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'SourceSansProSemiBold',
+                              color: Colors.white),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
                   ])))),
       backgroundColor: faintGrey,
       body: ListView(
@@ -286,6 +289,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           // return StatefulBuilder(
           // builder: (BuildContext context, StateSetter setState) {
           return Container(
+            color: Colors.white,
             child: new Wrap(
               children: <Widget>[
                 Container(
@@ -298,61 +302,101 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       ),
                       onTap: () => {}),
                 ),
+
                 if (order.isAcknowledged == null)
-                  Container(
-                    height: 40,
-                    child: new ListTile(
-                      leading: Image.asset(
-                        'assets/images/icon_tick_grey.png',
-                        width: 22,
-                        height: 22,
-                      ),
-                      title: Transform.translate(
-                        offset: Offset(-25, 0),
-                        child: Text('Acknowledge',
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        Navigator.of(context).pop();
+                        acknowledgeOrder();
+                      });
+                    },
+                    child: Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.fromLTRB(17, 10, 17, 0),
+                      height: 40,
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/icon_tick_grey.png',
+                            width: 22,
+                            height: 22,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Acknowledge',
                             style: TextStyle(
                                 fontSize: 16,
-                                fontFamily: 'SourceSansProRegular')),
+                                fontFamily: 'SourceSansProRegular'),
+                          ),
+                        ],
                       ),
-                      onTap: () {
-                        setState(() {
-                          acknowledgeOrder();
-                        });
-                        Navigator.of(context).pop();
-                      },
                     ),
                   ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Divider(
-                    thickness: 2,
-                    color: faintGrey,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                  child: Divider(thickness: 2, color: faintGrey),
                 ),
-                Container(
-                  height: 40,
-                  child: new ListTile(
-                    leading: Image.asset(
-                      'assets/images/icon_close-red.png',
-                      width: 22,
-                      height: 22,
-                    ),
-                    title: Transform.translate(
-                      offset: Offset(-25, 0),
-                      child: new Text('Void order',
+
+                if (order.orderStatus != 'Void')
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.of(context).pop();
+                      voidOrderReasons();
+                    });
+                  },
+                  child: Container(
+                    color: Colors.white,
+                    margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                    height: 40,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/icon_close-red.png',
+                          width: 22,
+                          height: 22,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'Void order',
                           style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'SourceSansProRegular',
-                              color: warningRed)),
+                              color: warningRed),
+                        ),
+                      ],
                     ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      voidOrderReasons();
-
-                    },
                   ),
                 ),
-                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
+                // Container(
+                //   height: 30,
+                //   child: new ListTile(
+                //     leading: Image.asset(
+                //       'assets/images/icon_close-red.png',
+                //       width: 22,
+                //       height: 22,
+                //     ),
+                //     title: Transform.translate(
+                //       offset: Offset(-25, 0),
+                //       child: new Text('Void order',
+                //           style: TextStyle(
+                //               fontSize: 16,
+                //               fontFamily: 'SourceSansProRegular',
+                //               color: warningRed)),
+                //     ),
+                //     onTap: () {
+                //       Navigator.of(context).pop();
+                //       voidOrderReasons();
+                //
+                //     },
+                //   ),
+                // ),
+                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 10)),
               ],
             ),
             // }
@@ -372,14 +416,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
       if (value == Constants.status_success) {
         print('isAcknowledged success');
 
-
-        globalKey.currentState.showSnackBar(
-          SnackBar(
-            content:
-            Text('Order acknowledged'),
-            duration: Duration(seconds: 1),
-          ),
-        );
+        Fluttertoast.showToast(
+            msg: "Order acknowledged",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
         setState(() {
           order.isAcknowledged = true;
           DartNotificationCenter.post(channel: Constants.acknowledge_notifier);
@@ -455,7 +499,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         ),
                       ),
                     ),
-                    Divider(thickness: 2, color: faintGrey),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                      child: Divider(thickness: 2, color: faintGrey),
+                    ),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -480,7 +527,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         ),
                       ),
                     ),
-                    Divider(thickness: 2, color: faintGrey),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                      child: Divider(thickness: 2, color: faintGrey),
+                    ),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -505,53 +555,52 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                      margin: EdgeInsets.only(top: 20.0),
-                      child: TextField(
-                        controller: _controller,
-                        keyboardType: TextInputType.text,
-                        maxLines: null,
-                        //  maxLength: 150,
-                        autofocus: true,
-                        cursorColor: Colors.blue,
-                        decoration: InputDecoration(
-                          fillColor: faintGrey,
-                          filled: true,
-                          border: new OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(
-                              const Radius.circular(10.0),
-                            ),
-                          ),
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          // hintText: Constants.txt_add_notes,
-                          // hintStyle: new TextStyle(
-                          //     color: greyText,
-                          //     fontSize: 16.0,
-                          //     fontFamily: "SourceSansProRegular"),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0, right: 10),
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15.0, right: 10.0),
+                        margin: EdgeInsets.only(top: 10.0),
+                        decoration: BoxDecoration(
+                          color: faintGrey,
+                          // border: Border.all(
+                          //   color: keyLineGrey,
+                          // ),
+                          borderRadius: BorderRadius.all(Radius.circular(15.0)),
                         ),
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.0,
-                            fontFamily: "SourceSansProRegular"),
+                        child: TextField(
+                          controller: _controller,
+                          keyboardType: TextInputType.text,
+                          maxLines: null,
+                          //  maxLength: 150,
+                          autofocus: true,
+                          cursorColor: Colors.blue,
+                          decoration: InputDecoration(
+                            // fillColor: Colors.orange,
+                            // filled: true,
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0),
+                              ),
+                            ),
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            // hintText: Constants.txt_add_notes,
+                            // hintStyle: new TextStyle(
+                            //     color: greyText,
+                            //     fontSize: 16.0,
+                            //     fontFamily: "SourceSansProRegular"),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              fontFamily: "SourceSansProRegular"),
+                        ),
                       ),
                     ),
                     GestureDetector(
                         onTap: () {
-                          // if (_txtOrderNotesEditController.text != null &&
-                          //     _txtOrderNotesEditController.text.isNotEmpty) {
-                          //   setState(() {
-                          //     orderNotes = _txtOrderNotesEditController.text;
-                          //   });
-                          // } else {
-                          //   setState(() {
-                          //     orderNotes = "Notes";
-                          //   });
-                          // }
-
                           if (selectedReason == 'Other reason')
                             selectedReason = _controller.text;
 
@@ -589,18 +638,28 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   voidOrder(String reason) {
     OrderApi reject = OrderApi();
 
-    reject.voidOrder(mudra, supplierID, order.orderId, order.outlet.outletId, reason).then((value) async {
-
+    reject
+        .voidOrder(
+            mudra, supplierID, order.orderId, order.outlet.outletId, reason)
+        .then((value) async {
       if (value == Constants.status_success) {
         print('order voided');
+        Fluttertoast.showToast(
+            msg: "Order voided",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
         setState(() {
           order.orderStatus = 'Void';
           DartNotificationCenter.post(channel: Constants.acknowledge_notifier);
         });
       }
     });
-
   }
+
   Widget banner(BuildContext context) {
     return new Container(
       padding:
@@ -1095,26 +1154,35 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            child: new Wrap(
+            height: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(padding: EdgeInsets.fromLTRB(15, 5, 0, 0)),
-                new Text("More options",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "SourceSansProSemiBold",
-                        fontSize: 14)),
+                // Padding(padding: EdgeInsets.fromLTRB(15, 5, 0, 0)),
 
-                // new Text("More options", style: TextStyle(
-                //     color: Colors.black, fontFamily: "SourceSansProSemiBold", fontSize: 14)),
-                new ListTile(
-                  title: new Text("Activity history",
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text("More options",
                       style: TextStyle(
                           color: Colors.black,
-                          fontFamily: "SourceSansProRegular",
-                          fontSize: 16)),
-                  onTap: () =>
-                      {Navigator.pop(context), moveToOrderActivityPage(order)},
+                          fontFamily: "SourceSansProSemiBold",
+                          fontSize: 14)),
                 ),
+
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    moveToOrderActivityPage(order);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text("Activity history",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: "SourceSansProRegular",
+                            fontSize: 16)),
+                  ),
+                )
               ],
             ),
           );
