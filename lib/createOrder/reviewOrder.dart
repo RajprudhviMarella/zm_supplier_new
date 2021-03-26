@@ -1433,7 +1433,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
-      moveToDashBoard();
+          moveToDashBoard();
     });
   }
 }

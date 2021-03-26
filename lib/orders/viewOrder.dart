@@ -350,7 +350,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       );
       this.appBarTitle = new Text(
         Constants.txt_orders,
-        style: new TextStyle(color: Colors.black),
+        style: new TextStyle(color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 18.0),
       );
       _isSearching = false;
       _controller.clear();
