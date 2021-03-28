@@ -817,12 +817,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       fontFamily: "SourceSansProBold")),
             ]),
             Row(children: <Widget>[
-              Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-              Text("     " + order.notes,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14.0,
-                      fontFamily: "SourceSansProRegular")),
+              Padding(padding: EdgeInsets.fromLTRB(0, 5, 15, 0)),
+              Expanded(
+                child: Text(order.notes,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14.0,
+                        fontFamily: "SourceSansProRegular")),
+              ),
             ]),
             Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 5)),
           ]),

@@ -1160,12 +1160,13 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   void moveToDashBoard() {
-    DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.acknowledge_notifier);
-    Navigator.pushNamed(context, '/home');
+    //  DartNotificationCenter.post(channel: Constants.draft_notifier);
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.draft_notifier);
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.acknowledge_notifier);
+      Navigator.pushNamed(context, '/home');
+
   }
 
   void showAlert(context) {
@@ -1433,7 +1434,12 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
-          moveToDashBoard();
+          // moveToDashBoard();
+          DartNotificationCenter.unsubscribe(
+              observer: 1, channel: Constants.draft_notifier);
+          DartNotificationCenter.unsubscribe(
+              observer: 1, channel: Constants.acknowledge_notifier);
+          Navigator.pushNamed(context, '/home', arguments: {'orderPlaced': true});
     });
   }
 }
