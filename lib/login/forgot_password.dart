@@ -102,7 +102,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
           prefs.setString(Constants.user_email, _email);
 
           events.mixpanel.track(Events.TAP_REQUEST_RESET_PASSWORD);
-          mixpanel.flush();
+          // mixpanel.flush();
           Navigator.push(
               context,
               MaterialPageRoute(

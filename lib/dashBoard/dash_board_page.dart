@@ -89,6 +89,7 @@ class DashboardState extends State<DashboardPage> {
     yield 1;
     await Future<void>.delayed(const Duration(seconds: 1));
   })();
+
   @override
   void initState() {
     _scrollController = ScrollController();
@@ -102,19 +103,32 @@ class DashboardState extends State<DashboardPage> {
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
-   // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
+    Future.delayed(Duration.zero, () {
+      final Map arguments = ModalRoute
+          .of(context)
+          .settings
+          .arguments as Map;
+      if (arguments['orderPlaced'] != null) {
+        Future.delayed(Duration(seconds: 2), ()
+        {
+
+          DartNotificationCenter.post(channel: Constants.draft_notifier);
+          arguments.remove(arguments['orderPlaced']);
+          arguments.remove('orderPlaced');
+        });
+      } else {
+      }
+    });
+
+    // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.subscribe(
       channel: Constants.draft_notifier,
       observer: i,
       onNotification: (result) {
         print('listener called');
         setState(() {
-          draftOrdersFuture = getDraftOrders();
-          Future.delayed(const Duration(milliseconds: 3000), ()
-          {
-            print('listener called with delay');
+            draftOrdersFuture = getDraftOrders();
             ordersListToday = _retriveTodayOrders();
-          });
         });
 
       },
@@ -143,6 +157,7 @@ class DashboardState extends State<DashboardPage> {
   void dispose(){
     _scrollController.removeListener(_scrollListener);
     super.dispose();
+    print('dispose');
     // DartNotificationCenter.post(channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
    // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
@@ -1060,10 +1075,6 @@ class DashboardState extends State<DashboardPage> {
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.hasData &&
                     snapshot.data.isNotEmpty) {
-                  return StreamBuilder(
-                    stream: selectedTab == "Today" ? ordersListToday.asStream() : ordersListYesterday.asStream(),
-                      builder: (BuildContext ctx, snapshot) {
-                      if (snapshot.hasData) {
                         return ListView.builder(
                           key: UniqueKey(),
                           //PageStorageKey(selectedTab == "Today" ? 'a' : 'b'),
@@ -1195,11 +1206,6 @@ class DashboardState extends State<DashboardPage> {
                             ]);
                           },
                         );
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      }
-                  );
                 } else {
                   return Container(
                     color: Colors.white,
