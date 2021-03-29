@@ -45,6 +45,7 @@ dependencies:
   adaptive_action_sheet: ^1.1.0
   keyboard_visibility: any
   dart_notification_center: ^1.0.0+1
+  fluttertoast: ^7.1.7
 
 dev_dependencies:
   flutter_test:

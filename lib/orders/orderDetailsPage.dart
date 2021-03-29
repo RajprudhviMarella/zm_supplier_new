@@ -1,6 +1,7 @@
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
@@ -44,6 +45,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     color: Colors.black,
   );
   final TextEditingController _controller = new TextEditingController();
+  final globalKey = new GlobalKey<ScaffoldState>();
 
   Orders order;
   bool _isSearching;
@@ -58,6 +60,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   String searchedString;
   LoginResponse userData;
 
+  String selectedReason = 'Other reason';
   Constants events = Constants();
 
   @override
@@ -98,6 +101,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: globalKey,
       appBar: buildAppBar(context),
       bottomNavigationBar: Container(
           height: 80.0,
@@ -138,22 +142,24 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       elevation: 0,
                     ),
                     new Spacer(),
-                    FloatingActionButton.extended(
-                      heroTag: "btn2",
-                      backgroundColor: azul_blue,
-                      foregroundColor: Colors.white,
-                      onPressed: () {
-                        _openBottomSheet();
-                      },
-                      label: Text(
-                        'Respond',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: 'SourceSansProSemiBold',
-                            color: Colors.white),
+                    if (order.isAcknowledged == null ||
+                        order.orderStatus != 'Void')
+                      FloatingActionButton.extended(
+                        heroTag: "btn2",
+                        backgroundColor: azul_blue,
+                        foregroundColor: Colors.white,
+                        onPressed: () {
+                          _openBottomSheet();
+                        },
+                        label: Text(
+                          'Respond',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'SourceSansProSemiBold',
+                              color: Colors.white),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
                   ])))),
       backgroundColor: faintGrey,
       body: ListView(
@@ -283,6 +289,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           // return StatefulBuilder(
           // builder: (BuildContext context, StateSetter setState) {
           return Container(
+            color: Colors.white,
             child: new Wrap(
               children: <Widget>[
                 Container(
@@ -295,71 +302,101 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       ),
                       onTap: () => {}),
                 ),
+
                 if (order.isAcknowledged == null)
-                  Container(
-                    height: 40,
-                    child: new ListTile(
-                      leading: Image.asset(
-                        'assets/images/icon_tick_grey.png',
-                        width: 22,
-                        height: 22,
-                      ),
-                      title: Transform.translate(
-                        offset: Offset(-25, 0),
-                        child: Text('Acknowledge',
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        Navigator.of(context).pop();
+                        acknowledgeOrder();
+                      });
+                    },
+                    child: Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.fromLTRB(17, 10, 17, 0),
+                      height: 40,
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/icon_tick_grey.png',
+                            width: 22,
+                            height: 22,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Acknowledge',
                             style: TextStyle(
                                 fontSize: 16,
-                                fontFamily: 'SourceSansProRegular')),
+                                fontFamily: 'SourceSansProRegular'),
+                          ),
+                        ],
                       ),
-                      onTap: () {
-                        setState(() {
-                          acknowledgeOrder();
-                          // selectedFilterType = 'RecentOrdered';
-                          //
-                          // selectedCustomersDataFuture =
-                          //     getCustomersListCalling(false, true);
-                        });
-                        Navigator.of(context).pop();
-                      },
                     ),
                   ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Divider(
-                    thickness: 2,
-                    color: faintGrey,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                  child: Divider(thickness: 2, color: faintGrey),
                 ),
-                Container(
-                  height: 40,
-                  child: new ListTile(
-                    leading: Image.asset(
-                      'assets/images/icon_close-red.png',
-                      width: 22,
-                      height: 22,
-                    ),
-                    title: Transform.translate(
-                      offset: Offset(-25, 0),
-                      child: new Text('Void order',
+
+                if (order.orderStatus != 'Void')
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Navigator.of(context).pop();
+                      voidOrderReasons();
+                    });
+                  },
+                  child: Container(
+                    color: Colors.white,
+                    margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                    height: 40,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/icon_close-red.png',
+                          width: 22,
+                          height: 22,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'Void order',
                           style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'SourceSansProRegular',
-                              color: warningRed)),
+                              color: warningRed),
+                        ),
+                      ],
                     ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      voidOrderReasons();
-                      // setState(() {
-                      //   // print('void tapped');
-                      //   // voidOrderReasons();
-                      //   // selectedFilterType = 'A-Z';
-                      //   // selectedCustomersDataFuture =
-                      //   //     getCustomersListCalling(false, true);
-                      // });
-                    },
                   ),
                 ),
-                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
+                // Container(
+                //   height: 30,
+                //   child: new ListTile(
+                //     leading: Image.asset(
+                //       'assets/images/icon_close-red.png',
+                //       width: 22,
+                //       height: 22,
+                //     ),
+                //     title: Transform.translate(
+                //       offset: Offset(-25, 0),
+                //       child: new Text('Void order',
+                //           style: TextStyle(
+                //               fontSize: 16,
+                //               fontFamily: 'SourceSansProRegular',
+                //               color: warningRed)),
+                //     ),
+                //     onTap: () {
+                //       Navigator.of(context).pop();
+                //       voidOrderReasons();
+                //
+                //     },
+                //   ),
+                // ),
+                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 10)),
               ],
             ),
             // }
@@ -378,6 +415,15 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         .then((value) async {
       if (value == Constants.status_success) {
         print('isAcknowledged success');
+
+        Fluttertoast.showToast(
+            msg: "Order acknowledged",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
         setState(() {
           order.isAcknowledged = true;
           DartNotificationCenter.post(channel: Constants.acknowledge_notifier);
@@ -386,136 +432,232 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     });
   }
 
+  Widget trailingIcon(String name) {
+    if (selectedReason == name) {
+      return ImageIcon(
+        AssetImage('assets/images/icon-tick-green.png'),
+        size: 22,
+        color: buttonBlue,
+      );
+    } else {
+      return Container();
+    }
+  }
+
   void voidOrderReasons() {
     showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          return SingleChildScrollView(
-              child: Container(
-            padding: EdgeInsets.only(
-                top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
-            color: Colors.white,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 5, left: 17.0, bottom: 0),
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Add a reason",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.black,
-                                fontFamily: "SourceSansProSemiBold"))),
-                  ),
-                  ListTile(
-                    title: Text(
-                      'Can’t fulfil the order',
-                      style: TextStyle(
-                          fontSize: 16, fontFamily: 'SourceSansProRegular'),
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+                child: Container(
+              padding: EdgeInsets.only(
+                  top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+              color: Colors.white,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 5, left: 17.0, bottom: 0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Add a reason",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                  fontFamily: "SourceSansProSemiBold"))),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 17.0, right: 17, top: 20),
-                    child: Divider(thickness: 2, color: faintGrey),
-                  ),
-                  Container(
-                    height: 40,
-                    color: Colors.yellow,
-                    child: Text(
-                        'Requested by buyer',
-                        style: TextStyle(
-                            fontSize: 16, fontFamily: 'SourceSansProRegular'),
-                      ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 17.0, right: 17, top: 20),
-                    child: Divider(thickness: 2, color: faintGrey),
-                  ),                  Container(
-                    height: 20,
-                    child: ListTile(
-                      title: Text(
-                        'Other reason (type below)',
-                        style: TextStyle(
-                            fontSize: 16, fontFamily: 'SourceSansProRegular'),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                    margin: EdgeInsets.only(top: 20.0),
-                    child: TextField(
-                      controller: _controller,
-                      keyboardType: TextInputType.text,
-                      maxLines: null,
-                      //  maxLength: 150,
-                      autofocus: true,
-                      cursorColor: Colors.blue,
-                      decoration: InputDecoration(
-                        fillColor: faintGrey,
-                        filled: true,
-                        border: new OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(10.0),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedReason = 'Can’t fulfil the order';
+                          });
+                        },
+                        child: Container(
+                          color: Colors.white,
+                          margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                          height: 40,
+                          child: Row(
+                            children: [
+                              Text(
+                                'Can’t fulfil the order',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'SourceSansProRegular'),
+                              ),
+                              Spacer(),
+                              trailingIcon('Can’t fulfil the order')
+                            ],
                           ),
                         ),
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        // hintText: Constants.txt_add_notes,
-                        // hintStyle: new TextStyle(
-                        //     color: greyText,
-                        //     fontSize: 16.0,
-                        //     fontFamily: "SourceSansProRegular"),
                       ),
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                          fontFamily: "SourceSansProRegular"),
                     ),
-                  ),
-                  GestureDetector(
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                      child: Divider(thickness: 2, color: faintGrey),
+                    ),
+                    GestureDetector(
                       onTap: () {
-                        // if (_txtOrderNotesEditController.text != null &&
-                        //     _txtOrderNotesEditController.text.isNotEmpty) {
-                        //   setState(() {
-                        //     orderNotes = _txtOrderNotesEditController.text;
-                        //   });
-                        // } else {
-                        //   setState(() {
-                        //     orderNotes = "Notes";
-                        //   });
-                        // }
-                        Navigator.pop(context);
+                        setState(() {
+                          selectedReason = 'Requested by buyer';
+                        });
                       },
                       child: Container(
-                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                          margin: EdgeInsets.only(
-                              top: 20.0, right: 20.0, left: 20.0),
-                          height: 47.0,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              color: buttonBlue,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30))),
-                          child: Center(
-                              child: Text(
-                            "Done",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: "SourceSansProSemiBold"),
-                          ))))
-                ],
+                        color: Colors.white,
+                        margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                        height: 40,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Requested by buyer',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'SourceSansProRegular'),
+                            ),
+                            Spacer(),
+                            trailingIcon('Requested by buyer')
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                      child: Divider(thickness: 2, color: faintGrey),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedReason = 'Other reason';
+                        });
+                      },
+                      child: Container(
+                        color: Colors.white,
+                        margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                        height: 40,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Other reason (type below)',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'SourceSansProRegular'),
+                            ),
+                            Spacer(),
+                            trailingIcon('Other reason')
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0, right: 10),
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15.0, right: 10.0),
+                        margin: EdgeInsets.only(top: 10.0),
+                        decoration: BoxDecoration(
+                          color: faintGrey,
+                          // border: Border.all(
+                          //   color: keyLineGrey,
+                          // ),
+                          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                        ),
+                        child: TextField(
+                          controller: _controller,
+                          keyboardType: TextInputType.text,
+                          maxLines: null,
+                          //  maxLength: 150,
+                          autofocus: true,
+                          cursorColor: Colors.blue,
+                          decoration: InputDecoration(
+                            // fillColor: Colors.orange,
+                            // filled: true,
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0),
+                              ),
+                            ),
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            // hintText: Constants.txt_add_notes,
+                            // hintStyle: new TextStyle(
+                            //     color: greyText,
+                            //     fontSize: 16.0,
+                            //     fontFamily: "SourceSansProRegular"),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              fontFamily: "SourceSansProRegular"),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          if (selectedReason == 'Other reason')
+                            selectedReason = _controller.text;
+
+                          print(selectedReason);
+                          voidOrder(selectedReason);
+                          print(_controller.text);
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            margin: EdgeInsets.only(
+                                top: 20.0, right: 20.0, left: 20.0),
+                            height: 47.0,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                color: buttonBlue,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30))),
+                            child: Center(
+                                child: Text(
+                              "Done",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: "SourceSansProSemiBold"),
+                            ))))
+                  ],
+                ),
               ),
-            ),
-          ));
+            ));
+          });
         });
+  }
+
+  voidOrder(String reason) {
+    OrderApi reject = OrderApi();
+
+    reject
+        .voidOrder(
+            mudra, supplierID, order.orderId, order.outlet.outletId, reason)
+        .then((value) async {
+      if (value == Constants.status_success) {
+        print('order voided');
+        Fluttertoast.showToast(
+            msg: "Order voided",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState(() {
+          order.orderStatus = 'Void';
+          DartNotificationCenter.post(channel: Constants.acknowledge_notifier);
+        });
+      }
+    });
   }
 
   Widget banner(BuildContext context) {
@@ -675,12 +817,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       fontFamily: "SourceSansProBold")),
             ]),
             Row(children: <Widget>[
-              Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-              Text("     " + order.notes,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14.0,
-                      fontFamily: "SourceSansProRegular")),
+              Padding(padding: EdgeInsets.fromLTRB(0, 5, 15, 0)),
+              Expanded(
+                child: Text(order.notes,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14.0,
+                        fontFamily: "SourceSansProRegular")),
+              ),
             ]),
             Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 5)),
           ]),
@@ -1012,26 +1156,35 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            child: new Wrap(
+            height: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(padding: EdgeInsets.fromLTRB(15, 5, 0, 0)),
-                new Text("More options",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "SourceSansProSemiBold",
-                        fontSize: 14)),
+                // Padding(padding: EdgeInsets.fromLTRB(15, 5, 0, 0)),
 
-                // new Text("More options", style: TextStyle(
-                //     color: Colors.black, fontFamily: "SourceSansProSemiBold", fontSize: 14)),
-                new ListTile(
-                  title: new Text("Activity history",
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text("More options",
                       style: TextStyle(
                           color: Colors.black,
-                          fontFamily: "SourceSansProRegular",
-                          fontSize: 16)),
-                  onTap: () =>
-                      {Navigator.pop(context), moveToOrderActivityPage(order)},
+                          fontFamily: "SourceSansProSemiBold",
+                          fontSize: 14)),
                 ),
+
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    moveToOrderActivityPage(order);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text("Activity history",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: "SourceSansProRegular",
+                            fontSize: 16)),
+                  ),
+                )
               ],
             ),
           );

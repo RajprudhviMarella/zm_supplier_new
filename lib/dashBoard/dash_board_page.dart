@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
@@ -14,6 +15,7 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/SearchOrders.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
+import 'package:zm_supplier/services/authenticationApi.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
@@ -82,6 +84,12 @@ class DashboardState extends State<DashboardPage> {
     });
   }
 
+  final Stream<int> _bids = (() async* {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    yield 1;
+    await Future<void>.delayed(const Duration(seconds: 1));
+  })();
+
   @override
   void initState() {
     _scrollController = ScrollController();
@@ -89,24 +97,38 @@ class DashboardState extends State<DashboardPage> {
 
     super.initState();
     mixPanelEvents();
+    print('init called');
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
-   // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
+    Future.delayed(Duration.zero, () {
+      final Map arguments = ModalRoute
+          .of(context)
+          .settings
+          .arguments as Map;
+      if (arguments['orderPlaced'] != null) {
+        Future.delayed(Duration(seconds: 2), ()
+        {
+
+          DartNotificationCenter.post(channel: Constants.draft_notifier);
+          arguments.remove(arguments['orderPlaced']);
+          arguments.remove('orderPlaced');
+        });
+      } else {
+      }
+    });
+
+    // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.subscribe(
       channel: Constants.draft_notifier,
       observer: i,
       onNotification: (result) {
         print('listener called');
         setState(() {
-          draftOrdersFuture = getDraftOrders();
-          Future.delayed(const Duration(milliseconds: 3000), ()
-          {
-            print('listener called with delay');
+            draftOrdersFuture = getDraftOrders();
             ordersListToday = _retriveTodayOrders();
-          });
         });
 
       },
@@ -135,6 +157,7 @@ class DashboardState extends State<DashboardPage> {
   void dispose(){
     _scrollController.removeListener(_scrollListener);
     super.dispose();
+    print('dispose');
     // DartNotificationCenter.post(channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
    // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
@@ -145,16 +168,19 @@ class DashboardState extends State<DashboardPage> {
   void mixPanelEvents() async {
     mixpanel = await Constants.initMixPanel();
   }
-
+  // bool second = false;
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
     LoginResponse user =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
-
+    // String mudra = '5ae6b19666463d3518556653--022b92f1-946c-4e1b-ac6d-9978a7ecf4cc';
+    // if (second == true) {
+    //   mudra = user.mudra;
+    // }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
       'mudra': user.mudra,
-      'supplierId': user.supplier.first.supplierId
+      'supplierId': user.supplier.first.supplierId,
     };
 
     var response =
@@ -165,10 +191,13 @@ class DashboardState extends State<DashboardPage> {
       print(response.body);
       print('Success response');
       summaryData = OrderSummaryResponse.fromJson(json.decode(response.body));
+      return summaryData;
     } else {
-      print('failed get summary data');
+      print('failed get summary data' + response.statusCode.toString());
+      if(response.statusCode == 401) {
+        callLoginApi(0);
+      }
     }
-    return summaryData;
 
     // print(user.mudra);
     // orders
@@ -191,6 +220,45 @@ class DashboardState extends State<DashboardPage> {
     // });
   }
 
+  Future<Void> callLoginApi(int api) async {
+    LoginResponse user =
+    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+    String passwordEncrypted =
+    await sharedPref.readData(Constants.PASSWORD_ENCRYPTED);
+    Authentication login = new Authentication();
+
+    login.authenticate(user.user.email, passwordEncrypted).then((value) async {
+      print('login api calling done');
+      print(value.toJson());
+      if (value == null) {
+        return;
+      }
+
+      if (value.status == Constants.status_success) {
+        //save login data
+        sharedPref.saveData(Constants.login_Info, value);
+        sharedPref.saveData(Constants.PASSWORD_ENCRYPTED, passwordEncrypted);
+
+        if (api == 0) {
+          orderSummaryData = getSummaryDataApiCalling();
+          setState(() {});
+          } else if (api == 1) {
+          ordersListToday = _retriveTodayOrders();
+          setState(() {});
+        } else if (api == 2) {
+          ordersListYesterday = _retriveYesterdayOrders();
+          setState(() {});
+        }
+        else if (api == 3) {
+          draftOrdersFuture = getDraftOrders();
+          setState(() {});
+        }
+
+      } else {
+
+      }
+    });
+  }
   Future<List<Orders>> getDraftOrders() async {
     LoginResponse user =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
@@ -218,7 +286,10 @@ class DashboardState extends State<DashboardPage> {
         response.statusCode == 202) {
       ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
-      print('failed get customers reports');
+      print('failed get draft orders');
+      if(response.statusCode == 401) {
+        callLoginApi(3);
+      }
     }
 
     draftOrdersList = ordersData.data.data;
@@ -267,6 +338,9 @@ class DashboardState extends State<DashboardPage> {
       ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get orders data');
+      if(response.statusCode == 401) {
+        callLoginApi(2);
+      }
     }
 
     arrayOrderList = ordersData.data.data;
@@ -315,6 +389,9 @@ class DashboardState extends State<DashboardPage> {
       ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get orders data');
+      if(response.statusCode == 401) {
+        callLoginApi(1);
+      }
     }
 
     print(ordersData.data.data.length);
@@ -998,130 +1075,137 @@ class DashboardState extends State<DashboardPage> {
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.hasData &&
                     snapshot.data.isNotEmpty) {
-                  return ListView.builder(
-                    key: PageStorageKey(selectedTab == "Today" ? 'a' : 'b'),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return new Column(children: <Widget>[
-                        ListTile(
-                          title: Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Text(
-                              snapshot.data[index].outlet.outletName,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: "SourceSansProSemiBold"),
-                            ),
-                          ),
-                          isThreeLine: true,
-                          subtitle: Container(
-                            margin: EdgeInsets.only(top: 3.0, bottom: 10),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(children: <Widget>[
-                                    ImageIcon(
-                                      AssetImage(
-                                          "assets/images/Truck-black.png"),
-                                      size: 14,
-                                    ),
-                                    SizedBox(width: 2),
-                                    Text(
-                                      readTimestamp(
-                                          snapshot.data[index].timeDelivered),
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: "SourceSansProRegular",
-                                          color: Colors.black),
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      snapshot.data[index].orderId,
-                                      style: TextStyle(
-                                          fontSize: 12.0,
-                                          fontFamily: "SourceSansProRegular",
-                                          color: greyText),
-                                    ),
-                                    SizedBox(width: 2),
-                                    if (snapshot.data[index].isAcknowledged !=
-                                        null)
-                                      Container(
-                                        width:
-                                            snapshot.data[index].isAcknowledged
-                                                ? 12
-                                                : 0,
-                                        child: InkResponse(
-                                          child: Image.asset(
-                                            "assets/images/icon-tick-green.png",
-                                            width: 12,
-                                            height: 12,
+                        return ListView.builder(
+                          key: UniqueKey(),
+                          //PageStorageKey(selectedTab == "Today" ? 'a' : 'b'),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (BuildContext ctx, int index) {
+                            return new Column(children: <Widget>[
+                              ListTile(
+                                title: Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    snapshot.data[index].outlet.outletName,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: "SourceSansProSemiBold"),
+                                  ),
+                                ),
+                                isThreeLine: true,
+                                subtitle: Container(
+                                  margin: EdgeInsets.only(top: 3.0, bottom: 10),
+                                  child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
+                                      children: <Widget>[
+                                        Row(children: <Widget>[
+                                          ImageIcon(
+                                            AssetImage(
+                                                "assets/images/Truck-black.png"),
+                                            size: 14,
                                           ),
-                                        ),
-                                      ),
-                                    Spacer(),
-                                    Text(
-                                        '\$' +
-                                            snapshot.data[index].amount.total
-                                                .amountV1
-                                                .toStringAsFixed(2)
-                                                .replaceAllMapped(reg,
-                                                    (Match m) => '${m[1]},'),
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: "SourceSansProRegular",
-                                            color: Colors.black)),
-                                  ]),
-                                  if (snapshot.data[index].orderStatus !=
-                                      'Placed')
-                                    Constants.OrderStatusColor(
-                                        snapshot.data[index]),
-                                ]),
-                          ),
+                                          SizedBox(width: 2),
+                                          Text(
+                                            readTimestamp(
+                                                snapshot.data[index]
+                                                    .timeDelivered),
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontFamily: "SourceSansProRegular",
+                                                color: Colors.black),
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            snapshot.data[index].orderId,
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontFamily: "SourceSansProRegular",
+                                                color: greyText),
+                                          ),
+                                          SizedBox(width: 2),
+                                          if (snapshot.data[index]
+                                              .isAcknowledged !=
+                                              null)
+                                            Container(
+                                              width:
+                                              snapshot.data[index]
+                                                  .isAcknowledged
+                                                  ? 12
+                                                  : 0,
+                                              child: InkResponse(
+                                                child: Image.asset(
+                                                  "assets/images/icon-tick-green.png",
+                                                  width: 12,
+                                                  height: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          Spacer(),
+                                          Text(
+                                              '\$' +
+                                                  snapshot.data[index].amount
+                                                      .total
+                                                      .amountV1
+                                                      .toStringAsFixed(2)
+                                                      .replaceAllMapped(reg,
+                                                          (
+                                                          Match m) => '${m[1]},'),
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontFamily: "SourceSansProRegular",
+                                                  color: Colors.black)),
+                                        ]),
+                                        if (snapshot.data[index].orderStatus !=
+                                            'Placed')
+                                          Constants.OrderStatusColor(
+                                              snapshot.data[index]),
+                                      ]),
+                                ),
 
-                          // trailing: Column(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: [
-                          //     Container(
-                          //       width: 100,
-                          //       child: Text(
-                          //           '\$' +
-                          //               snapshot
-                          //                   .data[index].amount.total.amountV1
-                          //                   .toStringAsFixed(2)
-                          //                   .replaceAllMapped(
-                          //                       reg, (Match m) => '${m[1]},'),
-                          //           textAlign: TextAlign.end,
-                          //           style: TextStyle(
-                          //               fontSize: 16,
-                          //               fontFamily: "SourceSansProRegular",
-                          //               color: Colors.black)),
-                          //     ),
-                          //   ],
-                          // ),
+                                // trailing: Column(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: [
+                                //     Container(
+                                //       width: 100,
+                                //       child: Text(
+                                //           '\$' +
+                                //               snapshot
+                                //                   .data[index].amount.total.amountV1
+                                //                   .toStringAsFixed(2)
+                                //                   .replaceAllMapped(
+                                //                       reg, (Match m) => '${m[1]},'),
+                                //           textAlign: TextAlign.end,
+                                //           style: TextStyle(
+                                //               fontSize: 16,
+                                //               fontFamily: "SourceSansProRegular",
+                                //               color: Colors.black)),
+                                //     ),
+                                //   ],
+                                // ),
 
-                          //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                          leading: leadingImage(snapshot.data[index]),
+                                //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
+                                leading: leadingImage(snapshot.data[index]),
 
-                          tileColor: Colors.white,
-                          onTap: () {
-                            print('item tapped $index');
-                            moveToOrderDetailsPage(snapshot.data[index]);
+                                tileColor: Colors.white,
+                                onTap: () {
+                                  print('item tapped $index');
+                                  moveToOrderDetailsPage(snapshot.data[index]);
+                                },
+                              ),
+                              Divider(
+                                height: 1.5,
+                                color: faintGrey,
+                              ),
+                              if (index == snapshot.data.length - 1)
+                                Container(
+                                  height: 80,
+                                )
+                            ]);
                           },
-                        ),
-                        Divider(
-                          height: 1.5,
-                          color: faintGrey,
-                        ),
-                        if (index == snapshot.data.length - 1)
-                          Container(
-                            height: 80,
-                          )
-                      ]);
-                    },
-                  );
+                        );
                 } else {
                   return Container(
                     color: Colors.white,
