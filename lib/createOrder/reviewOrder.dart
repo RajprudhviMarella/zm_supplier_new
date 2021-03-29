@@ -1132,8 +1132,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     PlaceOrderResponse placeOrderResponse =
         PlaceOrderResponse.fromJson(jsonDecode(response.body));
     if (placeOrderResponse != null &&
-        placeOrderResponse.status == 200 &&
-        placeOrderResponse.data.status == "SUCCESS") {
+        placeOrderResponse.status == 200) {
       events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
       events.mixpanel.flush();
       showSuccessDialog();
