@@ -1115,7 +1115,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => WebViewContainer(order.pdfURL, "")));
+            builder: (context) => WebViewContainer(order.pdfURL, "",true)));
   }
 
   void _newTaskModalBottomSheet(context) {

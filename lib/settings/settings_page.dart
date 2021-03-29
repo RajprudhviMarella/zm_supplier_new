@@ -251,7 +251,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
 
   void _handleURLButtonPress(BuildContext context, String url, String title) {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WebViewContainer(url, title)));
+        MaterialPageRoute(builder: (context) => WebViewContainer(url, title,false)));
   }
 
   void _launchMailClient() async {

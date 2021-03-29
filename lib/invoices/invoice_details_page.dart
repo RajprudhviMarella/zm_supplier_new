@@ -867,6 +867,6 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
   openPdf(String url) {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WebViewContainer(url, "")));
+        MaterialPageRoute(builder: (context) => WebViewContainer(url, "",true)));
   }
 }
