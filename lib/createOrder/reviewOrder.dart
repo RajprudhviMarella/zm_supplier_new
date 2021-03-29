@@ -7,6 +7,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
+import 'package:zm_supplier/models/placeOrderResponse.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -621,6 +622,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                             .toLowerCase() ==
                                                         it.priceList[0].unitSize
                                                             .toLowerCase());
+                                            calculatePrice();
                                             Navigator.pop(context);
                                           });
                                         },
@@ -1127,7 +1129,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     print("ms" + createOrderModel.toJson().toString());
     print("ms" + response.statusCode.toString());
     print("ms" + response.body.toString());
-    if (response.statusCode == 200) {
+    PlaceOrderResponse placeOrderResponse =
+        PlaceOrderResponse.fromJson(jsonDecode(response.body));
+    if (placeOrderResponse != null &&
+        placeOrderResponse.status == 200 &&
+        placeOrderResponse.data.status == "SUCCESS") {
       events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
       events.mixpanel.flush();
       showSuccessDialog();
