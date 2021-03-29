@@ -159,8 +159,6 @@ class CustomerState extends State<CustomersPage> {
   }
 
   Future<CustomersData> selectedD(CustomersData i) async {
-    print(i.outlets.first.outlet.outletName);
-    print(i.outlets[1].outlet.outletName);
     return i;
   }
 
@@ -426,7 +424,6 @@ class CustomerState extends State<CustomersPage> {
                             }
                             events.mixpanel.flush();
                             var a = snapshot.data[index];
-                            print(a.outlets.first.outlet.outletName);
                             selectedCustomersDataFuture = selectedD(a);
                           });
                         },
@@ -708,7 +705,8 @@ class CustomerState extends State<CustomersPage> {
                                             outletId, lastOrderd, isStarred)));
 
                             setState(() {
-                              snapshot.data.outlets[index].isFavourite = result;
+                              getCustomersReportApiCalling(true, false);
+                              getCustomersListCalling(true, false);
                             });
                           }),
                       Divider(
