@@ -683,7 +683,7 @@ class MarketListDesign extends State<MarketListPage>
                                             ? "Quantity is below MOQ"
                                             : null,
                                         controller: _textEditingController,
-                                        keyboardType: keyboard,
+                                        keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
                                         inputFormatters: <TextInputFormatter>[
                                           regExp,
                                         ],
