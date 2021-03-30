@@ -249,18 +249,24 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                         },
                       )
                     ]))),
-            body: ListView(
-              children: [
-                Headers("Delivery date"),
-                displayDeliveryDates(context),
-                Headers(widget.marketList.length.toString() +
-                    ((widget.marketList.length > 1) ? " items" : " item")),
-                displayList(context),
-                Headers("Notes / special requests"),
-                EditNotes(),
-                priceDetails(context)
-              ],
-            )));
+            body: WillPopScope(
+                onWillPop: () async {
+                  String textToSendBack = _txtSpecialRequest.text;
+                  Navigator.pop(context, textToSendBack);
+                  return false;
+                },
+                child: ListView(
+                  children: [
+                    Headers("Delivery date"),
+                    displayDeliveryDates(context),
+                    Headers(widget.marketList.length.toString() +
+                        ((widget.marketList.length > 1) ? " items" : " item")),
+                    displayList(context),
+                    Headers("Notes / special requests"),
+                    EditNotes(),
+                    priceDetails(context)
+                  ],
+                ))));
   }
 
   Widget Headers(String name) {
