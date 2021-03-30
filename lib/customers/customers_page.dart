@@ -48,6 +48,27 @@ class CustomerState extends State<CustomersPage> {
     events.mixPanelEvents();
     customersData = getCustomersReportApiCalling(false, false);
     selectedCustomersDataFuture = getCustomersListCalling(false, false);
+
+    DartNotificationCenter.subscribe(
+      channel: Constants.favourite_notifier,
+      observer: 1,
+      onNotification: (result) {
+        print('listener called');
+        setState(() {
+          customersData = getCustomersReportApiCalling(false, false);
+          selectedCustomersDataFuture = getCustomersListCalling(false, false);
+        });
+
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.favourite_notifier);
+    super.dispose();
+    //DartNotificationCenter.unsubscribe(observer: Constants.favourite_notifier);
   }
 
   Future<List<CustomersData>> getCustomersReportApiCalling(
@@ -266,17 +287,12 @@ class CustomerState extends State<CustomersPage> {
               onTap: () async {
                 events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_SEARCH);
                 events.mixpanel.flush();
-                final result = await Navigator.push(
+                Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
                             new SearchCustomersPage(customerDataList.first)));
 
-                print(result);
-                //  setState(() {
-                getCustomersReportApiCalling(true, false);
-                getCustomersListCalling(true, false);
-                // });
               },
               decoration: new InputDecoration(
                   border: InputBorder.none,
@@ -697,17 +713,13 @@ class CustomerState extends State<CustomersPage> {
                             events.mixpanel.track(
                                 Events.TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS);
                             events.mixpanel.flush();
-                            final result = await Navigator.push(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         new CustomerDetailsPage(outletName,
                                             outletId, lastOrderd, isStarred)));
 
-                            setState(() {
-                              getCustomersReportApiCalling(true, false);
-                              getCustomersListCalling(true, false);
-                            });
                           }),
                       Divider(
                         height: 1.5,

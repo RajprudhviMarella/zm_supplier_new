@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -999,7 +1000,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     favourite
         .updateFavourite(userData.mudra, userData.supplier.first.supplierId,
             outletId, isStarred)
-        .then((value) async {});
+        .then((value) async {
+      DartNotificationCenter.post(channel: Constants.favourite_notifier);
+    });
   }
 
   Widget peopleList() {
