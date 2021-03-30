@@ -166,12 +166,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               ),
               actions: [
                 IconButton(
-                  icon: Image.asset("assets/images/icon_trash.png"),
-                  onPressed: () =>
-                      (widget.orderId != null && widget.orderId.isNotEmpty)
-                          ? showDraftAlert(context)
-                          : moveToDashBoard(),
-                ),
+                    icon: Image.asset("assets/images/icon_trash.png"),
+                    onPressed: () => showDraftAlert(context)),
               ],
             ),
             bottomNavigationBar: Container(
@@ -1244,7 +1240,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         Navigator.pop(dialogContext);
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PAGE_DELETE_DRAFT);
         events.mixpanel.flush();
-        deleteOrderAPI();
+        (widget.orderId != null && widget.orderId.isNotEmpty)
+            ? deleteOrderAPI()
+            : moveToDashBoard();
       },
     );
     // set up the button
