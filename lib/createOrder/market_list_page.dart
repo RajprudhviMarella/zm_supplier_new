@@ -505,7 +505,7 @@ class MarketListDesign extends State<MarketListPage>
                 counter = snapShot.data[index].priceList[0].moq;
               }
               keyboard =
-                  TextInputType.numberWithOptions(signed: true, decimal: false);
+                  TextInputType.numberWithOptions(signed: true, decimal: true);
               regExp = FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
             }
 
@@ -540,7 +540,7 @@ class MarketListDesign extends State<MarketListPage>
                   return SingleChildScrollView(
                       child: Container(
                     padding: EdgeInsets.only(
-                        top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
                     color: Colors.white,
                     child: Center(
                       child: Column(

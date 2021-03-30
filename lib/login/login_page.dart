@@ -59,12 +59,12 @@ class _LoginPageState extends State<LoginPage> {
   SharedPref sharedPref = SharedPref();
 
   Constants events = Constants();
+
   @override
   void initState() {
     super.initState();
     events.mixPanelEvents();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -88,14 +88,14 @@ class _LoginPageState extends State<LoginPage> {
           isLogged = true;
           prefs.setBool(Constants.is_logged, isLogged);
 
-          events.mixpanel.track(Events.TAP_LOGIN, properties: {'email': _email});
-        //  mixpanel.flush();
-
+          events.mixpanel
+              .track(Events.TAP_LOGIN, properties: {'email': _email});
           _hideLoader();
-          Navigator.push(
+          Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomePage(), fullscreenDialog: true));
+                  builder: (BuildContext context) => new HomePage()),
+              (Route<dynamic> route) => false);
         });
       });
     }
@@ -329,9 +329,8 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {
                       print('forgot tapped');
 
-                     // mixpanel.timeEvent('Aquaman');
-
-                      events.mixpanel.track(Events.TAP_FORGOT_PASSWORD, properties: {'email': _email});
+                      events.mixpanel.track(Events.TAP_FORGOT_PASSWORD,
+                          properties: {'email': _email});
                       events.mixpanel.flush();
 
                       Navigator.push(
@@ -353,7 +352,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(
-                  height: height > 667 ? height - (height * 0.55 + 270) : height - (height * 0.5 + 270),
+                  height: height > 667
+                      ? height - (height * 0.55 + 270)
+                      : height - (height * 0.5 + 270),
                 ),
                 Container(
                   width: width,
