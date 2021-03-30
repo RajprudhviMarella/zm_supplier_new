@@ -345,6 +345,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
       'sortBy': 'timeDelivered',
       'sortOrder': 'ASC',
       'deliveryStartDate': date.toString(),
+      'orderStatus': 'Placed',
       if (searchedString != null && searchedString.isNotEmpty)
         'orderIdText': searchedString,
     };
