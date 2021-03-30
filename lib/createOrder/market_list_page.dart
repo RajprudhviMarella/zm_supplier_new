@@ -554,7 +554,8 @@ class MarketListDesign extends State<MarketListPage>
                     builder: (BuildContext context, StateSetter setStates) {
                   return SingleChildScrollView(
                       child: Container(
-                    padding: (Platform.isAndroid) ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                    padding: EdgeInsets.only(
+                        top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -697,7 +698,9 @@ class MarketListDesign extends State<MarketListPage>
                                             ? "Quantity is below MOQ"
                                             : null,
                                         controller: _textEditingController,
-                                        keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
+                                        keyboardType:
+                                            TextInputType.numberWithOptions(
+                                                signed: false, decimal: true),
                                         inputFormatters: <TextInputFormatter>[
                                           regExp,
                                         ],
@@ -1183,9 +1186,9 @@ class MarketListDesign extends State<MarketListPage>
         builder: (context) {
           return SingleChildScrollView(
               child: Container(
-            padding: (Platform.isAndroid) ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
-
-                color: Colors.white,
+            padding: EdgeInsets.only(
+                top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+            color: Colors.white,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
