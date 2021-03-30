@@ -17,6 +17,7 @@ import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
+import 'dart:io' show Platform;
 
 /**
  * Created by RajPrudhviMarella on 02/Mar/2021.
@@ -553,8 +554,7 @@ class MarketListDesign extends State<MarketListPage>
                     builder: (BuildContext context, StateSetter setStates) {
                   return SingleChildScrollView(
                       child: Container(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                    padding: (Platform.isAndroid) ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -697,7 +697,7 @@ class MarketListDesign extends State<MarketListPage>
                                             ? "Quantity is below MOQ"
                                             : null,
                                         controller: _textEditingController,
-                                        keyboardType: keyboard,
+                                        keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
                                         inputFormatters: <TextInputFormatter>[
                                           regExp,
                                         ],
@@ -1183,9 +1183,9 @@ class MarketListDesign extends State<MarketListPage>
         builder: (context) {
           return SingleChildScrollView(
               child: Container(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            color: Colors.white,
+            padding: (Platform.isAndroid) ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+
+                color: Colors.white,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
