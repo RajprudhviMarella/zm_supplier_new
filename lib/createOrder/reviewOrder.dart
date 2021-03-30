@@ -20,6 +20,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'dart:io' show Platform;
 
 /**
  * Created by RajPrudhviMarella on 04/Mar/2021.
@@ -543,9 +544,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                             (BuildContext context, StateSetter setStates) {
                           return SingleChildScrollView(
                               child: Container(
-                            padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom),
+                            padding: (Platform.isAndroid) ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
                             color: Colors.white,
                             child: Center(
                               child: Column(
@@ -718,7 +717,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                     : null,
                                                 controller:
                                                     _textEditingController,
-                                                keyboardType: keyboard,
+                                                keyboardType: TextInputType.numberWithOptions(
+                                                    signed: false, decimal: true),
                                                 inputFormatters: <
                                                     TextInputFormatter>[
                                                   regExp,
