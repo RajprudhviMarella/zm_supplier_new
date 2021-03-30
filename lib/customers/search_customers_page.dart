@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -365,7 +366,9 @@ class SearchCustomersState extends State<SearchCustomersPage> {
     favourite
         .updateFavourite(
             mudra, supplierID, customers.outlet.outletId, customers.isFavourite)
-        .then((value) async {});
+        .then((value) async {
+      DartNotificationCenter.post(channel: Constants.favourite_notifier);
+    });
   }
 
   String outletPlaceholder(String name) {
