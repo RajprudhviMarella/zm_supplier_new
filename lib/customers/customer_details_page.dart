@@ -149,7 +149,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   Future<List<Orders>> _retriveRecentOrders() async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
-
+    
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -164,9 +164,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     String queryString = Uri(queryParameters: queryParams).query;
 
     var url = URLEndPoints.retrive_paginated_orders_url + '?' + queryString;
-    // print(url);
+     print(url);
 
-    //print(headers);
+    print(headers);
     var response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200 ||
@@ -306,7 +306,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                           Text(
                             '\$' +
                                     snapshot.data.totalSpendingCurrMonth
-                                        .toString()
+                                        .toStringAsFixed(2)
                                         .replaceAllMapped(
                                             reg, (Match m) => '${m[1]},') ??
                                 "",
@@ -342,7 +342,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                       '\$' +
                                               snapshot
                                                   .data.totalSpendingLastMonth
-                                                  .toString()
+                                                  .toStringAsFixed(2)
                                                   .replaceAllMapped(
                                                       reg,
                                                       (Match m) =>
@@ -368,7 +368,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                       '\$' +
                                               snapshot.data
                                                   .totalSpendingLastTwoMonths
-                                                  .toString()
+                                                  .toStringAsFixed(2)
                                                   .replaceAllMapped(
                                                       reg,
                                                       (Match m) =>
@@ -492,7 +492,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           color: buttonBlue,
                                           fontFamily: 'SourceSansProSemiBold'),
                                     ),
-                                    Text('\$' + snapshot.data.totalUnpaid.toString().replaceAllMapped(
+                                    Text('\$' + snapshot.data.totalUnpaid.toStringAsFixed(2).replaceAllMapped(
                                         reg,
                                             (Match m) =>
                                         '${m[1]},') ??
@@ -542,7 +542,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                             },
                             child: Row(
                               children: [
-                                Text('\$' + snapshot.data.totalOverDue.toString().replaceAllMapped(
+                                Text('\$' + snapshot.data.totalOverDue.toStringAsFixed(2).replaceAllMapped(
                                     reg,
                                         (Match m) =>
                                     '${m[1]},') ??
@@ -893,7 +893,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                         // ImageIcon(AssetImage('assets/images/orders_icon.png')),
                         SizedBox(height: 10),
                         Text(
-                          'No orders in past 3 months',
+                          'No orders',
                           style: TextStyle(
                               fontSize: 14,
                               fontFamily: 'SourceSansProRegular',

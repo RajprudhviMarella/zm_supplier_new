@@ -7,6 +7,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
+import 'package:zm_supplier/models/placeOrderResponse.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -165,12 +166,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               ),
               actions: [
                 IconButton(
-                  icon: Image.asset("assets/images/icon_trash.png"),
-                  onPressed: () =>
-                      (widget.orderId != null && widget.orderId.isNotEmpty)
-                          ? showDraftAlert(context)
-                          : moveToDashBoard(),
-                ),
+                    icon: Image.asset("assets/images/icon_trash.png"),
+                    onPressed: () => showDraftAlert(context)),
               ],
             ),
             bottomNavigationBar: Container(
@@ -248,18 +245,24 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                         },
                       )
                     ]))),
-            body: ListView(
-              children: [
-                Headers("Delivery date"),
-                displayDeliveryDates(context),
-                Headers(widget.marketList.length.toString() +
-                    ((widget.marketList.length > 1) ? " items" : " item")),
-                displayList(context),
-                Headers("Notes / special requests"),
-                EditNotes(),
-                priceDetails(context)
-              ],
-            )));
+            body: WillPopScope(
+                onWillPop: () async {
+                  String textToSendBack = _txtSpecialRequest.text;
+                  Navigator.pop(context, textToSendBack);
+                  return false;
+                },
+                child: ListView(
+                  children: [
+                    Headers("Delivery date"),
+                    displayDeliveryDates(context),
+                    Headers(widget.marketList.length.toString() +
+                        ((widget.marketList.length > 1) ? " items" : " item")),
+                    displayList(context),
+                    Headers("Notes / special requests"),
+                    EditNotes(),
+                    priceDetails(context)
+                  ],
+                ))));
   }
 
   Widget Headers(String name) {
@@ -504,7 +507,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                         counter = widget.marketList[index].priceList[0].moq;
                       }
                       keyboard = TextInputType.numberWithOptions(
-                          signed: true, decimal: false);
+                          signed: true, decimal: true);
                       regExp =
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]'));
                     }
@@ -541,10 +544,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                           return SingleChildScrollView(
                               child: Container(
                             padding: EdgeInsets.only(
-                                top: 15.0,
-                                right: 10.0,
-                                left: 10.0,
-                                bottom: 15.0),
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
                             color: Colors.white,
                             child: Center(
                               child: Column(
@@ -621,6 +622,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                             .toLowerCase() ==
                                                         it.priceList[0].unitSize
                                                             .toLowerCase());
+                                            calculatePrice();
                                             Navigator.pop(context);
                                           });
                                         },
@@ -1119,21 +1121,32 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     if (widget.orderId != null && widget.orderId.isNotEmpty) {
       requestUrl = URLEndPoints.edit_place_order + '?' + queryString;
       response = await http.put(requestUrl, headers: headers, body: msg);
+      PlaceOrderResponse placeOrderResponse =
+          PlaceOrderResponse.fromJson(jsonDecode(response.body));
+      if (placeOrderResponse != null &&
+          placeOrderResponse.status == 200 &&
+          placeOrderResponse.data.status == "SUCCESS") {
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
+        events.mixpanel.flush();
+        showSuccessDialog();
+      } else {
+        showFailureDialog();
+      }
     } else {
       requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
       response = await http.post(requestUrl, headers: headers, body: msg);
+      if (response != null && response.statusCode == 200) {
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
+        events.mixpanel.flush();
+        showSuccessDialog();
+      } else {
+        showFailureDialog();
+      }
     }
     print("url" + requestUrl);
     print("ms" + createOrderModel.toJson().toString());
     print("ms" + response.statusCode.toString());
     print("ms" + response.body.toString());
-    if (response.statusCode == 200) {
-      events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
-      events.mixpanel.flush();
-      showSuccessDialog();
-    } else {
-      showFailureDialog();
-    }
   }
 
   deleteOrderAPI() async {
@@ -1160,7 +1173,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   void moveToDashBoard() {
-    DartNotificationCenter.post(channel: Constants.draft_notifier);
+    //  DartNotificationCenter.post(channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(
         observer: 1, channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(
@@ -1227,7 +1240,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         Navigator.pop(dialogContext);
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PAGE_DELETE_DRAFT);
         events.mixpanel.flush();
-        deleteOrderAPI();
+        (widget.orderId != null && widget.orderId.isNotEmpty)
+            ? deleteOrderAPI()
+            : moveToDashBoard();
       },
     );
     // set up the button
@@ -1433,7 +1448,12 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
-      moveToDashBoard();
+      // moveToDashBoard();
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.draft_notifier);
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.acknowledge_notifier);
+      Navigator.pushNamed(context, '/home', arguments: {'orderPlaced': true});
     });
   }
 }

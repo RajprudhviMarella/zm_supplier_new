@@ -46,12 +46,12 @@ class CustomerState extends State<CustomersPage> {
     super.initState();
 
     events.mixPanelEvents();
-    customersData = getCustomersReportApiCalling(false);
+    customersData = getCustomersReportApiCalling(false, false);
     selectedCustomersDataFuture = getCustomersListCalling(false, false);
   }
 
   Future<List<CustomersData>> getCustomersReportApiCalling(
-      bool isUpdating) async {
+      bool isUpdating, bool isFilterApplied) async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
@@ -62,7 +62,15 @@ class CustomerState extends State<CustomersPage> {
       'supplierId': userData.supplier.first.supplierId
     };
 
-    var url = URLEndPoints.customers_report_data;
+    Map<String, String> queryParams = {
+      'sortBy': selectedFilterType,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.customers_report_data + '?' + queryString;
+
+    // var url = URLEndPoints.customers_report_data;
     print(headers);
     print(url);
     var response = await http.get(url, headers: headers);
@@ -266,7 +274,7 @@ class CustomerState extends State<CustomersPage> {
 
                 print(result);
                 //  setState(() {
-                getCustomersReportApiCalling(true);
+                getCustomersReportApiCalling(true, false);
                 getCustomersListCalling(true, false);
                 // });
               },
@@ -527,8 +535,10 @@ class CustomerState extends State<CustomersPage> {
                     setState(() {
                       selectedFilterType = 'RecentOrdered';
 
+                      customersData = getCustomersReportApiCalling(false, true);
                       selectedCustomersDataFuture =
                           getCustomersListCalling(false, true);
+
                     });
                     Navigator.of(context).pop();
                   },
@@ -547,6 +557,7 @@ class CustomerState extends State<CustomersPage> {
                   onTap: () {
                     setState(() {
                       selectedFilterType = 'A-Z';
+                      customersData = getCustomersReportApiCalling(false, true);
                       selectedCustomersDataFuture =
                           getCustomersListCalling(false, true);
                     });
@@ -694,7 +705,8 @@ class CustomerState extends State<CustomersPage> {
                                             outletId, lastOrderd, isStarred)));
 
                             setState(() {
-                              snapshot.data.outlets[index].isFavourite = result;
+                              getCustomersReportApiCalling(true, false);
+                              getCustomersListCalling(true, false);
                             });
                           }),
                       Divider(
@@ -771,7 +783,7 @@ class CustomerState extends State<CustomersPage> {
         .updateFavourite(userData.mudra, userData.supplier.first.supplierId,
             customers.outlet.outletId, customers.isFavourite)
         .then((value) async {
-      getCustomersReportApiCalling(true);
+      getCustomersReportApiCalling(true, false);
       getCustomersListCalling(true, false);
     });
   }

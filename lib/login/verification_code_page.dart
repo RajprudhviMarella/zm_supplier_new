@@ -78,11 +78,13 @@ class _VerificationCodeState extends State<VerificationCode> {
             isTimerEnabled = false;
           });
         } else {
-          setState(() {
-            _countDown--;
-            print(_countDown);
-            isTimerEnabled = true;
-          });
+          if (this.mounted) {
+            setState(() {
+              _countDown--;
+              print(_countDown);
+              isTimerEnabled = true;
+            });
+          }
         }
       },
     );
@@ -192,7 +194,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                             child: Text(
                               'Enter the code we’ve sent to your email: $email',
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   color: greyText,
                                   fontFamily: "SourceSansProRegular"),
                             ),
@@ -310,7 +312,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                             Expanded(
                               child: Text(
                                 isTimerEnabled
-                                    ? 'Send again $_countDown'
+                                    ? 'Send again ($_countDown)'
                                     : "Send again",
                                 style: TextStyle(
                                     fontSize: 14,
@@ -323,7 +325,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                           ]),
                     )),
 
-                SizedBox(height: 80),
+                SizedBox(height: 50),
                 //
                 // Align(
                 //   alignment: Alignment.bottomCenter,

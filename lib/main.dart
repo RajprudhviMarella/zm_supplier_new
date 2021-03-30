@@ -29,7 +29,7 @@ class ZmApp extends StatelessWidget {
     print(initialRoute);
 
     return MaterialApp(
-      title: 'Kodeversitas',
+      title: 'Supplier',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
