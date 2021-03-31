@@ -7,9 +7,14 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:icon="@mipmap/ic_launcher"
-        android:label="zm_supplier"
+        android:allowBackup="true"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher_supplier"
+        android:label="Supplier"
+        android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_supplier_round"
+        android:supportsRtl="true"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

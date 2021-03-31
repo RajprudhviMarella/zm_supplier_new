@@ -58,7 +58,6 @@ class CustomerState extends State<CustomersPage> {
           customersData = getCustomersReportApiCalling(false, false);
           selectedCustomersDataFuture = getCustomersListCalling(false, false);
         });
-
       },
     );
   }
@@ -204,6 +203,7 @@ class CustomerState extends State<CustomersPage> {
     final difference = date2.difference(birthday).inDays;
     return dispalyTime(difference);
   }
+
   String dispalyTime(int diff) {
     if (diff == 0) {
       return 'Last ordered today';
@@ -292,13 +292,15 @@ class CustomerState extends State<CustomersPage> {
                     MaterialPageRoute(
                         builder: (context) =>
                             new SearchCustomersPage(customerDataList.first)));
-
               },
               decoration: new InputDecoration(
                   border: InputBorder.none,
                   prefixIcon: new Icon(Icons.search, color: Colors.grey),
                   hintText: Constants.txt_search_outlet,
-                  hintStyle: new TextStyle(color: greyText, fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                  hintStyle: new TextStyle(
+                      color: greyText,
+                      fontSize: 16,
+                      fontFamily: 'SourceSansProRegular')),
               // onChanged: searchOperation,
             ),
           ),
@@ -450,8 +452,6 @@ class CustomerState extends State<CustomersPage> {
                                   ? EdgeInsets.only(right: 15)
                                   : EdgeInsets.all(0),
                               child: Container(
-
-
                                   //  padding: last ? EdgeInsets.only(left: 20): null,
                                   width: 110,
                                   height: 102,
@@ -554,7 +554,6 @@ class CustomerState extends State<CustomersPage> {
                       customersData = getCustomersReportApiCalling(false, true);
                       selectedCustomersDataFuture =
                           getCustomersListCalling(false, true);
-
                     });
                     Navigator.of(context).pop();
                   },
@@ -585,7 +584,7 @@ class CustomerState extends State<CustomersPage> {
                 Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
               ],
             ),
-          // }
+            // }
           );
         });
   }
@@ -613,9 +612,11 @@ class CustomerState extends State<CustomersPage> {
     }
     return greyText;
   }
+
   Widget spaceBanner() {
     return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 5));
   }
+
   Widget list() {
     return Column(
       children: [
@@ -634,93 +635,102 @@ class CustomerState extends State<CustomersPage> {
                   itemCount: snapshot.data.outlets.length,
                   itemBuilder: (BuildContext context, int index) {
                     return new Column(children: <Widget>[
-                      ListTile(
-                          title: Transform.translate(
-                            offset: Offset(-5, 0),
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
-                              child: Text(snapshot.data.outlets[index].outlet.outletName,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: "SourceSansProSemiBold"),
+                      Container(
+                          color: Colors.white,
+                          child: ListTile(
+                              title: Transform.translate(
+                                offset: Offset(-5, 0),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    snapshot
+                                        .data.outlets[index].outlet.outletName,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: "SourceSansProSemiBold"),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          //  isThreeLine: true,
+                              //  isThreeLine: true,
 
-                          subtitle: Transform.translate(
-                            offset: Offset(-5, 0),
-                            child: Padding(
-                                padding: const EdgeInsets.only(top: 2.0, bottom: 10),
-                                child: Row(
-                                  children: [
-                                    Text(calculateTime(snapshot.data
-                                                      .outlets[index].lastOrdered),
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'SourceSansProRegular',
-                                          color: timeDiff(snapshot
-                                                          .data
-                                                          .outlets[index]
-                                                          .lastOrdered) >
-                                                      30 ||
-                                                  selectedIndex == 4
-                                              ? warningRed
-                                              : greyText),
-                                    ),
-                                  ],
-                                )),
-                          ),
+                              subtitle: Transform.translate(
+                                offset: Offset(-5, 0),
+                                child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 2.0, bottom: 10),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          calculateTime(snapshot
+                                              .data.outlets[index].lastOrdered),
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily:
+                                                  'SourceSansProRegular',
+                                              color: timeDiff(snapshot
+                                                              .data
+                                                              .outlets[index]
+                                                              .lastOrdered) >
+                                                          30 ||
+                                                      selectedIndex == 4
+                                                  ? warningRed
+                                                  : greyText),
+                                        ),
+                                      ],
+                                    )),
+                              ),
 
-                          //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                          leading: leadingImage(snapshot.data.outlets[index]),
+                              //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
+                              leading:
+                                  leadingImage(snapshot.data.outlets[index]),
+                              trailing: Transform.translate(
+                                offset: Offset(10, 0),
+                                child: IconButton(
+                                    icon:
+                                        snapshot.data.outlets[index].isFavourite
+                                            ? Image(
+                                                image: AssetImage(
+                                                    'assets/images/Star_yellow.png'),
+                                                fit: BoxFit.fill,
+                                                width: 22,
+                                                height: 22,
+                                              )
+                                            : ImageIcon(
+                                                AssetImage(
+                                                    'assets/images/Star_light_grey.png'),
+                                              ),
+                                    onPressed: () {
+                                      print('tapped $index');
+                                      tapOnFavourite(
+                                          index, snapshot.data.outlets[index]);
+                                    }),
+                              ),
+                              tileColor: Colors.white,
+                              onTap: () async {
+                                var outletName = snapshot
+                                    .data.outlets[index].outlet.outletName;
+                                var outletId = snapshot
+                                    .data.outlets[index].outlet.outletId;
+                                var lastOrderd = calculateTime(
+                                    snapshot.data.outlets[index].lastOrdered);
+                                var isStarred =
+                                    snapshot.data.outlets[index].isFavourite;
+                                print(snapshot
+                                    .data.outlets[index].outlet.outletId);
 
-                          trailing: Transform.translate(
-
-                            offset: Offset(10, 0),
-
-                            child: IconButton(
-                                icon: snapshot.data.outlets[index].isFavourite
-                                    ? Image(
-                                        image: AssetImage(
-                                            'assets/images/Star_yellow.png'),
-                                        fit: BoxFit.fill,
-                                        width: 22,
-                                        height: 22,
-                                      )
-                                    : ImageIcon(
-                                        AssetImage(
-                                            'assets/images/Star_light_grey.png'),
-                                      ),
-                                onPressed: () {
-                                  print('tapped $index');
-                                  tapOnFavourite(
-                                      index, snapshot.data.outlets[index]);
-                                }),
-                          ),
-                          tileColor: Colors.white,
-                          onTap: () async {
-                            var outletName =
-                                snapshot.data.outlets[index].outlet.outletName;
-                            var outletId =
-                                snapshot.data.outlets[index].outlet.outletId;
-                            var lastOrderd = calculateTime(snapshot
-                                            .data.outlets[index].lastOrdered);
-                            var isStarred =
-                                snapshot.data.outlets[index].isFavourite;
-                            print(snapshot.data.outlets[index].outlet.outletId);
-
-                            events.mixpanel.track(
-                                Events.TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS);
-                            events.mixpanel.flush();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        new CustomerDetailsPage(outletName,
-                                            outletId, lastOrderd, isStarred)));
-
-                          }),
+                                events.mixpanel.track(Events
+                                    .TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS);
+                                events.mixpanel.flush();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            new CustomerDetailsPage(
+                                                outletName,
+                                                outletId,
+                                                lastOrderd,
+                                                isStarred)));
+                              })),
                       Divider(
                         height: 1.5,
                         color: faintGrey,
