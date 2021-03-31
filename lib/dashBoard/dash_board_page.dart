@@ -612,7 +612,7 @@ class DashboardState extends State<DashboardPage> {
                                                                         .data
                                                                         .data
                                                                         .totalSpendingCurrMonth
-                                                                        .toString()
+                                                                        .toStringAsFixed(2)
                                                                         .replaceAllMapped(
                                                                             reg,
                                                                             (Match m) =>
