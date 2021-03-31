@@ -9,11 +9,11 @@
         android:name="io.flutter.app.FlutterApplication"
         android:allowBackup="true"
         android:fullBackupContent="false"
-        android:icon="@mipmap/ic_launcher_supplier"
+        android:icon="@mipmap/ic_launcher_new_supplier"
         android:label="Supplier"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_supplier_round"
+        android:roundIcon="@mipmap/ic_launcher_new_supplier_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true">
         <activity
