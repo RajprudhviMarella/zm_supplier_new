@@ -544,9 +544,16 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                             (BuildContext context, StateSetter setStates) {
                           return SingleChildScrollView(
                               child: Container(
-                                padding:(Platform.isAndroid) ?EdgeInsets.only(
-                                    bottom: MediaQuery.of(context).viewInsets.bottom):EdgeInsets.only(
-                                    top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                            padding: (Platform.isAndroid)
+                                ? EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom)
+                                : EdgeInsets.only(
+                                    top: 15.0,
+                                    right: 10.0,
+                                    left: 10.0,
+                                    bottom: 15.0),
                             color: Colors.white,
                             child: Center(
                               child: Column(
@@ -1095,7 +1102,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     _showLoader();
     CreateOrderModel createOrderModel = new CreateOrderModel();
     createOrderModel.timeDelivered = selectedDate;
-    createOrderModel.notes = widget.orderNotes;
+    createOrderModel.notes = _txtSpecialRequest.text.toString();
     createOrderModel.orderId = widget.orderId;
     List<Product> productslist = [];
     for (var i = 0; i < widget.marketList.length; i++) {
