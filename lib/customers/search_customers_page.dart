@@ -315,7 +315,7 @@ class SearchCustomersState extends State<SearchCustomersPage> {
                 var outletName = snapShot[index].outlet.outletName;
                 var outletId = snapShot[index].outlet.outletId;
                 var lastOrderd =
-                        timeDiff(snapShot[index].lastOrdered);
+                        calculateTime(snapShot[index].lastOrdered);
                 var isStarred = snapShot[index].isFavourite;
                 print(snapShot[index].outlet.outletId);
                 final result = await Navigator.push(
