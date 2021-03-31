@@ -195,14 +195,29 @@ class CustomerState extends State<CustomersPage> {
     final birthday = DateTime.parse(readTimestamp(timeStamp));
     final date2 = DateTime.now();
     final difference = date2.difference(birthday).inDays;
+    if (timeStamp > 0) {
+      if (difference > 30) {
+        return warningRed;
+      } else {
+        return greyText;
+      }
+    } else {
+      return greyText;
+    }
     return difference; //dispalyTime(difference);
   }
 
   String calculateTime(int timeStamp) {
-    final birthday = DateTime.parse(readTimestamp(timeStamp));
-    final date2 = DateTime.now();
-    final difference = date2.difference(birthday).inDays;
-    return dispalyTime(difference);
+    if (timeStamp > 0) {
+      final birthday = DateTime.parse(readTimestamp(timeStamp));
+      final date2 = DateTime.now();
+      final difference = date2
+          .difference(birthday)
+          .inDays;
+      return dispalyTime(difference);
+    } else {
+      return 'N/A';
+    }
   }
   String dispalyTime(int diff) {
     if (diff == 0) {
@@ -662,11 +677,8 @@ class CustomerState extends State<CustomersPage> {
                                           color: timeDiff(snapshot
                                                           .data
                                                           .outlets[index]
-                                                          .lastOrdered) >
-                                                      30 ||
-                                                  selectedIndex == 4
-                                              ? warningRed
-                                              : greyText),
+                                                          .lastOrdered)
+                                      ),
                                     ),
                                   ],
                                 )),
