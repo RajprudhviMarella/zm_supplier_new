@@ -68,11 +68,11 @@ class DashboardState extends State<DashboardPage> {
   List<Orders> draftOrdersList;
   int i = 1;
 
-
   ScrollController _scrollController;
   double _scrollPosition;
 
   bool isScrolled = false;
+
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
@@ -104,20 +104,14 @@ class DashboardState extends State<DashboardPage> {
     draftOrdersFuture = getDraftOrders();
 
     Future.delayed(Duration.zero, () {
-      final Map arguments = ModalRoute
-          .of(context)
-          .settings
-          .arguments as Map;
+      final Map arguments = ModalRoute.of(context).settings.arguments as Map;
       if (arguments['orderPlaced'] != null) {
-        Future.delayed(Duration(seconds: 2), ()
-        {
-
+        Future.delayed(Duration(seconds: 2), () {
           DartNotificationCenter.post(channel: Constants.draft_notifier);
           arguments.remove(arguments['orderPlaced']);
           arguments.remove('orderPlaced');
         });
-      } else {
-      }
+      } else {}
     });
 
     // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
@@ -127,10 +121,9 @@ class DashboardState extends State<DashboardPage> {
       onNotification: (result) {
         print('listener called');
         setState(() {
-            draftOrdersFuture = getDraftOrders();
-            ordersListToday = _retriveTodayOrders();
+          draftOrdersFuture = getDraftOrders();
+          ordersListToday = _retriveTodayOrders();
         });
-
       },
     );
 
@@ -140,34 +133,35 @@ class DashboardState extends State<DashboardPage> {
       onNotification: (result) {
         print('listener called');
         setState(() {
-          Future.delayed(const Duration(milliseconds: 500), ()
-          {
+          Future.delayed(const Duration(milliseconds: 500), () {
             print('acknowledge listener called with delay');
             ordersListToday = _retriveTodayOrders();
             ordersListYesterday = _retriveYesterdayOrders();
           });
         });
-
       },
     );
-
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _scrollController.removeListener(_scrollListener);
     super.dispose();
     print('dispose');
     // DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.draft_notifier);
-   // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(observer: 1, channel: Constants.acknowledge_notifier);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.draft_notifier);
+    // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.acknowledge_notifier);
   }
+
   Mixpanel mixpanel;
 
   void mixPanelEvents() async {
     mixpanel = await Constants.initMixPanel();
   }
+
   // bool second = false;
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
     LoginResponse user =
@@ -194,7 +188,7 @@ class DashboardState extends State<DashboardPage> {
       return summaryData;
     } else {
       print('failed get summary data' + response.statusCode.toString());
-      if(response.statusCode == 401) {
+      if (response.statusCode == 401) {
         callLoginApi(0);
       }
     }
@@ -222,9 +216,9 @@ class DashboardState extends State<DashboardPage> {
 
   Future<Void> callLoginApi(int api) async {
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
     String passwordEncrypted =
-    await sharedPref.readData(Constants.PASSWORD_ENCRYPTED);
+        await sharedPref.readData(Constants.PASSWORD_ENCRYPTED);
     Authentication login = new Authentication();
 
     login.authenticate(user.user.email, passwordEncrypted).then((value) async {
@@ -242,23 +236,20 @@ class DashboardState extends State<DashboardPage> {
         if (api == 0) {
           orderSummaryData = getSummaryDataApiCalling();
           setState(() {});
-          } else if (api == 1) {
+        } else if (api == 1) {
           ordersListToday = _retriveTodayOrders();
           setState(() {});
         } else if (api == 2) {
           ordersListYesterday = _retriveYesterdayOrders();
           setState(() {});
-        }
-        else if (api == 3) {
+        } else if (api == 3) {
           draftOrdersFuture = getDraftOrders();
           setState(() {});
         }
-
-      } else {
-
-      }
+      } else {}
     });
   }
+
   Future<List<Orders>> getDraftOrders() async {
     LoginResponse user =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
@@ -287,7 +278,7 @@ class DashboardState extends State<DashboardPage> {
       ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get draft orders');
-      if(response.statusCode == 401) {
+      if (response.statusCode == 401) {
         callLoginApi(3);
       }
     }
@@ -338,7 +329,7 @@ class DashboardState extends State<DashboardPage> {
       ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get orders data');
-      if(response.statusCode == 401) {
+      if (response.statusCode == 401) {
         callLoginApi(2);
       }
     }
@@ -389,7 +380,7 @@ class DashboardState extends State<DashboardPage> {
       ordersData = OrdersBaseResponse.fromJson(json.decode(response.body));
     } else {
       print('failed get orders data');
-      if(response.statusCode == 401) {
+      if (response.statusCode == 401) {
         callLoginApi(1);
       }
     }
@@ -433,7 +424,6 @@ class DashboardState extends State<DashboardPage> {
 
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-
 
     return new Scaffold(
       appBar: new AppBar(
@@ -579,18 +569,22 @@ class DashboardState extends State<DashboardPage> {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) => ViewOrdersPage(null)));
+                                                    builder: (context) =>
+                                                        ViewOrdersPage(null)));
                                           },
                                           child: Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
                                             child: Container(
                                               color: Colors.white,
                                               child: Column(children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 20, top: 15),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 20, top: 15),
                                                   child: Align(
-                                                      alignment: Alignment.topLeft,
+                                                      alignment:
+                                                          Alignment.topLeft,
                                                       child: new Text(
                                                         currentIndex == 0
                                                             ? "Total orders"
@@ -605,10 +599,12 @@ class DashboardState extends State<DashboardPage> {
                                                       )),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 20, top: 0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 20, top: 0),
                                                   child: Align(
-                                                      alignment: Alignment.topLeft,
+                                                      alignment:
+                                                          Alignment.topLeft,
                                                       child: new Text(
                                                         currentIndex == 0
                                                             ? '\$' +
@@ -616,7 +612,7 @@ class DashboardState extends State<DashboardPage> {
                                                                         .data
                                                                         .data
                                                                         .totalSpendingCurrMonth
-                                                                        .toString()
+                                                                        .toStringAsFixed(2)
                                                                         .replaceAllMapped(
                                                                             reg,
                                                                             (Match m) =>
@@ -631,10 +627,12 @@ class DashboardState extends State<DashboardPage> {
                                                       )),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 20, top: 0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 20, top: 0),
                                                   child: Align(
-                                                      alignment: Alignment.topLeft,
+                                                      alignment:
+                                                          Alignment.topLeft,
                                                       child: new Text(
                                                         "this month",
                                                         style: TextStyle(
@@ -1075,137 +1073,140 @@ class DashboardState extends State<DashboardPage> {
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.hasData &&
                     snapshot.data.isNotEmpty) {
-                        return ListView.builder(
-                          key: UniqueKey(),
-                          //PageStorageKey(selectedTab == "Today" ? 'a' : 'b'),
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (BuildContext ctx, int index) {
-                            return new Column(children: <Widget>[
-                              ListTile(
-                                title: Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    snapshot.data[index].outlet.outletName,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: "SourceSansProSemiBold"),
-                                  ),
+                  return ListView.builder(
+                    key: UniqueKey(),
+                    //PageStorageKey(selectedTab == "Today" ? 'a' : 'b'),
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext ctx, int index) {
+                      return new Column(children: <Widget>[
+                        Container(
+                            color: Colors.white,
+                            child: ListTile(
+                              title: Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Text(
+                                  snapshot.data[index].outlet.outletName,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: "SourceSansProSemiBold"),
                                 ),
-                                isThreeLine: true,
-                                subtitle: Container(
-                                  margin: EdgeInsets.only(top: 3.0, bottom: 10),
-                                  child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: <Widget>[
-                                        Row(children: <Widget>[
-                                          ImageIcon(
-                                            AssetImage(
-                                                "assets/images/Truck-black.png"),
-                                            size: 14,
-                                          ),
-                                          SizedBox(width: 2),
-                                          Text(
-                                            readTimestamp(
-                                                snapshot.data[index]
-                                                    .timeDelivered),
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: "SourceSansProRegular",
-                                                color: Colors.black),
-                                          ),
-                                          SizedBox(width: 5),
-                                          Text(
-                                            snapshot.data[index].orderId,
-                                            style: TextStyle(
-                                                fontSize: 12.0,
-                                                fontFamily: "SourceSansProRegular",
-                                                color: greyText),
-                                          ),
-                                          SizedBox(width: 2),
-                                          if (snapshot.data[index]
-                                              .isAcknowledged !=
-                                              null)
-                                            Container(
-                                              width:
-                                              snapshot.data[index]
-                                                  .isAcknowledged
-                                                  ? 12
-                                                  : 0,
-                                              child: InkResponse(
-                                                child: Image.asset(
-                                                  "assets/images/icon-tick-green.png",
-                                                  width: 12,
-                                                  height: 12,
-                                                ),
+                              ),
+                              isThreeLine: true,
+                              subtitle: Container(
+                                margin: EdgeInsets.only(top: 3.0, bottom: 10),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Row(children: <Widget>[
+                                        ImageIcon(
+                                          AssetImage(
+                                              "assets/images/Truck-black.png"),
+                                          size: 14,
+                                        ),
+                                        SizedBox(width: 2),
+                                        Text(
+                                          readTimestamp(snapshot
+                                              .data[index].timeDelivered),
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily:
+                                                  "SourceSansProRegular",
+                                              color: Colors.black),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          snapshot.data[index].orderId,
+                                          style: TextStyle(
+                                              fontSize: 12.0,
+                                              fontFamily:
+                                                  "SourceSansProRegular",
+                                              color: greyText),
+                                        ),
+                                        SizedBox(width: 2),
+                                        if (snapshot
+                                                .data[index].isAcknowledged !=
+                                            null)
+                                          Container(
+                                            width: snapshot
+                                                    .data[index].isAcknowledged
+                                                ? 12
+                                                : 0,
+                                            child: InkResponse(
+                                              child: Image.asset(
+                                                "assets/images/icon-tick-green.png",
+                                                width: 12,
+                                                height: 12,
                                               ),
                                             ),
-                                          Spacer(),
-                                          Text(
-                                              '\$' +
-                                                  snapshot.data[index].amount
-                                                      .total
-                                                      .amountV1
-                                                      .toStringAsFixed(2)
-                                                      .replaceAllMapped(reg,
-                                                          (
-                                                          Match m) => '${m[1]},'),
-                                              textAlign: TextAlign.end,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily: "SourceSansProRegular",
-                                                  color: Colors.black)),
-                                        ]),
-                                        if (snapshot.data[index].orderStatus !=
-                                            'Placed')
-                                          Constants.OrderStatusColor(
-                                              snapshot.data[index]),
+                                          ),
+                                        Spacer(),
+                                        Text(
+                                            '\$' +
+                                                snapshot.data[index].amount
+                                                    .total.amountV1
+                                                    .toStringAsFixed(2)
+                                                    .replaceAllMapped(
+                                                        reg,
+                                                        (Match m) =>
+                                                            '${m[1]},'),
+                                            textAlign: TextAlign.end,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily:
+                                                    "SourceSansProRegular",
+                                                color: Colors.black)),
                                       ]),
-                                ),
-
-                                // trailing: Column(
-                                //   mainAxisAlignment: MainAxisAlignment.center,
-                                //   children: [
-                                //     Container(
-                                //       width: 100,
-                                //       child: Text(
-                                //           '\$' +
-                                //               snapshot
-                                //                   .data[index].amount.total.amountV1
-                                //                   .toStringAsFixed(2)
-                                //                   .replaceAllMapped(
-                                //                       reg, (Match m) => '${m[1]},'),
-                                //           textAlign: TextAlign.end,
-                                //           style: TextStyle(
-                                //               fontSize: 16,
-                                //               fontFamily: "SourceSansProRegular",
-                                //               color: Colors.black)),
-                                //     ),
-                                //   ],
-                                // ),
-
-                                //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                                leading: leadingImage(snapshot.data[index]),
-
-                                tileColor: Colors.white,
-                                onTap: () {
-                                  print('item tapped $index');
-                                  moveToOrderDetailsPage(snapshot.data[index]);
-                                },
+                                      if (snapshot.data[index].orderStatus !=
+                                          'Placed')
+                                        Constants.OrderStatusColor(
+                                            snapshot.data[index]),
+                                    ]),
                               ),
-                              Divider(
-                                height: 1.5,
-                                color: faintGrey,
-                              ),
-                              if (index == snapshot.data.length - 1)
-                                Container(
-                                  height: 80,
-                                )
-                            ]);
-                          },
-                        );
+
+                              // trailing: Column(
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   children: [
+                              //     Container(
+                              //       width: 100,
+                              //       child: Text(
+                              //           '\$' +
+                              //               snapshot
+                              //                   .data[index].amount.total.amountV1
+                              //                   .toStringAsFixed(2)
+                              //                   .replaceAllMapped(
+                              //                       reg, (Match m) => '${m[1]},'),
+                              //           textAlign: TextAlign.end,
+                              //           style: TextStyle(
+                              //               fontSize: 16,
+                              //               fontFamily: "SourceSansProRegular",
+                              //               color: Colors.black)),
+                              //     ),
+                              //   ],
+                              // ),
+
+                              //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
+                              leading: leadingImage(snapshot.data[index]),
+
+                              tileColor: Colors.white,
+                              onTap: () {
+                                print('item tapped $index');
+                                moveToOrderDetailsPage(snapshot.data[index]);
+                              },
+                            )),
+                        Divider(
+                          height: 1.5,
+                          color: faintGrey,
+                        ),
+                        if (index == snapshot.data.length - 1)
+                          Container(
+                            height: 80,
+                          )
+                      ]);
+                    },
+                  );
                 } else {
                   return Container(
                     color: Colors.white,

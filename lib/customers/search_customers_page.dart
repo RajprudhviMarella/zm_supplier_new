@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -151,11 +152,44 @@ class SearchCustomersState extends State<SearchCustomersPage> {
     return formattedDate;
   }
 
-  int timeDiff(int timeStamp) {
+  String calculateTime(int timeStamp) {
+    if (timeStamp > 0) {
+      final birthday = DateTime.parse(readTimestamp(timeStamp));
+      final date2 = DateTime.now();
+      final difference = date2
+          .difference(birthday)
+          .inDays;
+      return dispalyTime(difference);
+    } else {
+      return 'N/A';
+    }
+  }
+
+  String dispalyTime(int diff) {
+    if (diff == 0) {
+      return 'Last ordered today';
+    } else if (diff == 1) {
+      return 'Last ordered yesterday';
+    } else {
+      return 'Last ordered ' + diff.toString() + ' days ago' ?? "";
+    }
+  }
+
+  timeDiff(int timeStamp) {
+    //the birthday's date
     final birthday = DateTime.parse(readTimestamp(timeStamp));
     final date2 = DateTime.now();
     final difference = date2.difference(birthday).inDays;
-    return difference;
+    if (timeStamp > 0) {
+      if (difference > 30) {
+        return warningRed;
+      } else {
+        return greyText;
+      }
+    } else {
+      return greyText;
+    }
+    return difference; //dispalyTime(difference);
   }
 
   Widget displayList(BuildContext context, bool bool) {
@@ -253,15 +287,10 @@ class SearchCustomersState extends State<SearchCustomersPage> {
                 ),
               ),
               subtitle: Text(
-                'Last ordered ' +
-                        timeDiff(snapShot[index].lastOrdered).toString() +
-                        ' days ago' ??
-                    "",
+                        calculateTime(snapShot[index].lastOrdered),
                 style: TextStyle(
                   fontSize: 12.0,
-                  color: timeDiff(snapShot[index].lastOrdered) > 30
-                      ? warningRed
-                      : greyText,
+                  color: timeDiff(snapShot[index].lastOrdered),
                   fontFamily: "SourceSansProRegular",
                 ),
               ),
@@ -285,10 +314,8 @@ class SearchCustomersState extends State<SearchCustomersPage> {
               onTap: () async {
                 var outletName = snapShot[index].outlet.outletName;
                 var outletId = snapShot[index].outlet.outletId;
-                var lastOrderd = 'Last ordered ' +
-                        timeDiff(snapShot[index].lastOrdered).toString() +
-                        ' days ago' ??
-                    "";
+                var lastOrderd =
+                        calculateTime(snapShot[index].lastOrdered);
                 var isStarred = snapShot[index].isFavourite;
                 print(snapShot[index].outlet.outletId);
                 final result = await Navigator.push(
@@ -365,7 +392,9 @@ class SearchCustomersState extends State<SearchCustomersPage> {
     favourite
         .updateFavourite(
             mudra, supplierID, customers.outlet.outletId, customers.isFavourite)
-        .then((value) async {});
+        .then((value) async {
+      DartNotificationCenter.post(channel: Constants.favourite_notifier);
+    });
   }
 
   String outletPlaceholder(String name) {

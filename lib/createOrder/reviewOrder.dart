@@ -20,6 +20,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'dart:io' show Platform;
 
 /**
  * Created by RajPrudhviMarella on 04/Mar/2021.
@@ -518,11 +519,19 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       ),
                     );
                     _txtSkuNotesEditController.value = TextEditingValue(
-                      text: widget.marketList[index].skuNotes,
-                      selection: TextSelection.fromPosition(
-                        TextPosition(
-                            offset: widget.marketList[index].skuNotes.length),
-                      ),
+                      text: (widget.marketList[index].skuNotes != null)
+                          ? widget.marketList[index].skuNotes
+                          : " ",
+                      selection: (widget.marketList[index].skuNotes != null &&
+                              widget.marketList[index].skuNotes.length != null)
+                          ? TextSelection.fromPosition(
+                              TextPosition(
+                                  offset:
+                                      widget.marketList[index].skuNotes.length),
+                            )
+                          : TextSelection.fromPosition(
+                              TextPosition(offset: 0),
+                            ),
                     );
                     setState(() {
                       if (counter > 0 &&
@@ -543,9 +552,16 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                             (BuildContext context, StateSetter setStates) {
                           return SingleChildScrollView(
                               child: Container(
-                            padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom),
+                            padding: (Platform.isAndroid)
+                                ? EdgeInsets.only(
+                                    bottom: MediaQuery.of(context)
+                                        .viewInsets
+                                        .bottom)
+                                : EdgeInsets.only(
+                                    top: 15.0,
+                                    right: 10.0,
+                                    left: 10.0,
+                                    bottom: 15.0),
                             color: Colors.white,
                             child: Center(
                               child: Column(
@@ -718,7 +734,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                     : null,
                                                 controller:
                                                     _textEditingController,
-                                                keyboardType: keyboard,
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        signed: false,
+                                                        decimal: true),
                                                 inputFormatters: <
                                                     TextInputFormatter>[
                                                   regExp,
@@ -1072,7 +1091,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   Widget displaySkuNotesName(String text) {
-    if (text.isNotEmpty) {
+    if (text != null && text.isNotEmpty) {
       return Container(
           margin: EdgeInsets.only(top: 3.0, bottom: 3.0),
           child: Text(text,
@@ -1091,7 +1110,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     _showLoader();
     CreateOrderModel createOrderModel = new CreateOrderModel();
     createOrderModel.timeDelivered = selectedDate;
-    createOrderModel.notes = widget.orderNotes;
+    createOrderModel.notes = _txtSpecialRequest.text.toString();
     createOrderModel.orderId = widget.orderId;
     List<Product> productslist = [];
     for (var i = 0; i < widget.marketList.length; i++) {
@@ -1448,12 +1467,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
-      // moveToDashBoard();
-      DartNotificationCenter.unsubscribe(
-          observer: 1, channel: Constants.draft_notifier);
-      DartNotificationCenter.unsubscribe(
-          observer: 1, channel: Constants.acknowledge_notifier);
-      Navigator.pushNamed(context, '/home', arguments: {'orderPlaced': true});
+      moveToDashBoard();
     });
   }
 }
