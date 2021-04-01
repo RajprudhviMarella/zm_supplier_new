@@ -555,8 +555,8 @@ class MarketListDesign extends State<MarketListPage>
                   return SingleChildScrollView(
                       child: Container(
                     padding:(Platform.isAndroid) ?EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom):EdgeInsets.only(
-                          top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                        bottom: MediaQuery.of(context).viewInsets.bottom): EdgeInsets.fromLTRB(0, 15, 0,
+                        MediaQuery.of(context).viewInsets.bottom + 15),
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -687,7 +687,7 @@ class MarketListDesign extends State<MarketListPage>
                                 Container(
                                     width: 200.0,
                                     child: TextFormField(
-                                        autofocus: true,
+                                        autofocus: false,
                                         autovalidate: true,
                                         validator: (value) => (value != null &&
                                                 value.isNotEmpty &&
@@ -1188,8 +1188,8 @@ class MarketListDesign extends State<MarketListPage>
           return SingleChildScrollView(
               child: Container(
                 padding:(Platform.isAndroid) ?EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom):EdgeInsets.only(
-                    top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                    bottom: MediaQuery.of(context).viewInsets.bottom): EdgeInsets.fromLTRB(0, 15, 0,
+                    MediaQuery.of(context).viewInsets.bottom + 15),
             color: Colors.white,
             child: Center(
               child: Column(
@@ -1215,7 +1215,7 @@ class MarketListDesign extends State<MarketListPage>
                       keyboardType: TextInputType.text,
                       maxLines: null,
                       maxLength: 150,
-                      autofocus: true,
+                      autofocus: false,
                       cursorColor: Colors.blue,
                       decoration: InputDecoration(
                         fillColor: faintGrey,
@@ -1398,11 +1398,11 @@ class MarketListDesign extends State<MarketListPage>
 
   Widget displayAddOrder(OutletMarketList snapShot) {
     if (snapShot.isSelected) {
-      if (snapShot.selectedQuantity.length < 4) {
+      if (snapShot.selectedQuantity.length <= 3) {
         return Container(
             margin: EdgeInsets.only(right: 5.0),
-            height: 40.0,
-            width: 40.0,
+            height: 45.0,
+            width: 45.0,
             child: Center(
               child: Text(
                 snapShot.selectedQuantity,
