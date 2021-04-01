@@ -54,7 +54,7 @@ static get retrieve_outlet_market_list {
  return Constants.INVENTORY_SERVER + "inventory/marketlist";
 }
 static get order_summary_url {
-  Constants.REPORT_SERVER + "reports/order/summary";
+  return  Constants.REPORT_SERVER + "reports/order/summary";
 }
 static get retrive_paginated_orders_url {
  return Constants.ORDER_MANAGEMENT_SERVER + "orders/po";
