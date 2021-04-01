@@ -69,6 +69,7 @@ class MarketListDesign extends State<MarketListPage>
   TextInputType keyboard;
   TextInputFormatter regExp;
   bool isValid = false;
+  String cutOffDate = "";
 
   @override
   void initState() {
@@ -110,200 +111,159 @@ class MarketListDesign extends State<MarketListPage>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        key: globalKey,
-        backgroundColor: faintGrey,
-        body: WillPopScope(
-            onWillPop: () async {
-              createDraftOrderAPI();
-              return false;
-            },
-            child: ModalProgressHUD(
-                inAsyncCall: _isShowLoader,
-                child: FutureBuilder<List<DeliveryDateList>>(
-                    future: deliveryDatesListFuture,
-                    builder: (context, snapShot) {
-                      if (snapShot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        if (snapShot.connectionState == ConnectionState.done &&
-                            snapShot.hasData &&
-                            snapShot.data.isNotEmpty) {
-                          return Scaffold(
-                            bottomNavigationBar: Container(
-                                height: 80.0,
-                                color: Colors.white,
-                                child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: 15.0, right: 15.0),
-                                    child: Row(children: <Widget>[
-                                      FloatingActionButton.extended(
-                                        backgroundColor: (orderNotes != null &&
-                                                orderNotes.isNotEmpty &&
-                                                orderNotes == "Notes")
-                                            ? faintGrey
-                                            : buttonBlue,
-                                        foregroundColor: Colors.white,
-                                        onPressed: () {
-                                          events.mixpanel.track(Events
-                                              .TAP_MARKET_LIST_SELECT_ORDER_NOTES);
-                                          events.mixpanel.flush();
-                                          createAddNotesOrder();
-                                        },
-                                        label: Container(
-                                          width: 45.0,
-                                          child: Text(
-                                            orderNotes,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                letterSpacing: 0,
-                                                fontFamily:
-                                                    'SourceSansProSemiBold',
-                                                color: (orderNotes != null &&
-                                                        orderNotes.isNotEmpty &&
-                                                        orderNotes == "Notes")
-                                                    ? greyText
-                                                    : Colors.white),
-                                          ),
-                                        ),
-                                        icon: Image(
-                                          image: AssetImage((orderNotes !=
-                                                      null &&
-                                                  orderNotes.isNotEmpty &&
-                                                  orderNotes == "Notes")
-                                              ? "assets/images/ic_notes.png"
-                                              : "assets/images/icon_notes_white.png"),
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                      new Spacer(),
-                                      RaisedButton(
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                              left: 7.0, right: 7.0),
-                                          height: 50,
-                                          child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Text(
-                                                  "Next",
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontFamily:
-                                                          'SourceSansProSemiBold',
-                                                      color: Colors.white),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 5.0, top: 2.0),
-                                                  child: Icon(
-                                                    Icons
-                                                        .arrow_forward_outlined,
-                                                    color: Colors.white,
-                                                    size: 22,
-                                                  ),
-                                                ),
-                                              ]),
-                                        ),
-                                        color: lightGreen,
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
-                                        ),
-                                        onPressed: () {
-                                          events.mixpanel.track(
-                                              Events.TAP_MARKET_LIST_NEXT,
-                                              properties: {
-                                                'ItemCount':
-                                                    selectedMarketList.length,
-                                                'OrderNotes': (orderNotes !=
-                                                            null &&
-                                                        orderNotes.isNotEmpty &&
-                                                        orderNotes != "Notes")
-                                                    ? true
-                                                    : false,
-                                                'OutletID': widget.outletId,
-                                                'OutletName': widget.outletName
-                                              });
-                                          events.mixpanel.flush();
-
-                                          if (selectedMarketList != null &&
-                                              selectedMarketList.isNotEmpty) {
-                                            moveToReviewOrdersScreen();
-                                            print(
-                                                jsonEncode(selectedMarketList));
-                                          } else {
-                                            globalKey.currentState.showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                    'Please select at least one product'),
-                                                duration: Duration(seconds: 1),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      )
-                                    ]))),
-                            body: displayList(context),
-                            appBar: AppBar(
-                              centerTitle: true,
-                              backgroundColor: Colors.white,
-                              bottomOpacity: 0.0,
-                              elevation: 2.0,
-                              leading: Container(
-                                padding: EdgeInsets.only(right: 12.0),
-                                child: IconButton(
-                                  icon: Icon(Icons.arrow_back_ios_outlined,
-                                      color: Colors.black),
-                                  onPressed: () => createDraftOrderAPI(),
+    return ModalProgressHUD(
+        inAsyncCall: _isShowLoader,
+        child: Scaffold(
+            key: globalKey,
+            backgroundColor: faintGrey,
+            bottomNavigationBar: Container(
+                height: 80.0,
+                color: Colors.white,
+                child: Container(
+                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    child: Row(children: <Widget>[
+                      FloatingActionButton.extended(
+                        backgroundColor: (orderNotes != null &&
+                                orderNotes.isNotEmpty &&
+                                orderNotes == "Notes")
+                            ? faintGrey
+                            : buttonBlue,
+                        foregroundColor: Colors.white,
+                        onPressed: () {
+                          events.mixpanel
+                              .track(Events.TAP_MARKET_LIST_SELECT_ORDER_NOTES);
+                          events.mixpanel.flush();
+                          createAddNotesOrder();
+                        },
+                        label: Container(
+                          width: 45.0,
+                          child: Text(
+                            orderNotes,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 16,
+                                letterSpacing: 0,
+                                fontFamily: 'SourceSansProSemiBold',
+                                color: (orderNotes != null &&
+                                        orderNotes.isNotEmpty &&
+                                        orderNotes == "Notes")
+                                    ? greyText
+                                    : Colors.white),
+                          ),
+                        ),
+                        icon: Image(
+                          image: AssetImage((orderNotes != null &&
+                                  orderNotes.isNotEmpty &&
+                                  orderNotes == "Notes")
+                              ? "assets/images/ic_notes.png"
+                              : "assets/images/icon_notes_white.png"),
+                        ),
+                        elevation: 0,
+                      ),
+                      new Spacer(),
+                      RaisedButton(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 7.0, right: 7.0),
+                          height: 50,
+                          child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  "Next",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: 'SourceSansProSemiBold',
+                                      color: Colors.white),
                                 ),
+                                Container(
+                                  margin: EdgeInsets.only(left: 5.0, top: 2.0),
+                                  child: Icon(
+                                    Icons.arrow_forward_outlined,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                ),
+                              ]),
+                        ),
+                        color: lightGreen,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        onPressed: () {
+                          events.mixpanel
+                              .track(Events.TAP_MARKET_LIST_NEXT, properties: {
+                            'ItemCount': selectedMarketList.length,
+                            'OrderNotes': (orderNotes != null &&
+                                    orderNotes.isNotEmpty &&
+                                    orderNotes != "Notes")
+                                ? true
+                                : false,
+                            'OutletID': widget.outletId,
+                            'OutletName': widget.outletName
+                          });
+                          events.mixpanel.flush();
+
+                          if (selectedMarketList != null &&
+                              selectedMarketList.isNotEmpty) {
+                            moveToReviewOrdersScreen();
+                            print(jsonEncode(selectedMarketList));
+                          } else {
+                            globalKey.currentState.showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Please select at least one product'),
+                                duration: Duration(seconds: 1),
                               ),
-                              title: _isSearching
-                                  ? _buildSearchField()
-                                  : Container(
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            widget.outletName,
-                                            style: new TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18.0,
-                                                fontFamily:
-                                                    "SourceSansProBold"),
-                                          ),
-                                          Text(
-                                            "Cutoff for earliest delivery: " +
-                                                DateFormat('d MMM, hh:mm a')
-                                                    .format(DateTime
-                                                        .fromMillisecondsSinceEpoch(
-                                                            lstDeliveryDates[0]
-                                                                    .deliveryDates[
-                                                                        0]
-                                                                    .cutOffDate *
-                                                                1000)),
-                                            style: new TextStyle(
-                                                color: grey_text,
-                                                fontSize: 12.0,
-                                                fontFamily:
-                                                    "SourceSansProRegular"),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                              actions: _buildActions(),
-                            ),
-                          );
-                        } else {
-                          return Container();
-                        }
-                      }
-                    }))));
+                            );
+                          }
+                        },
+                      )
+                    ]))),
+            appBar: AppBar(
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              bottomOpacity: 0.0,
+              elevation: 2.0,
+              leading: Container(
+                padding: EdgeInsets.only(right: 12.0),
+                child: IconButton(
+                  icon:
+                      Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+                  onPressed: () => createDraftOrderAPI(),
+                ),
+              ),
+              title: _isSearching
+                  ? _buildSearchField()
+                  : Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            widget.outletName,
+                            style: new TextStyle(
+                                color: Colors.black,
+                                fontSize: 18.0,
+                                fontFamily: "SourceSansProBold"),
+                          ),
+                          Text(
+                            "Cutoff for earliest delivery: " + cutOffDate,
+                            style: new TextStyle(
+                                color: grey_text,
+                                fontSize: 12.0,
+                                fontFamily: "SourceSansProRegular"),
+                          ),
+                        ],
+                      ),
+                    ),
+              actions: _buildActions(),
+            ),
+            body: WillPopScope(
+                onWillPop: () async {
+                  createDraftOrderAPI();
+                  return false;
+                },
+                child: displayList(context))));
   }
 
   Widget headers(context, String name, double size) {
@@ -496,8 +456,6 @@ class MarketListDesign extends State<MarketListPage>
       margin: EdgeInsets.only(top: 2.0),
       child: GestureDetector(
           onTap: () {
-            events.mixpanel.track(Events.TAP_MARKET_LIST_ADD_SKU);
-            events.mixpanel.flush();
             if (snapShot
                 .data[index].priceList[0].unitSizeAlias.isDecimalAllowed) {
               print(snapShot
@@ -531,10 +489,15 @@ class MarketListDesign extends State<MarketListPage>
               ),
             );
             _txtSkuNotesEditController.value = TextEditingValue(
-              text: snapShot.data[index].skuNotes,
-              selection: TextSelection.fromPosition(
-                TextPosition(offset: snapShot.data[index].skuNotes.length),
-              ),
+              text:(snapShot.data[index].skuNotes!=null)? snapShot.data[index].skuNotes:" ",
+              selection: (snapShot.data[index].skuNotes!=null && snapShot.data[index].skuNotes.length != null)
+                  ? TextSelection.fromPosition(
+                      TextPosition(
+                          offset: snapShot.data[index].skuNotes.length),
+                    )
+                  : TextSelection.fromPosition(
+                      TextPosition(offset: 0),
+                    ),
             );
             setState(() {
               if (counter > 0 &&
@@ -546,6 +509,8 @@ class MarketListDesign extends State<MarketListPage>
                 //btnColor = lightGreen.withOpacity(0.5);
               }
             });
+            events.mixpanel.track(Events.TAP_MARKET_LIST_ADD_SKU);
+            events.mixpanel.flush();
             showModalBottomSheet<void>(
               context: context,
               isScrollControlled: true,
@@ -559,6 +524,7 @@ class MarketListDesign extends State<MarketListPage>
                             bottom: MediaQuery.of(context).viewInsets.bottom)
                         : EdgeInsets.fromLTRB(0, 15, 0,
                             MediaQuery.of(context).viewInsets.bottom + 15),
+
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -1281,7 +1247,10 @@ class MarketListDesign extends State<MarketListPage>
   }
 
   createDraftOrderAPI() async {
-    if (selectedMarketList != null && selectedMarketList.length > 0) {
+    if (allOutletMarketList != null &&
+        allOutletMarketList.length > 0 &&
+        selectedMarketList != null &&
+        selectedMarketList.length > 0) {
       _showLoader();
       CreateOrderModel createOrderModel = new CreateOrderModel();
       createOrderModel.notes = _txtOrderNotesEditController.text.toString();
@@ -1366,6 +1335,15 @@ class MarketListDesign extends State<MarketListPage>
     Map results = json.decode(response.body);
     deliveryDateList = SupplierDeliveryDates.fromJson(results);
     lstDeliveryDates = deliveryDateList.data;
+    if (lstDeliveryDates != null &&
+        lstDeliveryDates[0].deliveryDates != null &&
+        lstDeliveryDates[0].deliveryDates[0].cutOffDate != null)
+      setState(() {
+        cutOffDate = DateFormat('d MMM, hh:mm a').format(
+            DateTime.fromMillisecondsSinceEpoch(
+                lstDeliveryDates[0].deliveryDates[0].cutOffDate * 1000));
+      });
+
     _hideLoader();
     return lstDeliveryDates;
   }

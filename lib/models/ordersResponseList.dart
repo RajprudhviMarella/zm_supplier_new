@@ -779,7 +779,7 @@ class DeliveryFee {
 class Products {
   String sku;
   String productName;
-  String notes;
+  String notes="";
   var quantity;
   String supplierProductCode;
   String unitSize;

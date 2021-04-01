@@ -519,11 +519,19 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       ),
                     );
                     _txtSkuNotesEditController.value = TextEditingValue(
-                      text: widget.marketList[index].skuNotes,
-                      selection: TextSelection.fromPosition(
-                        TextPosition(
-                            offset: widget.marketList[index].skuNotes.length),
-                      ),
+                      text: (widget.marketList[index].skuNotes != null)
+                          ? widget.marketList[index].skuNotes
+                          : " ",
+                      selection: (widget.marketList[index].skuNotes != null &&
+                              widget.marketList[index].skuNotes.length != null)
+                          ? TextSelection.fromPosition(
+                              TextPosition(
+                                  offset:
+                                      widget.marketList[index].skuNotes.length),
+                            )
+                          : TextSelection.fromPosition(
+                              TextPosition(offset: 0),
+                            ),
                     );
                     setState(() {
                       if (counter > 0 &&
@@ -1080,7 +1088,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   Widget displaySkuNotesName(String text) {
-    if (text.isNotEmpty) {
+    if (text != null && text.isNotEmpty) {
       return Container(
           margin: EdgeInsets.only(top: 3.0, bottom: 3.0),
           child: Text(text,
@@ -1456,12 +1464,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
-      // moveToDashBoard();
-      DartNotificationCenter.unsubscribe(
-          observer: 1, channel: Constants.draft_notifier);
-      DartNotificationCenter.unsubscribe(
-          observer: 1, channel: Constants.acknowledge_notifier);
-      Navigator.pushNamed(context, '/home', arguments: {'orderPlaced': true});
+      moveToDashBoard();
     });
   }
 }
