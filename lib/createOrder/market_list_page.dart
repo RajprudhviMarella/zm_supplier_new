@@ -511,7 +511,7 @@ class MarketListDesign extends State<MarketListPage>
               keyboard =
                   TextInputType.numberWithOptions(signed: false, decimal: true);
               regExp =
-                  WhitelistingTextInputFormatter(RegExp(r'^\d+\.?\d{0,2}'));
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
             } else {
               if (snapShot.data[index].quantity != null &&
                   snapShot.data[index].quantity != 0) {
@@ -554,9 +554,11 @@ class MarketListDesign extends State<MarketListPage>
                     builder: (BuildContext context, StateSetter setStates) {
                   return SingleChildScrollView(
                       child: Container(
-                    padding:(Platform.isAndroid) ?EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom): EdgeInsets.fromLTRB(0, 15, 0,
-                        MediaQuery.of(context).viewInsets.bottom + 15),
+                    padding: (Platform.isAndroid)
+                        ? EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom)
+                        : EdgeInsets.fromLTRB(0, 15, 0,
+                            MediaQuery.of(context).viewInsets.bottom + 15),
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -1187,9 +1189,11 @@ class MarketListDesign extends State<MarketListPage>
         builder: (context) {
           return SingleChildScrollView(
               child: Container(
-                padding:(Platform.isAndroid) ?EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom): EdgeInsets.fromLTRB(0, 15, 0,
-                    MediaQuery.of(context).viewInsets.bottom + 15),
+            padding: (Platform.isAndroid)
+                ? EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom)
+                : EdgeInsets.fromLTRB(
+                    0, 15, 0, MediaQuery.of(context).viewInsets.bottom + 15),
             color: Colors.white,
             child: Center(
               child: Column(
@@ -1424,16 +1428,15 @@ class MarketListDesign extends State<MarketListPage>
                 margin: EdgeInsets.only(right: 5.0),
                 height: 40.0,
                 padding: EdgeInsets.only(right: 10.0, left: 10.0),
-                child: Expanded(
-                    child: Center(
-                        child: Text(
+                child: Center(
+                    child: Text(
                   snapShot.selectedQuantity,
                   maxLines: 1,
                   style: TextStyle(
                       fontSize: snapShot.txtSize,
                       color: snapShot.txtColor,
                       fontFamily: "SourceSansProSemiBold"),
-                ))),
+                )),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
                     Radius.circular(200),
