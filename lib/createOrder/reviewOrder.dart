@@ -1194,6 +1194,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   void moveToDashBoard() {
     //  DartNotificationCenter.post(channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(
+           observer: 1, channel: Constants.orderPlaced_notifier);
+    DartNotificationCenter.unsubscribe(
         observer: 1, channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(
         observer: 1, channel: Constants.acknowledge_notifier);
@@ -1467,6 +1469,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
+          DartNotificationCenter.post(channel: Constants.orderPlaced_notifier);
       moveToDashBoard();
     });
   }

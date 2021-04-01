@@ -114,6 +114,17 @@ class DashboardState extends State<DashboardPage> {
       } else {}
     });
 
+    DartNotificationCenter.subscribe(
+      channel: Constants.orderPlaced_notifier,
+      observer: i,
+      onNotification: (result) {
+        print('orderPlaced_notifier listener called');
+        Future.delayed(Duration(seconds: 2), () {
+          DartNotificationCenter.post(channel: Constants.draft_notifier);
+        });
+      },
+    );
+
     // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.subscribe(
       channel: Constants.draft_notifier,
@@ -146,6 +157,8 @@ class DashboardState extends State<DashboardPage> {
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.orderPlaced_notifier);
     super.dispose();
     print('dispose');
     // DartNotificationCenter.post(channel: Constants.draft_notifier);
@@ -154,6 +167,7 @@ class DashboardState extends State<DashboardPage> {
     // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(
         observer: 1, channel: Constants.acknowledge_notifier);
+
   }
 
   Mixpanel mixpanel;
