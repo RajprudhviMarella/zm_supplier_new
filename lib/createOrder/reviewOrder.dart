@@ -557,11 +557,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     bottom: MediaQuery.of(context)
                                         .viewInsets
                                         .bottom)
-                                : EdgeInsets.only(
-                                    top: 15.0,
-                                    right: 10.0,
-                                    left: 10.0,
-                                    bottom: 15.0),
+                                : EdgeInsets.fromLTRB(0, 15, 0,
+                                MediaQuery.of(context).viewInsets.bottom + 15),
                             color: Colors.white,
                             child: Center(
                               child: Column(
@@ -717,7 +714,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                         Container(
                                             width: 200.0,
                                             child: TextFormField(
-                                                autofocus: true,
+                                                autofocus: false,
                                                 autovalidate: true,
                                                 validator: (value) => (value !=
                                                             null &&

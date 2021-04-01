@@ -469,7 +469,7 @@ class MarketListDesign extends State<MarketListPage>
               keyboard =
                   TextInputType.numberWithOptions(signed: false, decimal: true);
               regExp =
-                  WhitelistingTextInputFormatter(RegExp(r'^\d+\.?\d{0,2}'));
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
             } else {
               if (snapShot.data[index].quantity != null &&
                   snapShot.data[index].quantity != 0) {
@@ -522,8 +522,9 @@ class MarketListDesign extends State<MarketListPage>
                     padding: (Platform.isAndroid)
                         ? EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom)
-                        : EdgeInsets.only(
-                            top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                        : EdgeInsets.fromLTRB(0, 15, 0,
+                            MediaQuery.of(context).viewInsets.bottom + 15),
+
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -654,7 +655,7 @@ class MarketListDesign extends State<MarketListPage>
                                 Container(
                                     width: 200.0,
                                     child: TextFormField(
-                                        autofocus: true,
+                                        autofocus: false,
                                         autovalidate: true,
                                         validator: (value) => (value != null &&
                                                 value.isNotEmpty &&
@@ -1157,8 +1158,8 @@ class MarketListDesign extends State<MarketListPage>
             padding: (Platform.isAndroid)
                 ? EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom)
-                : EdgeInsets.only(
-                    top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+                : EdgeInsets.fromLTRB(
+                    0, 15, 0, MediaQuery.of(context).viewInsets.bottom + 15),
             color: Colors.white,
             child: Center(
               child: Column(
@@ -1184,7 +1185,7 @@ class MarketListDesign extends State<MarketListPage>
                       keyboardType: TextInputType.text,
                       maxLines: null,
                       maxLength: 150,
-                      autofocus: true,
+                      autofocus: false,
                       cursorColor: Colors.blue,
                       decoration: InputDecoration(
                         fillColor: faintGrey,
@@ -1379,11 +1380,11 @@ class MarketListDesign extends State<MarketListPage>
 
   Widget displayAddOrder(OutletMarketList snapShot) {
     if (snapShot.isSelected) {
-      if (snapShot.selectedQuantity.length < 4) {
+      if (snapShot.selectedQuantity.length <= 3) {
         return Container(
             margin: EdgeInsets.only(right: 5.0),
-            height: 40.0,
-            width: 40.0,
+            height: 45.0,
+            width: 45.0,
             child: Center(
               child: Text(
                 snapShot.selectedQuantity,
@@ -1405,16 +1406,15 @@ class MarketListDesign extends State<MarketListPage>
                 margin: EdgeInsets.only(right: 5.0),
                 height: 40.0,
                 padding: EdgeInsets.only(right: 10.0, left: 10.0),
-                child: Expanded(
-                    child: Center(
-                        child: Text(
+                child: Center(
+                    child: Text(
                   snapShot.selectedQuantity,
                   maxLines: 1,
                   style: TextStyle(
                       fontSize: snapShot.txtSize,
                       color: snapShot.txtColor,
                       fontFamily: "SourceSansProSemiBold"),
-                ))),
+                )),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(
                     Radius.circular(200),
