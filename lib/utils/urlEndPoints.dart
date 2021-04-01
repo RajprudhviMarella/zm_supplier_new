@@ -1,64 +1,96 @@
+import 'constants.dart';
+import 'constants.dart';
+import 'constants.dart';
+import 'constants.dart';
+import 'constants.dart';
+import 'constants.dart';
+import 'constants.dart';
+import 'constants.dart';
+
 class URLEndPoints {
-  static const String auth_server =
-      "https://zm-staging-authserv.zeemart.asia/services/";
-  static const String account_managent_server =
-      "https://zm-staging-accountmanagementserv.zeemart.asia/";
-  static const String report_management_server =
-      "https://zm-staging-reportmanagementserv.zeemart.asia/services/";
-  static const String order_management_server =
-      "https://zm-staging-ordermanagementserv.zeemart.asia/services/";
-  static const String inventory_management_server =
-      "https://zm-staging-inventorymanagement.zeemart.asia/services/";
-  static const String invoice_management_server = "https://zm-staging-invoicemanagement.zeemart.asia/services/";
 
 
-  static const String login_url = auth_server + "supplier/login";
-  static const String get_specific_user_url =
-      account_managent_server + "account/supplier";
-  static const String forgot_password_url =
-      auth_server + "sendVerificationCode";
-  static const String validate_verification_code =
-      auth_server + "validateVerificationCode";
-  static const String create_password = auth_server + "resetPassword";
-  static const String change_password = auth_server + "changePassword/v1";
+static get login_url {
+  return Constants.AUTH_SERVER + "supplier/login";
+}
+  static get get_specific_user_url {
+    return Constants.ACCOUNT_MANAGEMENT_SERVER + "account/supplier";
+  }
 
-  static const String img_upload_url =
-      "http://zm-staging-commonservices.zeemart.asia/services/storage/files/multipart";
-  static const String retrieve_orders = order_management_server + "orders/po";
-  static const String edit_place_order = order_management_server + "orders/po/draft/edit/place";
-  static const String create_draft_orders = order_management_server + "orders/po/draft";
-  static const String retrieve_outlets = inventory_management_server +
+static get forgot_password_url {
+  return Constants.AUTH_SERVER + "sendVerificationCode";
+}
+static get validate_verification_code {
+ return Constants.AUTH_SERVER + "validateVerificationCode";
+}
+static get create_password {
+  return Constants.AUTH_SERVER + "resetPassword";
+}
+static get change_password {
+  return Constants.AUTH_SERVER + "changePassword/v1";
+}
+
+static get img_upload_url {
+ return Constants.COMMON_SERVER + "storage/files/multipart";
+}
+static get  retrieve_orders {
+ return Constants.ORDER_MANAGEMENT_SERVER + "orders/po";
+}
+static get  edit_place_order {
+ return Constants.ORDER_MANAGEMENT_SERVER + "orders/po/draft/edit/place";
+}
+static get  create_draft_orders {
+ return Constants.ORDER_MANAGEMENT_SERVER + "orders/po/draft";
+}
+static get retrieve_outlets {
+ return Constants.INVENTORY_SERVER +
       "inventory/deliveryPreference/linkedOutlets";
-  static const String retrieve_supplier_delivery_dates = inventory_management_server +
+}
+static get retrieve_supplier_delivery_dates {
+ return Constants.INVENTORY_SERVER +
       "inventory/deliveryPreference/delivery/settings";
-  static const String retrieve_outlet_market_list =
-      inventory_management_server + "inventory/marketlist";
-  static const String order_summary_url =
-      report_management_server + "reports/order/summary";
-  static const String retrive_paginated_orders_url =
-      order_management_server + "orders/po";
-  static const String acknowledge_order = order_management_server + 'orders/po/acknowledge';
-  static const String void_order = order_management_server + 'orders/po/reject';
-  static const String order_activity_url =
-      order_management_server + "orders/activitylogs";
+}
+static get retrieve_outlet_market_list {
+ return Constants.INVENTORY_SERVER + "inventory/marketlist";
+}
+static get order_summary_url {
+  Constants.REPORT_SERVER + "reports/order/summary";
+}
+static get retrive_paginated_orders_url {
+ return Constants.ORDER_MANAGEMENT_SERVER + "orders/po";
+}
+static get acknowledge_order {return Constants.ORDER_MANAGEMENT_SERVER + 'orders/po/acknowledge'; }
+static get  void_order { return Constants.ORDER_MANAGEMENT_SERVER + 'orders/po/reject';}
+static get  order_activity_url {
+  return Constants.ORDER_MANAGEMENT_SERVER + "orders/activitylogs";
+}
 
-  static const String customersList_url = inventory_management_server +
-      "inventory/deliveryPreference/linkedOutlets";
-  static const String favourite_url =
-      inventory_management_server + "inventory/deliveryPreference/favourite";
-  static const String recent_orderd_outlets = inventory_management_server +
+static get  customersList_url {
+  return Constants.INVENTORY_SERVER +
+      "inventory/deliveryPreference/linkedOutlets"; }
+static get favourite_url {
+  return Constants.INVENTORY_SERVER + "inventory/deliveryPreference/favourite";
+}
+static get recent_orderd_outlets {
+  return Constants.INVENTORY_SERVER +
       "inventory/deliveryPreference/recent/order/outlets";
+}
 
-  static const String customers_report_data = report_management_server +
+static get customers_report_data {
+ return Constants.REPORT_SERVER +
       "reports/customers";
-  static const String buyer_people_url = account_managent_server +
-      "account/users/outlet";
+}
+static get buyer_people_url {return Constants.ACCOUNT_MANAGEMENT_SERVER +
+      "account/users/outlet"; }
 
   //Invoice related URLs.
-  static const String retrive_invoices_url = invoice_management_server + "supplier/eInvoices/v1";
-
-  static const String retrive_specific_invoice = invoice_management_server + 'invoice';
-  static const String retrive_specific_order_details = order_management_server + '/orders/po/orderById';
-
-  static const String retrive_invoices_summary = report_management_server + 'reports/invoices/summary';
+static get retrive_invoices_url {
+  return Constants.INVOICE_SERVER + "supplier/eInvoices/v1";
 }
+
+static get retrive_specific_invoice { return Constants.INVOICE_SERVER + 'invoice'; }
+static get retrive_specific_order_details { return Constants.ORDER_MANAGEMENT_SERVER + '/orders/po/orderById'; }
+
+static get  retrive_invoices_summary { return Constants.REPORT_SERVER + 'reports/invoices/summary'; }
+}
+

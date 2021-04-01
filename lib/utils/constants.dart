@@ -8,10 +8,13 @@ import 'dart:convert';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 
 import 'color.dart';
+import 'urlEndPoints.dart';
 
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
  */
+
+enum Environment { DEV, PROD }
 
 class Constants {
   // Strings
@@ -326,6 +329,49 @@ class Constants {
         optOutTrackingDefault: false);
     return mixPanel;
   }
+
+  static Map<String, dynamic> _config;
+
+  static void setEnvironment(Environment env) {
+    switch (env) {
+      case Environment.DEV:
+        _config = _Config.debugConstants;
+        break;
+      case Environment.PROD:
+        _config = _Config.prodConstants;
+        break;
+    }
+  }
+
+  static get ORDER_MANAGEMENT_SERVER {
+    return _config[_Config.ORDER_MANAGEMENT_SERVER];
+  }
+
+  // ignore: non_constant_identifier_names
+  static get AUTH_SERVER {
+    return _config[_Config.AUTH_SERVER];
+  }
+
+  static get COMMON_SERVER {
+    return _config[_Config.COMMON_SERVER];
+  }
+
+  static get ACCOUNT_MANAGEMENT_SERVER {
+    return _config[_Config.ACCOUNT_MANAGEMENT_SERVER];
+  }
+
+  // ignore: non_constant_identifier_names
+  static get  INVENTORY_SERVER{
+    return _config[_Config.INVENTORY_SERVER];
+  }
+
+  static get INVOICE_SERVER {
+    return _config[_Config.INVOICE_SERVER];
+  }
+
+  static get REPORT_SERVER {
+    return _config[_Config.REPORT_SERVER];
+  }
 }
 
 class SharedPref {
@@ -338,4 +384,35 @@ class SharedPref {
     final prefs = await SharedPreferences.getInstance();
     return json.decode(prefs.getString(key));
   }
+}
+
+class _Config {
+
+  static const ORDER_MANAGEMENT_SERVER = "ORDER_MANAGEMENT_SERVER";
+  static const AUTH_SERVER = "AUTH_SERVER";
+  static const ACCOUNT_MANAGEMENT_SERVER = "ACCOUNT_MANAGEMENT_SERVER";
+  static const INVENTORY_SERVER = "INVENTORY_SERVER";
+  static const INVOICE_SERVER = "INVOICE_SERVER";
+  static const REPORT_SERVER = "REPORT_SERVER";
+  static const COMMON_SERVER = "COMMON_SERVER";
+
+  static Map<String, dynamic> debugConstants = {
+    ORDER_MANAGEMENT_SERVER: "https://zm-staging-ordermanagementserv.zeemart.asia/services/",
+    AUTH_SERVER: "https://zm-staging-authserv.zeemart.asia/services/",
+    ACCOUNT_MANAGEMENT_SERVER: "https://zm-staging-accountmanagementserv.zeemart.asia/",
+    INVENTORY_SERVER: "https://zm-staging-inventorymanagement.zeemart.asia/services/",
+    INVOICE_SERVER: "https://zm-staging-invoicemanagement.zeemart.asia/services/",
+    REPORT_SERVER: "https://zm-staging-reportmanagementserv.zeemart.asia/services/",
+    COMMON_SERVER: "http://zm-staging-commonservices.zeemart.asia/services/"
+  };
+
+  static Map<String, dynamic> prodConstants = {
+    ORDER_MANAGEMENT_SERVER: "https://zm-ordermanagementserv.zeemart.asia/services/",
+    AUTH_SERVER: "https://zm-authserv.zeemart.asia/services/",
+    ACCOUNT_MANAGEMENT_SERVER: "https://zm-accountmanagementserv.zeemart.asia/",
+    INVENTORY_SERVER: "zm-https://zm-inventorymanagement.zeemart.asia/services/",
+    INVOICE_SERVER: "zm-https://zm-invoicemanagement.zeemart.asia/services/",
+    REPORT_SERVER: "zm-https://zm-reportmanagementserv.zeemart.asia/services/",
+    COMMON_SERVER: "http://zm-commonservices.zeemart.asia/services/"
+  };
 }
