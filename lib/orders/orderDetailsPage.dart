@@ -2,7 +2,6 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:grouped_list/grouped_list.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -17,9 +16,8 @@ import 'dart:math' as math;
 import 'package:zm_supplier/utils/webview.dart';
 
 import '../utils/color.dart';
-import '../utils/color.dart';
-import '../utils/color.dart';
 import 'orderActivityPage.dart';
+import 'dart:io' show Platform;
 
 class OrderDetailsPage extends StatefulWidget {
   String orderId;
@@ -460,7 +458,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
               builder: (BuildContext context, StateSetter setState) {
                 return SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.only(
+                      padding: (Platform.isAndroid)
+                          ? EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom)
+                          : EdgeInsets.only(
                           top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
                       color: Colors.white,
                       child: Center(
