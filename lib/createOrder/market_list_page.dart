@@ -522,8 +522,7 @@ class MarketListDesign extends State<MarketListPage>
                     padding: (Platform.isAndroid)
                         ? EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom)
-                        : EdgeInsets.fromLTRB(0, 15, 0,
-                            MediaQuery.of(context).viewInsets.bottom + 15),
+                        : EdgeInsets.fromLTRB(10, 15, 10, 15),
 
                     color: Colors.white,
                     child: Center(
@@ -655,7 +654,7 @@ class MarketListDesign extends State<MarketListPage>
                                 Container(
                                     width: 200.0,
                                     child: TextFormField(
-                                        autofocus: false,
+                                        autofocus: true,
                                         autovalidate: true,
                                         validator: (value) => (value != null &&
                                                 value.isNotEmpty &&
@@ -1159,7 +1158,7 @@ class MarketListDesign extends State<MarketListPage>
                 ? EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom)
                 : EdgeInsets.fromLTRB(
-                    0, 15, 0, MediaQuery.of(context).viewInsets.bottom + 15),
+                    10, 15, 10, 15),
             color: Colors.white,
             child: Center(
               child: Column(
