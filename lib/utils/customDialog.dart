@@ -30,7 +30,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
   }
 
   contentBox(context) {
-    Future.delayed(Duration(milliseconds: 3500), () {
+    Future.delayed(Duration(milliseconds: 3000), () {
       Navigator.of(context).pop(true);
     });
     return Stack(children: <Widget>[
