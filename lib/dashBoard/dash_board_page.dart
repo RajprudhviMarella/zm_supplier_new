@@ -72,6 +72,7 @@ class DashboardState extends State<DashboardPage> {
   double _scrollPosition;
 
   bool isScrolled = false;
+  bool isSubscribed = false;
 
   _scrollListener() {
     setState(() {
@@ -103,28 +104,9 @@ class DashboardState extends State<DashboardPage> {
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
-    Future.delayed(Duration.zero, () {
-      final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-      if (arguments['orderPlaced'] != null) {
-        Future.delayed(Duration(seconds: 2), () {
-          DartNotificationCenter.post(channel: Constants.draft_notifier);
-          arguments.remove(arguments['orderPlaced']);
-          arguments.remove('orderPlaced');
-        });
-      } else {}
-    });
-
-    DartNotificationCenter.subscribe(
-      channel: Constants.orderPlaced_notifier,
-      observer: i,
-      onNotification: (result) {
-        print('orderPlaced_notifier listener called');
-        Future.delayed(Duration(seconds: 2), () {
-          DartNotificationCenter.post(channel: Constants.draft_notifier);
-        });
-      },
-    );
-
+    isSubscribed = true;
+    sharedPref.saveBool(Constants.is_Subscribed, isSubscribed);
+    print(isSubscribed);
     // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.subscribe(
       channel: Constants.draft_notifier,
@@ -157,17 +139,17 @@ class DashboardState extends State<DashboardPage> {
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.orderPlaced_notifier);
     super.dispose();
     print('dispose');
-    // DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.draft_notifier);
-    // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.acknowledge_notifier);
-
+    if (isSubscribed) {
+      isSubscribed = false;
+      sharedPref.saveBool(Constants.is_Subscribed, isSubscribed);
+      print(isSubscribed);
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.draft_notifier);
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.acknowledge_notifier);
+    }
   }
 
   Mixpanel mixpanel;
@@ -626,7 +608,8 @@ class DashboardState extends State<DashboardPage> {
                                                                         .data
                                                                         .data
                                                                         .totalSpendingCurrMonth
-                                                                        .toStringAsFixed(2)
+                                                                        .toStringAsFixed(
+                                                                            2)
                                                                         .replaceAllMapped(
                                                                             reg,
                                                                             (Match m) =>
