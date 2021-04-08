@@ -5,8 +5,8 @@ import 'package:zm_supplier/models/outletSettings.dart';
 class User {
   User({
     this.status,
-    this.company,
-    this.outlet,
+    // this.company,
+    // this.outlet,
     this.supplier,
     this.roleGroup,
     this.roles,
@@ -20,8 +20,8 @@ class User {
   });
 
   String status;
-  List<Company> company;
-  List<Outlet> outlet;
+  // List<Company> company;
+  // List<Outlet> outlet;
   List<Supplier> supplier;
   String roleGroup;
   List<String> roles;
@@ -36,10 +36,10 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         status: json["status"],
-        company:
-            List<Company>.from(json["company"].map((x) => Company.fromJson(x))),
-        outlet:
-            List<Outlet>.from(json["outlet"].map((x) => Outlet.fromJson(x))),
+        // company:
+        //     List<Company>.from(json["company"].map((x) => Company.fromJson(x))),
+        // outlet:
+        //     List<Outlet>.from(json["outlet"].map((x) => Outlet.fromJson(x))),
         supplier: List<Supplier>.from(
             json["supplier"].map((x) => Supplier.fromJson(x))),
         roleGroup: json["roleGroup"],
@@ -55,8 +55,8 @@ class User {
 
   Map<String, dynamic> toJson() => {
         "status": status,
-        "company": List<dynamic>.from(company.map((x) => x.toJson())),
-        "outlet": List<dynamic>.from(outlet.map((x) => x.toJson())),
+        // "company": List<dynamic>.from(company.map((x) => x.toJson())),
+        // "outlet": List<dynamic>.from(outlet.map((x) => x.toJson())),
         "supplier": List<dynamic>.from(supplier.map((x) => x.toJson())),
         "roleGroup": roleGroup,
         "roles": List<dynamic>.from(roles.map((x) => x)),

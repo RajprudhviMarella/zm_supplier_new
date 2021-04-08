@@ -427,9 +427,9 @@ class _Config {
     AUTH_SERVER: "https://zm-authserv.zeemart.asia/services/",
     ACCOUNT_MANAGEMENT_SERVER: "https://zm-accountmanagementserv.zeemart.asia/",
     INVENTORY_SERVER:
-        "zm-https://zm-inventorymanagement.zeemart.asia/services/",
-    INVOICE_SERVER: "zm-https://zm-invoicemanagement.zeemart.asia/services/",
-    REPORT_SERVER: "zm-https://zm-reportmanagementserv.zeemart.asia/services/",
+        "https://zm-inventorymanagement.zeemart.asia/services/",
+    INVOICE_SERVER: "https://zm-invoicemanagement.zeemart.asia/services/",
+    REPORT_SERVER: "https://zm-reportmanagementserv.zeemart.asia/services/",
     COMMON_SERVER: "http://zm-commonservices.zeemart.asia/services/"
   };
 }
