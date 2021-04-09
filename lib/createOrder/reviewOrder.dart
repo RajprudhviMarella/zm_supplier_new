@@ -1471,9 +1471,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
             title: "Can’t create this order",
             imageAssets: 'assets/images/img_exclaimation_red.png',
           );
-        }).then((value) {
-      moveToDashBoard();
-    });
+        });
   }
 
   Future<void> showSuccessDialog() async {
