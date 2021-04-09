@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/settings/settings_page.dart';
 import 'package:zm_supplier/dashBoard/dash_board_page.dart';
 import 'package:zm_supplier/customers/customers_page.dart';
@@ -41,12 +42,17 @@ class _MyStatefulWidgetState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    sharedPref.saveBool(Constants.isFromReviewOrder, false);
     mixPanelEvents();
   }
+  SharedPref sharedPref = SharedPref();
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       _selectedIndex = index;
+      prefs.setBool(Constants.isFromReviewOrder, false);
       if (index == 0) {
         mixpanel.track(Events.TAP_ORDERS_TAB);
       } else if (index == 1) {

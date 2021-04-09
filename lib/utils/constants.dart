@@ -105,6 +105,7 @@ class Constants {
   static const String acknowledge_notifier = "Acknowledge_notifiler";
   static const String favourite_notifier = "Favourite_Notifiler";
   static const String is_Subscribed = "is_Subscribed";
+  static const String isFromReviewOrder = "isFromReviewOrder";
 
   static Widget OrderStatusColor(Orders orders) {
     String status = orders.orderStatus;
