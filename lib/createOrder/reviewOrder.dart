@@ -113,9 +113,12 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   loadSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isSubscribed = prefs.getBool(Constants.is_Subscribed);
+    print(isSubscribed);
     if (isSubscribed) {
       isSubscribed = false;
-      sharedPref.saveBool(Constants.is_Subscribed, isSubscribed);
+      print(isSubscribed);
+      prefs.setBool(Constants.is_Subscribed, isSubscribed);
+
       DartNotificationCenter.unsubscribe(
           observer: 1, channel: Constants.draft_notifier);
       DartNotificationCenter.unsubscribe(
@@ -1211,11 +1214,15 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     print("url" + requestUrl);
     http.Response response = await http.delete(requestUrl, headers: headers);
     moveToDashBoard();
-    print("url" + requestUrl);
+    print("url delete" + requestUrl);
     print("ms" + response.statusCode.toString());
   }
 
   void moveToDashBoard() {
+
+    sharedPref.saveBool(Constants.isFromReviewOrder, true);
+
+
     final PageRouteBuilder _homeRoute = new PageRouteBuilder(
       pageBuilder: (BuildContext context, _, __) {
         return HomePage();
