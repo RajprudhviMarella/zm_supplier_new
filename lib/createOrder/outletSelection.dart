@@ -190,6 +190,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
 
     Map<String, String> queryParams = {
       'supplierId': supplierID,
+      "orderEnabled": "true",
       'isFavourite': "true"
     };
     String queryString = Uri(queryParameters: queryParams).query;
@@ -217,6 +218,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
     };
     Map<String, String> queryParams = {
       'supplierId': supplierID,
+      "orderEnabled": "true"
     };
     String queryString = Uri(queryParameters: queryParams).query;
     var requestUrl = URLEndPoints.retrieve_outlets + '?' + queryString;

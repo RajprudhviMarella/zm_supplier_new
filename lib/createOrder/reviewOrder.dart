@@ -81,6 +81,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     for (var i = 0; i < lstDeliveryDates[0].deliveryDates.length; i++) {
       if (lstDeliveryDates[0].deliveryDates[i].isSelected) {
         isAnyDateSelected = true;
+        selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
       }
     }
     if (!isAnyDateSelected) {
