@@ -112,19 +112,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   SharedPref sharedPref = SharedPref();
 
   loadSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isSubscribed = prefs.getBool(Constants.is_Subscribed);
-    print(isSubscribed);
-    if (isSubscribed) {
-      isSubscribed = false;
-      print(isSubscribed);
-      prefs.setBool(Constants.is_Subscribed, isSubscribed);
 
-      DartNotificationCenter.unsubscribe(
-          observer: 1, channel: Constants.draft_notifier);
-      DartNotificationCenter.unsubscribe(
-          observer: 1, channel: Constants.acknowledge_notifier);
-    }
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
@@ -156,22 +144,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                     icon: Icon(Icons.arrow_back_ios_outlined,
                         color: Colors.black),
                     onPressed: () {
-                      if (!isSubscribed) {
-                        isSubscribed = true;
-                        sharedPref.saveBool(
-                            Constants.is_Subscribed, isSubscribed);
-                        DartNotificationCenter.subscribe(
-                          channel: Constants.draft_notifier,
-                          observer: 1,
-                          onNotification: (result) {},
-                        );
-
-                        DartNotificationCenter.subscribe(
-                          channel: Constants.acknowledge_notifier,
-                          observer: 1,
-                          onNotification: (result) {},
-                        );
-                      }
                       String textToSendBack = _txtSpecialRequest.text;
                       Navigator.pop(context, textToSendBack);
                       // events.mixpanel.track(Events.TAP_ORDER_REVIEW_BACK, properties: {'OrderId': widget.orderId});
@@ -1219,7 +1191,16 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     print("ms" + response.statusCode.toString());
   }
 
-  void moveToDashBoard() {
+  void moveToDashBoard() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    isSubscribed = false;
+    prefs.setBool(Constants.is_Subscribed, isSubscribed);
+
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.draft_notifier);
+    DartNotificationCenter.unsubscribe(
+        observer: 1, channel: Constants.acknowledge_notifier);
 
     sharedPref.saveBool(Constants.isFromReviewOrder, true);
 
