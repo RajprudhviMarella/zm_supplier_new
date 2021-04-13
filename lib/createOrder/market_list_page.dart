@@ -489,8 +489,11 @@ class MarketListDesign extends State<MarketListPage>
               ),
             );
             _txtSkuNotesEditController.value = TextEditingValue(
-              text:(snapShot.data[index].skuNotes!=null)? snapShot.data[index].skuNotes:" ",
-              selection: (snapShot.data[index].skuNotes!=null && snapShot.data[index].skuNotes.length != null)
+              text: (snapShot.data[index].skuNotes != null)
+                  ? snapShot.data[index].skuNotes
+                  : " ",
+              selection: (snapShot.data[index].skuNotes != null &&
+                      snapShot.data[index].skuNotes.length != null)
                   ? TextSelection.fromPosition(
                       TextPosition(
                           offset: snapShot.data[index].skuNotes.length),
@@ -523,7 +526,6 @@ class MarketListDesign extends State<MarketListPage>
                         ? EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom)
                         : EdgeInsets.fromLTRB(10, 15, 10, 15),
-
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -1102,14 +1104,14 @@ class MarketListDesign extends State<MarketListPage>
               ordersData.data.data[0].notes.isNotEmpty) {
             orderNotes = ordersData.data.data[0].notes;
             _txtOrderNotesEditController.text = ordersData.data.data[0].notes;
-            if (lstDeliveryDates != null && lstDeliveryDates.length > 0) {
-              lstDeliveryDates[0].deliveryDates.forEach((deliveryDate) {
-                if (ordersData.data.data[0].timeDelivered ==
-                    deliveryDate.deliveryDate) {
-                  deliveryDate.isSelected = true;
-                }
-              });
-            }
+          }
+          if (lstDeliveryDates != null && lstDeliveryDates.length > 0) {
+            lstDeliveryDates[0].deliveryDates.forEach((deliveryDate) {
+              if (ordersData.data.data[0].timeDelivered ==
+                  deliveryDate.deliveryDate) {
+                deliveryDate.isSelected = true;
+              }
+            });
           }
         }
       } else {
@@ -1157,8 +1159,7 @@ class MarketListDesign extends State<MarketListPage>
             padding: (Platform.isAndroid)
                 ? EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom)
-                : EdgeInsets.fromLTRB(
-                    10, 15, 10, 15),
+                : EdgeInsets.fromLTRB(10, 15, 10, 15),
             color: Colors.white,
             child: Center(
               child: Column(
