@@ -272,8 +272,11 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs?.clear();
 
-        Navigator.of(dialogContext).pop();
-        Navigator.of(context, rootNavigator: true).pop(context);
+        Navigator.of(context).pushAndRemoveUntil(
+            new MaterialPageRoute(
+                builder: (context) =>
+                new LoginPage()),
+                (route) => false);
 
       },
     );
