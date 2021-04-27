@@ -58,10 +58,9 @@ class ChangePasswordDesign extends State<ChangePassword>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: faintGrey,
+      appBar: buildAppBar(context),
       body: ListView(
         children: <Widget>[
-          menuItem(context, Constants.txt_change_password,
-              Icon(Icons.arrow_back_ios_outlined, color: Colors.black), 15),
           Headers(context, Constants.txt_current_password, 16, Colors.black),
           CurrentPassword(
             context,
@@ -81,6 +80,27 @@ class ChangePasswordDesign extends State<ChangePassword>
         ],
       ),
     );
+  }
+
+  Widget buildAppBar(BuildContext context) {
+    return new AppBar(
+        centerTitle: true,
+        title: Text(Constants.txt_change_password, style: TextStyle(
+          color: Colors.black,
+          fontFamily: "SourceSansProBold",
+          fontSize: 18,
+        )),
+        backgroundColor: Colors.white,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        );
   }
 
   Widget menuItem(context, String name, Icon icon, double margin) {

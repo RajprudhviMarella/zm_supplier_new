@@ -101,9 +101,12 @@ class Orders {
   bool isAcknowledged;
 
   String getTimeDelivered() {
-    DateTime dateTime =
-        new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
-    return DateFormat('EEE d MMM').format(dateTime);
+    if (timeDelivered != null) {
+      DateTime dateTime =
+      new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+      return DateFormat('EEE d MMM').format(dateTime);
+    }
+    return '';
   }
 
   String getDeliveryDay() {
