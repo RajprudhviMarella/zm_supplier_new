@@ -489,8 +489,11 @@ class MarketListDesign extends State<MarketListPage>
               ),
             );
             _txtSkuNotesEditController.value = TextEditingValue(
-              text:(snapShot.data[index].skuNotes!=null)? snapShot.data[index].skuNotes:" ",
-              selection: (snapShot.data[index].skuNotes!=null && snapShot.data[index].skuNotes.length != null)
+              text: (snapShot.data[index].skuNotes != null)
+                  ? snapShot.data[index].skuNotes
+                  : " ",
+              selection: (snapShot.data[index].skuNotes != null &&
+                      snapShot.data[index].skuNotes.length != null)
                   ? TextSelection.fromPosition(
                       TextPosition(
                           offset: snapShot.data[index].skuNotes.length),
@@ -522,9 +525,7 @@ class MarketListDesign extends State<MarketListPage>
                     padding: (Platform.isAndroid)
                         ? EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom)
-                        : EdgeInsets.fromLTRB(0, 15, 0,
-                            MediaQuery.of(context).viewInsets.bottom + 15),
-
+                        : EdgeInsets.fromLTRB(10, 15, 10, 15),
                     color: Colors.white,
                     child: Center(
                       child: Column(
@@ -655,7 +656,7 @@ class MarketListDesign extends State<MarketListPage>
                                 Container(
                                     width: 200.0,
                                     child: TextFormField(
-                                        autofocus: false,
+                                        autofocus: true,
                                         autovalidate: true,
                                         validator: (value) => (value != null &&
                                                 value.isNotEmpty &&
@@ -1103,14 +1104,14 @@ class MarketListDesign extends State<MarketListPage>
               ordersData.data.data[0].notes.isNotEmpty) {
             orderNotes = ordersData.data.data[0].notes;
             _txtOrderNotesEditController.text = ordersData.data.data[0].notes;
-            if (lstDeliveryDates != null && lstDeliveryDates.length > 0) {
-              lstDeliveryDates[0].deliveryDates.forEach((deliveryDate) {
-                if (ordersData.data.data[0].timeDelivered ==
-                    deliveryDate.deliveryDate) {
-                  deliveryDate.isSelected = true;
-                }
-              });
-            }
+          }
+          if (lstDeliveryDates != null && lstDeliveryDates.length > 0) {
+            lstDeliveryDates[0].deliveryDates.forEach((deliveryDate) {
+              if (ordersData.data.data[0].timeDelivered ==
+                  deliveryDate.deliveryDate) {
+                deliveryDate.isSelected = true;
+              }
+            });
           }
         }
       } else {
@@ -1158,8 +1159,7 @@ class MarketListDesign extends State<MarketListPage>
             padding: (Platform.isAndroid)
                 ? EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom)
-                : EdgeInsets.fromLTRB(
-                    0, 15, 0, MediaQuery.of(context).viewInsets.bottom + 15),
+                : EdgeInsets.fromLTRB(10, 15, 10, 15),
             color: Colors.white,
             child: Center(
               child: Column(

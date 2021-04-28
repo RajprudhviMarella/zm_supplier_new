@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/createOrder/outletSelection.dart';
 import 'package:zm_supplier/deliveries/deliveries_page.dart';
@@ -72,6 +73,7 @@ class DashboardState extends State<DashboardPage> {
   double _scrollPosition;
 
   bool isScrolled = false;
+  bool isSubscribed = false;
 
   _scrollListener() {
     setState(() {
@@ -103,34 +105,15 @@ class DashboardState extends State<DashboardPage> {
     ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
-    Future.delayed(Duration.zero, () {
-      final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-      if (arguments['orderPlaced'] != null) {
-        Future.delayed(Duration(seconds: 2), () {
-          DartNotificationCenter.post(channel: Constants.draft_notifier);
-          arguments.remove(arguments['orderPlaced']);
-          arguments.remove('orderPlaced');
-        });
-      } else {}
-    });
-
-    DartNotificationCenter.subscribe(
-      channel: Constants.orderPlaced_notifier,
-      observer: i,
-      onNotification: (result) {
-        print('orderPlaced_notifier listener called');
-        Future.delayed(Duration(seconds: 2), () {
-          DartNotificationCenter.post(channel: Constants.draft_notifier);
-        });
-      },
-    );
-
+    isSubscribed = true;
+    sharedPref.saveBool(Constants.is_Subscribed, isSubscribed);
+    print(isSubscribed);
     // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.subscribe(
       channel: Constants.draft_notifier,
       observer: i,
       onNotification: (result) {
-        print('listener called');
+        print('draft listener called');
         setState(() {
           draftOrdersFuture = getDraftOrders();
           ordersListToday = _retriveTodayOrders();
@@ -142,13 +125,11 @@ class DashboardState extends State<DashboardPage> {
       channel: Constants.acknowledge_notifier,
       observer: i,
       onNotification: (result) {
-        print('listener called');
         setState(() {
-          Future.delayed(const Duration(milliseconds: 500), () {
             print('acknowledge listener called with delay');
+            orderSummaryData = getSummaryDataApiCalling();
             ordersListToday = _retriveTodayOrders();
             ordersListYesterday = _retriveYesterdayOrders();
-          });
         });
       },
     );
@@ -157,17 +138,28 @@ class DashboardState extends State<DashboardPage> {
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.orderPlaced_notifier);
-    super.dispose();
     print('dispose');
-    // DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.draft_notifier);
-    // DartNotificationCenter.unregisterChannel(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-        observer: 1, channel: Constants.acknowledge_notifier);
+    getSharedPreference();
 
+    super.dispose();
+
+  }
+  getSharedPreference() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var a = prefs.getBool(Constants.isFromReviewOrder);
+    print('isSubscribed in dashboard');
+    isSubscribed = a;
+    print(a);
+    if (!isSubscribed) {
+      isSubscribed = false;
+      sharedPref.saveBool(Constants.is_Subscribed, isSubscribed);
+      print(isSubscribed);
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.draft_notifier);
+      DartNotificationCenter.unsubscribe(
+          observer: 1, channel: Constants.acknowledge_notifier);
+    }
   }
 
   Mixpanel mixpanel;
@@ -626,7 +618,8 @@ class DashboardState extends State<DashboardPage> {
                                                                         .data
                                                                         .data
                                                                         .totalSpendingCurrMonth
-                                                                        .toStringAsFixed(2)
+                                                                        .toStringAsFixed(
+                                                                            2)
                                                                         .replaceAllMapped(
                                                                             reg,
                                                                             (Match m) =>

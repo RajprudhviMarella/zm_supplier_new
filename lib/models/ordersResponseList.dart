@@ -28,8 +28,7 @@ class OrdersBaseResponse {
         data: OrdersResponse.fromJson(json["data"]),
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "path": path,
         "timestamp": timestamp.toIso8601String(),
         "status": status,
@@ -51,15 +50,13 @@ class OrdersResponse {
   int currentPageNumber;
   List<Orders> data;
 
-  factory OrdersResponse.fromJson(Map<String, dynamic> json) =>
-      OrdersResponse(
-          numberOfPages: json["numberOfPages"],
-          currentPageNumber: json["currentPageNumber"],
-          numberOfRecords: json["numberOfRecords"],
-          data: List<Orders>.from(json["data"].map((x) => Orders.fromJson(x))));
+  factory OrdersResponse.fromJson(Map<String, dynamic> json) => OrdersResponse(
+      numberOfPages: json["numberOfPages"],
+      currentPageNumber: json["currentPageNumber"],
+      numberOfRecords: json["numberOfRecords"],
+      data: List<Orders>.from(json["data"].map((x) => Orders.fromJson(x))));
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "numberOfPages": numberOfPages,
         "currentPageNumber": currentPageNumber,
         "numberOfRecords": numberOfRecords,
@@ -104,20 +101,23 @@ class Orders {
   bool isAcknowledged;
 
   String getTimeDelivered() {
-    DateTime dateTime =
-    new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
-    return DateFormat('EEE d MMM').format(dateTime);
+    if (timeDelivered != null) {
+      DateTime dateTime =
+      new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+      return DateFormat('EEE d MMM').format(dateTime);
+    }
+    return '';
   }
 
   String getDeliveryDay() {
     DateTime dateTime =
-    new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+        new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
     return DateFormat('EEEE').format(dateTime);
   }
 
   String getDeliveryDateMonthYear() {
     DateTime dateTime =
-    new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+        new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
     return DateFormat('d MMM yyyy').format(dateTime);
   }
 
@@ -125,7 +125,7 @@ class Orders {
     String date = " ";
     if (timePlaced != null) {
       DateTime dateTime =
-      new DateTime.fromMillisecondsSinceEpoch(this.timePlaced * 1000);
+          new DateTime.fromMillisecondsSinceEpoch(this.timePlaced * 1000);
       date = DateFormat('d MMM yyyy, HH:mm').format(dateTime);
     }
     return date;
@@ -133,14 +133,14 @@ class Orders {
 
   DateTime getTimeCompare() {
     if (this.timePlaced != null &&
-        (identical(this.orderStatus, "Placed") ||
-            identical(this.orderStatus, "Invoiced"))) {
+        (this.orderStatus == "Placed" ||
+            this.orderStatus == "Invoiced" ||
+            this.orderStatus == "Void")) {
       return new DateTime.fromMillisecondsSinceEpoch(this.timePlaced * 1000);
-    } else if (this.timeRejected != null &&
-        identical(this.orderStatus, "Rejected")) {
+    } else if (this.timeRejected != null && (this.orderStatus == "Rejected")) {
       return new DateTime.fromMillisecondsSinceEpoch(this.timeRejected * 1000);
     } else if (this.timeCancelled != null &&
-        identical(this.orderStatus, "Cancelled")) {
+        (this.orderStatus == "Cancelled")) {
       return new DateTime.fromMillisecondsSinceEpoch(this.timeCancelled * 1000);
     } else if (this.timeUpdated != null) {
       return new DateTime.fromMillisecondsSinceEpoch(this.timeUpdated * 1000);
@@ -153,39 +153,40 @@ class Orders {
     return new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
   }
 
-  Orders({this.dateCreated,
-    this.dateUpdated,
-    this.timeCreated,
-    this.timeUpdated,
-    this.createdBy,
-    this.updatedBy,
-    this.orderId,
-    this.deliveryInstruction,
-    this.outlet,
-    this.supplier,
-    this.amount,
-    this.orderStatus,
-    this.products,
-    this.timeCutOff,
-    this.timeDrafted,
-    this.timePlaced,
-    this.timeDelivered,
-    this.timeReceived,
-    this.datePlaced,
-    this.dateDelivered,
-    this.draftedBy,
-    this.receivedBy,
-    this.lastUpdatedBy,
-    this.timeRejected,
-    this.timeCancelled,
-    this.notes,
-    this.promoCode,
-    this.timeCompare,
-    this.isInvoiced,
-    this.isAddOn,
-    this.linkedOrder,
-    this.isAcknowledged,
-    this.pdfURL});
+  Orders(
+      {this.dateCreated,
+      this.dateUpdated,
+      this.timeCreated,
+      this.timeUpdated,
+      this.createdBy,
+      this.updatedBy,
+      this.orderId,
+      this.deliveryInstruction,
+      this.outlet,
+      this.supplier,
+      this.amount,
+      this.orderStatus,
+      this.products,
+      this.timeCutOff,
+      this.timeDrafted,
+      this.timePlaced,
+      this.timeDelivered,
+      this.timeReceived,
+      this.datePlaced,
+      this.dateDelivered,
+      this.draftedBy,
+      this.receivedBy,
+      this.lastUpdatedBy,
+      this.timeRejected,
+      this.timeCancelled,
+      this.notes,
+      this.promoCode,
+      this.timeCompare,
+      this.isInvoiced,
+      this.isAddOn,
+      this.linkedOrder,
+      this.isAcknowledged,
+      this.pdfURL});
 
   Orders.fromJson(Map<String, dynamic> json) {
     dateCreated = json['dateCreated'];
@@ -204,12 +205,12 @@ class Orders {
         : null;
     orderId = json['orderId'];
     outlet =
-    json['outlet'] != null ? new Outlet.fromJson(json['outlet']) : null;
+        json['outlet'] != null ? new Outlet.fromJson(json['outlet']) : null;
     supplier = json['supplier'] != null
         ? new Supplier.fromJson(json['supplier'])
         : null;
     amount =
-    json['amount'] != null ? new Amount.fromJson(json['amount']) : null;
+        json['amount'] != null ? new Amount.fromJson(json['amount']) : null;
     orderStatus = json['orderStatus'];
     if (json['products'] != null) {
       products = new List<Products>();
@@ -356,26 +357,27 @@ class Outlet {
   String market;
   Address address;
 
-  Outlet({this.outletId,
-    this.outletName,
-    this.company,
-    this.settings,
-    this.logoURL,
-    this.market,
-    this.address});
+  Outlet(
+      {this.outletId,
+      this.outletName,
+      this.company,
+      this.settings,
+      this.logoURL,
+      this.market,
+      this.address});
 
   Outlet.fromJson(Map<String, dynamic> json) {
     outletId = json['outletId'];
     outletName = json['outletName'];
     company =
-    json['company'] != null ? new Company.fromJson(json['company']) : null;
+        json['company'] != null ? new Company.fromJson(json['company']) : null;
     settings = json['settings'] != null
         ? new Settings.fromJson(json['settings'])
         : null;
     logoURL = json['logoURL'];
     market = json['market'];
     address =
-    json['address'] != null ? new Address.fromJson(json['address']) : null;
+        json['address'] != null ? new Address.fromJson(json['address']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -407,20 +409,21 @@ class Company {
   String regNo;
   String market;
 
-  Company({this.companyId,
-    this.companyName,
-    this.address,
-    this.logoURL,
-    this.email,
-    this.phone,
-    this.regNo,
-    this.market});
+  Company(
+      {this.companyId,
+      this.companyName,
+      this.address,
+      this.logoURL,
+      this.email,
+      this.phone,
+      this.regNo,
+      this.market});
 
   Company.fromJson(Map<String, dynamic> json) {
     companyId = json['companyId'];
     companyName = json['companyName'];
     address =
-    json['address'] != null ? new Address.fromJson(json['address']) : null;
+        json['address'] != null ? new Address.fromJson(json['address']) : null;
     logoURL = json['logoURL'];
     email = json['email'];
     phone = json['phone'];
@@ -476,11 +479,12 @@ class Settings {
   bool enableDeliveryInstruction;
   WeeklyOrder weeklyOrder;
 
-  Settings({this.timeZone,
-    this.language,
-    this.enableSpecialRequest,
-    this.enableDeliveryInstruction,
-    this.weeklyOrder});
+  Settings(
+      {this.timeZone,
+      this.language,
+      this.enableSpecialRequest,
+      this.enableDeliveryInstruction,
+      this.weeklyOrder});
 
   Settings.fromJson(Map<String, dynamic> json) {
     timeZone = json['timeZone'];
@@ -533,7 +537,7 @@ class WeeklyOrder {
 
   WeeklyOrder.fromJson(Map<String, dynamic> json) {
     cutOff =
-    json['cutOff'] != null ? new CutOff.fromJson(json['cutOff']) : null;
+        json['cutOff'] != null ? new CutOff.fromJson(json['cutOff']) : null;
     startDay = json['startDay'];
     status = json['status'];
   }
@@ -575,11 +579,12 @@ class Supplier {
   String logoURL;
   Settings settings;
 
-  Supplier({this.supplierId,
-    this.supplierName,
-    this.shortDesc,
-    this.logoURL,
-    this.settings});
+  Supplier(
+      {this.supplierId,
+      this.supplierName,
+      this.shortDesc,
+      this.logoURL,
+      this.settings});
 
   Supplier.fromJson(Map<String, dynamic> json) {
     supplierId = json['supplierId'];
@@ -616,16 +621,17 @@ class OrderSettings {
   DeliveryFee gst;
   Gst gST;
 
-  OrderSettings({this.currencyCode,
-    this.timeZone,
-    this.inventory,
-    this.notification,
-    this.payment,
-    this.invoice,
-    this.language,
-    this.taxComponents,
-    this.gst,
-    this.gST});
+  OrderSettings(
+      {this.currencyCode,
+      this.timeZone,
+      this.inventory,
+      this.notification,
+      this.payment,
+      this.invoice,
+      this.language,
+      this.taxComponents,
+      this.gst,
+      this.gST});
 
   OrderSettings.fromJson(Map<String, dynamic> json) {
     currencyCode = json['currencyCode'];
@@ -716,7 +722,7 @@ class Amount {
         ? new DeliveryFee.fromJson(json['subTotal'])
         : null;
     total =
-    json['total'] != null ? new DeliveryFee.fromJson(json['total']) : null;
+        json['total'] != null ? new DeliveryFee.fromJson(json['total']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -779,7 +785,7 @@ class DeliveryFee {
 class Products {
   String sku;
   String productName;
-  String notes="";
+  String notes = "";
   var quantity;
   String supplierProductCode;
   String unitSize;
@@ -787,15 +793,16 @@ class Products {
   DeliveryFee unitPrice;
   DeliveryFee totalPrice;
 
-  Products({this.sku,
-    this.productName,
-    this.notes,
-    this.unitSizeAlias,
-    this.quantity,
-    this.supplierProductCode,
-    this.unitSize,
-    this.unitPrice,
-    this.totalPrice});
+  Products(
+      {this.sku,
+      this.productName,
+      this.notes,
+      this.unitSizeAlias,
+      this.quantity,
+      this.supplierProductCode,
+      this.unitSize,
+      this.unitPrice,
+      this.totalPrice});
 
   Products.fromJson(Map<String, dynamic> json) {
     sku = json['sku'];
@@ -860,8 +867,7 @@ class OrderDetailsResponse {
         data: Orders.fromJson(json["data"]),
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "path": path,
         "timestamp": timestamp.toIso8601String(),
         "status": status,

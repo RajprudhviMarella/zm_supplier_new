@@ -29,6 +29,7 @@ class ZmApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Constants.setEnvironment(Environment.PROD);
     print(initialRoute);
 
     return MaterialApp(

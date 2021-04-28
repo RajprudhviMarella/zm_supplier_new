@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
@@ -71,6 +72,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   TextInputType keyboard;
   TextInputFormatter regExp;
   bool isValid = false;
+  bool isSubscribed = false;
 
   @override
   void initState() {
@@ -79,6 +81,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     for (var i = 0; i < lstDeliveryDates[0].deliveryDates.length; i++) {
       if (lstDeliveryDates[0].deliveryDates[i].isSelected) {
         isAnyDateSelected = true;
+        selectedDate = lstDeliveryDates[0].deliveryDates[i].deliveryDate;
       }
     }
     if (!isAnyDateSelected) {
@@ -109,6 +112,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   SharedPref sharedPref = SharedPref();
 
   loadSharedPrefs() async {
+
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
@@ -557,8 +561,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     bottom: MediaQuery.of(context)
                                         .viewInsets
                                         .bottom)
-                                : EdgeInsets.fromLTRB(0, 15, 0,
-                                MediaQuery.of(context).viewInsets.bottom + 15),
+                                : EdgeInsets.fromLTRB(10, 15, 10, 15),
                             color: Colors.white,
                             child: Center(
                               child: Column(
@@ -1184,19 +1187,31 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     print("url" + requestUrl);
     http.Response response = await http.delete(requestUrl, headers: headers);
     moveToDashBoard();
-    print("url" + requestUrl);
+    print("url delete" + requestUrl);
     print("ms" + response.statusCode.toString());
   }
 
-  void moveToDashBoard() {
-    //  DartNotificationCenter.post(channel: Constants.draft_notifier);
-    DartNotificationCenter.unsubscribe(
-           observer: 1, channel: Constants.orderPlaced_notifier);
+  void moveToDashBoard() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    isSubscribed = false;
+    prefs.setBool(Constants.is_Subscribed, isSubscribed);
+
     DartNotificationCenter.unsubscribe(
         observer: 1, channel: Constants.draft_notifier);
     DartNotificationCenter.unsubscribe(
         observer: 1, channel: Constants.acknowledge_notifier);
-    Navigator.pushNamed(context, '/home');
+
+    sharedPref.saveBool(Constants.isFromReviewOrder, true);
+
+
+    final PageRouteBuilder _homeRoute = new PageRouteBuilder(
+      pageBuilder: (BuildContext context, _, __) {
+        return HomePage();
+      },
+    );
+    Navigator.pushAndRemoveUntil(
+        context, _homeRoute, (Route<dynamic> r) => false);
   }
 
   void showAlert(context) {
@@ -1441,16 +1456,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
-          Future.delayed(Duration(seconds: 2), () {
-            Navigator.pop(dialogContext);
-          });
           return CustomDialogBox(
             title: "Can’t create this order",
             imageAssets: 'assets/images/img_exclaimation_red.png',
           );
-        }).then((value) {
-      moveToDashBoard();
-    });
+        });
   }
 
   Future<void> showSuccessDialog() async {
@@ -1458,15 +1468,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
-          Future.delayed(Duration(seconds: 2), () {
-            Navigator.pop(dialogContext);
-          });
           return CustomDialogBox(
             title: "Order created",
             imageAssets: 'assets/images/tick_receive_big.png',
           );
         }).then((value) {
-          DartNotificationCenter.post(channel: Constants.orderPlaced_notifier);
       moveToDashBoard();
     });
   }

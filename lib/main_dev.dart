@@ -30,7 +30,8 @@ class ZmApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(initialRoute);
-
+    Constants.setEnvironment(Environment.DEV);
+    
     return MaterialApp(
       title: 'Supplier',
       debugShowCheckedModeBanner: false,

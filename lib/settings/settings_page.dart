@@ -86,28 +86,28 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                       color: grey_text),
                   1.0,
                   Colors.black),
-              Headers(context, Constants.txt_support, 18.0),
-              menuItem(
-                  context,
-                  Constants.txt_help,
-                  ImageIcon(AssetImage('assets/images/icon_help.png'),
-                      color: grey_text),
-                  1.0,
-                  Colors.black),
-              menuItem(
-                  context,
-                  Constants.txt_ask_zeemart,
-                  ImageIcon(AssetImage('assets/images/icon_chat.png'),
-                      color: grey_text),
-                  1.0,
-                  Colors.black),
-              menuItem(
-                  context,
-                  Constants.txt_send_feed_back,
-                  ImageIcon(AssetImage('assets/images/icon_feedback.png'),
-                      color: grey_text),
-                  1.0,
-                  Colors.black),
+              //Headers(context, Constants.txt_support, 18.0),
+              // menuItem(
+              //     context,
+              //     Constants.txt_help,
+              //     ImageIcon(AssetImage('assets/images/icon_help.png'),
+              //         color: grey_text),
+              //     1.0,
+              //     Colors.black),
+              // menuItem(
+              //     context,
+              //     Constants.txt_ask_zeemart,
+              //     ImageIcon(AssetImage('assets/images/icon_chat.png'),
+              //         color: grey_text),
+              //     1.0,
+              //     Colors.black),
+              // menuItem(
+              //     context,
+              //     Constants.txt_send_feed_back,
+              //     ImageIcon(AssetImage('assets/images/icon_feedback.png'),
+              //         color: grey_text),
+              //     1.0,
+              //     Colors.black),
               menuItem(
                   context,
                   Constants.txt_terms_of_use,
@@ -272,8 +272,11 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs?.clear();
 
-        Navigator.of(dialogContext).pop();
-        Navigator.of(context, rootNavigator: true).pop(context);
+        Navigator.of(context).pushAndRemoveUntil(
+            new MaterialPageRoute(
+                builder: (context) =>
+                new LoginPage()),
+                (route) => false);
 
       },
     );
