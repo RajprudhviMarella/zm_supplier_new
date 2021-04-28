@@ -109,9 +109,9 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: faintGrey,
+      appBar: buildAppBar(context),
       body: ListView(
         children: <Widget>[
-          buildAppBar(context),
           displayList(context),
         ],
       ),

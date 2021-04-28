@@ -93,9 +93,9 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: faintGrey,
+      appBar: buildAppBar(context),
       body: ListView(
         children: <Widget>[
-          buildAppBar(context),
           displayList(context),
         ],
       ),
