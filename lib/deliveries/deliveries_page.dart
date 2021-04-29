@@ -208,44 +208,54 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                         ]),
                       ),
                     ),
-                    itemBuilder: (context, element) {
-                      return Card(
-                          margin: EdgeInsets.only(top: 1.0),
-                          child: Container(
-                              color: Colors.white,
-                              child: ListTile(
-                                onTap: () {
-                                  moveToOrderDetailsPage(element);
-                                },
-                                contentPadding:
-                                    EdgeInsets.only(left: 15.0, right: 10.0),
-                                leading: displayImage(element.outlet),
-                                title: Text(
-                                  element.outlet.outletName,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontFamily: "SourceSansProSemiBold",
-                                  ),
-                                ),
-                                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-                                subtitle: Container(
-                                  margin: EdgeInsets.only(top: 2.0),
-                                  child: Text(
-                                    '# ${element.orderId}',
+                    indexedItemBuilder: (context, element, index) {
+                      if (snapShot.data.length >= pageSize &&
+                          index == snapShot.data.length - 1) {
+                        return Container(
+                          height: 80,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else {
+                        return Card(
+                            margin: EdgeInsets.only(top: 1.0),
+                            child: Container(
+                                color: Colors.white,
+                                child: ListTile(
+                                  onTap: () {
+                                    moveToOrderDetailsPage(element);
+                                  },
+                                  contentPadding:
+                                      EdgeInsets.only(left: 15.0, right: 10.0),
+                                  leading: displayImage(element.outlet),
+                                  title: Text(
+                                    element.outlet.outletName,
                                     style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 12.0,
-                                        fontFamily: "SourceSansProRegular"),
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                      fontFamily: "SourceSansProSemiBold",
+                                    ),
                                   ),
-                                ),
-                                trailing: Text(
-                                    element.amount.total.getDisplayValue(),
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.black,
-                                        fontFamily: "SourceSansProRegular")),
-                              )));
+                                  // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+                                  subtitle: Container(
+                                    margin: EdgeInsets.only(top: 2.0),
+                                    child: Text(
+                                      '# ${element.orderId}',
+                                      style: TextStyle(
+                                          color: greyText,
+                                          fontSize: 12.0,
+                                          fontFamily: "SourceSansProRegular"),
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                      element.amount.total.getDisplayValue(),
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontFamily: "SourceSansProRegular")),
+                                )));
+                      }
                     },
                   ));
             } else {

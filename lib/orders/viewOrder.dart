@@ -224,70 +224,82 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                         ]),
                       ),
                     ),
-                    itemBuilder: (context, element) {
-                      return Card(
-                          margin: EdgeInsets.only(top: 2.0),
-                          child: Container(
-                              color: Colors.white,
-                              child: ListTile(
-                                onTap: () {
-                                  moveToOrderDetailsPage(element);
-                                },
-                                contentPadding: EdgeInsets.only(
-                                    top: 10.0,
-                                    bottom: 10.0,
-                                    left: 15.0,
-                                    right: 10.0),
-                                leading: displayImage(element.outlet),
-                                title: Text(
-                                  element.outlet.outletName,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontFamily: "SourceSansProSemiBold",
+                    indexedItemBuilder: (context, element, index) {
+                      if (snapShot.data.length >= pageSize &&
+                          index == snapShot.data.length - 1) {
+                        return Container(
+                          height: 80,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else {
+                        return Card(
+                            margin: EdgeInsets.only(top: 2.0),
+                            child: Container(
+                                color: Colors.white,
+                                child: ListTile(
+                                  onTap: () {
+                                    moveToOrderDetailsPage(element);
+                                  },
+                                  contentPadding: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                      left: 15.0,
+                                      right: 10.0),
+                                  leading: displayImage(element.outlet),
+                                  title: Text(
+                                    element.outlet.outletName,
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                      fontFamily: "SourceSansProSemiBold",
+                                    ),
                                   ),
-                                ),
-                                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+                                  // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-                                subtitle: Container(
-                                  margin: EdgeInsets.only(top: 2.0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(top: 2.0),
-                                            height: 14.0,
-                                            width: 14.0,
-                                            child: ImageIcon(AssetImage(
-                                                'assets/images/truck.png')),
-                                          ),
-                                          Text(" " + element.getTimeDelivered(),
+                                  subtitle: Container(
+                                    margin: EdgeInsets.only(top: 2.0),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Row(children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.only(top: 2.0),
+                                              height: 14.0,
+                                              width: 14.0,
+                                              child: ImageIcon(AssetImage(
+                                                  'assets/images/truck.png')),
+                                            ),
+                                            Text(
+                                                " " +
+                                                    element.getTimeDelivered(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12.0,
+                                                    fontFamily:
+                                                        "SourceSansProRegular")),
+                                            Text(
+                                              " " + '# ${element.orderId}',
                                               style: TextStyle(
-                                                  color: Colors.black,
+                                                  color: greyText,
                                                   fontSize: 12.0,
                                                   fontFamily:
-                                                      "SourceSansProRegular")),
-                                          Text(
-                                            " " + '# ${element.orderId}',
-                                            style: TextStyle(
-                                                color: greyText,
-                                                fontSize: 12.0,
-                                                fontFamily:
-                                                    "SourceSansProRegular"),
-                                          ),
+                                                      "SourceSansProRegular"),
+                                            ),
+                                          ]),
+                                          Constants.OrderStatusColor(element),
                                         ]),
-                                        Constants.OrderStatusColor(element),
-                                      ]),
-                                ),
-                                trailing: Text(
-                                    element.amount.total.getDisplayValue(),
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.black,
-                                        fontFamily: "SourceSansProRegular")),
-                              )));
+                                  ),
+                                  trailing: Text(
+                                      element.amount.total.getDisplayValue(),
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontFamily: "SourceSansProRegular")),
+                                )));
+                      }
                     },
                   ));
             } else {
@@ -350,7 +362,10 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       );
       this.appBarTitle = new Text(
         Constants.txt_orders,
-        style: new TextStyle(color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 18.0),
+        style: new TextStyle(
+            color: Colors.black,
+            fontFamily: "SourceSansProBold",
+            fontSize: 18.0),
       );
       _isSearching = false;
       _controller.clear();
