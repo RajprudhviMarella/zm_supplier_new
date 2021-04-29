@@ -88,7 +88,7 @@ class Constants {
   static const String txt_something_wrong =
       "Something went wrong. please try again";
 
-  static const String termsUrl = "https://www.zeemart.asia/terms";
+  static const String termsUrl = "https://www.zeemart.asia/tnc-zeemart-supplier";
   static const String privacyUrl = "https://www.zeemart.asia/privacy-policy";
   static const String txt_orders = "Orders";
   static const String txt_select_outlet = "Select outlet";

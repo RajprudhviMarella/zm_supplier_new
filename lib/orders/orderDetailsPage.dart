@@ -11,6 +11,7 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
+import 'package:zm_supplier/utils/pdfViewerPage.dart';
 import 'dart:math' as math;
 
 import 'package:zm_supplier/utils/webview.dart';
@@ -1138,7 +1139,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => WebViewContainer(order.pdfURL, "", true)));
+            builder: (context) => PdfViewerPage(order.pdfURL)));
   }
 
   void _newTaskModalBottomSheet(context) {
