@@ -320,8 +320,10 @@ class InvoicesState extends State<InvoicesPage> {
                             .getInvoiceDate()
                             .compareTo(element2.getInvoiceDate()),
                     floatingHeader: true,
+                    useStickyGroupSeparators: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
                       height: 50,
+                      color: faintGrey,
                       child: Align(
                         alignment: Alignment.center,
                         child: Container(

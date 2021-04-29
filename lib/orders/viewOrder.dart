@@ -204,10 +204,12 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                         element1
                             .getTimeCompare()
                             .compareTo(element2.getTimeCompare()),
-                    floatingHeader: true,
+                   floatingHeader: true,
+                    useStickyGroupSeparators: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
                       margin: EdgeInsets.only(top: 4.0),
                       height: 50.0,
+                      color: faintGrey,
                       child: Padding(
                         padding: EdgeInsets.only(left: 15.0, top: 5.0),
                         child: Row(children: <Widget>[
