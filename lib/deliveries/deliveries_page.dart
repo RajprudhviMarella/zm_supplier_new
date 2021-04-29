@@ -189,6 +189,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                             .getTimeDeliveredLong()
                             .compareTo(element2.getTimeDeliveredLong()),
                     floatingHeader: true,
+                    useStickyGroupSeparators: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
                       margin: EdgeInsets.only(top: 4.0),
                       height: 50.0,

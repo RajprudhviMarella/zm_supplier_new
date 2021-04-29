@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:intl/intl.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 import 'package:zm_supplier/invoices/invoices_page.dart';
 import 'package:zm_supplier/models/buyerUserResponse.dart';
 import 'package:zm_supplier/models/invoicesResponse.dart';
@@ -228,9 +229,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
           orderSummaryBanner(),
           InvocesPanel(),
           headers(context),
-          list(),
           header(context),
-          peopleList()
         ],
       ),
     );
@@ -593,72 +592,82 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   Widget headers(context) {
-    return Container(
-      color: faintGrey,
-      margin: EdgeInsets.only(top: 10.0),
-      padding: EdgeInsets.only(left: 20.0, right: 10.0, top: 0, bottom: 0.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('Recent orders',
-              style: TextStyle(
-                fontFamily: "SourceSansProBold",
-                fontSize: 18,
-              )),
-          new RaisedButton(
-            color: Colors.transparent,
-            elevation: 0,
-            onPressed: () {
-              events.mixpanel
-                  .track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_VIEW_ALL_ORDERS);
-              events.mixpanel.flush();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ViewOrdersPage(outletId)));
-            },
-            child: new Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SizedBox(width: 5),
-                new Text(
-                  'View all orders',
-                  style: TextStyle(
-                      color: buttonBlue,
-                      fontSize: 12,
-                      fontFamily: 'SourceSansProRegular'),
-                ),
-              ],
+    return StickyHeader(
+      header: Container(
+        color: faintGrey,
+        margin: EdgeInsets.only(top: 0.0),
+        padding: EdgeInsets.only(left: 20.0, right: 10.0, top: 10, bottom: 0.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Recent orders',
+                style: TextStyle(
+                  fontFamily: "SourceSansProBold",
+                  fontSize: 18,
+                )),
+            new RaisedButton(
+              color: Colors.transparent,
+              elevation: 0,
+              onPressed: () {
+                events.mixpanel
+                    .track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_VIEW_ALL_ORDERS);
+                events.mixpanel.flush();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ViewOrdersPage(outletId)));
+              },
+              child: new Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  SizedBox(width: 5),
+                  new Text(
+                    'View all orders',
+                    style: TextStyle(
+                        color: buttonBlue,
+                        fontSize: 12,
+                        fontFamily: 'SourceSansProRegular'),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+      content: Container(
+       child: list()
       ),
     );
   }
 
   Widget header(context) {
-    return Container(
-      color: faintGrey,
-      margin: EdgeInsets.only(top: 10.0),
-      padding:
-          EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0, bottom: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text('People',
+    return StickyHeader(
+      header: Container(
+        color: faintGrey,
+        margin: EdgeInsets.only(top: 10.0),
+        padding:
+            EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0, bottom: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('People',
+                style: TextStyle(
+                  fontFamily: "SourceSansProBold",
+                  fontSize: 18,
+                )),
+            Text(
+              ' (active for last 180 days)',
               style: TextStyle(
-                fontFamily: "SourceSansProBold",
-                fontSize: 18,
-              )),
-          Text(
-            ' (active for last 180 days)',
-            style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'SourceSansProRegular',
-                color: greyText),
-          )
-        ],
+                  fontSize: 14,
+                  fontFamily: 'SourceSansProRegular',
+                  color: greyText),
+            )
+          ],
+        ),
+      ),
+      content: Container(
+        child: peopleList(),
       ),
     );
   }

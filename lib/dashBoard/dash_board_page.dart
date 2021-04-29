@@ -24,6 +24,7 @@ import 'package:zm_supplier/utils/urlEndPoints.dart';
 import '../utils/color.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:sticky_headers/sticky_headers.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -499,10 +500,10 @@ class DashboardState extends State<DashboardPage> {
             //dots(context),
 
             draftHeader(),
-            draftBannersList(),
+            // draftBannersList(),
             Header(),
-            tabs(),
-            list(),
+          //  tabs(),
+           // list(),
           ],
         ),
       ),
@@ -834,20 +835,28 @@ class DashboardState extends State<DashboardPage> {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
                 snapshot.data.isNotEmpty) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
-                child: Container(
-                  height: 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Continue ordering',
-                        style: TextStyle(
-                            fontFamily: 'SourceSansProBold', fontSize: 18),
+              return StickyHeader(
+                header: Container(
+                  color: faintGrey,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
+                    child: Container(
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Continue ordering',
+                            style: TextStyle(
+                                fontFamily: 'SourceSansProBold', fontSize: 18),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
+                ),
+                content: Column(
+                  children: [draftBannersList()],
                 ),
               );
             } else {
@@ -978,36 +987,49 @@ class DashboardState extends State<DashboardPage> {
   }
 
   Widget Header() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 17.0, top: 5, right: 2),
-      child: Container(
-        height: 30,
-        child: LeftRightAlign(
-            left: Padding(
-              padding: const EdgeInsets.only(top: 5.0),
-              child: Text('Recent orders',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18.0,
-                      fontFamily: "SourceSansProBold")),
-            ),
-            right: FlatButton(
-              onPressed: () {
-                print('View all orders tapped');
-                mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ViewOrdersPage(null)));
-              },
-              child: Text(
-                'View all orders',
-                style: TextStyle(
-                    color: buttonBlue,
-                    fontFamily: "SourceSansProRegular",
-                    fontSize: 12),
+    return StickyHeader(
+      header: Container(
+        color: faintGrey,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 17.0, top: 5, right: 2),
+              child: Container(
+                height: 30,
+                child: LeftRightAlign(
+                    left: Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: Text('Recent orders',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18.0,
+                              fontFamily: "SourceSansProBold")),
+                    ),
+                    right: FlatButton(
+                      onPressed: () {
+                        print('View all orders tapped');
+                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ViewOrdersPage(null)));
+                      },
+                      child: Text(
+                        'View all orders',
+                        style: TextStyle(
+                            color: buttonBlue,
+                            fontFamily: "SourceSansProRegular",
+                            fontSize: 12),
+                      ),
+                    )),
               ),
-            )),
+            ),
+            tabs()
+          ],
+        ),
+      ),
+      content: Column(
+        children: [list()],
       ),
     );
   }
