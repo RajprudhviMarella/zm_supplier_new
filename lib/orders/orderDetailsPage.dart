@@ -2,6 +2,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -173,11 +174,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           deliveryBanner(context),
           skuBanner(context),
 
-          if (order.notes != null && order.notes.isNotEmpty)
-            notesBanner(context),
-
-          skuDetails(context),
-          spaceBanner(context),
+          // if (order.notes != null && order.notes.isNotEmpty)
+          //   notesBanner(context),
+          //
+          // skuDetails(context),
           priceDetails(context),
           smallSpaceBanner(context),
           contactDetails(context),
@@ -809,18 +809,32 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
 
   Widget skuBanner(BuildContext context) {
     int count = order.products.length;
-    return Padding(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-        child: Text('$count items',
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.black,
-                fontFamily: "SourceSansProBold")));
+    return StickyHeader(
+      header: Container(
+        height: 40,
+        width: MediaQuery.of(context).size.width,
+        color: faintGrey,
+        child: Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Text('$count items',
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontFamily: "SourceSansProBold"))),
+      ),
+      content: Column(
+        children: [
+          if (order.notes != null && order.notes.isNotEmpty)
+            notesBanner(context),
+          skuDetails(context),
+        ],
+      ),
+    );
   }
 
   Widget notesBanner(BuildContext context) {
     return new Card(
-      margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
+      margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
       color: yellow,
       child: new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -938,7 +952,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         });
 
     // return listView;
-    return Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 0), child: listView);
+    return Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0), child: listView);
   }
 
   Widget spaceBanner(BuildContext context) {

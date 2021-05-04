@@ -4,7 +4,9 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 import 'package:zm_supplier/invoices/invoices_page.dart';
 import 'package:zm_supplier/models/buyerUserResponse.dart';
 import 'package:zm_supplier/models/invoicesResponse.dart';
@@ -67,6 +69,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       this.outletName, this.outletId, this.lastOrderd, this.isStarred);
 
   Constants events = Constants();
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -223,19 +226,33 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       key: globalKey,
       backgroundColor: faintGrey,
       appBar: buildAppBar(context),
-      body: ListView(
+      body:  RefreshIndicator( key: refreshKey,
+      child: ListView(
         children: <Widget>[
           orderSummaryBanner(),
           InvocesPanel(),
           headers(context),
-          list(),
           header(context),
-          peopleList()
         ],
-      ),
+      ), onRefresh: refreshList)
     );
   }
 
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      buyerDetailsFuture = _retrivePeople();
+      orderSummaryData = getSummaryDataApiCalling();
+      recentOrders = _retriveRecentOrders();
+      invoicesSummaryData = _retriveInvoicesSummary();
+    });
+
+
+    return null;
+  }
   Widget buildAppBar(BuildContext context) {
     return new AppBar(
         backgroundColor: faintGrey,
@@ -593,72 +610,82 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   Widget headers(context) {
-    return Container(
-      color: faintGrey,
-      margin: EdgeInsets.only(top: 10.0),
-      padding: EdgeInsets.only(left: 20.0, right: 10.0, top: 0, bottom: 0.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('Recent orders',
-              style: TextStyle(
-                fontFamily: "SourceSansProBold",
-                fontSize: 18,
-              )),
-          new RaisedButton(
-            color: Colors.transparent,
-            elevation: 0,
-            onPressed: () {
-              events.mixpanel
-                  .track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_VIEW_ALL_ORDERS);
-              events.mixpanel.flush();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ViewOrdersPage(outletId)));
-            },
-            child: new Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SizedBox(width: 5),
-                new Text(
-                  'View all orders',
-                  style: TextStyle(
-                      color: buttonBlue,
-                      fontSize: 12,
-                      fontFamily: 'SourceSansProRegular'),
-                ),
-              ],
+    return StickyHeader(
+      header: Container(
+        color: faintGrey,
+        margin: EdgeInsets.only(top: 0.0),
+        padding: EdgeInsets.only(left: 20.0, right: 10.0, top: 10, bottom: 0.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Recent orders',
+                style: TextStyle(
+                  fontFamily: "SourceSansProBold",
+                  fontSize: 18,
+                )),
+            new RaisedButton(
+              color: Colors.transparent,
+              elevation: 0,
+              onPressed: () {
+                events.mixpanel
+                    .track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_VIEW_ALL_ORDERS);
+                events.mixpanel.flush();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ViewOrdersPage(outletId)));
+              },
+              child: new Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  SizedBox(width: 5),
+                  new Text(
+                    'View all orders',
+                    style: TextStyle(
+                        color: buttonBlue,
+                        fontSize: 12,
+                        fontFamily: 'SourceSansProRegular'),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+      content: Container(
+       child: list()
       ),
     );
   }
 
   Widget header(context) {
-    return Container(
-      color: faintGrey,
-      margin: EdgeInsets.only(top: 10.0),
-      padding:
-          EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0, bottom: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text('People',
+    return StickyHeader(
+      header: Container(
+        color: faintGrey,
+        margin: EdgeInsets.only(top: 10.0),
+        padding:
+            EdgeInsets.only(left: 20.0, right: 10.0, top: 10.0, bottom: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('People',
+                style: TextStyle(
+                  fontFamily: "SourceSansProBold",
+                  fontSize: 18,
+                )),
+            Text(
+              ' (active for last 180 days)',
               style: TextStyle(
-                fontFamily: "SourceSansProBold",
-                fontSize: 18,
-              )),
-          Text(
-            ' (active for last 180 days)',
-            style: TextStyle(
-                fontSize: 14,
-                fontFamily: 'SourceSansProRegular',
-                color: greyText),
-          )
-        ],
+                  fontSize: 14,
+                  fontFamily: 'SourceSansProRegular',
+                  color: greyText),
+            )
+          ],
+        ),
+      ),
+      content: Container(
+        child: peopleList(),
       ),
     );
   }
@@ -678,7 +705,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,));
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {
