@@ -112,7 +112,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   SharedPref sharedPref = SharedPref();
 
   loadSharedPrefs() async {
-
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
@@ -171,6 +170,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               ),
               actions: [
                 IconButton(
+                    iconSize: 28.0,
                     icon: Image.asset("assets/images/icon_trash.png"),
                     onPressed: () => showDraftAlert(context)),
               ],
@@ -1192,7 +1192,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   void moveToDashBoard() async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isSubscribed = false;
     prefs.setBool(Constants.is_Subscribed, isSubscribed);
@@ -1203,7 +1202,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         observer: 1, channel: Constants.acknowledge_notifier);
 
     sharedPref.saveBool(Constants.isFromReviewOrder, true);
-
 
     final PageRouteBuilder _homeRoute = new PageRouteBuilder(
       pageBuilder: (BuildContext context, _, __) {
