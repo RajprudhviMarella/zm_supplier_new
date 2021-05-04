@@ -239,7 +239,7 @@ class CreatePasswordState extends State<CreatePassword> {
 
           obscureText: _newPasswordToggle,
 
-          style: TextStyle(fontSize: 20, height: 1),
+          style: TextStyle(fontSize: 20, height: 1, fontFamily: 'SourceSansProRegular'),
 
           decoration: InputDecoration(
               suffixIcon: InkWell(
@@ -256,6 +256,7 @@ class CreatePasswordState extends State<CreatePassword> {
               hintStyle: TextStyle(
                 fontSize: 16,
                 color: greyText,
+                fontFamily: 'SourceSansProRegular'
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
@@ -297,7 +298,7 @@ class CreatePasswordState extends State<CreatePassword> {
           // validator: (input) => input.isValidEmail() ? null : "Check your email",
 
           obscureText: _newPasswordAgainToggle,
-          style: TextStyle(fontSize: 20, height: 1),
+          style: TextStyle(fontSize: 20, height: 1, fontFamily: 'SourceSansProRegular'),
 
           decoration: InputDecoration(
             border: InputBorder.none,
@@ -326,6 +327,7 @@ class CreatePasswordState extends State<CreatePassword> {
             hintStyle: TextStyle(
               fontSize: 16,
               color: greyText,
+              fontFamily: 'SourceSansProRegular'
             ),
           ),
         ),

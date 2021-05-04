@@ -1155,33 +1155,77 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
           return Container(
             child: new Wrap(
               children: <Widget>[
-                new ListTile(
-                    title: new Text(
-                      details.firstName,
-                      style: TextStyle(
-                          fontSize: 14, fontFamily: 'SourceSansProSemibold'),
-                    ),
-                    onTap: () => {}),
-                new ListTile(
-                    title: new Text(details.email,
+                Container(
+                  height: 40,
+                  child: new ListTile(
+
+                      title: new Text(
+                        details.firstName,
                         style: TextStyle(
-                            fontSize: 16, fontFamily: 'SourceSansProRegular')),
-                    onTap: () => {showActionSheet(details.email)}),
+                            fontSize: 14, fontFamily: 'SourceSansProSemibold'),
+                      ),
+                      onTap: () => {}),
+                ),
+                Container(
+                  height: 40,
+                  child: new ListTile(
+                      title: new Text(details.email,
+                          style: TextStyle(
+                              fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                      onTap: () => {showActionSheet(details.email)}),
+                ),
                 Divider(
                   thickness: 1,
                   color: faintGrey,
                 ),
                 if (details.phone != null && details.phone.isNotEmpty)
-                  new ListTile(
-                    title: new Text(details.phone,
-                        style: TextStyle(
-                            fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                  // Container(
+                  //   height: 40,
+                  //   color: Colors.yellow,
+                  //   child: Row(
+                  //     children: [
+                  //       new ListTile(
+                  //         title: new Text(details.phone,
+                  //             style: TextStyle(
+                  //                 fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                  //         onTap: () => {
+                  //           // moveToOrderActivityPage(order)
+                  //           showActionSheetPhone(details.phone)
+                  //         },
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  GestureDetector(
+                    child: Container(
+                      color: Colors.white,
+                      margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                      height: 40,
+                      child: Row(
+                        children: [
+                          // Image.asset(
+                          //   'assets/images/icon_close-red.png',
+                          //   width: 22,
+                          //   height: 22,
+                          // ),
+                          // SizedBox(
+                          //   width: 10,
+                          // ),
+                          Text(details.phone,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'SourceSansProRegular'),
+                          ),
+
+                        ],
+                      ),
+
+                    ),
                     onTap: () => {
-                      // moveToOrderActivityPage(order)
-                      showActionSheetPhone(details.phone)
-                    },
+                              showActionSheetPhone(details.phone)
+                            },
                   ),
-                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 20)),
+               Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 10)),
               ],
             ),
           );
