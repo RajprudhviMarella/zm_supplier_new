@@ -373,26 +373,30 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
           await sharedPref.readData(Constants.specific_user_info));
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
+      String _userEmail = await sharedPref.readData(Constants.USER_EMAIL);
+      String _userName = await sharedPref.readData(Constants.USER_NAME);
+      String _userImageUrl =
+          await sharedPref.readData(Constants.USER_IMAGE_URL);
       setState(() {
         PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
           _versioncode = packageInfo.version;
         });
-        if (user.data.email != null) {
-          _email = user.data.email;
+        if (_userImageUrl != null && _userImageUrl.isNotEmpty) {
+          _image_Url = _userImageUrl;
+          _networkImage = NetworkImage(_userImageUrl);
+          print("logo url: " + _userImageUrl);
         }
-        if (user.data.supplierName != null) {
-          _userID = user.data.supplierName;
+        if (_userName != null && _userName.isNotEmpty) {
+          _userID = _userName;
         }
-        if (user.data.logoUrl != null) {
-          _image_Url = user.data.logoUrl;
-          _networkImage = NetworkImage(user.data.logoUrl);
-          print("logo url: " + user.data.logoUrl);
+        if (_userEmail != null && _userEmail.isNotEmpty) {
+          _email = _userEmail;
         }
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
         }
-        if (user.data.supplierId != null) {
-          supplierID = user.data.supplierId;
+        if (user.data.supplier[0].supplierId != null) {
+          supplierID = user.data.supplier[0].supplierId;
         }
       });
     } catch (Excepetion) {
@@ -457,6 +461,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   void UpdateImageView(String fileUrl) {
     setState(() {
       _networkImage = new NetworkImage(fileUrl);
+      sharedPref.saveData(Constants.USER_IMAGE_URL, fileUrl);
       _hideLoader();
     });
   }
