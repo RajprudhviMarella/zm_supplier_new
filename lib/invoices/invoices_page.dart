@@ -302,7 +302,7 @@ class InvoicesState extends State<InvoicesPage> {
                 snapShot.data.isNotEmpty) {
               // isPageLoading = false;
               return SizedBox(
-                  height: MediaQuery.of(context).size.height - (height + 100),
+                  height: MediaQuery.of(context).size.height - (height + 80),
                   child: GroupedListView<Invoices, DateTime>(
                     // controller: controller,
 
