@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/invoices/invoice_details_page.dart';
@@ -57,7 +58,8 @@ class InvoicesState extends State<InvoicesPage> {
   SharedPref sharedPref = SharedPref();
 
   Constants events = Constants();
-  
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
   @override
   void initState() {
     super.initState();
@@ -154,10 +156,23 @@ class InvoicesState extends State<InvoicesPage> {
         ],
       ),
       body: ListView(
-        physics: const NeverScrollableScrollPhysics(),
-        children: <Widget>[buildSearchBar(context), invoicesList()],
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: <Widget>[buildSearchBar(context),
+          invoicesList()],
       ),
     );
+  }
+
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      invoicesFuture = retriveInvoices();
+    });
+
+    return null;
   }
 
   Widget filterCount() {
@@ -294,7 +309,7 @@ class InvoicesState extends State<InvoicesPage> {
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,),
             );
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
@@ -303,6 +318,7 @@ class InvoicesState extends State<InvoicesPage> {
               // isPageLoading = false;
               return SizedBox(
                   height: MediaQuery.of(context).size.height - (height + 100),
+                  child: RefreshIndicator( key: refreshKey,
                   child: GroupedListView<Invoices, DateTime>(
                     // controller: controller,
 
@@ -424,7 +440,7 @@ class InvoicesState extends State<InvoicesPage> {
                         ],
                       );
                     },
-                  ));
+                  ), onRefresh: refreshList));
             } else {
               return Container(
 

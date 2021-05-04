@@ -4,6 +4,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:zm_supplier/invoices/invoices_page.dart';
@@ -68,6 +69,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       this.outletName, this.outletId, this.lastOrderd, this.isStarred);
 
   Constants events = Constants();
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -224,17 +226,33 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       key: globalKey,
       backgroundColor: faintGrey,
       appBar: buildAppBar(context),
-      body: ListView(
+      body:  RefreshIndicator( key: refreshKey,
+      child: ListView(
         children: <Widget>[
           orderSummaryBanner(),
           InvocesPanel(),
           headers(context),
           header(context),
         ],
-      ),
+      ), onRefresh: refreshList)
     );
   }
 
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      buyerDetailsFuture = _retrivePeople();
+      orderSummaryData = getSummaryDataApiCalling();
+      recentOrders = _retriveRecentOrders();
+      invoicesSummaryData = _retriveInvoicesSummary();
+    });
+
+
+    return null;
+  }
   Widget buildAppBar(BuildContext context) {
     return new AppBar(
         backgroundColor: faintGrey,
@@ -687,7 +705,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,));
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {
