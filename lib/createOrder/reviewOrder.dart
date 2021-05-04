@@ -112,7 +112,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   SharedPref sharedPref = SharedPref();
 
   loadSharedPrefs() async {
-
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
@@ -171,6 +170,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               ),
               actions: [
                 IconButton(
+                    iconSize: 28.0,
                     icon: Image.asset("assets/images/icon_trash.png"),
                     onPressed: () => showDraftAlert(context)),
               ],
@@ -662,7 +662,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     ],
                                   ),
                                   Container(
-                                    margin: const EdgeInsets.only(top: 10.0),
+                                    margin: const EdgeInsets.only(top: 20.0),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
@@ -697,8 +697,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                               });
                                             },
                                             child: Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 5.0),
+                                                margin: EdgeInsets.only(
+                                                    right: 5.0, bottom: 20.0),
                                                 height: 40.0,
                                                 width: 40.0,
                                                 child: Center(
@@ -716,6 +716,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                 ))),
                                         Container(
                                             width: 200.0,
+                                            height: 75.0,
                                             child: TextFormField(
                                                 autofocus: false,
                                                 autovalidate: true,
@@ -859,8 +860,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                               });
                                             },
                                             child: Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 5.0),
+                                                margin: EdgeInsets.only(
+                                                    right: 5.0, bottom: 20.0),
                                                 height: 40.0,
                                                 width: 40.0,
                                                 child: Center(
@@ -1192,7 +1193,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   void moveToDashBoard() async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isSubscribed = false;
     prefs.setBool(Constants.is_Subscribed, isSubscribed);
@@ -1203,7 +1203,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         observer: 1, channel: Constants.acknowledge_notifier);
 
     sharedPref.saveBool(Constants.isFromReviewOrder, true);
-
 
     final PageRouteBuilder _homeRoute = new PageRouteBuilder(
       pageBuilder: (BuildContext context, _, __) {

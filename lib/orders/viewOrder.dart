@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -61,6 +62,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   final outletId;
 
   ViewOrdersDesign(this.outletId);
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
 
   Mixpanel mixpanel;
 
@@ -180,7 +183,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,),
             );
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
@@ -189,10 +192,11 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
               isPageLoading = false;
               return SizedBox(
                   height: MediaQuery.of(context).size.height - 85,
-                  child: GroupedListView<Orders, DateTime>(
+                  child: RefreshIndicator( key: refreshKey,
+                      child: GroupedListView<Orders, DateTime>(
                     controller: controller,
                     elements: snapShot.data,
-                    physics: BouncingScrollPhysics(),
+                    physics: AlwaysScrollableScrollPhysics(),
                     order: GroupedListOrder.ASC,
                     groupComparator: (DateTime value1, DateTime value2) =>
                         value2.compareTo(value1),
@@ -232,7 +236,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                         return Container(
                           height: 80,
                           child: Center(
-                            child: CircularProgressIndicator(),
+                            child: SpinKitThreeBounce(color: Colors.white),
                           ),
                         );
                       } else {
@@ -303,12 +307,24 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                                 )));
                       }
                     },
-                  ));
+                  ), onRefresh: refreshList));
             } else {
               return Container();
             }
           }
         });
+  }
+
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      _handleSearchEnd();
+    });
+
+    return null;
   }
 
   void searchOperation(String searchText) {

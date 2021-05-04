@@ -6,6 +6,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
@@ -75,6 +76,7 @@ class DashboardState extends State<DashboardPage> {
 
   bool isScrolled = false;
   bool isSubscribed = false;
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   _scrollListener() {
     setState(() {
@@ -493,7 +495,8 @@ class DashboardState extends State<DashboardPage> {
       ),
       body: Container(
         color: faintGrey,
-        child: ListView(
+        child: RefreshIndicator( key: refreshKey,
+    child: ListView(
           controller: _scrollController,
           children: [
             banner(context),
@@ -505,11 +508,25 @@ class DashboardState extends State<DashboardPage> {
           //  tabs(),
            // list(),
           ],
-        ),
+        ), onRefresh: refreshList)
       ),
     );
   }
+  Future<Null> refreshList() async {
+    print("refreshing");
 
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      orderSummaryData = getSummaryDataApiCalling();
+      ordersListToday = _retriveTodayOrders();
+      ordersListYesterday = _retriveYesterdayOrders();
+      draftOrdersFuture = getDraftOrders();
+    });
+
+    return null;
+  }
   Widget banner(context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 13),
@@ -1095,7 +1112,7 @@ class DashboardState extends State<DashboardPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,));
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {

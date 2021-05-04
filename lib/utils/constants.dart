@@ -47,6 +47,9 @@ class Constants {
   static const String login_Info = "loginInfo";
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
   static const String specific_user_info = "specificUserInfo";
+  static const String USER_NAME = "USER_NAME";
+  static const String USER_EMAIL = "USER_EMAIL";
+  static const String USER_IMAGE_URL = "USER_IMAGE_URL";
 
   static const String txt_incorrect_format = "Incorrect format";
   static const String txt_short_password = "New password is too short";

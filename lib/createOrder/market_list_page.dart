@@ -609,7 +609,7 @@ class MarketListDesign extends State<MarketListPage>
                             ],
                           ),
                           Container(
-                            margin: const EdgeInsets.only(top: 10.0),
+                            margin: const EdgeInsets.only(top: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
@@ -638,7 +638,8 @@ class MarketListDesign extends State<MarketListPage>
                                       });
                                     },
                                     child: Container(
-                                        margin: EdgeInsets.only(right: 5.0),
+                                        margin: EdgeInsets.only(
+                                            right: 5.0, bottom: 20.0),
                                         height: 40.0,
                                         width: 40.0,
                                         child: Center(
@@ -655,6 +656,7 @@ class MarketListDesign extends State<MarketListPage>
                                         ))),
                                 Container(
                                     width: 200.0,
+                                    height: 75.0,
                                     child: TextFormField(
                                         autofocus: true,
                                         autovalidate: true,
@@ -776,7 +778,8 @@ class MarketListDesign extends State<MarketListPage>
                                       });
                                     },
                                     child: Container(
-                                        margin: EdgeInsets.only(right: 5.0),
+                                        margin: EdgeInsets.only(
+                                            right: 5.0, bottom: 20.0),
                                         height: 40.0,
                                         width: 40.0,
                                         child: Center(
@@ -941,7 +944,7 @@ class MarketListDesign extends State<MarketListPage>
               child: ListTile(
                   focusColor: Colors.white,
                   contentPadding: EdgeInsets.only(
-                      left: 15.0, right: 10.0, top: 5.0, bottom: 5.0),
+                      left: 15.0, right: 10.0),
                   title: RichText(
                     text: TextSpan(
                       children: highlightOccurrences(
