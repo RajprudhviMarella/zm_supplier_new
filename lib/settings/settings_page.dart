@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info/package_info.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/models/user.dart';
@@ -42,6 +43,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   File _image;
   String _email = "";
   String _userID = "";
+  String _versioncode = "";
   String _image_Url = "";
   String supplierID = "";
   String mudra;
@@ -129,6 +131,18 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                       color: Colors.pinkAccent),
                   20.0,
                   Colors.pinkAccent),
+              Container(
+                color: faintGrey,
+                margin: EdgeInsets.only(top: 2.0),
+                padding: EdgeInsets.fromLTRB(18, 15, 20, 15),
+                child: Text("Version " + _versioncode,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: grey_text,
+                      fontFamily: "SourceSansProRegular",
+                      fontSize: 14.0,
+                    )),
+              ),
             ],
           ),
         ));
@@ -250,8 +264,10 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   }
 
   void _handleURLButtonPress(BuildContext context, String url, String title) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WebViewContainer(url, title,false)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WebViewContainer(url, title, false)));
   }
 
   void _launchMailClient() async {
@@ -260,7 +276,6 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       await launch(mailUrl);
     } catch (e) {}
   }
-
 
   void showAlert(context) {
     BuildContext dialogContext;
@@ -273,11 +288,8 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         prefs?.clear();
 
         Navigator.of(context).pushAndRemoveUntil(
-            new MaterialPageRoute(
-                builder: (context) =>
-                new LoginPage()),
-                (route) => false);
-
+            new MaterialPageRoute(builder: (context) => new LoginPage()),
+            (route) => false);
       },
     );
     // set up the button
@@ -362,6 +374,9 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
       setState(() {
+        PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+          _versioncode = packageInfo.version;
+        });
         if (user.data.email != null) {
           _email = user.data.email;
         }
