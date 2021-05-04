@@ -944,7 +944,7 @@ class MarketListDesign extends State<MarketListPage>
               child: ListTile(
                   focusColor: Colors.white,
                   contentPadding: EdgeInsets.only(
-                      left: 15.0, right: 10.0, top: 5.0, bottom: 5.0),
+                      left: 15.0, right: 10.0),
                   title: RichText(
                     text: TextSpan(
                       children: highlightOccurrences(
