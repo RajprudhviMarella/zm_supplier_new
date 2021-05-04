@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
@@ -53,6 +54,9 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
   String searchedString;
 
   Constants events = Constants();
+
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
 
   @override
   void initState() {
@@ -164,7 +168,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,)
             );
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
@@ -173,10 +177,11 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
               isPageLoading = false;
               return SizedBox(
                   height: MediaQuery.of(context).size.height - 85,
+                  child:  RefreshIndicator(        key: refreshKey,
                   child: GroupedListView<Orders, DateTime>(
                     controller: controller,
                     elements: snapShot.data,
-                    physics: BouncingScrollPhysics(),
+                    physics: AlwaysScrollableScrollPhysics(),
                     order: GroupedListOrder.DESC,
                     groupComparator: (DateTime value1, DateTime value2) =>
                         value2.compareTo(value1),
@@ -215,7 +220,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                         return Container(
                           height: 80,
                           child: Center(
-                            child: CircularProgressIndicator(),
+                            child: SpinKitThreeBounce(color: Colors.blueAccent,size: 40,),
                           ),
                         );
                       } else {
@@ -258,12 +263,24 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                                 )));
                       }
                     },
-                  ));
+                  ), onRefresh: refreshList));
             } else {
               return Container();
             }
           }
         });
+  }
+
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      _handleSearchEnd();
+    });
+
+    return null;
   }
 
   void searchOperation(String searchText) {
