@@ -183,7 +183,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,),
+              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
             );
           } else {
             if (snapShot.connectionState == ConnectionState.done &&

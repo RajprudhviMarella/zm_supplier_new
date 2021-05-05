@@ -81,6 +81,7 @@ class DashboardState extends State<DashboardPage> {
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
+      print('scrolling');
       if (_scrollPosition > 20) {
         isScrolled = true;
       } else {
@@ -497,7 +498,6 @@ class DashboardState extends State<DashboardPage> {
         color: faintGrey,
         child: RefreshIndicator( key: refreshKey,
     child: ListView(
-          controller: _scrollController,
           children: [
             banner(context),
             //dots(context),
@@ -1097,10 +1097,14 @@ class DashboardState extends State<DashboardPage> {
   }
 
   String readTimestamp(int timestamp) {
-    var date1 = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    var formattedDate = DateFormat('E d MMM').format(date1);
+    if (timestamp != null) {
+      var date1 = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+      var formattedDate = DateFormat('E d MMM').format(date1);
 
-    return formattedDate;
+      return formattedDate;
+    } else {
+      return '';
+    }
   }
 
   Widget list({String key, String string}) {
@@ -1112,7 +1116,7 @@ class DashboardState extends State<DashboardPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,));
+                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,));
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {
