@@ -49,7 +49,8 @@ class ChangePasswordDesign extends State<ChangePassword>
     events.mixPanelEvents();
     KeyboardVisibilityNotification().addNewListener(
       onHide: () {
-
+      print("hello");
+      FocusScope.of(context).unfocus();
       },
     );
   }

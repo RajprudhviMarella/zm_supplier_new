@@ -13,6 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/pdfViewerPage.dart';
+import 'package:zm_supplier/utils/customDialog.dart';
 import 'dart:math' as math;
 
 import 'package:zm_supplier/utils/webview.dart';
@@ -750,7 +751,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                     ),
                     Text(order.getDeliveryDay(),
                         style: TextStyle(
-                            color: Colors.black,
+                            color: grey_text,
                             fontSize: 12.0,
                             fontFamily: "SourceSansProRegular")),
                   ]),
@@ -977,6 +978,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
                       Row(children: <Widget>[
                         Expanded(
                           child: LeftRightAlign(
@@ -1059,10 +1061,12 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         )
                       ])
                     ]),
+                Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
                 Divider(color: greyText),
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
                       Row(children: <Widget>[
                         Expanded(
                           child: LeftRightAlign(
@@ -1091,10 +1095,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   Widget contactDetails(BuildContext context) {
+    userData =
+        LoginResponse.fromJson(sharedPref.readData(Constants.login_Info));
     return ListTile(
       //contentPadding: EdgeInsets.all(<some value here>),//change for side padding
       title: Row(
         children: <Widget>[
+          if (order.createdBy.id != null &&
+              order.createdBy.id != userData.user.userId)
           Expanded(
               child: RaisedButton(
                   color: Colors.white,
@@ -1171,7 +1179,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       onTap: () =>
                       {
                         Clipboard.setData(new ClipboardData(
-                            text: order.outlet.company.email))
+                            text: order.outlet.company.email)),
+                        showSuccessDialog()
                       }),
                 if (order.outlet.company.phone != null &&
                     order.outlet.company.phone.isNotEmpty)
@@ -1181,7 +1190,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                     onTap: () =>
                     {
                       Clipboard.setData(
-                          new ClipboardData(text: order.outlet.company.phone))
+                          new ClipboardData(text: order.outlet.company.phone)),
+                      showSuccessDialog()
                     },
                   ),
                 Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
@@ -1189,6 +1199,21 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
             ),
           );
         });
+  }
+
+  Future<void> showSuccessDialog() async {
+
+    await showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return CustomDialogBox(
+            title: "Copied",
+            imageAssets: 'assets/images/tick_receive_big.png',
+            time: 1000,
+          );
+        }).then((value) {
+      Navigator.of(context, rootNavigator: true).pop();
+    });
   }
 
   void _moreActionBottomSheet(context) {
