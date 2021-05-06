@@ -655,7 +655,7 @@ class CustomerState extends State<CustomersPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<CustomersData> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40));
+                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24));
                 // } else if (snapshot.hasError) {
                 //   return Center(child: Text('failed to load'));
               } else {

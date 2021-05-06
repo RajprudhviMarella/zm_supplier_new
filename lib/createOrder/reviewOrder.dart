@@ -1146,6 +1146,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       if (placeOrderResponse != null &&
           placeOrderResponse.status == 200 &&
           placeOrderResponse.data.status == "SUCCESS") {
+        print('order placed');
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
         events.mixpanel.flush();
         showSuccessDialog();
@@ -1155,7 +1156,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     } else {
       requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
       response = await http.post(requestUrl, headers: headers, body: msg);
-      if (response != null && response.statusCode == 200) {
+      PlaceOrderResponse placeOrderResponse =
+      PlaceOrderResponse.fromJson(jsonDecode(response.body));
+      if (placeOrderResponse != null &&
+          placeOrderResponse.status == 200) {
+      //if (response != null && response.statusCode == 200) {
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
         events.mixpanel.flush();
         showSuccessDialog();
@@ -1165,6 +1170,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     }
     print("url" + requestUrl);
     print("ms" + createOrderModel.toJson().toString());
+    print(headers);
     print("ms" + response.statusCode.toString());
     print("ms" + response.body.toString());
   }
