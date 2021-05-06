@@ -1464,6 +1464,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           return CustomDialogBox(
             title: "Can’t create this order",
             imageAssets: 'assets/images/img_exclaimation_red.png',
+            time: 3000,
           );
         });
   }
@@ -1476,6 +1477,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           return CustomDialogBox(
             title: "Order created",
             imageAssets: 'assets/images/tick_receive_big.png',
+            time: 3000,
           );
         }).then((value) {
       moveToDashBoard();
