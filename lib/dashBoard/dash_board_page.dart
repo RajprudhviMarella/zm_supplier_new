@@ -508,7 +508,7 @@ class DashboardState extends State<DashboardPage> {
           //  tabs(),
            // list(),
           ],
-        ), onRefresh: refreshList)
+        ), color: azul_blue, onRefresh: refreshList)
       ),
     );
   }

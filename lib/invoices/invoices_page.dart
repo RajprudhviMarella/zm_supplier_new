@@ -440,7 +440,7 @@ class InvoicesState extends State<InvoicesPage> {
                         ],
                       );
                     },
-                  ), onRefresh: refreshList));
+                  ), color: azul_blue, onRefresh: refreshList));
             } else {
               return Container(
 
