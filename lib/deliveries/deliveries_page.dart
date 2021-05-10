@@ -263,7 +263,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                                 )));
                       }
                     },
-                  ), onRefresh: refreshList));
+                  ),color: azul_blue, onRefresh: refreshList));
             } else {
               return Container();
             }

@@ -266,7 +266,7 @@ class CustomerState extends State<CustomersPage> {
           spaceBanner(),
           list()
         ]),
-        onRefresh: refreshList,)),
+          color: azul_blue, onRefresh: refreshList,)),
     );
   }
 

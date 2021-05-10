@@ -234,7 +234,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
           headers(context),
           header(context),
         ],
-      ), onRefresh: refreshList)
+      ), color: azul_blue, onRefresh: refreshList)
     );
   }
 

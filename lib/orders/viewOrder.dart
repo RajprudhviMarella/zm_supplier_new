@@ -307,7 +307,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                                 )));
                       }
                     },
-                  ), onRefresh: refreshList));
+                  ), color: azul_blue, onRefresh: refreshList));
             } else {
               return Container();
             }
