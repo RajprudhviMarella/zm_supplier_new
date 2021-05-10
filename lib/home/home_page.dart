@@ -87,6 +87,7 @@ class _MyStatefulWidgetState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
+        selectedFontSize: 12,
         selectedItemColor: buttonBlue,
         onTap: _onItemTapped,
       ),

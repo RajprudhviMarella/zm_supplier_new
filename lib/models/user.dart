@@ -20,6 +20,7 @@ class User {
   });
 
   String status;
+
   // List<Company> company;
   // List<Outlet> outlet;
   List<Supplier> supplier;
@@ -198,94 +199,44 @@ class CreatePasswordRequest {
 }
 
 class userData {
+  String fullName;
+  String phone;
+  String email;
+  List<Supplier> supplier;
+  String imageURL;
+
   userData({
-    this.dateUpdated,
-    this.timeUpdated,
-    this.updatedBy,
-    this.supplierId,
-    this.supplierName,
-    //  this.address,
-    this.alias,
-    this.desc,
-    this.email,
-    this.logoUrl,
-    this.market,
+    this.fullName,
     this.phone,
-    this.regNo,
-    this.shortDesc,
-    this.showPrice,
-    this.supplierIntegrationEnabled,
-    this.isActive,
-    this.status,
-    this.timePublished,
+    this.email,
+    this.imageURL,
+    this.supplier,
   });
 
-  String dateUpdated;
-  int timeUpdated;
-  UpdatedBy updatedBy;
-  String supplierId;
-  String supplierName;
+  userData.fromJson(Map<String, dynamic> json) {
+    fullName = json['fullName'];
+    phone = json['phone'];
+    email = json['email'];
+    imageURL = json['imageURL'];
+    if (json['supplier'] != null) {
+      supplier = new List<Supplier>();
+      json['supplier'].forEach((v) {
+        supplier.add(new Supplier.fromJson(v));
+      });
+    }
+  }
 
-  // Address address;
-  String alias;
-  String desc;
-  String email;
-  String logoUrl;
-  String market;
-  String phone;
-  String regNo;
-
-// SupplierSettings settings;
-  String shortDesc;
-  bool showPrice;
-  bool supplierIntegrationEnabled;
-  bool isActive;
-  String status;
-  int timePublished;
-
-  factory userData.fromJson(Map<String, dynamic> json) => userData(
-        dateUpdated: json["dateUpdated"],
-        timeUpdated: json["timeUpdated"],
-        updatedBy: UpdatedBy.fromJson(json["updatedBy"]),
-        supplierId: json["supplierId"],
-        supplierName: json["supplierName"],
-        // address: Address.fromJson(json["address"]),
-        alias: json["alias"],
-        desc: json["desc"],
-        email: json["email"],
-        logoUrl: json["logoURL"],
-        market: json["market"],
-        phone: json["phone"],
-        regNo: json["regNo"],
-        shortDesc: json["shortDesc"],
-        showPrice: json["showPrice"],
-        supplierIntegrationEnabled: json["supplierIntegrationEnabled"],
-        isActive: json["isActive"],
-        status: json["status"],
-        timePublished: json["timePublished"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "dateUpdated": dateUpdated,
-        "timeUpdated": timeUpdated,
-        "updatedBy": updatedBy.toJson(),
-        "supplierId": supplierId,
-        "supplierName": supplierName,
-        //"address": address.toJson(),
-        "alias": alias,
-        "desc": desc,
-        "email": email,
-        "logoURL": logoUrl,
-        "market": market,
-        "phone": phone,
-        "regNo": regNo,
-        "shortDesc": shortDesc,
-        "showPrice": showPrice,
-        "supplierIntegrationEnabled": supplierIntegrationEnabled,
-        "isActive": isActive,
-        "status": status,
-        "timePublished": timePublished,
-      };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['fullName'] = this.fullName;
+    data['phone'] = this.phone;
+    data['email'] = this.email;
+    data['imageURL'] = this.imageURL;
+    if (this.supplier != null) {
+      data['supplier'] = this.supplier.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
 }
 
 class SupplierSettings {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/constants.dart';
@@ -81,9 +82,13 @@ class _LoginPageState extends State<LoginPage> {
         getSpecificUser specificUser = new getSpecificUser();
 
         specificUser
-            .retriveSpecificUser(user.supplier.first.supplierId, user.mudra)
+            .retriveSpecificUser(
+                user.supplier.first.supplierId, user.mudra, user.user.userId)
             .then((value) async {
           sharedPref.saveData(Constants.specific_user_info, value);
+          sharedPref.saveData(Constants.USER_NAME, value.data.fullName);
+          sharedPref.saveData(Constants.USER_EMAIL, value.data.email);
+          sharedPref.saveData(Constants.USER_IMAGE_URL, value.data.imageURL);
           SharedPreferences prefs = await SharedPreferences.getInstance();
           isLogged = true;
           prefs.setBool(Constants.is_logged, isLogged);
@@ -137,9 +142,9 @@ class _LoginPageState extends State<LoginPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: ModalProgressHUD(
-        inAsyncCall: _isShowLoader,
-        child: Container(
+      body: Stack(
+        children: [
+          Container(
           height: height,
           width: width,
           child: SingleChildScrollView(
@@ -393,6 +398,28 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
+         _isShowLoader ? Container(
+           child: Stack(
+             children: [
+               Container(
+                 height: MediaQuery.of(context).size.height,
+                 color: Colors.black.withOpacity(0.3),
+               ),
+             Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+               crossAxisAlignment: CrossAxisAlignment.center,
+               children: [
+                 Container(
+                     // color: Colors.black.withOpacity(0.4) ,
+                     child: SpinKitThreeBounce(color: Colors.white, size: 24, duration:  Duration(seconds: 2),)),
+                 SizedBox(height: 10,),
+                 Text('Logging you in...', style: TextStyle(fontSize: 16, fontFamily: 'SourceSansProRegular', color: Colors.white),),
+               ],
+             ),
+           ]
+           ),
+         ) : Container()
+      ]
       ),
     );
   }

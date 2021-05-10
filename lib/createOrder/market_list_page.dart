@@ -609,7 +609,7 @@ class MarketListDesign extends State<MarketListPage>
                             ],
                           ),
                           Container(
-                            margin: const EdgeInsets.only(top: 10.0),
+                            margin: const EdgeInsets.only(top: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
@@ -638,7 +638,8 @@ class MarketListDesign extends State<MarketListPage>
                                       });
                                     },
                                     child: Container(
-                                        margin: EdgeInsets.only(right: 5.0),
+                                        margin: EdgeInsets.only(
+                                            right: 5.0, bottom: 20.0),
                                         height: 40.0,
                                         width: 40.0,
                                         child: Center(
@@ -655,6 +656,7 @@ class MarketListDesign extends State<MarketListPage>
                                         ))),
                                 Container(
                                     width: 200.0,
+                                    height: 75.0,
                                     child: TextFormField(
                                         autofocus: true,
                                         autovalidate: true,
@@ -776,7 +778,8 @@ class MarketListDesign extends State<MarketListPage>
                                       });
                                     },
                                     child: Container(
-                                        margin: EdgeInsets.only(right: 5.0),
+                                        margin: EdgeInsets.only(
+                                            right: 5.0, bottom: 20.0),
                                         height: 40.0,
                                         width: 40.0,
                                         child: Center(
@@ -940,8 +943,7 @@ class MarketListDesign extends State<MarketListPage>
               color: Colors.white,
               child: ListTile(
                   focusColor: Colors.white,
-                  contentPadding: EdgeInsets.only(
-                      left: 15.0, right: 10.0, top: 5.0, bottom: 5.0),
+                  contentPadding: EdgeInsets.only(left: 15.0, right: 10.0),
                   title: RichText(
                     text: TextSpan(
                       children: highlightOccurrences(
@@ -1247,15 +1249,14 @@ class MarketListDesign extends State<MarketListPage>
   }
 
   createDraftOrderAPI() async {
-    if (allOutletMarketList != null &&
-        allOutletMarketList.length > 0 &&
-        selectedMarketList != null &&
-        selectedMarketList.length > 0) {
-      _showLoader();
-      CreateOrderModel createOrderModel = new CreateOrderModel();
-      createOrderModel.notes = _txtOrderNotesEditController.text.toString();
-      bool isAnyDateSelected = false;
-      int selectedDate = 0;
+    _showLoader();
+    CreateOrderModel createOrderModel = new CreateOrderModel();
+    createOrderModel.notes = _txtOrderNotesEditController.text.toString();
+    bool isAnyDateSelected = false;
+    int selectedDate = 0;
+    if (lstDeliveryDates != null &&
+        lstDeliveryDates[0] != null &&
+        lstDeliveryDates[0].deliveryDates != null) {
       for (var i = 0; i < lstDeliveryDates[0].deliveryDates.length; i++) {
         if (lstDeliveryDates[0].deliveryDates[i].isSelected) {
           isAnyDateSelected = true;
@@ -1266,9 +1267,10 @@ class MarketListDesign extends State<MarketListPage>
         lstDeliveryDates[0].deliveryDates[0].isSelected = true;
         selectedDate = lstDeliveryDates[0].deliveryDates[0].deliveryDate;
       }
-
-      createOrderModel.timeDelivered = selectedDate;
-      List<Product> productslist = [];
+    }
+    createOrderModel.timeDelivered = selectedDate;
+    List<Product> productslist = [];
+    if (selectedMarketList != null && selectedMarketList.length > 0)
       for (var i = 0; i < selectedMarketList.length; i++) {
         Product products = new Product();
         products.sku = selectedMarketList[i].sku;
@@ -1277,37 +1279,28 @@ class MarketListDesign extends State<MarketListPage>
         products.unitSize = selectedMarketList[i].priceList[0].unitSize;
         productslist.add(products);
       }
-      createOrderModel.products = productslist;
-      Map<String, String> headers = {
-        'Content-Type': 'application/json',
-        'authType': 'Zeemart',
-        'mudra': mudra,
-        'supplierId': supplierID
-      };
-      Map<String, String> queryParams = {
-        'supplierId': supplierID,
-        'outletId': widget.outletId,
-      };
-
-      String queryString = Uri(queryParameters: queryParams).query;
-      var requestUrl = URLEndPoints.create_draft_orders + '?' + queryString;
-      print("url" + requestUrl);
-      print("ms" + createOrderModel.toJson().toString());
-      final msg = jsonEncode(createOrderModel);
-
-      http.Response response =
-          await http.post(requestUrl, headers: headers, body: msg);
-      print("ms" + response.statusCode.toString());
-      print("ms" + response.body.toString());
-      if (response.statusCode == 200) {
-        DartNotificationCenter.post(channel: Constants.draft_notifier);
-        _hideLoader();
-        Navigator.of(context).pop();
-      } else {
-        _hideLoader();
-        Navigator.of(context).pop();
-      }
+    createOrderModel.products = productslist;
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierID
+    };
+    Map<String, String> queryParams = {
+      'supplierId': supplierID,
+      'outletId': widget.outletId,
+    };
+    String queryString = Uri(queryParameters: queryParams).query;
+    var requestUrl = URLEndPoints.create_draft_orders + '?' + queryString;
+    final msg = jsonEncode(createOrderModel);
+    http.Response response =
+        await http.post(requestUrl, headers: headers, body: msg);
+    if (response.statusCode == 200) {
+      DartNotificationCenter.post(channel: Constants.draft_notifier);
+      _hideLoader();
+      Navigator.of(context).pop();
     } else {
+      _hideLoader();
       Navigator.of(context).pop();
     }
   }

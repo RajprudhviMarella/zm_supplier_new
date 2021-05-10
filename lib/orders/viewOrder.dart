@@ -187,6 +187,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                   child:  Center(
                     child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
             ));
+
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&

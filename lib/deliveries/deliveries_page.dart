@@ -172,6 +172,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
           child: Center(
               child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,)
             ));
+
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
