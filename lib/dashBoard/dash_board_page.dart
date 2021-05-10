@@ -1112,7 +1112,9 @@ class DashboardState extends State<DashboardPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,));
+                return Padding(
+                    padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    child: Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,)));
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {

@@ -182,9 +182,11 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         future: ordersList,
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,),
-            );
+            return Padding(
+                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                  child:  Center(
+                    child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
+            ));
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
@@ -235,7 +237,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                         return Container(
                           height: 80,
                           child: Center(
-                            child: SpinKitThreeBounce(color: Colors.white),
+                            child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
                           ),
                         );
                       } else {
