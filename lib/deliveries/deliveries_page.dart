@@ -167,9 +167,12 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
         future: ordersList,
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,)
-            );
+            return Padding(
+                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+          child: Center(
+              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,)
+            ));
+
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
@@ -220,7 +223,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                         return Container(
                           height: 80,
                           child: Center(
-                            child: SpinKitThreeBounce(color: Colors.blueAccent,size: 40,),
+                            child: SpinKitThreeBounce(color: Colors.blueAccent,size: 24,),
                           ),
                         );
                       } else {
