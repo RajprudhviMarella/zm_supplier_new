@@ -85,15 +85,12 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
       setState(() {
+        userData = loginResponse;
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
         }
-        if (loginResponse.user.supplier
-            .elementAt(0)
-            .supplierId != null) {
-          supplierID = loginResponse.user.supplier
-              .elementAt(0)
-              .supplierId;
+        if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
+          supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
           // ordersList = callRetreiveOrdersAPI();
         }
       });
@@ -127,8 +124,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                new MarketListPage(
+                                builder: (context) => new MarketListPage(
                                     order.outlet.outletId,
                                     order.outlet.outletName,
                                     order.products)));
@@ -169,7 +165,6 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                   ])))),
       backgroundColor: faintGrey,
       body: ListView(
-
         children: <Widget>[
           banner(context),
           deliveryBanner(context),
@@ -241,7 +236,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              //  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                //  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                 child: Text("#" + order.orderId,
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -276,7 +271,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              //  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                //  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                 child: Text("#" + order.orderId,
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -411,14 +406,11 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         });
   }
 
-  acknowledgeOrder() async {
+  acknowledgeOrder() {
     OrderApi acknowledge = new OrderApi();
-
-    userData =
-        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
     acknowledge
         .acknowledgeOrder(
-        userData.mudra, userData.supplier.first.supplierId, order.orderId)
+            userData.mudra, userData.supplier.first.supplierId, order.orderId)
         .then((value) async {
       if (value == Constants.status_success) {
         print('isAcknowledged success');
@@ -458,198 +450,190 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         builder: (context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-                return SingleChildScrollView(
-                    child: Container(
-                      padding: (Platform.isAndroid)
-                          ? EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom)
-                          : EdgeInsets.only(
-                          top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
-                      color: Colors.white,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: 5, left: 17.0, bottom: 0),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Add a reason",
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.black,
-                                          fontFamily: "SourceSansProSemiBold"))),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedReason = 'Can’t fulfil the order';
-                                  });
-                                },
-                                child: Container(
-                                  color: Colors.white,
-                                  margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
-                                  height: 40,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Can’t fulfil the order',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: 'SourceSansProRegular'),
-                                      ),
-                                      Spacer(),
-                                      trailingIcon('Can’t fulfil the order')
-                                    ],
-                                  ),
-                                ),
+            return SingleChildScrollView(
+                child: Container(
+              padding: (Platform.isAndroid)
+                  ? EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom)
+                  : EdgeInsets.only(
+                      top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+              color: Colors.white,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(top: 5, left: 17.0, bottom: 0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Add a reason",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                  fontFamily: "SourceSansProSemiBold"))),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedReason = 'Can’t fulfil the order';
+                          });
+                        },
+                        child: Container(
+                          color: Colors.white,
+                          margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                          height: 40,
+                          child: Row(
+                            children: [
+                              Text(
+                                'Can’t fulfil the order',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'SourceSansProRegular'),
                               ),
+                              Spacer(),
+                              trailingIcon('Can’t fulfil the order')
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                      child: Divider(thickness: 2, color: faintGrey),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedReason = 'Requested by buyer';
+                        });
+                      },
+                      child: Container(
+                        color: Colors.white,
+                        margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                        height: 40,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Requested by buyer',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'SourceSansProRegular'),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
-                              child: Divider(thickness: 2, color: faintGrey),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedReason = 'Requested by buyer';
-                                });
-                              },
-                              child: Container(
-                                color: Colors.white,
-                                margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
-                                height: 40,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Requested by buyer',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'SourceSansProRegular'),
-                                    ),
-                                    Spacer(),
-                                    trailingIcon('Requested by buyer')
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
-                              child: Divider(thickness: 2, color: faintGrey),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedReason = 'Other reason';
-                                });
-                              },
-                              child: Container(
-                                color: Colors.white,
-                                margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
-                                height: 40,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Other reason (type below)',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'SourceSansProRegular'),
-                                    ),
-                                    Spacer(),
-                                    trailingIcon('Other reason')
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10),
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                    left: 15.0, right: 10.0),
-                                margin: EdgeInsets.only(top: 10.0),
-                                decoration: BoxDecoration(
-                                  color: faintGrey,
-                                  // border: Border.all(
-                                  //   color: keyLineGrey,
-                                  // ),
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(15.0)),
-                                ),
-                                child: TextField(
-                                  controller: _controller,
-                                  keyboardType: TextInputType.text,
-                                  maxLines: null,
-                                  //  maxLength: 150,
-                                  autofocus: true,
-                                  cursorColor: Colors.blue,
-                                  decoration: InputDecoration(
-                                    // fillColor: Colors.orange,
-                                    // filled: true,
-                                    border: new OutlineInputBorder(
-                                      borderRadius: const BorderRadius.all(
-                                        const Radius.circular(10.0),
-                                      ),
-                                    ),
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    // hintText: Constants.txt_add_notes,
-                                    // hintStyle: new TextStyle(
-                                    //     color: greyText,
-                                    //     fontSize: 16.0,
-                                    //     fontFamily: "SourceSansProRegular"),
-                                  ),
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16.0,
-                                      fontFamily: "SourceSansProRegular"),
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                                onTap: () {
-                                  if (selectedReason == 'Other reason')
-                                    selectedReason = _controller.text;
-
-                                  print(selectedReason);
-                                  voidOrder(selectedReason);
-                                  print(_controller.text);
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: 20.0, right: 20.0),
-                                    margin: EdgeInsets.only(
-                                        top: 20.0, right: 20.0, left: 20.0),
-                                    height: 47.0,
-                                    width: MediaQuery
-                                        .of(context)
-                                        .size
-                                        .width,
-                                    decoration: BoxDecoration(
-                                        color: buttonBlue,
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(30))),
-                                    child: Center(
-                                        child: Text(
-                                          "Done",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontFamily: "SourceSansProSemiBold"),
-                                        ))))
+                            Spacer(),
+                            trailingIcon('Requested by buyer')
                           ],
                         ),
                       ),
-                    ));
-              });
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(17, 0, 17, 0),
+                      child: Divider(thickness: 2, color: faintGrey),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedReason = 'Other reason';
+                        });
+                      },
+                      child: Container(
+                        color: Colors.white,
+                        margin: EdgeInsets.fromLTRB(17, 0, 17, 0),
+                        height: 40,
+                        child: Row(
+                          children: [
+                            Text(
+                              'Other reason (type below)',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'SourceSansProRegular'),
+                            ),
+                            Spacer(),
+                            trailingIcon('Other reason')
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0, right: 10),
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15.0, right: 10.0),
+                        margin: EdgeInsets.only(top: 10.0),
+                        decoration: BoxDecoration(
+                          color: faintGrey,
+                          // border: Border.all(
+                          //   color: keyLineGrey,
+                          // ),
+                          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                        ),
+                        child: TextField(
+                          controller: _controller,
+                          keyboardType: TextInputType.text,
+                          maxLines: null,
+                          //  maxLength: 150,
+                          autofocus: true,
+                          cursorColor: Colors.blue,
+                          decoration: InputDecoration(
+                            // fillColor: Colors.orange,
+                            // filled: true,
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0),
+                              ),
+                            ),
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            // hintText: Constants.txt_add_notes,
+                            // hintStyle: new TextStyle(
+                            //     color: greyText,
+                            //     fontSize: 16.0,
+                            //     fontFamily: "SourceSansProRegular"),
+                          ),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                              fontFamily: "SourceSansProRegular"),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          if (selectedReason == 'Other reason')
+                            selectedReason = _controller.text;
+
+                          print(selectedReason);
+                          voidOrder(selectedReason);
+                          print(_controller.text);
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            margin: EdgeInsets.only(
+                                top: 20.0, right: 20.0, left: 20.0),
+                            height: 47.0,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                                color: buttonBlue,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30))),
+                            child: Center(
+                                child: Text(
+                              "Done",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: "SourceSansProSemiBold"),
+                            ))))
+                  ],
+                ),
+              ),
+            ));
+          });
         });
   }
 
@@ -658,7 +642,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
 
     reject
         .voidOrder(
-        mudra, supplierID, order.orderId, order.outlet.outletId, reason)
+            mudra, supplierID, order.orderId, order.outlet.outletId, reason)
         .then((value) async {
       if (value == Constants.status_success) {
         print('order voided');
@@ -681,7 +665,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   Widget banner(BuildContext context) {
     return new Container(
       padding:
-      new EdgeInsets.only(top: 20, left: 10.0, bottom: 8.0, right: 10.0),
+          new EdgeInsets.only(top: 20, left: 10.0, bottom: 8.0, right: 10.0),
       decoration: new BoxDecoration(color: faintGrey),
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -918,7 +902,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                 Row(children: <Widget>[
                                   Padding(
                                       padding:
-                                      EdgeInsets.fromLTRB(0, 15, 0, 10)),
+                                          EdgeInsets.fromLTRB(0, 15, 0, 10)),
                                   Container(
                                     margin: EdgeInsets.only(left: 15),
                                     child: Text("Special notes",
@@ -939,7 +923,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                                   color: Colors.black,
                                                   fontSize: 14.0,
                                                   fontFamily:
-                                                  "SourceSansProRegular")))),
+                                                      "SourceSansProRegular")))),
                                 ]),
                                 Padding(
                                     padding: EdgeInsets.fromLTRB(20, 5, 20, 5)),
@@ -1095,14 +1079,12 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   Widget contactDetails(BuildContext context) {
-    userData =
-        LoginResponse.fromJson(sharedPref.readData(Constants.login_Info));
     return ListTile(
       //contentPadding: EdgeInsets.all(<some value here>),//change for side padding
       title: Row(
         children: <Widget>[
-          if (order.createdBy.id != null &&
-              order.createdBy.id != userData.user.userId)
+          // if (order.createdBy.id != null &&
+          //     order.createdBy.id != userData.user.userId)
           Expanded(
               child: RaisedButton(
                   color: Colors.white,
@@ -1158,10 +1140,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   openPdf(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PdfViewerPage(order.pdfURL)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => PdfViewerPage(order.pdfURL)));
   }
 
   void _newTaskModalBottomSheet(context) {
@@ -1176,19 +1156,17 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                   new ListTile(
                       leading: new Icon(Icons.email),
                       title: new Text(order.outlet.company.email),
-                      onTap: () =>
-                      {
-                        Clipboard.setData(new ClipboardData(
-                            text: order.outlet.company.email)),
-                        showSuccessDialog()
-                      }),
+                      onTap: () => {
+                            Clipboard.setData(new ClipboardData(
+                                text: order.outlet.company.email)),
+                            showSuccessDialog()
+                          }),
                 if (order.outlet.company.phone != null &&
                     order.outlet.company.phone.isNotEmpty)
                   new ListTile(
                     leading: new Icon(Icons.phone),
                     title: new Text(order.outlet.company.phone),
-                    onTap: () =>
-                    {
+                    onTap: () => {
                       Clipboard.setData(
                           new ClipboardData(text: order.outlet.company.phone)),
                       showSuccessDialog()
@@ -1202,7 +1180,6 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   Future<void> showSuccessDialog() async {
-
     await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
