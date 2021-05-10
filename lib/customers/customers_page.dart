@@ -197,7 +197,7 @@ class CustomerState extends State<CustomersPage> {
     final date2 = DateTime.now();
     final difference = date2.difference(birthday).inDays;
     if (timeStamp > 0) {
-      if (difference > 30) {
+      if (difference > 14) {
         return warningRed;
       } else {
         return greyText;

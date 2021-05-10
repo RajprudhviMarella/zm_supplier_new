@@ -170,7 +170,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
             return Padding(
                 padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
           child: Center(
-              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 40,)
+              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,)
             ));
 
           } else {
