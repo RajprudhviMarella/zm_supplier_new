@@ -91,7 +91,8 @@ class Constants {
   static const String txt_something_wrong =
       "Something went wrong. please try again";
 
-  static const String termsUrl = "https://www.zeemart.asia/tnc-zeemart-supplier";
+  static const String termsUrl =
+      "https://www.zeemart.asia/tnc-zeemart-supplier";
   static const String privacyUrl = "https://www.zeemart.asia/privacy-policy";
   static const String txt_orders = "Orders";
   static const String txt_select_outlet = "Select outlet";
@@ -112,6 +113,7 @@ class Constants {
 
   static Widget OrderStatusColor(Orders orders) {
     String status = orders.orderStatus;
+
     if (status == "Approving") {
       return Container(
         margin: EdgeInsets.only(top: 6),
@@ -238,14 +240,16 @@ class Constants {
                   fontFamily: "SourceSansProSemiBold")),
         ),
       );
-    } else if (status == "Placed" ||
-        (orders.isInvoiced != null && orders.isInvoiced)) {
+    } else if (status == "Cancelled" ||
+        status == "Deleted" ||
+        status == "Rejected" ||
+        status == "Void") {
       return Container(
         margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
-          color: green,
+          color: pinkyRed,
           border: Border.all(
-            color: green,
+            color: pinkyRed,
           ),
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
         ),
@@ -260,16 +264,14 @@ class Constants {
                   fontFamily: "SourceSansProSemiBold")),
         ),
       );
-    } else if (status == "Cancelled" ||
-        status == "Deleted" ||
-        status == "Rejected" ||
-        status == "Void") {
+    } else if (status == "Placed" ||
+        (orders.isInvoiced != null && orders.isInvoiced)) {
       return Container(
         margin: EdgeInsets.only(top: 6),
         decoration: BoxDecoration(
-          color: pinkyRed,
+          color: green,
           border: Border.all(
-            color: pinkyRed,
+            color: green,
           ),
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
         ),
@@ -430,8 +432,7 @@ class _Config {
         "https://zm-ordermanagementserv.zeemart.asia/services/",
     AUTH_SERVER: "https://zm-authserv.zeemart.asia/services/",
     ACCOUNT_MANAGEMENT_SERVER: "https://zm-accountmanagementserv.zeemart.asia/",
-    INVENTORY_SERVER:
-        "https://zm-inventorymanagement.zeemart.asia/services/",
+    INVENTORY_SERVER: "https://zm-inventorymanagement.zeemart.asia/services/",
     INVOICE_SERVER: "https://zm-invoicemanagement.zeemart.asia/services/",
     REPORT_SERVER: "https://zm-reportmanagementserv.zeemart.asia/services/",
     COMMON_SERVER: "http://zm-commonservices.zeemart.asia/services/"
