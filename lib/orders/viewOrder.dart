@@ -211,7 +211,6 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                    floatingHeader: true,
                     useStickyGroupSeparators: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
-                      margin: EdgeInsets.only(top: 4.0),
                       height: 50.0,
                       color: faintGrey,
                       child: Padding(

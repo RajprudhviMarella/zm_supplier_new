@@ -196,8 +196,8 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                     floatingHeader: true,
                     useStickyGroupSeparators: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
-                      margin: EdgeInsets.only(top: 4.0),
                       height: 50.0,
+                      color: faintGrey,
                       child: Padding(
                         padding: EdgeInsets.only(left: 15.0, top: 5.0),
                         child: Row(children: <Widget>[
@@ -342,7 +342,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
         color: Colors.black,
       );
       this.appBarTitle = new Text(
-        Constants.txt_orders,
+        Constants.txt_deliveries,
         style: new TextStyle(color: Colors.black),
       );
       _isSearching = false;
