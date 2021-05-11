@@ -266,7 +266,7 @@ class Images {
 }
 
 class PriceList {
-  int moq;
+  var moq;
   Price price;
   String status;
   String unitSize;
