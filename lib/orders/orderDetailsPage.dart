@@ -1083,8 +1083,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
       //contentPadding: EdgeInsets.all(<some value here>),//change for side padding
       title: Row(
         children: <Widget>[
-          // if (order.createdBy.id != null &&
-          //     order.createdBy.id != userData.user.userId)
+          if (order.createdBy != null &&
+              order.createdBy.id != userData.user.userId)
           Expanded(
               child: RaisedButton(
                   color: Colors.white,
