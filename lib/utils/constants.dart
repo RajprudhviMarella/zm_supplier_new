@@ -25,6 +25,7 @@ class Constants {
   static const String txt_send_feed_back = "Send feedback";
   static const String txt_terms_of_use = "Terms of use";
   static const String txt_privacy_policy = "Privacy policy";
+  static const String txt_catalogue = "View catalogue";
   static const String txt_log_out = "Sign out";
   static const String txt_support = "Support";
   static const String txt_account = "Account";
@@ -104,7 +105,7 @@ class Constants {
   static const String txt_all_outlets = "All outlets";
   static const String txt_add_notes = "Add notes..";
   static const String txt_search_outlet = "Search outlet or people";
-
+  static const String txt_search_catalogue = "Search catalogue";
   static const String draft_notifier = "Draft_Notifier";
   static const String acknowledge_notifier = "Acknowledge_notifiler";
   static const String favourite_notifier = "Favourite_Notifiler";
