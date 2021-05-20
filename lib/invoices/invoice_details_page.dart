@@ -9,6 +9,7 @@ import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
+import 'package:zm_supplier/utils/pdfViewerPage.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:zm_supplier/utils/webview.dart';
@@ -867,6 +868,6 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
   openPdf(String url) {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => WebViewContainer(url, "",true)));
+        MaterialPageRoute(builder: (context) => PdfViewerPage(url)));
   }
 }

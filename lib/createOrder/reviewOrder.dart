@@ -112,7 +112,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   SharedPref sharedPref = SharedPref();
 
   loadSharedPrefs() async {
-
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
@@ -171,6 +170,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
               ),
               actions: [
                 IconButton(
+                    iconSize: 28.0,
                     icon: Image.asset("assets/images/icon_trash.png"),
                     onPressed: () => showDraftAlert(context)),
               ],
@@ -662,7 +662,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     ],
                                   ),
                                   Container(
-                                    margin: const EdgeInsets.only(top: 10.0),
+                                    margin: const EdgeInsets.only(top: 20.0),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
@@ -697,8 +697,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                               });
                                             },
                                             child: Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 5.0),
+                                                margin: EdgeInsets.only(
+                                                    right: 5.0, bottom: 20.0),
                                                 height: 40.0,
                                                 width: 40.0,
                                                 child: Center(
@@ -716,6 +716,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                                 ))),
                                         Container(
                                             width: 200.0,
+                                            height: 75.0,
                                             child: TextFormField(
                                                 autofocus: false,
                                                 autovalidate: true,
@@ -859,8 +860,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                               });
                                             },
                                             child: Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 5.0),
+                                                margin: EdgeInsets.only(
+                                                    right: 5.0, bottom: 20.0),
                                                 height: 40.0,
                                                 width: 40.0,
                                                 child: Center(
@@ -1145,6 +1146,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       if (placeOrderResponse != null &&
           placeOrderResponse.status == 200 &&
           placeOrderResponse.data.status == "SUCCESS") {
+        print('order placed');
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
         events.mixpanel.flush();
         showSuccessDialog();
@@ -1154,7 +1156,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     } else {
       requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
       response = await http.post(requestUrl, headers: headers, body: msg);
-      if (response != null && response.statusCode == 200) {
+      PlaceOrderResponse placeOrderResponse =
+      PlaceOrderResponse.fromJson(jsonDecode(response.body));
+      if (placeOrderResponse != null &&
+          placeOrderResponse.status == 200) {
+      //if (response != null && response.statusCode == 200) {
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
         events.mixpanel.flush();
         showSuccessDialog();
@@ -1164,6 +1170,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     }
     print("url" + requestUrl);
     print("ms" + createOrderModel.toJson().toString());
+    print(headers);
     print("ms" + response.statusCode.toString());
     print("ms" + response.body.toString());
   }
@@ -1192,7 +1199,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   }
 
   void moveToDashBoard() async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     isSubscribed = false;
     prefs.setBool(Constants.is_Subscribed, isSubscribed);
@@ -1203,7 +1209,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         observer: 1, channel: Constants.acknowledge_notifier);
 
     sharedPref.saveBool(Constants.isFromReviewOrder, true);
-
 
     final PageRouteBuilder _homeRoute = new PageRouteBuilder(
       pageBuilder: (BuildContext context, _, __) {
@@ -1459,6 +1464,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           return CustomDialogBox(
             title: "Can’t create this order",
             imageAssets: 'assets/images/img_exclaimation_red.png',
+            time: 3000,
           );
         });
   }
@@ -1471,6 +1477,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           return CustomDialogBox(
             title: "Order created",
             imageAssets: 'assets/images/tick_receive_big.png',
+            time: 3000,
           );
         }).then((value) {
       moveToDashBoard();

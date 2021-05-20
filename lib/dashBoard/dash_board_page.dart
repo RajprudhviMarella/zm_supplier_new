@@ -6,6 +6,7 @@ import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
@@ -24,6 +25,7 @@ import 'package:zm_supplier/utils/urlEndPoints.dart';
 import '../utils/color.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:sticky_headers/sticky_headers.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -74,10 +76,12 @@ class DashboardState extends State<DashboardPage> {
 
   bool isScrolled = false;
   bool isSubscribed = false;
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
+      print('scrolling');
       if (_scrollPosition > 20) {
         isScrolled = true;
       } else {
@@ -492,23 +496,37 @@ class DashboardState extends State<DashboardPage> {
       ),
       body: Container(
         color: faintGrey,
-        child: ListView(
-          controller: _scrollController,
+        child: RefreshIndicator( key: refreshKey,
+    child: ListView(
           children: [
             banner(context),
             //dots(context),
 
             draftHeader(),
-            draftBannersList(),
+            // draftBannersList(),
             Header(),
-            tabs(),
-            list(),
+          //  tabs(),
+           // list(),
           ],
-        ),
+        ), color: azul_blue, onRefresh: refreshList)
       ),
     );
   }
+  Future<Null> refreshList() async {
+    print("refreshing");
 
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      orderSummaryData = getSummaryDataApiCalling();
+      ordersListToday = _retriveTodayOrders();
+      ordersListYesterday = _retriveYesterdayOrders();
+      draftOrdersFuture = getDraftOrders();
+    });
+
+    return null;
+  }
   Widget banner(context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 13),
@@ -834,20 +852,28 @@ class DashboardState extends State<DashboardPage> {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData &&
                 snapshot.data.isNotEmpty) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
-                child: Container(
-                  height: 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Continue ordering',
-                        style: TextStyle(
-                            fontFamily: 'SourceSansProBold', fontSize: 18),
+              return StickyHeader(
+                header: Container(
+                  color: faintGrey,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
+                    child: Container(
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Continue ordering',
+                            style: TextStyle(
+                                fontFamily: 'SourceSansProBold', fontSize: 18),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
+                ),
+                content: Column(
+                  children: [draftBannersList()],
                 ),
               );
             } else {
@@ -978,36 +1004,49 @@ class DashboardState extends State<DashboardPage> {
   }
 
   Widget Header() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 17.0, top: 5, right: 2),
-      child: Container(
-        height: 30,
-        child: LeftRightAlign(
-            left: Padding(
-              padding: const EdgeInsets.only(top: 5.0),
-              child: Text('Recent orders',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18.0,
-                      fontFamily: "SourceSansProBold")),
-            ),
-            right: FlatButton(
-              onPressed: () {
-                print('View all orders tapped');
-                mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ViewOrdersPage(null)));
-              },
-              child: Text(
-                'View all orders',
-                style: TextStyle(
-                    color: buttonBlue,
-                    fontFamily: "SourceSansProRegular",
-                    fontSize: 12),
+    return StickyHeader(
+      header: Container(
+        color: faintGrey,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 17.0, top: 5, right: 2),
+              child: Container(
+                height: 30,
+                child: LeftRightAlign(
+                    left: Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: Text('Recent orders',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18.0,
+                              fontFamily: "SourceSansProBold")),
+                    ),
+                    right: FlatButton(
+                      onPressed: () {
+                        print('View all orders tapped');
+                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ViewOrdersPage(null)));
+                      },
+                      child: Text(
+                        'View all orders',
+                        style: TextStyle(
+                            color: buttonBlue,
+                            fontFamily: "SourceSansProRegular",
+                            fontSize: 12),
+                      ),
+                    )),
               ),
-            )),
+            ),
+            tabs()
+          ],
+        ),
+      ),
+      content: Column(
+        children: [list()],
       ),
     );
   }
@@ -1058,10 +1097,14 @@ class DashboardState extends State<DashboardPage> {
   }
 
   String readTimestamp(int timestamp) {
-    var date1 = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    var formattedDate = DateFormat('E d MMM').format(date1);
+    if (timestamp != null) {
+      var date1 = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+      var formattedDate = DateFormat('E d MMM').format(date1);
 
-    return formattedDate;
+      return formattedDate;
+    } else {
+      return '';
+    }
   }
 
   Widget list({String key, String string}) {
@@ -1073,7 +1116,10 @@ class DashboardState extends State<DashboardPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return Padding(
+                    padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    child: Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,)));
+
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {

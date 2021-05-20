@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 
 class CustomDialogBox extends StatefulWidget {
   final String title, imageAssets;
-
-  const CustomDialogBox({Key key, this.title, this.imageAssets})
+  final int time;
+  const CustomDialogBox({Key key, this.title, this.imageAssets, this.time})
       : super(key: key);
 
   @override
@@ -30,7 +30,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
   }
 
   contentBox(context) {
-    Future.delayed(Duration(milliseconds: 3000), () {
+    Future.delayed(Duration(milliseconds: widget.time), () {
       Navigator.of(context).pop(true);
     });
     return Stack(children: <Widget>[

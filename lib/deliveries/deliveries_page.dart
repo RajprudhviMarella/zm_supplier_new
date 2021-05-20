@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
@@ -53,6 +54,9 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
   String searchedString;
 
   Constants events = Constants();
+
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
 
   @override
   void initState() {
@@ -163,9 +167,12 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
         future: ordersList,
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Padding(
+                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+          child: Center(
+              child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,)
+            ));
+
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
@@ -173,10 +180,11 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
               isPageLoading = false;
               return SizedBox(
                   height: MediaQuery.of(context).size.height - 85,
+                  child:  RefreshIndicator(        key: refreshKey,
                   child: GroupedListView<Orders, DateTime>(
                     controller: controller,
                     elements: snapShot.data,
-                    physics: BouncingScrollPhysics(),
+                    physics: AlwaysScrollableScrollPhysics(),
                     order: GroupedListOrder.DESC,
                     groupComparator: (DateTime value1, DateTime value2) =>
                         value2.compareTo(value1),
@@ -189,9 +197,10 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                             .getTimeDeliveredLong()
                             .compareTo(element2.getTimeDeliveredLong()),
                     floatingHeader: true,
+                    useStickyGroupSeparators: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
-                      margin: EdgeInsets.only(top: 4.0),
                       height: 50.0,
+                      color: faintGrey,
                       child: Padding(
                         padding: EdgeInsets.only(left: 15.0, top: 5.0),
                         child: Row(children: <Widget>[
@@ -208,51 +217,73 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
                         ]),
                       ),
                     ),
-                    itemBuilder: (context, element) {
-                      return Card(
-                          margin: EdgeInsets.only(top: 1.0),
-                          child: Container(
-                              color: Colors.white,
-                              child: ListTile(
-                                onTap: () {
-                                  moveToOrderDetailsPage(element);
-                                },
-                                contentPadding:
-                                    EdgeInsets.only(left: 15.0, right: 10.0),
-                                leading: displayImage(element.outlet),
-                                title: Text(
-                                  element.outlet.outletName,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontFamily: "SourceSansProSemiBold",
-                                  ),
-                                ),
-                                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-                                subtitle: Container(
-                                  margin: EdgeInsets.only(top: 2.0),
-                                  child: Text(
-                                    '# ${element.orderId}',
+                    indexedItemBuilder: (context, element, index) {
+                      if (snapShot.data.length >= pageSize &&
+                          index == snapShot.data.length - 1) {
+                        return Container(
+                          height: 80,
+                          child: Center(
+                            child: SpinKitThreeBounce(color: Colors.blueAccent,size: 24,),
+                          ),
+                        );
+                      } else {
+                        return Card(
+                            margin: EdgeInsets.only(top: 1.0),
+                            child: Container(
+                                color: Colors.white,
+                                child: ListTile(
+                                  onTap: () {
+                                    moveToOrderDetailsPage(element);
+                                  },
+                                  contentPadding:
+                                      EdgeInsets.only(left: 15.0, right: 10.0),
+                                  leading: displayImage(element.outlet),
+                                  title: Text(
+                                    element.outlet.outletName,
                                     style: TextStyle(
-                                        color: greyText,
-                                        fontSize: 12.0,
-                                        fontFamily: "SourceSansProRegular"),
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                      fontFamily: "SourceSansProSemiBold",
+                                    ),
                                   ),
-                                ),
-                                trailing: Text(
-                                    element.amount.total.getDisplayValue(),
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.black,
-                                        fontFamily: "SourceSansProRegular")),
-                              )));
+                                  // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+                                  subtitle: Container(
+                                    margin: EdgeInsets.only(top: 2.0),
+                                    child: Text(
+                                      '# ${element.orderId}',
+                                      style: TextStyle(
+                                          color: greyText,
+                                          fontSize: 12.0,
+                                          fontFamily: "SourceSansProRegular"),
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                      element.amount.total.getDisplayValue(),
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontFamily: "SourceSansProRegular")),
+                                )));
+                      }
                     },
-                  ));
+                  ),color: azul_blue, onRefresh: refreshList));
             } else {
               return Container();
             }
           }
         });
+  }
+
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      _handleSearchEnd();
+    });
+
+    return null;
   }
 
   void searchOperation(String searchText) {
@@ -314,7 +345,7 @@ class DeliveriesPageDesign extends State<DeliveriesPage>
         color: Colors.black,
       );
       this.appBarTitle = new Text(
-        Constants.txt_orders,
+        Constants.txt_deliveries,
         style: new TextStyle(color: Colors.black),
       );
       _isSearching = false;

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/customers/customer_details_page.dart';
 import 'package:zm_supplier/customers/search_customers_page.dart';
@@ -40,6 +41,7 @@ class CustomerState extends State<CustomersPage> {
   String selectedFilterType = 'RecentOrdered';
 
   Constants events = Constants();
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -195,7 +197,7 @@ class CustomerState extends State<CustomersPage> {
     final date2 = DateTime.now();
     final difference = date2.difference(birthday).inDays;
     if (timeStamp > 0) {
-      if (difference > 30) {
+      if (difference > 14) {
         return warningRed;
       } else {
         return greyText;
@@ -256,17 +258,32 @@ class CustomerState extends State<CustomersPage> {
       ),
       body: Container(
         color: faintGrey,
-        child: ListView(children: [
+        child:  RefreshIndicator( key: refreshKey,
+          child: ListView(children: [
           buildSearchBar(context),
           Headers(),
           bannerList(),
           spaceBanner(),
           list()
         ]),
-      ),
+          color: azul_blue, onRefresh: refreshList,)),
     );
   }
 
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      customersData = getCustomersReportApiCalling(false, true);
+      selectedCustomersDataFuture =
+          getCustomersListCalling(false, true);
+    });
+
+
+    return null;
+  }
   Widget buildSearchBar(BuildContext context) {
     return Container(
         //padding: EdgeInsets.only(top: 5.0),
@@ -638,7 +655,7 @@ class CustomerState extends State<CustomersPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<CustomersData> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24));
                 // } else if (snapshot.hasError) {
                 //   return Center(child: Text('failed to load'));
               } else {

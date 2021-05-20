@@ -48,8 +48,8 @@ class Authentication {
 
 class getSpecificUser {
   Future<ApiResponse> retriveSpecificUser(
-      String supplierId, String mudra) async {
-    Map<String, String> queryParams = {'supplierId': supplierId};
+      String supplierId, String mudra,String userID) async {
+    Map<String, String> queryParams = {'userId': userID};
     var userModel = null;
     String queryString = Uri(queryParameters: queryParams).query;
 
@@ -61,7 +61,7 @@ class getSpecificUser {
     };
 
     print(headers);
-    var requestUrl = URLEndPoints.get_specific_user_url + '?' + queryString;
+    var requestUrl = URLEndPoints.get_specific_user_login_url + '?' + queryString;
     print(requestUrl);
     try {
       var response = await http.get(requestUrl, headers: headers);

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -61,6 +62,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   final outletId;
 
   ViewOrdersDesign(this.outletId);
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
 
   Mixpanel mixpanel;
 
@@ -179,9 +182,12 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         future: ordersList,
         builder: (context, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Padding(
+                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                  child:  Center(
+                    child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
+            ));
+
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
@@ -189,10 +195,11 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
               isPageLoading = false;
               return SizedBox(
                   height: MediaQuery.of(context).size.height - 85,
-                  child: GroupedListView<Orders, DateTime>(
+                  child: RefreshIndicator( key: refreshKey,
+                      child: GroupedListView<Orders, DateTime>(
                     controller: controller,
                     elements: snapShot.data,
-                    physics: BouncingScrollPhysics(),
+                    physics: AlwaysScrollableScrollPhysics(),
                     order: GroupedListOrder.ASC,
                     groupComparator: (DateTime value1, DateTime value2) =>
                         value2.compareTo(value1),
@@ -204,10 +211,11 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                         element1
                             .getTimeCompare()
                             .compareTo(element2.getTimeCompare()),
-                    floatingHeader: true,
+                   floatingHeader: true,
+                    useStickyGroupSeparators: true,
                     groupSeparatorBuilder: (DateTime element) => Container(
-                      margin: EdgeInsets.only(top: 4.0),
                       height: 50.0,
+                      color: faintGrey,
                       child: Padding(
                         padding: EdgeInsets.only(left: 15.0, top: 5.0),
                         child: Row(children: <Widget>[
@@ -224,77 +232,101 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                         ]),
                       ),
                     ),
-                    itemBuilder: (context, element) {
-                      return Card(
-                          margin: EdgeInsets.only(top: 2.0),
-                          child: Container(
-                              color: Colors.white,
-                              child: ListTile(
-                                onTap: () {
-                                  moveToOrderDetailsPage(element);
-                                },
-                                contentPadding: EdgeInsets.only(
-                                    top: 10.0,
-                                    bottom: 10.0,
-                                    left: 15.0,
-                                    right: 10.0),
-                                leading: displayImage(element.outlet),
-                                title: Text(
-                                  element.outlet.outletName,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontFamily: "SourceSansProSemiBold",
+                    indexedItemBuilder: (context, element, index) {
+                      if (snapShot.data.length >= pageSize &&
+                          index == snapShot.data.length - 1) {
+                        return Container(
+                          height: 80,
+                          child: Center(
+                            child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
+                          ),
+                        );
+                      } else {
+                        return Card(
+                            margin: EdgeInsets.only(top: 2.0),
+                            child: Container(
+                                color: Colors.white,
+                                child: ListTile(
+                                  onTap: () {
+                                    moveToOrderDetailsPage(element);
+                                  },
+                                  contentPadding: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
+                                      left: 15.0,
+                                      right: 10.0),
+                                  leading: displayImage(element.outlet),
+                                  title: Text(
+                                    element.outlet.outletName,
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                      fontFamily: "SourceSansProSemiBold",
+                                    ),
                                   ),
-                                ),
-                                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+                                  // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-                                subtitle: Container(
-                                  margin: EdgeInsets.only(top: 2.0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.only(top: 2.0),
-                                            height: 14.0,
-                                            width: 14.0,
-                                            child: ImageIcon(AssetImage(
-                                                'assets/images/truck.png')),
-                                          ),
-                                          Text(" " + element.getTimeDelivered(),
+                                  subtitle: Container(
+                                    margin: EdgeInsets.only(top: 2.0),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Row(children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.only(top: 2.0),
+                                              height: 14.0,
+                                              width: 14.0,
+                                              child: ImageIcon(AssetImage(
+                                                  'assets/images/truck.png')),
+                                            ),
+                                            Text(
+                                                " " +
+                                                    element.getTimeDelivered(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12.0,
+                                                    fontFamily:
+                                                        "SourceSansProRegular")),
+                                            Text(
+                                              " " + '# ${element.orderId}',
                                               style: TextStyle(
-                                                  color: Colors.black,
+                                                  color: greyText,
                                                   fontSize: 12.0,
                                                   fontFamily:
-                                                      "SourceSansProRegular")),
-                                          Text(
-                                            " " + '# ${element.orderId}',
-                                            style: TextStyle(
-                                                color: greyText,
-                                                fontSize: 12.0,
-                                                fontFamily:
-                                                    "SourceSansProRegular"),
-                                          ),
+                                                      "SourceSansProRegular"),
+                                            ),
+                                          ]),
+                                          Constants.OrderStatusColor(element),
                                         ]),
-                                        Constants.OrderStatusColor(element),
-                                      ]),
-                                ),
-                                trailing: Text(
-                                    element.amount.total.getDisplayValue(),
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.black,
-                                        fontFamily: "SourceSansProRegular")),
-                              )));
+                                  ),
+                                  trailing: Text(
+                                      element.amount.total.getDisplayValue(),
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontFamily: "SourceSansProRegular")),
+                                )));
+                      }
                     },
-                  ));
+                  ), color: azul_blue, onRefresh: refreshList));
             } else {
               return Container();
             }
           }
         });
+  }
+
+  Future<Null> refreshList() async {
+    print("refreshing");
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 0));
+
+    setState(() {
+      _handleSearchEnd();
+    });
+
+    return null;
   }
 
   void searchOperation(String searchText) {
@@ -350,7 +382,10 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       );
       this.appBarTitle = new Text(
         Constants.txt_orders,
-        style: new TextStyle(color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 18.0),
+        style: new TextStyle(
+            color: Colors.black,
+            fontFamily: "SourceSansProBold",
+            fontSize: 18.0),
       );
       _isSearching = false;
       _controller.clear();
@@ -376,7 +411,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       'pageSize': pageSize.toString(),
       'sortBy': 'timeUpdated',
       'sortOrder': 'DESC',
-      'orderStatus': 'Placed,Void',
+      'orderStatus': 'Placed,Void,Cancelled',
       if (searchedString != null && searchedString.isNotEmpty)
         'orderIdText': searchedString,
     };
