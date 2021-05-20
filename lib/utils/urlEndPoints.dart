@@ -118,4 +118,13 @@ class URLEndPoints {
   static get retrive_invoices_summary {
     return Constants.REPORT_SERVER + 'reports/invoices/summary';
   }
+
+  static get retrieve_categories {
+    return Constants.REPORT_SERVER + "reports/category";
+  }
+
+  static get retrieve_catalogue {
+    return Constants.INVENTORY_SERVER +
+        "inventory/products";
+  }
 }

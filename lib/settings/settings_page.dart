@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zm_supplier/catalogue/catalogue.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
@@ -46,6 +47,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   String _versioncode = "";
   String _image_Url = "";
   String supplierID = "";
+  String supplierName = "";
   String mudra;
   NetworkImage _networkImage;
   bool _isShowLoader = false;
@@ -88,7 +90,14 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                       color: grey_text),
                   1.0,
                   Colors.black),
-              //Headers(context, Constants.txt_support, 18.0),
+              Headers(context, supplierName, 18.0),
+              menuItem(
+                  context,
+                  Constants.txt_catalogue,
+                  ImageIcon(AssetImage('assets/images/icon_help.png'),
+                      color: grey_text),
+                  1.0,
+                  Colors.black),
               // menuItem(
               //     context,
               //     Constants.txt_help,
@@ -237,6 +246,10 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       sendEvent(Events.TAP_SETTINGS_TAB_CHANGE_PASSWORD);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
+    }
+    else if (name == Constants.txt_catalogue) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Catalogue()));
     } else if (name == Constants.txt_help) {
       sendEvent(Events.TAP_SETTINGS_TAB_HELP);
     } else if (name == Constants.txt_ask_zeemart) {
@@ -397,6 +410,9 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         }
         if (user.data.supplier[0].supplierId != null) {
           supplierID = user.data.supplier[0].supplierId;
+        }
+        if (user.data.supplier[0].supplierName != null) {
+          supplierName = user.data.supplier[0].supplierName;
         }
       });
     } catch (Excepetion) {
