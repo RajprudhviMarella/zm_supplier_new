@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:zm_supplier/catalogue/searchCataloguePage.dart';
 import 'package:zm_supplier/customers/customers_page.dart';
 import 'package:zm_supplier/models/catalogueResponse.dart';
 import 'package:zm_supplier/models/categoryResponse.dart';
@@ -19,8 +20,7 @@ class Catalogue extends StatefulWidget {
   }
 }
 
-class CatalogueDesign extends State<Catalogue>{
-
+class CatalogueDesign extends State<Catalogue> {
   CatalogueBaseResponse catalogueBaseResponse;
   CatalogueResponse catalogueResponse;
   Future<List<CatalogueProducts>> productsData;
@@ -43,6 +43,10 @@ class CatalogueDesign extends State<Catalogue>{
   Constants events = Constants();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   int selectedIndex = 0;
+  Icon actionIcon = new Icon(
+    Icons.search,
+    color: Colors.black,
+  );
 
   @override
   void initState() {
@@ -50,11 +54,9 @@ class CatalogueDesign extends State<Catalogue>{
 
     events.mixPanelEvents();
 
-    categoriesData = getCategoriesAPI(false,false);
+    categoriesData = getCategoriesAPI(false, false);
     productsData = getCataloguesAPI(false, false, "");
     // productsData = getCatalogueApiCalling(false, false);
-
-
   }
 
   Future<List<Categories>> getCategoriesAPI(
@@ -99,8 +101,7 @@ class CatalogueDesign extends State<Catalogue>{
 
   Future<List<CatalogueProducts>> getCataloguesAPI(
       bool isUpdating, bool isFilterApplied, String categoryId) async {
-
-    catalogueBaseResponse =  CatalogueBaseResponse() ;
+    catalogueBaseResponse = CatalogueBaseResponse();
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
@@ -118,7 +119,7 @@ class CatalogueDesign extends State<Catalogue>{
       'pageSize': pageSize.toString(),
     };
 
-    if(categoryId.isNotEmpty) {
+    if (categoryId.isNotEmpty) {
       queryParams['mainCategoryId'] = categoryId;
     }
 
@@ -155,27 +156,26 @@ class CatalogueDesign extends State<Catalogue>{
 
   @override
   void dispose() {
-
     super.dispose();
     //DartNotificationCenter.unsubscribe(observer: Constants.favourite_notifier);
   }
 
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: faintGrey,
       appBar: buildAppBar(context),
       body: Container(
           color: faintGrey,
-          child:  RefreshIndicator( key: refreshKey,
+          child: RefreshIndicator(
+            key: refreshKey,
             child: ListView(children: [
-              buildSearchBar(context),
-
               bannerList(),
               list(),
-
             ]),
-            color: azul_blue, onRefresh: refreshList,)),
+            color: azul_blue,
+            onRefresh: refreshList,
+          )),
     );
   }
 
@@ -185,89 +185,56 @@ class CatalogueDesign extends State<Catalogue>{
     await Future.delayed(Duration(seconds: 0));
 
     setState(() {
-      categoriesData = getCategoriesAPI(false,true);
+      categoriesData = getCategoriesAPI(false, true);
       productsData = getCataloguesAPI(false, false, "");
       // selectedCustomersDataFuture =
       //     getCustomersListCalling(false, true);
     });
 
-
     return null;
-  }
-
-  Widget buildSearchBar(BuildContext context) {
-    return Container(
-      //padding: EdgeInsets.only(top: 5.0),
-        color: faintGrey,
-        height: 60,
-        child: ListTile(
-          leading: null,
-          title: Container(
-            margin: EdgeInsets.only(top: 3, bottom: 15),
-            decoration: BoxDecoration(
-              color: keyLineGrey,
-              border: Border.all(
-                color: keyLineGrey,
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            ),
-            child: TextField(
-              cursorColor: Colors.blue,
-              maxLines: null,
-
-              focusNode: AlwaysDisabledFocusNode(),
-              textInputAction: TextInputAction.go,
-              // controller: _controller,
-              // onSubmitted: searchOperation,
-              // autofocus: true,
-              // controller: _controller,
-              // onSubmitted: searchOperation,
-              style: new TextStyle(
-                color: Colors.black,
-              ),
-              onTap: () async {
-
-              },
-              decoration: new InputDecoration(
-                  border: InputBorder.none,
-                  prefixIcon: new Icon(Icons.search, color: Colors.grey),
-                  hintText: Constants.txt_search_catalogue,
-                  hintStyle: new TextStyle(
-                      color: greyText,
-                      fontSize: 16,
-                      fontFamily: 'SourceSansProRegular')),
-              // onChanged: searchOperation,
-            ),
-          ),
-        ));
   }
 
   Widget buildAppBar(BuildContext context) {
     return new AppBar(
-      centerTitle: true,
-      title: Text(Constants.txt_catalogue, style: TextStyle(
-        color: Colors.black,
-        fontFamily: "SourceSansProBold",
-        fontSize: 18,
-      )),
-      backgroundColor: Colors.white,
-      bottomOpacity: 0.0,
-      elevation: 0.0,
-      leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
-        child: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        title: Text(Constants.txt_catalogue,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: "SourceSansProBold",
+              fontSize: 18,
+            )),
+        backgroundColor: Colors.white,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-    );
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: new IconButton(
+              icon: actionIcon,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => new SearchCataloguePage()));
+              },
+            ),
+          ),
+        ]);
   }
 
   Widget bannerList() {
     return FutureBuilder<List<Categories>>(
         future: categoriesData,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<Categories>> snapshot) {
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Categories>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container();
           } else if (snapshot.hasError) {
@@ -281,46 +248,48 @@ class CatalogueDesign extends State<Catalogue>{
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
-
                     return Padding(
-                      padding:
-                      EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
                       child: GestureDetector(
                         onTap: () {
                           print('tapped $index');
                           setState(() {
                             pageNum = 1;
                             selectedIndex = index;
-                            productsData = getCataloguesAPI(false, false, categoryResponse.data[selectedIndex].categoryId);
+                            productsData = getCataloguesAPI(
+                                false,
+                                false,
+                                categoryResponse
+                                    .data[selectedIndex].categoryId);
                             // selectedCustomersDataFuture = selectedD(a);
                           });
                         },
                         child: Row(
                           children: [
                             Padding(
-                              padding
-                                  : EdgeInsets.all(0),
+                              padding: EdgeInsets.all(0),
                               child: Container(
-                                //  padding: last ? EdgeInsets.only(left: 20): null,
+                                  //  padding: last ? EdgeInsets.only(left: 20): null,
                                   width: 110,
                                   height: 110,
                                   margin: EdgeInsets.all(4),
                                   decoration: BoxDecoration(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
+                                        BorderRadius.all(Radius.circular(10)),
                                     border: selectedIndex == index
                                         ? Border.all(
-                                        width: 2, color: buttonBlue)
+                                            width: 2, color: buttonBlue)
                                         : Border.all(
-                                        width: 0,
-                                        color: Colors.transparent),
+                                            width: 0,
+                                            color: Colors.transparent),
                                     color: Colors.white,
                                   ),
                                   child: Column(
                                     children: [
-                                  Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10.0),),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 10.0),
+                                      ),
                                       displayImage(snapshot.data[index]),
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -378,7 +347,9 @@ class CatalogueDesign extends State<Catalogue>{
   }
 
   Widget displayImage(Categories category) {
-    if (category != null && category.imageURL != null && category.imageURL.isNotEmpty) {
+    if (category != null &&
+        category.imageURL != null &&
+        category.imageURL.isNotEmpty) {
       return Container(
           height: 60.0,
           width: 60.0,
@@ -418,10 +389,12 @@ class CatalogueDesign extends State<Catalogue>{
       children: [
         FutureBuilder<List<CatalogueProducts>>(
             future: productsData,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<CatalogueProducts>> snapshot) {
+            builder: (BuildContext context,
+                AsyncSnapshot<List<CatalogueProducts>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24));
+                return Center(
+                    child:
+                        SpinKitThreeBounce(color: Colors.blueAccent, size: 24));
                 // } else if (snapshot.hasError) {
                 //   return Center(child: Text('failed to load'));
               } else {
@@ -439,8 +412,7 @@ class CatalogueDesign extends State<Catalogue>{
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 10.0),
                                   child: Text(
-                                    snapshot
-                                        .data[index].productName,
+                                    snapshot.data[index].productName,
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontFamily: "SourceSansProSemiBold"),
@@ -451,35 +423,30 @@ class CatalogueDesign extends State<Catalogue>{
 
                               //  isThreeLine: true,
 
-
                               //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
                               // leading:
                               // leadingImage(snapshot.data[index].sku),
                               trailing: Transform.translate(
                                 offset: Offset(10, 0),
                                 child: IconButton(
-                                    icon:
-                                    snapshot.data[index].isFavourite
+                                    icon: snapshot.data[index].isFavourite
                                         ? Image(
-                                      image: AssetImage(
-                                          'assets/images/Star_yellow.png'),
-                                      fit: BoxFit.fill,
-                                      width: 22,
-                                      height: 22,
-                                    )
+                                            image: AssetImage(
+                                                'assets/images/Star_yellow.png'),
+                                            fit: BoxFit.fill,
+                                            width: 22,
+                                            height: 22,
+                                          )
                                         : ImageIcon(
-                                      AssetImage(
-                                          'assets/images/Star_light_grey.png'),
-                                    ),
+                                            AssetImage(
+                                                'assets/images/Star_light_grey.png'),
+                                          ),
                                     onPressed: () {
                                       print('tapped $index');
-
                                     }),
                               ),
                               tileColor: Colors.white,
-                              onTap: () async {
-
-                              })),
+                              onTap: () async {})),
                       Divider(
                         height: 1.5,
                         color: faintGrey,
