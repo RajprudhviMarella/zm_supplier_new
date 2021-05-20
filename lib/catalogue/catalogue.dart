@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:zm_supplier/catalogue/searchCataloguePage.dart';
 import 'package:zm_supplier/customers/customers_page.dart';
 import 'package:zm_supplier/models/catalogueResponse.dart';
 import 'package:zm_supplier/models/categoryResponse.dart';
@@ -46,6 +47,10 @@ class CatalogueDesign extends State<Catalogue> {
   Constants events = Constants();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   int selectedIndex = 0;
+  Icon actionIcon = new Icon(
+    Icons.search,
+    color: Colors.black,
+  );
 
   @override
   void initState() {
@@ -170,7 +175,6 @@ class CatalogueDesign extends State<Catalogue> {
           child: RefreshIndicator(
             key: refreshKey,
             child: ListView(children: [
-              buildSearchBar(context),
               bannerList(),
               spaceBanner(),
               headers(context),
@@ -228,71 +232,40 @@ class CatalogueDesign extends State<Catalogue> {
     return null;
   }
 
-  Widget buildSearchBar(BuildContext context) {
-    return Container(
-        //padding: EdgeInsets.only(top: 5.0),
-        color: faintGrey,
-        height: 60,
-        child: ListTile(
-          leading: null,
-          title: Container(
-            margin: EdgeInsets.only(top: 3, bottom: 15),
-            decoration: BoxDecoration(
-              color: keyLineGrey,
-              border: Border.all(
-                color: keyLineGrey,
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            ),
-            child: TextField(
-              cursorColor: Colors.blue,
-              maxLines: null,
-
-              focusNode: AlwaysDisabledFocusNode(),
-              textInputAction: TextInputAction.go,
-              // controller: _controller,
-              // onSubmitted: searchOperation,
-              // autofocus: true,
-              // controller: _controller,
-              // onSubmitted: searchOperation,
-              style: new TextStyle(
-                color: Colors.black,
-              ),
-              onTap: () async {},
-              decoration: new InputDecoration(
-                  border: InputBorder.none,
-                  prefixIcon: new Icon(Icons.search, color: Colors.grey),
-                  hintText: Constants.txt_search_catalogue,
-                  hintStyle: new TextStyle(
-                      color: greyText,
-                      fontSize: 16,
-                      fontFamily: 'SourceSansProRegular')),
-              // onChanged: searchOperation,
+Widget buildAppBar(BuildContext context) {
+    return new AppBar(
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        title: Text(Constants.txt_catalogue,
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: "SourceSansProBold",
+              fontSize: 18,
+            )),
+        backgroundColor: Colors.white,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
+        leading: Container(
+          padding: EdgeInsets.only(right: 12.0),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: new IconButton(
+              icon: actionIcon,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => new SearchCataloguePage()));
+              },
             ),
           ),
-        ));
-  }
-
-  Widget buildAppBar(BuildContext context) {
-    return new AppBar(
-      centerTitle: true,
-      title: Text(Constants.txt_catalogue,
-          style: TextStyle(
-            color: Colors.black,
-            fontFamily: "SourceSansProBold",
-            fontSize: 18,
-          )),
-      backgroundColor: Colors.white,
-      bottomOpacity: 0.0,
-      elevation: 0.0,
-      leading: Container(
-        padding: EdgeInsets.only(right: 12.0),
-        child: IconButton(
-          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-    );
+        ]);
   }
 
   Widget bannerList() {
@@ -344,6 +317,7 @@ class CatalogueDesign extends State<Catalogue> {
                                   //  padding: last ? EdgeInsets.only(left: 20): null,
                                   width: 120,
                                   height: 120,
+
                                   margin: EdgeInsets.all(4),
                                   decoration: BoxDecoration(
                                     borderRadius:
@@ -422,7 +396,9 @@ class CatalogueDesign extends State<Catalogue> {
     if (category != null &&
         category.imageURL != null &&
         category.imageURL.isNotEmpty) {
+
       print(category.imageURL);
+
       return Container(
         height: 60.0,
         width: 60.0,
