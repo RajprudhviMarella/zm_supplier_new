@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:zm_supplier/catalogue/searchCataloguePage.dart';
 import 'package:zm_supplier/customers/customers_page.dart';
 import 'package:zm_supplier/models/catalogueResponse.dart';
@@ -39,6 +40,9 @@ class CatalogueDesign extends State<Catalogue> {
   int totalNumberOfPages = 0;
   int pageSize = 50;
   ScrollController controller;
+
+  bool isAllSelected = true;
+  Categories selectedCategory;
 
   Constants events = Constants();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
@@ -87,10 +91,11 @@ class CatalogueDesign extends State<Catalogue> {
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      print(response.body);
+      // print(response.body);
       print('Success response');
 
       categoryResponse = CategoryResponse.fromJson(json.decode(response.body));
+      addAllCategory();
       categoriesDataList = categoryResponse.data;
     } else {
       print('failed get categories');
@@ -134,7 +139,7 @@ class CatalogueDesign extends State<Catalogue> {
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
         response.statusCode == 202) {
-      print(response.body);
+      // print(response.body);
       print('Success response');
       var jsonMap = json.decode(response.body);
 
@@ -171,12 +176,45 @@ class CatalogueDesign extends State<Catalogue> {
             key: refreshKey,
             child: ListView(children: [
               bannerList(),
-              list(),
+              spaceBanner(),
+              headers(context),
             ]),
             color: azul_blue,
             onRefresh: refreshList,
           )),
     );
+  }
+
+  Widget headers(context) {
+    String text = "";
+    if (isAllSelected) {
+      text = "All items";
+    } else {
+      text = selectedCategory.name;
+    }
+    return StickyHeader(
+      header: Container(
+        color: faintGrey,
+        margin: EdgeInsets.only(top: 0.0),
+        padding:
+            EdgeInsets.only(left: 20.0, right: 10.0, top: 10, bottom: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(text,
+                style: TextStyle(
+                  fontFamily: "SourceSansProBold",
+                  fontSize: 18,
+                )),
+          ],
+        ),
+      ),
+      content: Container(child: list()),
+    );
+  }
+
+  Widget spaceBanner() {
+    return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 5));
   }
 
   Future<Null> refreshList() async {
@@ -194,7 +232,7 @@ class CatalogueDesign extends State<Catalogue> {
     return null;
   }
 
-  Widget buildAppBar(BuildContext context) {
+Widget buildAppBar(BuildContext context) {
     return new AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -241,7 +279,7 @@ class CatalogueDesign extends State<Catalogue> {
             return Center(child: Text('failed to load'));
           } else {
             return SizedBox(
-              height: 130,
+              height: 135,
               child: ListView.builder(
                   key: const PageStorageKey<String>('scrollPosition'),
                   itemCount: categoryResponse.data.length,
@@ -253,6 +291,13 @@ class CatalogueDesign extends State<Catalogue> {
                       child: GestureDetector(
                         onTap: () {
                           print('tapped $index');
+                          if (index == 0) {
+                            isAllSelected = true;
+                            selectedCategory = categoryResponse.data[index];
+                          } else {
+                            isAllSelected = false;
+                            selectedCategory = categoryResponse.data[index];
+                          }
                           setState(() {
                             pageNum = 1;
                             selectedIndex = index;
@@ -270,8 +315,9 @@ class CatalogueDesign extends State<Catalogue> {
                               padding: EdgeInsets.all(0),
                               child: Container(
                                   //  padding: last ? EdgeInsets.only(left: 20): null,
-                                  width: 110,
-                                  height: 110,
+                                  width: 120,
+                                  height: 120,
+
                                   margin: EdgeInsets.all(4),
                                   decoration: BoxDecoration(
                                     borderRadius:
@@ -292,22 +338,22 @@ class CatalogueDesign extends State<Catalogue> {
                                       ),
                                       displayImage(snapshot.data[index]),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 15.0, left: 20),
+                                        padding:
+                                            const EdgeInsets.only(top: 15.0),
                                         child: Row(
                                           children: [
-                                            // Expanded(
-                                            //   child: Text(
-                                            //     snapshot
-                                            //         .data[index].name,
-                                            //     style: TextStyle(
-                                            //       fontSize: 14,
-                                            //       fontFamily:
-                                            //       'SourceSansProSemiBold',
-                                            //       color: Colors.black,
-                                            //     ),
-                                            //   ),
-                                            // ),
+                                            Expanded(
+                                              child: Text(
+                                                snapshot.data[index].name,
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  fontFamily:
+                                                      'SourceSansProSemiBold',
+                                                  color: Colors.black,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -350,20 +396,23 @@ class CatalogueDesign extends State<Catalogue> {
     if (category != null &&
         category.imageURL != null &&
         category.imageURL.isNotEmpty) {
+
+      print(category.imageURL);
+
       return Container(
-          height: 60.0,
-          width: 60.0,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5.0),
-            child: Image.network(
-              category.imageURL,
-              fit: BoxFit.fill,
-            ),
-          ));
+        height: 60.0,
+        width: 60.0,
+        child: CircleAvatar(
+          backgroundColor: Colors.grey,
+          backgroundImage: category.imageURL.isNotEmpty
+              ? NetworkImage(category.imageURL)
+              : null,
+        ),
+      );
     } else {
       return Container(
-        height: 38,
-        width: 38,
+        height: 60,
+        width: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           color: Colors.blue.withOpacity(0.5),
@@ -371,6 +420,45 @@ class CatalogueDesign extends State<Catalogue> {
         child: Center(
           child: Text(
             outletPlaceholder(category.name),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
+    }
+  }
+
+  void addAllCategory() {
+    Categories categories = new Categories("", "All", "");
+    categoryResponse.data.insert(0, categories);
+  }
+
+  Widget displayProductImage(CatalogueProducts products) {
+    if (products != null &&
+        products.images != null &&
+        products.images.isNotEmpty &&
+        products.images[0].imageURL != null &&
+        products.images[0].imageFileNames != null &&
+        products.images[0].imageFileNames.isNotEmpty) {
+      var url =
+          products.images[0].imageURL + products.images[0].imageFileNames[0];
+      return Container(
+        height: 70,
+        width: 70,
+        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+        decoration: BoxDecoration(
+            image: DecorationImage(image: NetworkImage(url), fit: BoxFit.fill)),
+      );
+    } else {
+      return Container(
+        height: 100,
+        width: 100,
+        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+        decoration: BoxDecoration(
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder(products.productName),
             style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
           ),
         ),
@@ -406,7 +494,10 @@ class CatalogueDesign extends State<Catalogue> {
                     return new Column(children: <Widget>[
                       Container(
                           color: Colors.white,
+                          height: 100,
                           child: ListTile(
+                              leading:
+                                  displayProductImage(snapshot.data[index]),
                               title: Transform.translate(
                                 offset: Offset(-5, 0),
                                 child: Padding(
