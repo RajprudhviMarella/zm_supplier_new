@@ -1,6 +1,4 @@
-
-class CatalogueProducts{
-
+class CatalogueProducts {
   int timeCreated;
   int timeUpdated;
   String sku;
@@ -24,20 +22,27 @@ class CatalogueProducts{
   List<Certifications> certifications;
   bool isFavourite;
 
-
   CatalogueProducts(
       this.timeCreated,
       this.timeUpdated,
       this.sku,
-      this.supplierId,this.productName,
+      this.supplierId,
+      this.productName,
       this.urlProductName,
       this.brand,
-      this.supplierProductCode, this.description,
-      this.categoryTags, this.categoryPath,
-      this.status, this.tags,this.mainCategoryId,
-      this.categoryId, this.countryOfOrigin,
-      this.isFavourite,this.orderBy,this.images
-      );
+      this.supplierProductCode,
+      this.description,
+      this.categoryTags,
+      this.categoryPath,
+      this.status,
+      this.tags,
+      this.mainCategoryId,
+      this.categoryId,
+      this.countryOfOrigin,
+      this.isFavourite,
+      this.certifications,
+      this.images,
+      this.chargeBy);
 
   CatalogueProducts.fromJson(Map<String, dynamic> json) {
     timeCreated = json['timeCreated'];
@@ -57,9 +62,9 @@ class CatalogueProducts{
     categoryId = json['categoryId'];
     countryOfOrigin = json['countryOfOrigin'];
     isFavourite = json['isFavourite'];
-    // chargeBy = json['chargeBy'] != null
-    //     ? new ChargeBy.fromJson(json['chargeBy'])
-    //     : null;
+    chargeBy = json['chargeBy'] != null
+        ? new ChargeBy.fromJson(json['chargeBy'])
+        : null;
 
     // orderBy = json['orderBy'] != null
     //     ? new OrderBy.fromJson(json['orderBy'])
@@ -73,11 +78,10 @@ class CatalogueProducts{
 
     if (json['certifications'] != null) {
       certifications = new List<Certifications>();
-      json['images'].forEach((v) {
+      json['certifications'].forEach((v) {
         certifications.add(new Certifications.fromJson(v));
       });
     }
-
   }
 
   Map<String, dynamic> toJson() {
@@ -100,10 +104,9 @@ class CatalogueProducts{
     data['countryOfOrigin'] = this.countryOfOrigin;
     data['isFavourite'] = this.isFavourite;
     data['chargeBy'] = this.chargeBy.toJson();
-    data['orderBy'] = this.orderBy.toJson();
+    // data['orderBy'] = this.orderBy.toJson();
     data['images'] = this.images;
     data['certifications'] = this.certifications;
-
   }
 }
 
@@ -111,19 +114,22 @@ class ChargeBy {
   String unitSize;
   UnitSizeAlias unitSizeAlias;
 
-  ChargeBy(this.unitSizeAlias,this.unitSize);
+  ChargeBy(this.unitSizeAlias, this.unitSize);
 
   ChargeBy.fromJson(Map<String, dynamic> json) {
     unitSize = json['unitSize'];
-    unitSizeAlias = json['unitSizeAlias'];
+    unitSizeAlias = json['unitSizeAlias'] != null
+        ? new UnitSizeAlias.fromJson(json['unitSizeAlias'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['unitSize'] = this.unitSize;
-    data['unitSizeAlias'] = UnitSizeAlias.fromJson(this.unitSizeAlias.toJson());
+    if (this.unitSizeAlias != null) {
+      data['unitSizeAlias'] = this.unitSizeAlias.toJson();
+    }
   }
-
 }
 
 class UnitSizeAlias {
@@ -135,7 +141,6 @@ class UnitSizeAlias {
     unitSize = json['unitSize'];
     shortName = json['shortName'];
     isDecimalAllowed = json['isDecimalAllowed'];
-
   }
 
   Map<String, dynamic> toJson() {
@@ -149,7 +154,6 @@ class UnitSizeAlias {
 }
 
 class OrderBy {
-
   String unitSize;
   UnitSizeAlias unitSizeAlias;
   int unitQuantity;
@@ -160,7 +164,6 @@ class OrderBy {
     unitSizeAlias = json['unitSizeAlias'];
     unitQuantity = json['unitQuantity'];
     isDefault = json['isDefault'];
-
   }
 
   Map<String, dynamic> toJson() {
@@ -178,12 +181,11 @@ class Images {
   String imageURL;
   List<String> imageFileNames;
 
-  Images(this.imageFileNames,this.imageURL);
+  Images(this.imageFileNames, this.imageURL);
 
   Images.fromJson(Map<String, dynamic> json) {
     imageURL = json['imageURL'];
     imageFileNames = List.from(json['imageFileNames']);
-
   }
 
   Map<String, dynamic> toJson() {
@@ -199,11 +201,10 @@ class Certifications {
   String id;
   String name;
 
-  Certifications(this.name,this.id);
+  Certifications(this.name, this.id);
   Certifications.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-
   }
 
   Map<String, dynamic> toJson() {
@@ -212,5 +213,4 @@ class Certifications {
     data['name'] = this.name;
     return data;
   }
-
 }
