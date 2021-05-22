@@ -358,16 +358,24 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                     return new Column(children: <Widget>[
                       Container(
                           color: Colors.white,
+                          height: 100,
                           child: ListTile(
+                              leading:
+                                  displayProductImage(snapshot.data[index]),
                               title: Transform.translate(
                                 offset: Offset(-5, 0),
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    snapshot.data[index].productName,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: "SourceSansProSemiBold"),
+                                  child:RichText(
+                                    text: TextSpan(
+                                      children: highlightOccurrences(
+                                          snapshot.data[index].productName,
+                                          searchedString),
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontFamily: "SourceSansProSemiBold"),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -416,6 +424,83 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
     );
   }
 
+  Widget displayProductImage(CatalogueProducts products) {
+    if (products != null &&
+        products.images != null &&
+        products.images.isNotEmpty &&
+        products.images[0].imageURL != null &&
+        products.images[0].imageFileNames != null &&
+        products.images[0].imageFileNames.isNotEmpty) {
+      var url =
+          products.images[0].imageURL + products.images[0].imageFileNames[0];
+      return Container(
+        height: 70,
+        width: 70,
+        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+        decoration: BoxDecoration(
+            image: DecorationImage(image: NetworkImage(url), fit: BoxFit.fill)),
+      );
+    } else {
+      return Container(
+        height: 100,
+        width: 100,
+        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+        decoration: BoxDecoration(
+          color: Colors.blue.withOpacity(0.5),
+        ),
+        child: Center(
+          child: Text(
+            outletPlaceholder(products.productName),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+          ),
+        ),
+      );
+    }
+  }
+
+  List<TextSpan> highlightOccurrences(String source, String query) {
+    if (query == null ||
+        query.isEmpty ||
+        !source.toLowerCase().contains(query.toLowerCase())) {
+      return [TextSpan(text: source)];
+    }
+    final matches = query.toLowerCase().allMatches(source.toLowerCase());
+
+    int lastMatchEnd = 0;
+
+    final List<TextSpan> children = [];
+    for (var i = 0; i < matches.length; i++) {
+      final match = matches.elementAt(i);
+
+      if (match.start != lastMatchEnd) {
+        children.add(TextSpan(
+          text: source.substring(lastMatchEnd, match.start),
+        ));
+      }
+
+      children.add(TextSpan(
+        text: source.substring(match.start, match.end),
+        style: TextStyle(
+            fontSize: 16.0,
+            color: chartBlue,
+            fontFamily: "SourceSansProSemiBold"),
+      ));
+
+      if (i == matches.length - 1 && match.end != source.length) {
+        children.add(TextSpan(
+          text: source.substring(match.end, source.length),
+        ));
+      }
+
+      lastMatchEnd = match.end;
+    }
+    return children;
+  }
+  String outletPlaceholder(String name) {
+    Constants value = Constants();
+    var placeholder = value.getInitialWords(name);
+    return placeholder;
+  }
 // moveToOrderDetailsPage(Orders element) {
 //   Navigator.push(
 //       context,
