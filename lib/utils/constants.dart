@@ -46,6 +46,7 @@ class Constants {
       "Please correct any mistakes and try again";
   static const String txt_please_try_again = "Please try again";
   static const String login_Info = "loginInfo";
+  static const String recent_search_info_Info = "recentSearchCatalogueInfo";
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
   static const String specific_user_info = "specificUserInfo";
   static const String USER_NAME = "USER_NAME";
@@ -100,6 +101,7 @@ class Constants {
   static const String txt_deliveries = "Deliveries";
   static const String txt_starred = "Starred";
   static const String txt_Search_order_number = "Search order number";
+  static const String txt_Search_catalogue = "Search catalogue";
   static const String txt_Search_outlet = "Search outlet";
   static const String txt_Search_sku = "Search SKU";
   static const String txt_all_outlets = "All outlets";
@@ -393,11 +395,15 @@ class SharedPref {
     prefs.setString(key, json.encode(value));
   }
 
+  saveStringArrayList(String key, List<String> list) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList(key, list);
+  }
+
   readData(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return json.decode(prefs.getString(key));
   }
-
   saveBool(String key, bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, true);
