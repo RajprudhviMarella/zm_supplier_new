@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zm_supplier/models/products.dart';
+import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 
 class Productdetails extends StatefulWidget {
@@ -29,7 +30,7 @@ class ProductdetailsState extends State<Productdetails> {
     return Stack(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(left: 20,top: 25, right: 20,bottom: 20
+          padding: EdgeInsets.only(left: 0,top: 25, right: 0,bottom: 20
           ),
           margin: EdgeInsets.only(top: 5),
           decoration: BoxDecoration(
@@ -90,6 +91,9 @@ class ProductdetailsState extends State<Productdetails> {
                       );
                     }),
               ),
+              // showSoldPer(widget.catalogueProducts),
+              SizedBox(height: 22,),
+
               Text(widget.catalogueProducts.description,style: TextStyle(fontSize: 16,
                   fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
               SizedBox(height: 22,),
@@ -99,6 +103,31 @@ class ProductdetailsState extends State<Productdetails> {
         ),
       ],
     );
+  }
+
+  Widget showSoldPer(CatalogueProducts products) {
+
+    List<String> uoms = [];
+
+    for( OrderBy orderBy in products.orderBy) {
+      uoms.add(orderBy.unitSize);
+    }
+
+    return  Row(children: <Widget>[
+      Expanded(
+        child: LeftRightAlign(
+            left: Text("Sold per ",
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16.0,
+                    fontFamily: "SourceSansProRegular")),
+            right: Text(uoms.join(", "),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.0,
+                    fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,)),
+      )
+    ]);
   }
 
   Widget displayProductImage(CatalogueProducts products) {
@@ -111,13 +140,15 @@ class ProductdetailsState extends State<Productdetails> {
       var url =
           products.images[0].imageURL + products.images[0].imageFileNames[0];
       return Container(
+          height: 375,
+          width: 375,
           margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
-          child:  Image.network(url)
+          child:  Image.network(url,fit: BoxFit.fill,)
       );
     } else {
       return Container(
-        height: 70,
-        width: 70,
+        height: 375,
+        width: 375,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           color: faintGrey
@@ -130,6 +161,7 @@ class ProductdetailsState extends State<Productdetails> {
   }
 
   Widget displayCertImage(String certName) {
+
     var assetName = 'assets/images/cert_vegan.png';
     Color color = Colors.blue;
 
@@ -175,14 +207,20 @@ class ProductdetailsState extends State<Productdetails> {
     }
 
     return Container(
-      height: 23,
-      width: 23,
+      height: 32,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         color: color.withOpacity(1),
       ),
       child: Center(
-        child: Image.asset(assetName),
+        child: Row(
+            children: [
+              Image.asset(assetName),
+             Text('  ' + certName + '  ',style: TextStyle(
+          fontSize: 14,
+          fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
+        ]
+        )
       ),
     );
   }
