@@ -74,6 +74,8 @@ class CatalogueProducts {
       json['images'].forEach((v) {
         images.add(new Images.fromJson(v));
       });
+    } else {
+      images = [];
     }
 
     if (json['certifications'] != null) {
@@ -81,6 +83,8 @@ class CatalogueProducts {
       json['certifications'].forEach((v) {
         certifications.add(new Certifications.fromJson(v));
       });
+    } else {
+      certifications = [];
     }
   }
 

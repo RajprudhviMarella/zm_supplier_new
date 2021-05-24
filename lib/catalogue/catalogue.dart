@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
+import 'package:zm_supplier/catalogue/productDetails.dart';
 import 'package:zm_supplier/catalogue/searchCataloguePage.dart';
-import 'package:zm_supplier/customers/customers_page.dart';
+import 'package:zm_supplier/catalogue/subCategoryFilter.dart';
 import 'package:zm_supplier/models/catalogueResponse.dart';
 import 'package:zm_supplier/models/categoryResponse.dart';
 import 'package:zm_supplier/models/products.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
@@ -26,6 +28,7 @@ class CatalogueDesign extends State<Catalogue> {
   CatalogueResponse catalogueResponse;
   Future<List<CatalogueProducts>> productsData;
   List<CatalogueProducts> productsDataList;
+  List<SubCategory> selectedFilters = [];
 
   CategoryResponse categoryResponse;
   Future<List<Categories>> categoriesData;
@@ -59,7 +62,7 @@ class CatalogueDesign extends State<Catalogue> {
     events.mixPanelEvents();
 
     categoriesData = getCategoriesAPI(false, false);
-    productsData = getCataloguesAPI(false, false, "");
+    productsData = getCataloguesAPI(false, false, "","");
     // productsData = getCatalogueApiCalling(false, false);
   }
 
@@ -105,7 +108,7 @@ class CatalogueDesign extends State<Catalogue> {
   }
 
   Future<List<CatalogueProducts>> getCataloguesAPI(
-      bool isUpdating, bool isFilterApplied, String categoryId) async {
+      bool isUpdating, bool isFilterApplied, String categoryId, String subcategoryId) async {
     catalogueBaseResponse = CatalogueBaseResponse();
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
@@ -126,6 +129,10 @@ class CatalogueDesign extends State<Catalogue> {
 
     if (categoryId.isNotEmpty) {
       queryParams['mainCategoryId'] = categoryId;
+    }
+
+    if (subcategoryId.isNotEmpty) {
+      queryParams['categoryIds'] = subcategoryId;
     }
 
     String queryString = Uri(queryParameters: queryParams).query;
@@ -194,10 +201,10 @@ class CatalogueDesign extends State<Catalogue> {
     }
     return StickyHeader(
       header: Container(
-        color: faintGrey,
+        color: Colors.white,
         margin: EdgeInsets.only(top: 0.0),
         padding:
-            EdgeInsets.only(left: 20.0, right: 10.0, top: 10, bottom: 20.0),
+            EdgeInsets.only(left: 20.0, right: 10.0, top: 15, bottom: 15.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -209,8 +216,57 @@ class CatalogueDesign extends State<Catalogue> {
           ],
         ),
       ),
-      content: Container(child: list()),
+      content: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (!isAllSelected) subCategoryBanner(),
+            list(),
+          ],
+        ),
+      ),
     );
+  }
+
+  Widget subCategoryBanner() {
+    String names = "All categories";
+    List<String> namesArray = [];
+    if (selectedFilters.isNotEmpty) {
+      selectedFilters.forEach((element) {
+        namesArray.add(element.name);
+      });
+      names = namesArray.join(",");
+    }
+
+    return Padding(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: new GestureDetector(
+            onTap: () async {
+              print("Container clicked");
+              final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => new SubCategoryFilterPage(
+                          selectedFilters, selectedCategory.categoryId)));
+
+              // isFilterApplied = true;
+              // );
+            },
+            child: new Container(
+              height: 60,
+              margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Center(
+                child: Text(
+                  names,
+                  style: TextStyle(
+                      fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+                ),
+              ),
+            )));
   }
 
   Widget spaceBanner() {
@@ -224,7 +280,7 @@ class CatalogueDesign extends State<Catalogue> {
 
     setState(() {
       categoriesData = getCategoriesAPI(false, true);
-      productsData = getCataloguesAPI(false, false, "");
+      productsData = getCataloguesAPI(false, false, "","");
       // selectedCustomersDataFuture =
       //     getCustomersListCalling(false, true);
     });
@@ -232,7 +288,7 @@ class CatalogueDesign extends State<Catalogue> {
     return null;
   }
 
-Widget buildAppBar(BuildContext context) {
+  Widget buildAppBar(BuildContext context) {
     return new AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
@@ -305,7 +361,7 @@ Widget buildAppBar(BuildContext context) {
                                 false,
                                 false,
                                 categoryResponse
-                                    .data[selectedIndex].categoryId);
+                                    .data[selectedIndex].categoryId,"");
                             // selectedCustomersDataFuture = selectedD(a);
                           });
                         },
@@ -317,7 +373,6 @@ Widget buildAppBar(BuildContext context) {
                                   //  padding: last ? EdgeInsets.only(left: 20): null,
                                   width: 120,
                                   height: 120,
-
                                   margin: EdgeInsets.all(4),
                                   decoration: BoxDecoration(
                                     borderRadius:
@@ -357,28 +412,6 @@ Widget buildAppBar(BuildContext context) {
                                           ],
                                         ),
                                       ),
-                                      // Padding(
-                                      //   padding: first
-                                      //       ? const EdgeInsets.only(
-                                      //       left: 20.0, top: 20)
-                                      //       : const EdgeInsets.only(
-                                      //       left: 20.0, top: 5),
-                                      //   child: Row(
-                                      //     children: [
-                                      //       Text(
-                                      //         snapshot.data[index].count
-                                      //             .toString(),
-                                      //         style: TextStyle(
-                                      //             fontSize: 30,
-                                      //             fontFamily:
-                                      //             'SourceSansProBold',
-                                      //             color: (index == 4
-                                      //                 ? warningRed
-                                      //                 : Colors.black)),
-                                      //       ),
-                                      //     ],
-                                      //   ),
-                                      // ),
                                     ],
                                   )),
                             ),
@@ -396,7 +429,6 @@ Widget buildAppBar(BuildContext context) {
     if (category != null &&
         category.imageURL != null &&
         category.imageURL.isNotEmpty) {
-
       print(category.imageURL);
 
       return Container(
@@ -411,17 +443,13 @@ Widget buildAppBar(BuildContext context) {
       );
     } else {
       return Container(
-        height: 60,
-        width: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          color: Colors.blue.withOpacity(0.5),
-        ),
-        child: Center(
-          child: Text(
-            outletPlaceholder(category.name),
-            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
-          ),
+        height: 60.0,
+        width: 60.0,
+        child: CircleAvatar(
+          backgroundColor: Colors.grey,
+          backgroundImage: category.imageURL.isNotEmpty
+              ? NetworkImage(category.imageURL)
+              : null,
         ),
       );
     }
@@ -445,22 +473,18 @@ Widget buildAppBar(BuildContext context) {
         height: 70,
         width: 70,
         margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
-        decoration: BoxDecoration(
-            image: DecorationImage(image: NetworkImage(url), fit: BoxFit.fill)),
+            child:  Image.network(url)
       );
     } else {
       return Container(
-        height: 100,
-        width: 100,
-        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+        height: 70,
+        width: 70,
         decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.5),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: faintGrey.withOpacity(1),
         ),
         child: Center(
-          child: Text(
-            outletPlaceholder(products.productName),
-            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
-          ),
+          child: Image.asset('assets/images/icon_sku_placeholder.png'),
         ),
       );
     }
@@ -510,6 +534,48 @@ Widget buildAppBar(BuildContext context) {
                                   ),
                                 ),
                               ),
+                              subtitle: SizedBox(
+                                height: 43,
+                                child: ListView.builder(
+                                    key: const PageStorageKey<String>(
+                                        'scrollPosition'),
+                                    itemCount: snapshot
+                                        .data[index].certifications.length,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder:
+                                        (BuildContext context, int subIndex) {
+                                      return Padding(
+                                        padding: EdgeInsets.all(0),
+                                        child: GestureDetector(
+                                          onTap: () {},
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 10),
+                                                  child: Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 10.0,
+                                                                left: 10),
+                                                      ),
+                                                      displayCertImage(snapshot
+                                                          .data[index]
+                                                          .certifications[
+                                                              subIndex]
+                                                          .name),
+                                                    ],
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
                               //  isThreeLine: true,
 
                               //  isThreeLine: true,
@@ -534,10 +600,19 @@ Widget buildAppBar(BuildContext context) {
                                           ),
                                     onPressed: () {
                                       print('tapped $index');
+                                      tapOnFavourite(index, snapshot.data[index]);
                                     }),
                               ),
                               tileColor: Colors.white,
-                              onTap: () async {})),
+                              onTap: () async {
+                                showDialog(context: context,
+                                    builder: (BuildContext context){
+                                      return Productdetails(
+                                       catalogueProducts: snapshot.data[index],
+                                      );
+                                    }
+                                );
+                              })),
                       Divider(
                         height: 1.5,
                         color: faintGrey,
@@ -548,6 +623,88 @@ Widget buildAppBar(BuildContext context) {
               }
             }),
       ],
+    );
+  }
+
+  tapOnFavourite(int index, CatalogueProducts products) {
+
+    if (products.isFavourite) {
+      setState(() {
+        products.isFavourite = false;
+
+      });
+    } else {
+      setState(() {
+        products.isFavourite = true;
+      });
+    }
+
+    SkuFavourite skuFavourite = SkuFavourite(products.sku, products.isFavourite);
+    FavouritesApi favourite = new FavouritesApi();
+    favourite
+        .updateProductFavourite(userData.mudra, userData.supplier.first.supplierId,
+         skuFavourite)
+        .then((value) async {
+      // getCustomersReportApiCalling(true, false);
+      // getCustomersListCalling(true, false);
+    });
+  }
+
+  Widget displayCertImage(String certName) {
+    var assetName = 'assets/images/cert_vegan.png';
+    Color color = Colors.blue;
+
+    if (certName == 'Halal') {
+      assetName = 'assets/images/cert_halal.png';
+      color = litGreen;
+    }
+    if (certName == 'Vegetarian') {
+      assetName = 'assets/images/cert_vegetarian.png';
+      color = litGreen;
+    }
+    if (certName == 'Organic') {
+      assetName = 'assets/images/cert_organic.png';
+      color = litGreen;
+    }
+    if (certName == 'Vegan') {
+      assetName = 'assets/images/cert_vegan.png';
+      color = litGreen;
+    }
+    if (certName == 'Gluten-free') {
+      assetName = 'assets/images/cert_gluten.png';
+      color = sandal;
+    }
+    if (certName == 'Kosher') {
+      assetName = 'assets/images/cert_halal.png';
+      color = sandal;
+    }
+    if (certName == 'FDA') {
+      assetName = 'assets/images/cert_fda.png';
+      color = Colors.blue;
+    }
+    if (certName == 'Fairtrade') {
+      assetName = 'assets/images/cert_fairtrade.png';
+      color = sandal;
+    }
+    if (certName == 'GMP') {
+      assetName = 'assets/images/cert_gmp.png';
+      color = Colors.blue;
+    }
+    if (certName == 'HAACP') {
+      assetName = 'assets/images/cert_haacp.png';
+      color = Colors.blue;
+    }
+
+    return Container(
+      height: 23,
+      width: 23,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        color: color.withOpacity(1),
+      ),
+      child: Center(
+        child: Image.asset(assetName),
+      ),
     );
   }
 }

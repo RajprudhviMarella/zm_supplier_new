@@ -112,6 +112,17 @@ flutter:
     - assets/images/invoices_icon.png
     - assets/images/icon_tick_grey.png
     - assets/images/icon_close-red.png
+    - assets/images/cert_fairtrade.png
+    - assets/images/cert_fda.png
+    - assets/images/cert_gluten.png
+    - assets/images/cert_gmp.png
+    - assets/images/cert_haacp.png
+    - assets/images/cert_halal.png
+    - assets/images/cert_kosher.png
+    - assets/images/cert_organic.png
+    - assets/images/cert_vegan.png
+    - assets/images/cert_vegetarian.png
+    - assets/images/icon_sku_placeholder.png
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

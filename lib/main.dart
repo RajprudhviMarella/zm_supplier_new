@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/constants.dart';
 
 void main() async {
-  Constants.setEnvironment(Environment.PROD);
+  Constants.setEnvironment(Environment.DEV);
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isLogged = false;
@@ -29,7 +29,7 @@ class ZmApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Constants.setEnvironment(Environment.PROD);
+    Constants.setEnvironment(Environment.DEV);
     print(initialRoute);
 
     return MaterialApp(
