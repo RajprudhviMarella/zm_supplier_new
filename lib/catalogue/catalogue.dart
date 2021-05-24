@@ -433,24 +433,13 @@ class CatalogueDesign extends State<Catalogue> {
 
       return Container(
         height: 60.0,
-        width: 60.0,
-        child: CircleAvatar(
-          backgroundColor: Colors.grey,
-          backgroundImage: category.imageURL.isNotEmpty
-              ? NetworkImage(category.imageURL)
-              : null,
-        ),
+        width: 60.0, child:  Image.network('https://i.imgur.com/P3bhVwb.png')
       );
     } else {
       return Container(
         height: 60.0,
         width: 60.0,
-        child: CircleAvatar(
-          backgroundColor: Colors.grey,
-          backgroundImage: category.imageURL.isNotEmpty
-              ? NetworkImage(category.imageURL)
-              : null,
-        ),
+        child: Image.asset('assets/images/cat_icon_all.png'),
       );
     }
   }
