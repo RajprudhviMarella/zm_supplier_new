@@ -28,7 +28,7 @@ class CatalogueDesign extends State<Catalogue> {
   CatalogueResponse catalogueResponse;
   Future<List<CatalogueProducts>> productsData;
   List<CatalogueProducts> productsDataList;
-  List<SubCategory> selectedFilters = [];
+  List<Children> selectedFilters = [];
 
   CategoryResponse categoryResponse;
   Future<List<Categories>> categoriesData;

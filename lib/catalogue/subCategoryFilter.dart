@@ -10,33 +10,34 @@ import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class SubCategoryFilterPage extends StatefulWidget {
-  List<SubCategory> selectedFilters = [];
+  List<Children> selectedFilters = [];
   String categoryId;
-  SubCategoryFilterPage(this.selectedFilters,this.categoryId);
+
+  SubCategoryFilterPage(this.selectedFilters, this.categoryId);
 
   @override
   State<StatefulWidget> createState() =>
-      SubCategoryFilterState(this.selectedFilters,this.categoryId);
+      SubCategoryFilterState(this.selectedFilters, this.categoryId);
 }
 
 class SubCategoryFilterState extends State<SubCategoryFilterPage> {
-
-  bool isPresent(SubCategory categoryId) {
+  bool isPresent(Children categoryId) {
     print(selectedStatus);
     return selectedStatus.contains(categoryId);
   }
 
-  List<SubCategory> selectedStatus =
-  []; //<String>['Not yet due', 'Overdue', 'Paid'];
+  List<Children> selectedStatus =
+      []; //<String>['Not yet due', 'Overdue', 'Paid'];
   String categoryId;
   LoginResponse userData;
   SharedPref sharedPref = SharedPref();
-  SubCategoryFilterState(this.selectedStatus,this.categoryId);
+
+  SubCategoryFilterState(this.selectedStatus, this.categoryId);
 
   SubCategoryBaseResponse subCategoryBaseResponse;
   List<SubCategoryData> subCategoryResponse;
-  Future<List<SubCategory>> categoriesData;
-  List<SubCategory> categoriesDataList;
+  Future<List<Children>> categoriesData;
+  List<Children> categoriesDataList;
 
   @override
   void initState() {
@@ -47,7 +48,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
     categoriesData = getCategoriesAPI(false, false);
   }
 
-  Future<List<SubCategory>> getCategoriesAPI(
+  Future<List<Children>> getCategoriesAPI(
       bool isUpdating, bool isFilterApplied) async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
@@ -59,9 +60,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
       'supplierId': userData.supplier.first.supplierId
     };
 
-    Map<String, String> queryParams = {
-      'categoryId': this.categoryId
-    };
+    Map<String, String> queryParams = {'categoryId': this.categoryId};
 
     String queryString = Uri(queryParameters: queryParams).query;
 
@@ -77,12 +76,13 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
       // print(response.body);
       print('Success response');
       print(response.body.toString());
-
-      subCategoryBaseResponse = SubCategoryBaseResponse.fromJson(json.decode(response.body));
-      // print(subCategoryBaseResponse.toString());
+      var jsonMap = json.decode(response.body);
+      print("jsonmap: " + jsonMap.toString());
+      subCategoryBaseResponse = SubCategoryBaseResponse.fromJson(jsonMap);
+      print("reposnedjfnf:" + json.encode(subCategoryBaseResponse));
       // subCategoryResponse =  json.decode(response.body)['data'];
-      categoriesDataList = json.decode(response.body)['data'][0]['children'];
-      print(categoriesDataList.toString());
+      categoriesDataList = subCategoryBaseResponse.data[0].children;
+      print("categoryList:" + json.encode(categoriesDataList));
     } else {
       print('failed get categories');
     }
@@ -117,18 +117,18 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
         elevation: 0.0,
         leading: Center(
             child: GestureDetector(
-              onTap: () {
-                selectedStatus = [];
-                setState(() {});
-              },
-              child: Text(
-                '   Reset',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontFamily: 'SourceSansProRegular'),
-              ),
-            )),
+          onTap: () {
+            selectedStatus = [];
+            setState(() {});
+          },
+          child: Text(
+            '   Reset',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'SourceSansProRegular'),
+          ),
+        )),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close, color: Colors.black), //Image(
@@ -149,10 +149,10 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
   }
 
   Widget statusList() {
-    return FutureBuilder<List<SubCategory>>(
+    return FutureBuilder<List<Children>>(
         future: categoriesData,
         builder:
-            (BuildContext context, AsyncSnapshot<List<SubCategory>> snapshot) {
+            (BuildContext context, AsyncSnapshot<List<Children>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container();
           } else if (snapshot.hasError) {
@@ -167,27 +167,31 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
                     return new Column(children: <Widget>[
-                      ListTile(
-                        tileColor: Colors.white,
-                        title: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Text(
-                            snapshot.data[index].name,
-                            style: TextStyle(
-                                fontSize: 16, fontFamily: "SourceSansProRegular"),
-                          ),
-                        ),
-                        onTap: () {
-                          if (isPresent(snapshot.data[index])) {
-                            selectedStatus.remove(snapshot.data[index]);
-                          } else {
-                            selectedStatus.add(snapshot.data[index]);
-                          }
-                          setState(() {});
-                          print(selectedStatus);
-                        },
-                        trailing: trailingIcon(index),
-                      ),
+                      Container(
+                          color: Colors.white,
+                          height: 100,
+                          child: ListTile(
+                            tileColor: Colors.white,
+                            title: Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Text(
+                                snapshot.data[index].name,
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: "SourceSansProRegular"),
+                              ),
+                            ),
+                            onTap: () {
+                              if (isPresent(snapshot.data[index])) {
+                                selectedStatus.remove(snapshot.data[index]);
+                              } else {
+                                selectedStatus.add(snapshot.data[index]);
+                              }
+                              setState(() {});
+                              print(selectedStatus);
+                            },
+                            trailing: trailingIcon(index),
+                          )),
                       Divider(
                         height: 1.5,
                         color: faintGrey,
@@ -221,13 +225,13 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
         height: 50,
         child: RaisedButton(
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
           onPressed: () {
             Navigator.of(context).pop(selectedStatus);
           },
           child: const Text('Save',
               style:
-              TextStyle(fontSize: 16, fontFamily: 'SorceSansProSemiBold')),
+                  TextStyle(fontSize: 16, fontFamily: 'SorceSansProSemiBold')),
           color: buttonBlue,
           textColor: Colors.white,
         ),

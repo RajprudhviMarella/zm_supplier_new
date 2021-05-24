@@ -7,10 +7,12 @@ import 'package:zm_supplier/models/catalogueResponse.dart';
 import 'package:zm_supplier/models/products.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
+import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'package:http/http.dart' as http;
+import 'package:zm_supplier/catalogue/productDetails.dart';
 
 /**
  * Created by RajPrudhviMarella on 20/May/2021.
@@ -366,18 +368,55 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                 offset: Offset(-5, 0),
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 10.0),
-                                  child:RichText(
-                                    text: TextSpan(
-                                      children: highlightOccurrences(
-                                          snapshot.data[index].productName,
-                                          searchedString),
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: Colors.black,
-                                          fontFamily: "SourceSansProSemiBold"),
-                                    ),
+                                  child: Text(
+                                    snapshot.data[index].productName,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: "SourceSansProSemiBold"),
                                   ),
                                 ),
+                              ),
+                              subtitle: SizedBox(
+                                height: 43,
+                                child: ListView.builder(
+                                    key: const PageStorageKey<String>(
+                                        'scrollPosition'),
+                                    itemCount: snapshot
+                                        .data[index].certifications.length,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder:
+                                        (BuildContext context, int subIndex) {
+                                      return Padding(
+                                        padding: EdgeInsets.all(0),
+                                        child: GestureDetector(
+                                          onTap: () {},
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 10),
+                                                  child: Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 10.0,
+                                                                left: 10),
+                                                      ),
+                                                      displayCertImage(snapshot
+                                                          .data[index]
+                                                          .certifications[
+                                                              subIndex]
+                                                          .name),
+                                                    ],
+                                                  )),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
                               ),
                               //  isThreeLine: true,
 
@@ -403,10 +442,20 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                           ),
                                     onPressed: () {
                                       print('tapped $index');
+                                      tapOnFavourite(
+                                          index, snapshot.data[index]);
                                     }),
                               ),
                               tileColor: Colors.white,
-                              onTap: () async {})),
+                              onTap: () async {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Productdetails(
+                                        catalogueProducts: snapshot.data[index],
+                                      );
+                                    });
+                              })),
                       Divider(
                         height: 1.5,
                         color: faintGrey,
@@ -424,6 +473,28 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
     );
   }
 
+  tapOnFavourite(int index, CatalogueProducts products) {
+    if (products.isFavourite) {
+      setState(() {
+        products.isFavourite = false;
+      });
+    } else {
+      setState(() {
+        products.isFavourite = true;
+      });
+    }
+
+    SkuFavourite skuFavourite =
+        SkuFavourite(products.sku, products.isFavourite);
+    FavouritesApi favourite = new FavouritesApi();
+    favourite
+        .updateProductFavourite(mudra, supplierID, skuFavourite)
+        .then((value) async {
+      // getCustomersReportApiCalling(true, false);
+      // getCustomersListCalling(true, false);
+    });
+  }
+
   Widget displayProductImage(CatalogueProducts products) {
     if (products != null &&
         products.images != null &&
@@ -434,25 +505,20 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
       var url =
           products.images[0].imageURL + products.images[0].imageFileNames[0];
       return Container(
-        height: 70,
-        width: 70,
-        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
-        decoration: BoxDecoration(
-            image: DecorationImage(image: NetworkImage(url), fit: BoxFit.fill)),
-      );
+          height: 70,
+          width: 70,
+          margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+          child: Image.network(url));
     } else {
       return Container(
-        height: 100,
-        width: 100,
-        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+        height: 70,
+        width: 70,
         decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.5),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: faintGrey.withOpacity(1),
         ),
         child: Center(
-          child: Text(
-            outletPlaceholder(products.productName),
-            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
-          ),
+          child: Image.asset('assets/images/icon_sku_placeholder.png'),
         ),
       );
     }
@@ -496,10 +562,69 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
     }
     return children;
   }
+
   String outletPlaceholder(String name) {
     Constants value = Constants();
     var placeholder = value.getInitialWords(name);
     return placeholder;
+  }
+
+  Widget displayCertImage(String certName) {
+    var assetName = 'assets/images/cert_vegan.png';
+    Color color = Colors.blue;
+
+    if (certName == 'Halal') {
+      assetName = 'assets/images/cert_halal.png';
+      color = litGreen;
+    }
+    if (certName == 'Vegetarian') {
+      assetName = 'assets/images/cert_vegetarian.png';
+      color = litGreen;
+    }
+    if (certName == 'Organic') {
+      assetName = 'assets/images/cert_organic.png';
+      color = litGreen;
+    }
+    if (certName == 'Vegan') {
+      assetName = 'assets/images/cert_vegan.png';
+      color = litGreen;
+    }
+    if (certName == 'Gluten-free') {
+      assetName = 'assets/images/cert_gluten.png';
+      color = sandal;
+    }
+    if (certName == 'Kosher') {
+      assetName = 'assets/images/cert_halal.png';
+      color = sandal;
+    }
+    if (certName == 'FDA') {
+      assetName = 'assets/images/cert_fda.png';
+      color = Colors.blue;
+    }
+    if (certName == 'Fairtrade') {
+      assetName = 'assets/images/cert_fairtrade.png';
+      color = sandal;
+    }
+    if (certName == 'GMP') {
+      assetName = 'assets/images/cert_gmp.png';
+      color = Colors.blue;
+    }
+    if (certName == 'HAACP') {
+      assetName = 'assets/images/cert_haacp.png';
+      color = Colors.blue;
+    }
+
+    return Container(
+      height: 23,
+      width: 23,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        color: color.withOpacity(1),
+      ),
+      child: Center(
+        child: Image.asset(assetName),
+      ),
+    );
   }
 // moveToOrderDetailsPage(Orders element) {
 //   Navigator.push(
