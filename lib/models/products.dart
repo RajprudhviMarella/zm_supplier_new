@@ -11,7 +11,7 @@ class CatalogueProducts {
   String description;
   List<String> categoryTags;
   String categoryPath;
-  OrderBy orderBy;
+  List<OrderBy> orderBy;
   String status;
   List<String> tags;
   List<Images> images;
@@ -69,6 +69,12 @@ class CatalogueProducts {
     // orderBy = json['orderBy'] != null
     //     ? new OrderBy.fromJson(json['orderBy'])
     //     : null;
+    // if (json['orderBy'] != null) {
+    //   orderBy = new List<OrderBy>();
+    //   json['orderBy'].forEach((v) {
+    //     orderBy.add(new OrderBy.fromJson(v));
+    //   });
+    // }
     if (json['images'] != null) {
       images = new List<Images>();
       json['images'].forEach((v) {
@@ -165,7 +171,9 @@ class OrderBy {
 
   OrderBy.fromJson(Map<String, dynamic> json) {
     unitSize = json['unitSize'];
-    unitSizeAlias = json['unitSizeAlias'];
+    unitSizeAlias = json['unitSizeAlias'] != null
+        ? new UnitSizeAlias.fromJson(json['unitSizeAlias'])
+        : null;
     unitQuantity = json['unitQuantity'];
     isDefault = json['isDefault'];
   }

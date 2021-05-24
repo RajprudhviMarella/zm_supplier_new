@@ -29,6 +29,7 @@ class CatalogueDesign extends State<Catalogue> {
   Future<List<CatalogueProducts>> productsData;
   List<CatalogueProducts> productsDataList;
   List<Children> selectedFilters = [];
+  List<String> selectedSubcategoryIds = [];
 
   CategoryResponse categoryResponse;
   Future<List<Categories>> categoriesData;
@@ -247,8 +248,23 @@ class CatalogueDesign extends State<Catalogue> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => new SubCategoryFilterPage(
-                          selectedFilters, selectedCategory.categoryId)));
+                          selectedFilters, selectedCategory.categoryId,selectedSubcategoryIds)));
 
+              selectedFilters = result;
+
+              setState(() {
+                List<String> ids = [];
+                pageNum = 1;
+                selectedFilters.forEach((element) {
+                  ids.add(element.categoryId);
+                });
+                productsData = getCataloguesAPI(
+                    false,
+                    false,
+                    categoryResponse
+                        .data[selectedIndex].categoryId,ids.join(","));
+                // selectedCustomersDataFuture = selectedD(a);
+              });
               // isFilterApplied = true;
               // );
             },
@@ -263,7 +279,7 @@ class CatalogueDesign extends State<Catalogue> {
                 child: Text(
                   names,
                   style: TextStyle(
-                      fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+                      fontSize: 14, fontFamily: "SourceSansProSemiBold",color: Colors.black),
                 ),
               ),
             )));
@@ -355,6 +371,7 @@ class CatalogueDesign extends State<Catalogue> {
                             selectedCategory = categoryResponse.data[index];
                           }
                           setState(() {
+                            selectedFilters = [];
                             pageNum = 1;
                             selectedIndex = index;
                             productsData = getCataloguesAPI(
