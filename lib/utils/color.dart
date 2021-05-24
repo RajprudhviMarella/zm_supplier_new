@@ -21,3 +21,5 @@ Color notesyellow = Color(0xfffdca40);
 Color warning_red = Color(0xffff4b33);
 Color grey_text = Color(0xff999999);
 Color azul_blue = Color(0xff115ece);
+Color sandal = Color(0xfff6de);
+Color litGreen = Color(0xe5fff1);

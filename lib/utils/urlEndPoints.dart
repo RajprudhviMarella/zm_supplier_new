@@ -127,4 +127,14 @@ class URLEndPoints {
     return Constants.INVENTORY_SERVER +
         "inventory/products";
   }
+
+  static get retrieve_subCategories {
+    return Constants.COMMON_SERVER + "inventory/productcategories";
+  }
+
+  static get fav_sku_url {
+    return Constants.INVENTORY_SERVER +
+        "inventory/product/favourites";
+  }
+
 }
