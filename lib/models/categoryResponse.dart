@@ -2,6 +2,7 @@ class CategoryResponse {
   CategoryResponse({
     this.data,
   });
+
   List<Categories> data;
 
   factory CategoryResponse.fromJson(Map<String, dynamic> json) =>
@@ -10,7 +11,8 @@ class CategoryResponse {
             json["data"].map((x) => Categories.fromJson(x))),
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "data": List<dynamic>.from(data.map((x) => x.toJson())),
       };
 }
@@ -36,68 +38,86 @@ class Categories {
     data['imageURL'] = this.imageURL;
   }
 }
-
 class SubCategoryBaseResponse {
+  String path;
+  String timestamp;
   int status;
   String message;
   List<SubCategoryData> data;
 
-  SubCategoryBaseResponse(this.data, this.status, this.message);
+  SubCategoryBaseResponse(
+      {this.path, this.timestamp, this.status, this.message, this.data});
 
   SubCategoryBaseResponse.fromJson(Map<String, dynamic> json) {
+    path = json['path'];
+    timestamp = json['timestamp'];
     status = json['status'];
     message = json['message'];
-    data = List<SubCategoryData>.from(
-        json["data"].map((x) => SubCategoryData.fromJson(x)));
+    if (json['data'] != null) {
+      data = new List<SubCategoryData>();
+      json['data'].forEach((v) {
+        data.add(new SubCategoryData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-
-    data['message'] = this.message;
+    data['path'] = this.path;
+    data['timestamp'] = this.timestamp;
     data['status'] = this.status;
-    data['data'] = this.data;
+    data['message'] = this.message;
+    if (this.data != null) {
+      data['data'] = this.data.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
 }
 
 class SubCategoryData {
   String categoryId;
   String name;
-  List<SubCategory> children;
+  List<Children> children;
 
-  SubCategoryData(this.name, this.categoryId, this.children);
+  SubCategoryData({this.categoryId, this.name, this.children});
 
   SubCategoryData.fromJson(Map<String, dynamic> json) {
     categoryId = json['categoryId'];
     name = json['name'];
-    children = List<SubCategory>.from(
-        json["children"].map((x) => SubCategory.fromJson(x)));
+    if (json['children'] != null) {
+      children = new List<Children>();
+      json['children'].forEach((v) {
+        children.add(new Children.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-
     data['categoryId'] = this.categoryId;
     data['name'] = this.name;
-    // data['children'] = List<dynamic>.from(data.map((x) => x.toJson())),
+    if (this.children != null) {
+      data['children'] = this.children.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
 }
 
-class SubCategory {
+class Children {
   String categoryId;
   String name;
 
-  SubCategory(this.categoryId, this.name);
+  Children({this.categoryId, this.name});
 
-  SubCategory.fromJson(Map<String, dynamic> json) {
+  Children.fromJson(Map<String, dynamic> json) {
     categoryId = json['categoryId'];
     name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-
     data['categoryId'] = this.categoryId;
     data['name'] = this.name;
+    return data;
   }
 }
