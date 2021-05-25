@@ -21,6 +21,7 @@ class CatalogueProducts {
   String countryOfOrigin;
   List<Certifications> certifications;
   bool isFavourite;
+  DirectorySettings directorySettings;
 
   CatalogueProducts(
       this.timeCreated,
@@ -41,6 +42,7 @@ class CatalogueProducts {
       this.countryOfOrigin,
       this.isFavourite,
       this.certifications,
+      this.directorySettings,
       this.images,
       this.chargeBy);
 
@@ -92,6 +94,10 @@ class CatalogueProducts {
     } else {
       certifications = [];
     }
+
+    directorySettings = json['directorySettings'] != null
+        ? new DirectorySettings.fromJson(json['directorySettings'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -225,4 +231,60 @@ class Certifications {
     data['name'] = this.name;
     return data;
   }
+}
+
+class DirectorySettings {
+  DirectorySettings({
+    this.isIncluded,
+    this.skuName,
+    this.leadTime,
+   // this.priceRange,
+    this.condition,
+    this.shelfLife,
+  });
+
+  bool isIncluded;
+  String skuName;
+  LeadTime leadTime;
+ // List<PriceRange> priceRange;
+  String condition;
+  LeadTime shelfLife;
+
+  factory DirectorySettings.fromJson(Map<String, dynamic> json) => DirectorySettings(
+    isIncluded: json["isIncluded"] == null ? null : json["isIncluded"],
+    skuName: json["skuName"] == null ? null : json["skuName"],
+    leadTime: LeadTime.fromJson(json["leadTime"]),
+   // priceRange: List<PriceRange>.from(json["priceRange"].map((x) => PriceRange.fromJson(x))),
+    condition: json["condition"] == null ? null : json["condition"],
+    shelfLife: LeadTime.fromJson(json["shelfLife"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "isIncluded": isIncluded == null ? null : isIncluded,
+    "skuName": skuName == null ? null : skuName,
+    "leadTime": leadTime.toJson(),
+   // "priceRange": List<dynamic>.from(priceRange.map((x) => x.toJson())),
+    "condition": condition == null ? null : condition,
+    "shelfLife": shelfLife.toJson(),
+  };
+}
+
+class LeadTime {
+  LeadTime({
+    this.time,
+    this.duration,
+  });
+
+  String time;
+  String duration;
+
+  factory LeadTime.fromJson(Map<String, dynamic> json) => LeadTime(
+    time: json["time"] == null ? null : json["time"],
+    duration: json["duration"] == null ? null : json["duration"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "time": time == null ? null : time,
+    "duration": duration == null ? null : duration
+  };
 }

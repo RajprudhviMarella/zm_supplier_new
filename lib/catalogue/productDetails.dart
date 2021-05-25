@@ -5,6 +5,13 @@ import 'package:zm_supplier/models/products.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
 
+import '../models/products.dart';
+import '../utils/color.dart';
+import '../utils/color.dart';
+import '../utils/color.dart';
+import '../utils/color.dart';
+import '../utils/color.dart';
+
 class Productdetails extends StatefulWidget {
   final CatalogueProducts catalogueProducts;
 
@@ -30,7 +37,7 @@ class ProductdetailsState extends State<Productdetails> {
     return Stack(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(left: 0,top: 25, right: 0,bottom: 20
+          padding: EdgeInsets.only(left: 20,top: 25, right: 20,bottom: 20
           ),
           margin: EdgeInsets.only(top: 5),
           decoration: BoxDecoration(
@@ -43,91 +50,256 @@ class ProductdetailsState extends State<Productdetails> {
                 ),
               ]
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              displayProductImage(widget.catalogueProducts),
-              Text(widget.catalogueProducts.productName,style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: "SourceSansProBold"),textAlign: TextAlign.left,),
-              Text(widget.catalogueProducts.supplierProductCode,style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
-              SizedBox(
-                height: 43,
-                child: ListView.builder(
-                    key: const PageStorageKey<String>(
-                        'scrollPosition'),
-                    itemCount: widget.catalogueProducts.certifications.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder:
-                        (BuildContext context, int subIndex) {
-                      return Padding(
-                        padding: EdgeInsets.all(0),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              Padding(
-                                  padding:
-                                  EdgeInsets.only(left: 10),
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets
-                                            .only(
-                                            top: 10.0,
-                                            left: 10),
-                                      ),
-                                      displayCertImage(widget.catalogueProducts.certifications[subIndex]
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                displayProductImage(widget.catalogueProducts),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(widget.catalogueProducts.productName,style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: "SourceSansProBold"),textAlign: TextAlign.left,),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(widget.catalogueProducts.supplierProductCode,style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
+                  ],
+                ),
+
+                if (widget.catalogueProducts.certifications.length > 0)
+                Container(
+                  height: 50,
+                  child: ListView.builder(
+
+                      key: const PageStorageKey<String>(
+                          'scrollPosition'),
+                      itemCount: widget.catalogueProducts.certifications.length,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder:
+                          (BuildContext context, int subIndex) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: 5, bottom: 5),
+                          child: GestureDetector(
+                            onTap: () {},
+                              child: Container(
+                                // color: Colors.red,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      //  width: 30,
+                                      color: Colors.white,
+                                      child: displayCertImage(widget.catalogueProducts.certifications[subIndex]
                                           .name),
-                                    ],
-                                  )),
-                            ],
+                                    ),
+                                  ],
+                                ),
+                              )
                           ),
-                        ),
-                      );
-                    }),
-              ),
-              // showSoldPer(widget.catalogueProducts),
-              SizedBox(height: 22,),
+                        );
+                      }),
+                ),
+               // SizedBox(height: 10,),
 
-              Text(widget.catalogueProducts.description,style: TextStyle(fontSize: 16,
-                  fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
-              SizedBox(height: 22,),
+                showSoldPer(widget.catalogueProducts),
+                shelfLife(widget.catalogueProducts),
+                region(widget.catalogueProducts),
+                condition(widget.catalogueProducts),
 
-            ],
+                Row(
+                  children: [
+                    Text(widget.catalogueProducts.description,style: TextStyle(fontSize: 16,
+                        fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
+                  ],
+                ),
+                SizedBox(height: 22,),
+
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
+  Widget region(CatalogueProducts pro) {
+    if (pro.countryOfOrigin != null && pro.countryOfOrigin.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Container(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Country of origin",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'SourceSansProRegular',
+                        color: grey_text),
+                  ),
+
+                  if (pro.countryOfOrigin != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30.0),
+                      child: Container(
+                          child: Text(
+                            pro.countryOfOrigin,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'SourceSansProRegular',
+                                color: Colors.black),
+                          )),
+                    )
+                ],
+              ),
+              SizedBox(height: 16,),
+              Container(
+                height: 1.5,
+                color: faintGrey,
+              ),
+              SizedBox(height: 10,)
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
   Widget showSoldPer(CatalogueProducts products) {
 
     List<String> uoms = [];
-
-    for( OrderBy orderBy in products.orderBy) {
+    if (products.orderBy != null)
+      for( OrderBy orderBy in products.orderBy) {
       uoms.add(orderBy.unitSize);
     }
 
-    return  Row(children: <Widget>[
-      Expanded(
-        child: LeftRightAlign(
-            left: Text("Sold per ",
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 16.0,
-                    fontFamily: "SourceSansProRegular")),
-            right: Text(uoms.join(", "),
+    if (uoms != null && uoms.length != 0) {
+      print(uoms);
+      return Row(children: <Widget>[
+        Expanded(
+          child: LeftRightAlign(
+              left: Text("Sold per ",
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16.0,
+                      fontFamily: "SourceSansProRegular")),
+              right: Text(uoms.join(", "),
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 16.0,
-                    fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,)),
-      )
-    ]);
+                    fontFamily: "SourceSansProRegular"),
+                textAlign: TextAlign.left,)),
+        )
+      ]);
+    } else {
+      return Container();
+    }
+  }
+
+  Widget shelfLife(CatalogueProducts pro) {
+    print('directory settings');
+    print(pro.directorySettings);
+    if (pro.directorySettings != null && pro.directorySettings.shelfLife.duration != null && pro.directorySettings.shelfLife.time != null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Container(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Shelf life",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'SourceSansProRegular',
+                        color: grey_text),
+                  ),
+
+                  if (pro.directorySettings != null && pro.directorySettings.shelfLife.duration != null && pro.directorySettings.shelfLife.time != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 80.0),
+                      child: Container(
+                          child: Text(
+                            pro.directorySettings.shelfLife.time + " " + pro.directorySettings.shelfLife.duration,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'SourceSansProRegular',
+                                color: Colors.black),
+                          )),
+                    )
+                ],
+              ),
+              SizedBox(height: 16,),
+              Container(
+                height: 1.5,
+                color: faintGrey,
+              ),
+              SizedBox(height: 10,)
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  Widget condition(CatalogueProducts pro) {
+    print('directory settings');
+    print(pro.directorySettings);
+    if (pro.directorySettings != null && pro.directorySettings.condition != null && pro.directorySettings.condition.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Container(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Condition",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'SourceSansProRegular',
+                        color: grey_text),
+                  ),
+
+                  if (pro.directorySettings != null && pro.directorySettings.condition != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 75.0),
+                      child: Container(
+                          child: Text(
+                            pro.directorySettings.condition,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'SourceSansProRegular',
+                                color: Colors.black),
+                          )),
+                    )
+                ],
+              ),
+              SizedBox(height: 16,),
+              Container(
+                height: 1.5,
+                color: faintGrey,
+              ),
+              SizedBox(height: 10,)
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget displayProductImage(CatalogueProducts products) {
@@ -206,21 +378,28 @@ class ProductdetailsState extends State<Productdetails> {
       color = Colors.blue;
     }
 
-    return Container(
-      height: 32,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        color: color.withOpacity(1),
-      ),
-      child: Center(
+    return Padding(
+      padding: const EdgeInsets.only(right: 5.0, top: 5, bottom: 5),
+      child: Container(
+        height: 32,
+        // width: 23,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: color.withOpacity(1),
+        ),
         child: Row(
             children: [
-              Image.asset(assetName),
-             Text('  ' + certName + '  ',style: TextStyle(
-          fontSize: 14,
-          fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
-        ]
-        )
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Image.asset(assetName,width: 20, height: 20,),
+              ),
+              SizedBox(width: 5,),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Text(certName, style: TextStyle(fontFamily: 'SourceSansProSemiBold', fontSize: 14, color: Colors.black),),
+              ),
+
+            ]),
       ),
     );
   }
