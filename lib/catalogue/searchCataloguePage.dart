@@ -381,8 +381,8 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                 child: ListView.builder(
                                     key: const PageStorageKey<String>(
                                         'scrollPosition'),
-                                    itemCount: snapshot
-                                        .data[index].certifications.length,
+                                    itemCount: (snapshot
+                                        .data[index].certifications == null) ? 0 : snapshot.data[index].certifications.length,
                                     shrinkWrap: true,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder:
@@ -499,11 +499,11 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
     if (products != null &&
         products.images != null &&
         products.images.isNotEmpty &&
-        products.images[0].imageURL != null &&
+        products.images[0].imageUrl != null &&
         products.images[0].imageFileNames != null &&
         products.images[0].imageFileNames.isNotEmpty) {
       var url =
-          products.images[0].imageURL + products.images[0].imageFileNames[0];
+          products.images[0].imageUrl + products.images[0].imageFileNames[0];
       return Container(
           height: 70,
           width: 70,

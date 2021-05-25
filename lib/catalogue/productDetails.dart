@@ -45,7 +45,7 @@ class ProductdetailsState extends State<Productdetails> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
-                BoxShadow(color: Colors.black,offset: Offset(0,10),
+                BoxShadow(color: Colors.black,offset: Offset(0,3),
                     blurRadius: 10
                 ),
               ]
@@ -53,6 +53,7 @@ class ProductdetailsState extends State<Productdetails> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 displayProductImage(widget.catalogueProducts),
                 Row(
@@ -72,51 +73,60 @@ class ProductdetailsState extends State<Productdetails> {
                   ],
                 ),
 
-                if (widget.catalogueProducts.certifications.length > 0)
-                Container(
-                  height: 50,
-                  child: ListView.builder(
+                if (widget.catalogueProducts.certifications != null && widget.catalogueProducts.certifications.isNotEmpty)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 50,
+                        child: ListView.builder(
 
-                      key: const PageStorageKey<String>(
-                          'scrollPosition'),
-                      itemCount: widget.catalogueProducts.certifications.length,
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder:
-                          (BuildContext context, int subIndex) {
-                        return Padding(
-                          padding: EdgeInsets.only(top: 5, bottom: 5),
-                          child: GestureDetector(
-                            onTap: () {},
-                              child: Container(
-                                // color: Colors.red,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      //  width: 30,
-                                      color: Colors.white,
-                                      child: displayCertImage(widget.catalogueProducts.certifications[subIndex]
-                                          .name),
-                                    ),
-                                  ],
+                            key: const PageStorageKey<String>(
+                                'scrollPosition'),
+                            itemCount: widget.catalogueProducts.certifications.length,
+                            shrinkWrap: true,
+
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder:
+                                (BuildContext context, int subIndex) {
+                              return Padding(
+                                padding: EdgeInsets.only(top: 5, bottom: 5),
+                                child: GestureDetector(
+                                  onTap: () {},
+                                    child: Container(
+                                      // color: Colors.red,
+                                      child: Row(
+                                      //  mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            //  width: 30,
+                                            color: Colors.white,
+                                            child: displayCertImage(widget.catalogueProducts.certifications[subIndex]
+                                                .name),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                 ),
-                              )
-                          ),
-                        );
-                      }),
+                              );
+                            }),
+                      ),
+                    ),
+                  ],
                 ),
                // SizedBox(height: 10,),
 
-                showSoldPer(widget.catalogueProducts),
+               showSoldPer(widget.catalogueProducts),
                 shelfLife(widget.catalogueProducts),
                 region(widget.catalogueProducts),
                 condition(widget.catalogueProducts),
 
                 Row(
                   children: [
-                    Text(widget.catalogueProducts.description,style: TextStyle(fontSize: 16,
-                        fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
+                    Expanded(
+                      child: Text(widget.catalogueProducts.description,style: TextStyle(fontSize: 16,
+                          fontFamily: "SourceSansProRegular"),textAlign: TextAlign.left,),
+                    ),
                   ],
                 ),
                 SizedBox(height: 22,),
@@ -177,38 +187,67 @@ class ProductdetailsState extends State<Productdetails> {
 
   Widget showSoldPer(CatalogueProducts products) {
 
+    print('sold by');
+    print(products.orderBy);
     List<String> uoms = [];
     if (products.orderBy != null)
       for( OrderBy orderBy in products.orderBy) {
+        print(orderBy.unitSize);
       uoms.add(orderBy.unitSize);
     }
 
     if (uoms != null && uoms.length != 0) {
       print(uoms);
-      return Row(children: <Widget>[
-        Expanded(
-          child: LeftRightAlign(
-              left: Text("Sold per ",
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  "Sold per",
                   style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16.0,
-                      fontFamily: "SourceSansProRegular")),
-              right: Text(uoms.join(", "),
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16.0,
-                    fontFamily: "SourceSansProRegular"),
-                textAlign: TextAlign.left,)),
-        )
-      ]);
+                      fontSize: 16,
+                      fontFamily: 'SourceSansProRegular',
+                      color: grey_text),
+                ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 80.0),
+                    child: Container(
+                        width: 100,
+                    //  height: 200,
+                        child: Flexible(
+                          child: Text(uoms.join(", "),
+                              // maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'SourceSansProRegular',
+                                color: Colors.black),
+                          ),
+                        )),
+                  )
+              ],
+            ),
+
+            SizedBox(height: 16,),
+            Container(
+              height: 1.5,
+              color: faintGrey,
+            ),
+            SizedBox(height: 10,)
+
+          ],
+        ),
+      );
     } else {
       return Container();
     }
   }
 
   Widget shelfLife(CatalogueProducts pro) {
-    print('directory settings');
-    print(pro.directorySettings);
+
     if (pro.directorySettings != null && pro.directorySettings.shelfLife.duration != null && pro.directorySettings.shelfLife.time != null) {
       return Padding(
         padding: const EdgeInsets.only(top: 8.0),
@@ -255,8 +294,6 @@ class ProductdetailsState extends State<Productdetails> {
   }
 
   Widget condition(CatalogueProducts pro) {
-    print('directory settings');
-    print(pro.directorySettings);
     if (pro.directorySettings != null && pro.directorySettings.condition != null && pro.directorySettings.condition.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(top: 8.0),
@@ -306,11 +343,11 @@ class ProductdetailsState extends State<Productdetails> {
     if (products != null &&
         products.images != null &&
         products.images.isNotEmpty &&
-        products.images[0].imageURL != null &&
+        products.images[0].imageUrl != null &&
         products.images[0].imageFileNames != null &&
         products.images[0].imageFileNames.isNotEmpty) {
       var url =
-          products.images[0].imageURL + products.images[0].imageFileNames[0];
+          products.images[0].imageUrl + products.images[0].imageFileNames[0];
       return Container(
           height: 375,
           width: 375,
