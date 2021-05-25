@@ -123,6 +123,7 @@ flutter:
     - assets/images/cert_vegan.png
     - assets/images/cert_vegetarian.png
     - assets/images/icon_sku_placeholder.png
+    - assets/images/cat_icon_all.png
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

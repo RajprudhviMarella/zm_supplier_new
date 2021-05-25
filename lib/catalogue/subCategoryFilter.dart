@@ -12,27 +12,37 @@ import 'package:http/http.dart' as http;
 class SubCategoryFilterPage extends StatefulWidget {
   List<Children> selectedFilters = [];
   String categoryId;
+  List<String> selectedCategoryIds = [];
 
-  SubCategoryFilterPage(this.selectedFilters, this.categoryId);
+  SubCategoryFilterPage(this.selectedFilters, this.categoryId,this.selectedCategoryIds);
 
   @override
   State<StatefulWidget> createState() =>
-      SubCategoryFilterState(this.selectedFilters, this.categoryId);
+      SubCategoryFilterState(this.selectedFilters, this.categoryId,this.selectedCategoryIds);
 }
 
 class SubCategoryFilterState extends State<SubCategoryFilterPage> {
   bool isPresent(Children categoryId) {
-    print(selectedStatus);
-    return selectedStatus.contains(categoryId);
+    for (Children e in selectedStatus) {
+      if (e == categoryId)
+        return true;
+    }
+    return false;
+  }
+
+  bool isPresentCategoryId(String categoryId) {
+    print(selectedCategoryIds);
+    return selectedCategoryIds.contains(categoryId);
   }
 
   List<Children> selectedStatus =
-      []; //<String>['Not yet due', 'Overdue', 'Paid'];
+      [];
+  List<String> selectedCategoryIds = [];//<String>['Not yet due', 'Overdue', 'Paid'];
   String categoryId;
   LoginResponse userData;
   SharedPref sharedPref = SharedPref();
 
-  SubCategoryFilterState(this.selectedStatus, this.categoryId);
+  SubCategoryFilterState(this.selectedStatus, this.categoryId, List<String> selectedCategoryIds);
 
   SubCategoryBaseResponse subCategoryBaseResponse;
   List<SubCategoryData> subCategoryResponse;
@@ -119,6 +129,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
             child: GestureDetector(
           onTap: () {
             selectedStatus = [];
+            selectedCategoryIds = [];
             setState(() {});
           },
           child: Text(
@@ -148,7 +159,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
     );
   }
 
-  Widget statusList() {
+  Widget statusList1() {
     return FutureBuilder<List<Children>>(
         future: categoriesData,
         builder:
@@ -158,11 +169,12 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('failed to load'));
           } else {
-            return SizedBox(
+            return Expanded(
+                child: SizedBox(
               height: 135,
               child: ListView.builder(
                   key: const PageStorageKey<String>('scrollPosition'),
-                  itemCount: snapshot.data.length,
+                  itemCount: categoriesDataList.length,
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int index) {
@@ -175,20 +187,21 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
                             title: Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Text(
-                                snapshot.data[index].name,
+                                categoriesDataList[index].name,
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontFamily: "SourceSansProRegular"),
                               ),
                             ),
                             onTap: () {
-                              if (isPresent(snapshot.data[index])) {
-                                selectedStatus.remove(snapshot.data[index]);
+                              if (isPresent(categoriesDataList[index])) {
+                                selectedStatus.remove(categoriesDataList[index]);
+                                selectedCategoryIds.remove(categoriesDataList[index].categoryId);
                               } else {
-                                selectedStatus.add(snapshot.data[index]);
+                                selectedStatus.add(categoriesDataList[index]);
+                                selectedCategoryIds.add(categoriesDataList[index].categoryId);
                               }
                               setState(() {});
-                              print(selectedStatus);
                             },
                             trailing: trailingIcon(index),
                           )),
@@ -198,8 +211,57 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
                       )
                     ]);
                   }),
-            );
+            ));
           }
+        });
+  }
+
+
+  Widget statusList() {
+    return FutureBuilder<List<Children>>(
+        future: categoriesData,
+        builder:
+        (BuildContext context, AsyncSnapshot<List<Children>> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Container();
+      } else if (snapshot.hasError) {
+        return Center(child: Text('failed to load'));
+      } else {
+        return ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: categoriesDataList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return new Column(children: <Widget>[
+                ListTile(
+                  tileColor: Colors.white,
+                  title: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                      categoriesDataList[index].name,
+                      style: TextStyle(
+                          fontSize: 16, fontFamily: "SourceSansProRegular"),
+                    ),
+                  ),
+                  onTap: () {
+                    if (isPresent(categoriesDataList[index])) {
+                      selectedStatus.remove(categoriesDataList[index]);
+                      selectedCategoryIds.remove(categoriesDataList[index].categoryId);
+                    } else {
+                      selectedStatus.add(categoriesDataList[index]);
+                      selectedCategoryIds.add(categoriesDataList[index].categoryId);
+                    }
+                    setState(() {});
+                  },
+                  trailing: trailingIcon(index),
+                ),
+                Divider(
+                  height: 1.5,
+                  color: faintGrey,
+                )
+              ]);
+            });
+      }
         });
   }
 
@@ -220,7 +282,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
 
   Widget button() {
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0, top: 300, right: 20),
+      padding: const EdgeInsets.only(left: 20.0, top: 100, right: 20),
       child: Container(
         height: 50,
         child: RaisedButton(
