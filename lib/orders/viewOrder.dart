@@ -62,8 +62,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   final outletId;
 
   ViewOrdersDesign(this.outletId);
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   Mixpanel mixpanel;
 
@@ -184,10 +184,12 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
           if (snapShot.connectionState == ConnectionState.waiting) {
             return Padding(
                 padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                  child:  Center(
-                    child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
-            ));
-
+                child: Center(
+                  child: SpinKitThreeBounce(
+                    color: Colors.blueAccent,
+                    size: 24,
+                  ),
+                ));
           } else {
             if (snapShot.connectionState == ConnectionState.done &&
                 snapShot.hasData &&
@@ -195,121 +197,132 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
               isPageLoading = false;
               return SizedBox(
                   height: MediaQuery.of(context).size.height - 85,
-                  child: RefreshIndicator( key: refreshKey,
+                  child: RefreshIndicator(
+                      key: refreshKey,
                       child: GroupedListView<Orders, DateTime>(
-                    controller: controller,
-                    elements: snapShot.data,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    order: GroupedListOrder.ASC,
-                    groupComparator: (DateTime value1, DateTime value2) =>
-                        value2.compareTo(value1),
-                    groupBy: (Orders element) => DateTime(
-                        element.getTimeCompare().year,
-                        element.getTimeCompare().month,
-                        element.getTimeCompare().day),
-                    itemComparator: (Orders element1, Orders element2) =>
-                        element1
-                            .getTimeCompare()
-                            .compareTo(element2.getTimeCompare()),
-                   floatingHeader: true,
-                    useStickyGroupSeparators: true,
-                    groupSeparatorBuilder: (DateTime element) => Container(
-                      height: 50.0,
-                      color: faintGrey,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 15.0, top: 5.0),
-                        child: Row(children: <Widget>[
-                          Text(DateFormat('d MMM yyyy').format(element),
-                              style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                  fontFamily: "SourceSansProBold")),
-                          Text(" " + DateFormat('EEE').format(element),
-                              style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: greyText,
-                                  fontFamily: "SourceSansProRegular")),
-                        ]),
-                      ),
-                    ),
-                    indexedItemBuilder: (context, element, index) {
-                      if (snapShot.data.length >= pageSize &&
-                          index == snapShot.data.length - 1) {
-                        return Container(
-                          height: 80,
-                          child: Center(
-                            child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,),
-                          ),
-                        );
-                      } else {
-                        return Card(
-                            margin: EdgeInsets.only(top: 2.0),
-                            child: Container(
-                                color: Colors.white,
-                                child: ListTile(
-                                  onTap: () {
-                                    moveToOrderDetailsPage(element);
-                                  },
-                                  contentPadding: EdgeInsets.only(
-                                      top: 10.0,
-                                      bottom: 10.0,
-                                      left: 15.0,
-                                      right: 10.0),
-                                  leading: displayImage(element.outlet),
-                                  title: Text(
-                                    element.outlet.outletName,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
+                        controller: controller,
+                        elements: snapShot.data,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        order: GroupedListOrder.ASC,
+                        groupComparator: (DateTime value1, DateTime value2) =>
+                            value2.compareTo(value1),
+                        groupBy: (Orders element) => DateTime(
+                            element.getTimeCompare().year,
+                            element.getTimeCompare().month,
+                            element.getTimeCompare().day),
+                        itemComparator: (Orders element1, Orders element2) =>
+                            element1
+                                .getTimeCompare()
+                                .compareTo(element2.getTimeCompare()),
+                        floatingHeader: true,
+                        useStickyGroupSeparators: true,
+                        groupSeparatorBuilder: (DateTime element) => Container(
+                          height: 50.0,
+                          color: faintGrey,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 15.0, top: 5.0),
+                            child: Row(children: <Widget>[
+                              Text(DateFormat('d MMM yyyy').format(element),
+                                  style: TextStyle(
+                                      fontSize: 18.0,
                                       color: Colors.black,
-                                      fontFamily: "SourceSansProSemiBold",
-                                    ),
-                                  ),
-                                  // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-                                  subtitle: Container(
-                                    margin: EdgeInsets.only(top: 2.0),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Row(children: <Widget>[
-                                            Container(
-                                              margin: EdgeInsets.only(top: 2.0),
-                                              height: 14.0,
-                                              width: 14.0,
-                                              child: ImageIcon(AssetImage(
-                                                  'assets/images/truck.png')),
-                                            ),
-                                            Text(
-                                                " " +
-                                                    element.getTimeDelivered(),
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12.0,
-                                                    fontFamily:
-                                                        "SourceSansProRegular")),
-                                            Text(
-                                              " " + '# ${element.orderId}',
-                                              style: TextStyle(
-                                                  color: greyText,
-                                                  fontSize: 12.0,
-                                                  fontFamily:
-                                                      "SourceSansProRegular"),
-                                            ),
-                                          ]),
-                                          Constants.OrderStatusColor(element),
-                                        ]),
-                                  ),
-                                  trailing: Text(
-                                      element.amount.total.getDisplayValue(),
-                                      style: TextStyle(
+                                      fontFamily: "SourceSansProBold")),
+                              Text(" " + DateFormat('EEE').format(element),
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: greyText,
+                                      fontFamily: "SourceSansProRegular")),
+                            ]),
+                          ),
+                        ),
+                        indexedItemBuilder: (context, element, index) {
+                          if (snapShot.data.length >= pageSize &&
+                              index == snapShot.data.length - 1) {
+                            return Container(
+                              height: 80,
+                              child: Center(
+                                child: SpinKitThreeBounce(
+                                  color: Colors.blueAccent,
+                                  size: 24,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Card(
+                                margin: EdgeInsets.only(top: 2.0),
+                                child: Container(
+                                    color: Colors.white,
+                                    child: ListTile(
+                                      onTap: () {
+                                        moveToOrderDetailsPage(element);
+                                      },
+                                      contentPadding: EdgeInsets.only(
+                                          top: 10.0,
+                                          bottom: 10.0,
+                                          left: 15.0,
+                                          right: 10.0),
+                                      leading: displayImage(element.outlet),
+                                      title: Text(
+                                        element.outlet.outletName,
+                                        style: TextStyle(
                                           fontSize: 16.0,
                                           color: Colors.black,
-                                          fontFamily: "SourceSansProRegular")),
-                                )));
-                      }
-                    },
-                  ), color: azul_blue, onRefresh: refreshList));
+                                          fontFamily: "SourceSansProSemiBold",
+                                        ),
+                                      ),
+                                      // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+                                      subtitle: Container(
+                                        margin: EdgeInsets.only(top: 2.0),
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Row(children: <Widget>[
+                                                Container(
+                                                  margin:
+                                                      EdgeInsets.only(top: 2.0),
+                                                  height: 14.0,
+                                                  width: 14.0,
+                                                  child: ImageIcon(AssetImage(
+                                                      'assets/images/truck.png')),
+                                                ),
+                                                Text(
+                                                    " " +
+                                                        element
+                                                            .getTimeDelivered(),
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 12.0,
+                                                        fontFamily:
+                                                            "SourceSansProRegular")),
+                                                Text(
+                                                  " " + '# ${element.orderId}',
+                                                  style: TextStyle(
+                                                      color: greyText,
+                                                      fontSize: 12.0,
+                                                      fontFamily:
+                                                          "SourceSansProRegular"),
+                                                ),
+                                              ]),
+                                              Constants.OrderStatusColor(
+                                                  element),
+                                            ]),
+                                      ),
+                                      trailing: Text(
+                                          element.amount.total
+                                              .getDisplayValue(),
+                                          style: TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.black,
+                                              fontFamily:
+                                                  "SourceSansProRegular")),
+                                    )));
+                          }
+                        },
+                      ),
+                      color: azul_blue,
+                      onRefresh: refreshList));
             } else {
               return Container();
             }
@@ -334,6 +347,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     ordersList = null;
     if (_isSearching != null) {
       searchedString = searchText;
+      pageNum = 1;
       ordersList = callRetreiveOrdersAPI();
     }
   }
@@ -390,6 +404,7 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
       _isSearching = false;
       _controller.clear();
       searchedString = "";
+      pageNum = 1;
       ordersList = callRetreiveOrdersAPI();
     });
   }
