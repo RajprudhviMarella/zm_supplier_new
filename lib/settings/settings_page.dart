@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intercom_flutter/intercom_flutter.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,27 +99,28 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                       color: grey_text),
                   1.0,
                   Colors.black),
-              // menuItem(
-              //     context,
-              //     Constants.txt_help,
-              //     ImageIcon(AssetImage('assets/images/icon_help.png'),
-              //         color: grey_text),
-              //     1.0,
-              //     Colors.black),
-              // menuItem(
-              //     context,
-              //     Constants.txt_ask_zeemart,
-              //     ImageIcon(AssetImage('assets/images/icon_chat.png'),
-              //         color: grey_text),
-              //     1.0,
-              //     Colors.black),
-              // menuItem(
-              //     context,
-              //     Constants.txt_send_feed_back,
-              //     ImageIcon(AssetImage('assets/images/icon_feedback.png'),
-              //         color: grey_text),
-              //     1.0,
-              //     Colors.black),
+              Headers(context, Constants.txt_support, 16.0),
+              menuItem(
+                  context,
+                  Constants.txt_help,
+                  ImageIcon(AssetImage('assets/images/icon_help.png'),
+                      color: grey_text),
+                  1.0,
+                  Colors.black),
+              menuItem(
+                  context,
+                  Constants.txt_ask_zeemart,
+                  ImageIcon(AssetImage('assets/images/icon_chat.png'),
+                      color: grey_text),
+                  1.0,
+                  Colors.black),
+              menuItem(
+                  context,
+                  Constants.txt_send_feed_back,
+                  ImageIcon(AssetImage('assets/images/icon_feedback.png'),
+                      color: grey_text),
+                  1.0,
+                  Colors.black),
               menuItem(
                   context,
                   Constants.txt_terms_of_use,
@@ -246,13 +248,14 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       sendEvent(Events.TAP_SETTINGS_TAB_CHANGE_PASSWORD);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChangePassword()));
-    }
-    else if (name == Constants.txt_catalogue) {
+    } else if (name == Constants.txt_catalogue) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Catalogue()));
     } else if (name == Constants.txt_help) {
+      Intercom.displayHelpCenter();
       sendEvent(Events.TAP_SETTINGS_TAB_HELP);
     } else if (name == Constants.txt_ask_zeemart) {
+      Intercom.displayMessenger();
       sendEvent(Events.TAP_SETTINGS_TAB_ASK_ZEEMART);
     } else if (name == Constants.txt_send_feed_back) {
       sendEvent(Events.TAP_SETTINGS_TAB_SEND_FEEDBACK);
