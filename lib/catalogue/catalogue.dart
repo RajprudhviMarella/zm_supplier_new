@@ -450,7 +450,7 @@ class CatalogueDesign extends State<Catalogue> {
 
       return Container(
         height: 60.0,
-        width: 60.0, child:  Image.network('https://i.imgur.com/P3bhVwb.png')
+        width: 60.0, child:  Image.network(category.imageURL)
       );
     } else {
       return Container(
@@ -470,11 +470,11 @@ class CatalogueDesign extends State<Catalogue> {
     if (products != null &&
         products.images != null &&
         products.images.isNotEmpty &&
-        products.images[0].imageURL != null &&
+        products.images[0].imageUrl != null &&
         products.images[0].imageFileNames != null &&
         products.images[0].imageFileNames.isNotEmpty) {
       var url =
-          products.images[0].imageURL + products.images[0].imageFileNames[0];
+          products.images[0].imageUrl + products.images[0].imageFileNames[0];
       return Container(
         height: 70,
         width: 70,
@@ -545,8 +545,8 @@ class CatalogueDesign extends State<Catalogue> {
                                 child: ListView.builder(
                                     key: const PageStorageKey<String>(
                                         'scrollPosition'),
-                                    itemCount: snapshot
-                                        .data[index].certifications.length,
+                                    itemCount: (snapshot
+                                        .data[index].certifications == null) ? 0 : snapshot.data[index].certifications.length,
                                     shrinkWrap: true,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder:
