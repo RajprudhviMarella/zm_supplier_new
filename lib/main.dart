@@ -11,7 +11,7 @@ import 'models/user.dart';
 import 'utils/constants.dart';
 
 void main() async {
-  Constants.setEnvironment(Environment.DEV);
+  Constants.setEnvironment(Environment.PROD);
   WidgetsFlutterBinding.ensureInitialized();
   await Intercom.initialize('lzmzad7p',
       iosApiKey: '"ios_sdk-3089316353932af1f13250c1743f44f1df7db154',
@@ -40,7 +40,7 @@ class ZmApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Constants.setEnvironment(Environment.DEV);
+    Constants.setEnvironment(Environment.PROD);
     print(initialRoute);
 
     return MaterialApp(
