@@ -290,7 +290,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
   Widget orderSummaryBanner() {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 15.0, left: 16, right: 16),
       child: FutureBuilder<SummaryData>(
           future: orderSummaryData,
           builder: (context, AsyncSnapshot<SummaryData> snapshot) {
@@ -461,7 +461,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             return Center(child: Text('failed to load'));
           } else {
             return Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 15),
               child: Container(
                 height: 150,
                 decoration: BoxDecoration(
@@ -802,7 +802,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                 ? 50
                                                 : 0,
                                             margin: EdgeInsets.fromLTRB(
-                                                0, 0, 10, 0),
+                                                0, 0, 0, 0),
 
                                             decoration: BoxDecoration(
                                                 color: warningRed,
@@ -864,7 +864,17 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                     fontFamily:
                                                         "SourceSansProSemiBold")),
                                             // color: Colors.pink,
-                                          )
+                                          ),
+
+                                          Spacer(),
+                                          Text(
+                                              snapshot.data[index].amount.total
+                                                  .getDisplayValue(),
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  color: Colors.black,
+                                                  fontFamily:
+                                                  "SourceSansProRegular")),
                                         ],
                                       ),
                                     ),
