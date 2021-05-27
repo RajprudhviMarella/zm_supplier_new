@@ -614,7 +614,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       header: Container(
         color: faintGrey,
         margin: EdgeInsets.only(top: 0.0),
-        padding: EdgeInsets.only(left: 20.0, right: 10.0, top: 10, bottom: 0.0),
+        padding: EdgeInsets.only(left: 16.0, right: 3, top: 10, bottom: 0.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -697,6 +697,14 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     return formattedDate;
   }
 
+  String displayAmount(Orders order) {
+    if (order.orderStatus == 'Void' || order.orderStatus == 'Cancelled' || order.orderStatus == 'Invoiced') {
+      return '';
+    } else {
+      return order.amount.total.getDisplayValue();
+    }
+  }
+
   Widget list() {
     return Column(
       children: [
@@ -763,14 +771,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             maxLines: 1),
                                       ),
                                       Spacer(),
-                                      Text(
-                                          snapshot.data[index].amount.total
-                                              .getDisplayValue(),
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.black,
-                                              fontFamily:
-                                                  "SourceSansProRegular")),
+                                      Text(displayAmount(snapshot.data[index])),
                                     ],
                                   ),
                                   Padding(
