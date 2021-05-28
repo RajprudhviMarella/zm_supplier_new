@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intercom_flutter/intercom_flutter.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'package:zm_supplier/models/ordersResponseList.dart';
+import 'package:zm_supplier/models/response.dart';
+import 'package:zm_supplier/models/user.dart';
 
 import 'color.dart';
 import 'urlEndPoints.dart';
@@ -407,6 +410,32 @@ class SharedPref {
   saveBool(String key, bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, true);
+  }
+
+  static void  registerIntercomUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    LoginResponse loginResponse = LoginResponse.fromJson(
+        json.decode(prefs.getString(Constants.login_Info)));
+    await Intercom.registerIdentifiedUser(userId: loginResponse.mudra);
+  }
+
+  static void updateIntercomUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    LoginResponse loginResponse = LoginResponse.fromJson(
+        json.decode(prefs.getString(Constants.login_Info)));
+    ApiResponse specificUser = ApiResponse.fromJson(
+        json.decode(prefs.getString(Constants.specific_user_info)));
+    Map<String, String> customAttributes = {
+      'User type': 'Supplier',
+    };
+    await Intercom.updateUser(
+        userId: loginResponse.user.userId,
+        email: specificUser.data.email,
+        phone: specificUser.data.phone,
+        name: specificUser.data.fullName,
+        company: specificUser.data.supplier[0].supplierName,
+        companyId: specificUser.data.supplier[0].supplierId,
+        customAttributes: customAttributes);
   }
 }
 
