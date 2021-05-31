@@ -833,7 +833,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 10, 0),
                                             decoration: BoxDecoration(
-                                                color: warningRed,
+                                                color: warningRed.withOpacity(0.5),
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(10))),
                                             child: Center(
@@ -841,7 +841,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                 '  cancelled  '.toUpperCase(),
                                                 style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 12,
+                                                    fontSize: 10,
                                                     fontFamily:
                                                         "SourceSansProSemiBold"),
                                               ),

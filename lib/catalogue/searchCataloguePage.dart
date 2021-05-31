@@ -387,6 +387,7 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder:
                                         (BuildContext context, int subIndex) {
+                                          bool first = -1 == (subIndex - 1);
                                       return Padding(
                                         padding: EdgeInsets.all(0),
                                         child: GestureDetector(
@@ -395,7 +396,8 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                             children: [
                                               Padding(
                                                   padding:
-                                                      EdgeInsets.only(left: 10),
+                                                  first ?
+                                                  EdgeInsets.only(left: 0) : EdgeInsets.only(left: 10),
                                                   child: Column(
                                                     children: [
                                                       Padding(
@@ -505,14 +507,19 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
       var url =
           products.images[0].imageUrl + products.images[0].imageFileNames[0];
       return Container(
-          height: 70,
-          width: 70,
-          margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
-          child: Image.network(url));
+          height: 70.0,
+          width: 55.0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(
+              url,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
         height: 70,
-        width: 70,
+        width: 55,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           color: faintGrey.withOpacity(1),
