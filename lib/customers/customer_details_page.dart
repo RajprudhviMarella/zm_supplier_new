@@ -13,6 +13,7 @@ import 'package:zm_supplier/models/invoicesResponse.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletResponse.dart';
+import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
@@ -47,6 +48,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
   final globalKey = new GlobalKey<ScaffoldState>();
 
+  ApiResponse specificUserInfo;
+  dynamic userProperties;
   OrderSummaryResponse summaryData;
   Future<SummaryData> orderSummaryData;
   LoginResponse userResponse;
@@ -86,6 +89,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
+    specificUserInfo = ApiResponse.fromJson(
+        await sharedPref.readData(Constants.specific_user_info));
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -1007,11 +1012,14 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   tapOnFavourite() {
-    events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE);
-    events.mixpanel.flush();
+
     if (isStarred) {
       setState(() {
         isStarred = false;
+        userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "isFavourite": false};
+
+        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE, properties: userProperties);
+        events.mixpanel.flush();
         globalKey.currentState
           ..showSnackBar(
             SnackBar(
@@ -1023,7 +1031,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     } else {
       setState(() {
         isStarred = true;
-
+        userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "isFavourite": true};
+        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE, properties: userProperties);
+        events.mixpanel.flush();
         globalKey.currentState.showSnackBar(
           SnackBar(
             content: Text('Added to starred'),

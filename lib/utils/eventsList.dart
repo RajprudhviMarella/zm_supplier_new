@@ -129,7 +129,7 @@ class Events {
       "TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM";
   static final String TAP_ORDER_REVIEW_PLACE_ORDER_CANCEL =
       "TAP_ORDER_REVIEW_PLACE_ORDER_CANCEL";
-
+  static final String TAP_CREATE_DRAFT_ORDER = "TAP_CREATE_DRAFT_ORDER";
   /*Invoices Events*/
   static final String TAP_INVOICES_SEARCH = "TAP_INVOICES_SEARCH";
   static final String TAP_INVOICES_FILTER = "TAP_INVOICES_FILTER";
