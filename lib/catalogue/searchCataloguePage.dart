@@ -338,9 +338,8 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
   }
 
   Widget displayList(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: FutureBuilder<List<CatalogueProducts>>(
+    return Column(children: [
+      FutureBuilder<List<CatalogueProducts>>(
           future: productsData,
           builder: (BuildContext context,
               AsyncSnapshot<List<CatalogueProducts>> snapshot) {
@@ -364,16 +363,13 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                           child: ListTile(
                               leading:
                                   displayProductImage(snapshot.data[index]),
-                              title: Transform.translate(
-                                offset: Offset(-5, 0),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    snapshot.data[index].productName,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: "SourceSansProSemiBold"),
-                                  ),
+                              title: Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Text(
+                                  snapshot.data[index].productName,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: "SourceSansProSemiBold"),
                                 ),
                               ),
                               subtitle: SizedBox(
@@ -381,13 +377,17 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                 child: ListView.builder(
                                     key: const PageStorageKey<String>(
                                         'scrollPosition'),
-                                    itemCount: (snapshot
-                                        .data[index].certifications == null) ? 0 : snapshot.data[index].certifications.length,
+                                    itemCount:
+                                        (snapshot.data[index].certifications ==
+                                                null)
+                                            ? 0
+                                            : snapshot.data[index]
+                                                .certifications.length,
                                     shrinkWrap: true,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder:
                                         (BuildContext context, int subIndex) {
-                                          bool first = -1 == (subIndex - 1);
+                                      bool first = -1 == (subIndex - 1);
                                       return Padding(
                                         padding: EdgeInsets.all(0),
                                         child: GestureDetector(
@@ -395,9 +395,10 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                           child: Row(
                                             children: [
                                               Padding(
-                                                  padding:
-                                                  first ?
-                                                  EdgeInsets.only(left: 0) : EdgeInsets.only(left: 10),
+                                                  padding: first
+                                                      ? EdgeInsets.only(left: 0)
+                                                      : EdgeInsets.only(
+                                                          left: 10),
                                                   child: Column(
                                                     children: [
                                                       Padding(
@@ -472,7 +473,7 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
               }
             }
           }),
-    );
+    ]);
   }
 
   tapOnFavourite(int index, CatalogueProducts products) {
@@ -525,7 +526,10 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
           color: faintGrey.withOpacity(1),
         ),
         child: Center(
-          child: Image.asset('assets/images/icon_sku_placeholder.png'),
+          child: Image.asset(
+            'assets/images/icon_sku_placeholder.png',
+            fit: BoxFit.fill,
+          ),
         ),
       );
     }
@@ -633,10 +637,4 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
       ),
     );
   }
-// moveToOrderDetailsPage(Orders element) {
-//   Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//           builder: (context) => new OrderDetailsPage(element)));
-// }
 }
