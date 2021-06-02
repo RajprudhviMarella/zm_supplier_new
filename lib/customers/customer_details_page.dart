@@ -13,6 +13,7 @@ import 'package:zm_supplier/models/invoicesResponse.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletResponse.dart';
+import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/orders/viewOrder.dart';
@@ -47,6 +48,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
   final globalKey = new GlobalKey<ScaffoldState>();
 
+  ApiResponse specificUserInfo;
+  dynamic userProperties;
   OrderSummaryResponse summaryData;
   Future<SummaryData> orderSummaryData;
   LoginResponse userResponse;
@@ -86,6 +89,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
+    specificUserInfo = ApiResponse.fromJson(
+        await sharedPref.readData(Constants.specific_user_info));
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -290,7 +295,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
   Widget orderSummaryBanner() {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 15.0, left: 16, right: 16),
       child: FutureBuilder<SummaryData>(
           future: orderSummaryData,
           builder: (context, AsyncSnapshot<SummaryData> snapshot) {
@@ -461,7 +466,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             return Center(child: Text('failed to load'));
           } else {
             return Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 15),
               child: Container(
                 height: 150,
                 decoration: BoxDecoration(
@@ -614,7 +619,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       header: Container(
         color: faintGrey,
         margin: EdgeInsets.only(top: 0.0),
-        padding: EdgeInsets.only(left: 20.0, right: 10.0, top: 10, bottom: 0.0),
+        padding: EdgeInsets.only(left: 16.0, right: 3, top: 10, bottom: 0.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -697,6 +702,14 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     return formattedDate;
   }
 
+  String displayAmount(Orders order) {
+    if (order.orderStatus == 'Void' || order.orderStatus == 'Cancelled' || order.orderStatus == 'Invoiced') {
+      return '';
+    } else {
+      return order.amount.total.getDisplayValue();
+    }
+  }
+
   Widget list() {
     return Column(
       children: [
@@ -763,14 +776,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             maxLines: 1),
                                       ),
                                       Spacer(),
-                                      Text(
-                                          snapshot.data[index].amount.total
-                                              .getDisplayValue(),
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.black,
-                                              fontFamily:
-                                                  "SourceSansProRegular")),
+                                      Text(displayAmount(snapshot.data[index])),
                                     ],
                                   ),
                                   Padding(
@@ -802,7 +808,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                 ? 50
                                                 : 0,
                                             margin: EdgeInsets.fromLTRB(
-                                                0, 0, 10, 0),
+                                                0, 0, 0, 0),
 
                                             decoration: BoxDecoration(
                                                 color: warningRed,
@@ -832,7 +838,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 10, 0),
                                             decoration: BoxDecoration(
-                                                color: warningRed,
+                                                color: warningRed.withOpacity(0.5),
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(10))),
                                             child: Center(
@@ -840,7 +846,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                 '  cancelled  '.toUpperCase(),
                                                 style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 12,
+                                                    fontSize: 10,
                                                     fontFamily:
                                                         "SourceSansProSemiBold"),
                                               ),
@@ -864,7 +870,17 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                     fontFamily:
                                                         "SourceSansProSemiBold")),
                                             // color: Colors.pink,
-                                          )
+                                          ),
+
+                                          Spacer(),
+                                          Text(
+                                              snapshot.data[index].amount.total
+                                                  .getDisplayValue(),
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  color: Colors.black,
+                                                  fontFamily:
+                                                  "SourceSansProRegular")),
                                         ],
                                       ),
                                     ),
@@ -997,11 +1013,14 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   tapOnFavourite() {
-    events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE);
-    events.mixpanel.flush();
+
     if (isStarred) {
       setState(() {
         isStarred = false;
+        userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "isFavourite": false};
+
+        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE, properties: userProperties);
+        events.mixpanel.flush();
         globalKey.currentState
           ..showSnackBar(
             SnackBar(
@@ -1013,7 +1032,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     } else {
       setState(() {
         isStarred = true;
-
+        userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "isFavourite": true};
+        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE, properties: userProperties);
+        events.mixpanel.flush();
         globalKey.currentState.showSnackBar(
           SnackBar(
             content: Text('Added to starred'),

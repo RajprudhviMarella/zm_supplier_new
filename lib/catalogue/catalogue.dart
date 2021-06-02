@@ -202,7 +202,7 @@ class CatalogueDesign extends State<Catalogue> {
     }
     return StickyHeader(
       header: Container(
-        color: Colors.white,
+        color: faintGrey,
         margin: EdgeInsets.only(top: 0.0),
         padding:
             EdgeInsets.only(left: 20.0, right: 10.0, top: 15, bottom: 15.0),
@@ -476,21 +476,25 @@ class CatalogueDesign extends State<Catalogue> {
       var url =
           products.images[0].imageUrl + products.images[0].imageFileNames[0];
       return Container(
-        height: 70,
-        width: 70,
-        margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
-            child:  Image.network(url)
-      );
+          height: 70.0,
+          width: 55.0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.0),
+            child: Image.network(
+              url,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
         height: 70,
-        width: 70,
+        width: 55,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           color: faintGrey.withOpacity(1),
         ),
         child: Center(
-          child: Image.asset('assets/images/icon_sku_placeholder.png'),
+          child: Image.asset('assets/images/icon_sku_placeholder.png', fit: BoxFit.fill,),
         ),
       );
     }
@@ -528,16 +532,13 @@ class CatalogueDesign extends State<Catalogue> {
                           child: ListTile(
                               leading:
                                   displayProductImage(snapshot.data[index]),
-                              title: Transform.translate(
-                                offset: Offset(-5, 0),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 10.0),
-                                  child: Text(
-                                    snapshot.data[index].productName,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: "SourceSansProSemiBold"),
-                                  ),
+                              title: Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Text(
+                                  snapshot.data[index].productName,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: "SourceSansProSemiBold"),
                                 ),
                               ),
                               subtitle: SizedBox(
@@ -551,6 +552,7 @@ class CatalogueDesign extends State<Catalogue> {
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder:
                                         (BuildContext context, int subIndex) {
+                                          bool first = -1 == (subIndex - 1);
                                       return Padding(
                                         padding: EdgeInsets.all(0),
                                         child: GestureDetector(
@@ -558,8 +560,8 @@ class CatalogueDesign extends State<Catalogue> {
                                           child: Row(
                                             children: [
                                               Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 10),
+                                                  padding:first ?
+                                                  EdgeInsets.only(left: 0) : EdgeInsets.only(left: 10),
                                                   child: Column(
                                                     children: [
                                                       Padding(

@@ -9,6 +9,7 @@ import 'package:zm_supplier/customers/customer_details_page.dart';
 import 'package:zm_supplier/customers/search_customers_page.dart';
 import 'package:zm_supplier/models/customersResponse.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
+import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/orders/SearchOrders.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
@@ -36,6 +37,8 @@ class CustomerState extends State<CustomersPage> {
 
   SharedPref sharedPref = SharedPref();
   LoginResponse userData;
+  ApiResponse specificUserInfo;
+  dynamic userProperties;
   int selectedIndex = 0;
 
   String selectedFilterType = 'RecentOrdered';
@@ -76,7 +79,9 @@ class CustomerState extends State<CustomersPage> {
       bool isUpdating, bool isFilterApplied) async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
-
+    specificUserInfo = ApiResponse.fromJson(
+        await sharedPref.readData(Constants.specific_user_info));
+    userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId};
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -315,7 +320,7 @@ class CustomerState extends State<CustomersPage> {
                 color: Colors.black,
               ),
               onTap: () async {
-                events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_SEARCH);
+                events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_SEARCH, properties: userProperties);
                 events.mixpanel.flush();
                 Navigator.push(
                     context,
@@ -456,19 +461,19 @@ class CustomerState extends State<CustomersPage> {
                             selectedIndex = index;
                             if (index == 0) {
                               events.mixpanel.track(
-                                  Events.TAP_CUSTOMERS_TAB_ALL_OUTLETS_TAB);
+                                  Events.TAP_CUSTOMERS_TAB_ALL_OUTLETS_TAB, properties: userProperties);
                             } else if (index == 1) {
                               events.mixpanel.track(
-                                  Events.TAP_CUSTOMERS_TAB_STARRED_OUTLETS_TAB);
+                                  Events.TAP_CUSTOMERS_TAB_STARRED_OUTLETS_TAB, properties: userProperties);
                             } else if (index == 2) {
                               events.mixpanel.track(Events
-                                  .TAP_CUSTOMERS_TAB_THIS_WEEK_OUTLETS_TAB);
+                                  .TAP_CUSTOMERS_TAB_THIS_WEEK_OUTLETS_TAB, properties: userProperties);
                             } else if (index == 3) {
                               events.mixpanel.track(Events
-                                  .TAP_CUSTOMERS_TAB_LAST_WEEK_OUTLETS_TAB);
+                                  .TAP_CUSTOMERS_TAB_LAST_WEEK_OUTLETS_TAB, properties: userProperties);
                             } else {
                               events.mixpanel.track(Events
-                                  .TAP_CUSTOMERS_TAB_NO_RECENT_ORDERED_OUTLETS_TAB);
+                                  .TAP_CUSTOMERS_TAB_NO_RECENT_ORDERED_OUTLETS_TAB, properties: userProperties);
                             }
                             events.mixpanel.flush();
                             var a = snapshot.data[index];
@@ -744,7 +749,7 @@ class CustomerState extends State<CustomersPage> {
                                     .data.outlets[index].outlet.outletId);
 
                                 events.mixpanel.track(Events
-                                    .TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS);
+                                    .TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS, properties: userProperties);
                                 events.mixpanel.flush();
                                 Navigator.push(
                                     context,
@@ -800,7 +805,7 @@ class CustomerState extends State<CustomersPage> {
   }
 
   tapOnFavourite(int index, Customers customers) {
-    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_OUTLET_FAVOURITE);
+    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_OUTLET_FAVOURITE, properties: userProperties);
     events.mixpanel.flush();
     if (customers.isFavourite) {
       setState(() {
