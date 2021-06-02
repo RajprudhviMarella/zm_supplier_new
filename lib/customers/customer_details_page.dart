@@ -290,7 +290,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
   Widget orderSummaryBanner() {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 15.0, left: 16, right: 16),
       child: FutureBuilder<SummaryData>(
           future: orderSummaryData,
           builder: (context, AsyncSnapshot<SummaryData> snapshot) {
@@ -461,7 +461,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             return Center(child: Text('failed to load'));
           } else {
             return Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 15),
               child: Container(
                 height: 150,
                 decoration: BoxDecoration(
@@ -614,7 +614,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       header: Container(
         color: faintGrey,
         margin: EdgeInsets.only(top: 0.0),
-        padding: EdgeInsets.only(left: 20.0, right: 10.0, top: 10, bottom: 0.0),
+        padding: EdgeInsets.only(left: 16.0, right: 3, top: 10, bottom: 0.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -697,6 +697,14 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     return formattedDate;
   }
 
+  String displayAmount(Orders order) {
+    if (order.orderStatus == 'Void' || order.orderStatus == 'Cancelled' || order.orderStatus == 'Invoiced') {
+      return '';
+    } else {
+      return order.amount.total.getDisplayValue();
+    }
+  }
+
   Widget list() {
     return Column(
       children: [
@@ -763,14 +771,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             maxLines: 1),
                                       ),
                                       Spacer(),
-                                      Text(
-                                          snapshot.data[index].amount.total
-                                              .getDisplayValue(),
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.black,
-                                              fontFamily:
-                                                  "SourceSansProRegular")),
+                                      Text(displayAmount(snapshot.data[index])),
                                     ],
                                   ),
                                   Padding(
@@ -802,7 +803,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                 ? 50
                                                 : 0,
                                             margin: EdgeInsets.fromLTRB(
-                                                0, 0, 10, 0),
+                                                0, 0, 0, 0),
 
                                             decoration: BoxDecoration(
                                                 color: warningRed,
@@ -832,7 +833,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 10, 0),
                                             decoration: BoxDecoration(
-                                                color: warningRed,
+                                                color: warningRed.withOpacity(0.5),
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(10))),
                                             child: Center(
@@ -840,7 +841,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                 '  cancelled  '.toUpperCase(),
                                                 style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 12,
+                                                    fontSize: 10,
                                                     fontFamily:
                                                         "SourceSansProSemiBold"),
                                               ),
@@ -864,7 +865,17 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                     fontFamily:
                                                         "SourceSansProSemiBold")),
                                             // color: Colors.pink,
-                                          )
+                                          ),
+
+                                          Spacer(),
+                                          Text(
+                                              snapshot.data[index].amount.total
+                                                  .getDisplayValue(),
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  color: Colors.black,
+                                                  fontFamily:
+                                                  "SourceSansProRegular")),
                                         ],
                                       ),
                                     ),
