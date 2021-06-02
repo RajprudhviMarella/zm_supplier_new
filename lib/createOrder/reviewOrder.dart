@@ -9,6 +9,7 @@ import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
 import 'package:zm_supplier/models/placeOrderResponse.dart';
+import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/orders/orderDetailsPage.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -62,6 +63,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   bool isAddonOrder = false;
   List<DeliveryDateList> lstDeliveryDates;
   String supplierID;
+  String supplierName;
   String mudra;
   var selectedDate = 0;
   bool _isShowLoader = false;
@@ -73,6 +75,10 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   TextInputFormatter regExp;
   bool isValid = false;
   bool isSubscribed = false;
+
+  ApiResponse specificUserInfo;
+  dynamic userProperties;
+  LoginResponse loginResponse;
 
   @override
   void initState() {
@@ -113,14 +119,18 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
 
   loadSharedPrefs() async {
     try {
-      LoginResponse loginResponse = LoginResponse.fromJson(
+      loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
+      specificUserInfo = ApiResponse.fromJson(
+          await sharedPref.readData(Constants.specific_user_info));
+
       setState(() {
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
         }
         if (loginResponse.user.supplier.elementAt(0).supplierId != null) {
           supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
+          supplierName = loginResponse.user.supplier.elementAt(0).supplierName;
         }
       });
     } catch (Exception) {}
@@ -1138,6 +1148,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     var requestUrl;
     http.Response response;
     final msg = jsonEncode(createOrderModel);
+    bool orderNotes;
     if (widget.orderId != null && widget.orderId.isNotEmpty) {
       requestUrl = URLEndPoints.edit_place_order + '?' + queryString;
       response = await http.put(requestUrl, headers: headers, body: msg);
@@ -1147,7 +1158,13 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           placeOrderResponse.status == 200 &&
           placeOrderResponse.data.status == "SUCCESS") {
         print('order placed');
-        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
+        if (createOrderModel.notes.isNotEmpty || createOrderModel.notes != null) {
+          orderNotes = true;
+        } else {
+          orderNotes = false;
+        }
+        userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, "outletId": widget.outletId, "outletName": widget.outletName, "notes": orderNotes, "orderId": widget.orderId,"itemCount": widget.marketList.length,"isAddonOrder": isAddonOrder, "supplierId": supplierID, "supplierName": supplierName,"selectedDeliveryDate": selectedDate};
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: userProperties);
         events.mixpanel.flush();
         showSuccessDialog();
       } else {
@@ -1161,7 +1178,14 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       if (placeOrderResponse != null &&
           placeOrderResponse.status == 200) {
       //if (response != null && response.statusCode == 200) {
-        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER);
+        if (createOrderModel.notes.isNotEmpty || createOrderModel.notes != null) {
+          orderNotes = true;
+        } else {
+          orderNotes = false;
+        }
+
+        userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, "outletId": widget.outletId, "outletName": widget.outletName, "notes": orderNotes, "itemCount": widget.marketList.length,"isAddonOrder": isAddonOrder, "supplierId": supplierID, "supplierName": supplierName, "selectedDeliveryDate": selectedDate};
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: userProperties);
         events.mixpanel.flush();
         showSuccessDialog();
       } else {
@@ -1228,18 +1252,6 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       onPressed: () {
         Navigator.pop(dialogContext);
         createOrderAPI();
-        events.mixpanel
-            .track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: {
-          'ItemCount': widget.marketList.length,
-          'OrderNotes':
-              (widget.orderNotes != null && widget.orderNotes.isNotEmpty)
-                  ? true
-                  : false,
-          'OutletID': widget.outletId,
-          'OutletName': widget.outletName,
-          'isAddonOrder': isAddonOrder,
-        });
-        events.mixpanel.flush();
       },
     );
     // set up the button

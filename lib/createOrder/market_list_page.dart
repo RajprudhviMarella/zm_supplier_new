@@ -11,6 +11,7 @@ import 'package:zm_supplier/createOrder/reviewOrder.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
+import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/models/supplierDeliveryDates.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -70,6 +71,8 @@ class MarketListDesign extends State<MarketListPage>
   TextInputFormatter regExp;
   bool isValid = false;
   String cutOffDate = "";
+  LoginResponse loginResponse;
+  ApiResponse specificUserInfo;
 
   @override
   void initState() {
@@ -82,8 +85,11 @@ class MarketListDesign extends State<MarketListPage>
 
   loadSharedPrefs() async {
     try {
-      LoginResponse loginResponse = LoginResponse.fromJson(
+      loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
+      specificUserInfo = ApiResponse.fromJson(
+          await sharedPref.readData(Constants.specific_user_info));
+
       setState(() {
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
@@ -1296,6 +1302,14 @@ class MarketListDesign extends State<MarketListPage>
     http.Response response =
         await http.post(requestUrl, headers: headers, body: msg);
     if (response.statusCode == 200) {
+      bool orderNote;
+      if (createOrderModel.notes != null && createOrderModel.notes.isNotEmpty) {
+        orderNote = true;
+      } else {
+        orderNote = false;
+      }
+      events.mixpanel.track(Events.TAP_CREATE_DRAFT_ORDER, properties: {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, 'outletId': widget.outletId,
+        'outletName': widget.outletName, "notes": orderNote, "selectedDeliveryDate": selectedDate});
       DartNotificationCenter.post(channel: Constants.draft_notifier);
       _hideLoader();
       Navigator.of(context).pop();

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:zm_supplier/models/outletResponse.dart';
+import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/services/favouritesApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
@@ -50,6 +51,10 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
 
   Constants events = Constants();
 
+  ApiResponse specificUserInfo;
+  dynamic userProperties;
+  LoginResponse loginResponse;
+
   @override
   void initState() {
     loadSharedPrefs();
@@ -61,8 +66,11 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
 
   loadSharedPrefs() async {
     try {
-      LoginResponse loginResponse = LoginResponse.fromJson(
+      loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
+      specificUserInfo = ApiResponse.fromJson(
+          await sharedPref.readData(Constants.specific_user_info));
+
       setState(() {
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
@@ -127,8 +135,9 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
             onPressed: () {
               setState(() {
                 if (this.icon.icon == Icons.search) {
+                  userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId};
                   events.mixpanel
-                      .track(Events.TAP_NEW_ORDER_SELECT_OUTLET_SEARCH);
+                      .track(Events.TAP_NEW_ORDER_SELECT_OUTLET_SEARCH, properties: userProperties);
                   events.mixpanel.flush();
 
                   this.icon = new Icon(
@@ -367,10 +376,11 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                   },
                 ),
                 onTap: () {
+                  userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, 'outletId': snapShot.data[index].outlet.outletId,
+                    'outletName': snapShot.data[index].outlet.outletName};
                   events.mixpanel
                       .track(Events.TAP_NEW_ORDER_SELECT_OUTLET, properties: {
-                    'OutletId': snapShot.data[index].outlet.outletId,
-                    'OutletName': snapShot.data[index].outlet.outletName
+
                   });
                   events.mixpanel.flush();
                   Navigator.push(

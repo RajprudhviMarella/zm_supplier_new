@@ -26,6 +26,7 @@ import '../utils/color.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:sticky_headers/sticky_headers.dart';
+import '../models/response.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -64,7 +65,8 @@ class DashboardState extends State<DashboardPage> {
   double width;
 
   SharedPref sharedPref = SharedPref();
-
+  ApiResponse specificUserInfo;
+  dynamic userProperties;
   Future<List<OrderSummaryResponse>> getJobFuture;
 
   Future<List<Orders>> draftOrdersFuture;
@@ -103,6 +105,7 @@ class DashboardState extends State<DashboardPage> {
 
     super.initState();
     mixPanelEvents();
+
     print('init called');
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
@@ -174,17 +177,21 @@ class DashboardState extends State<DashboardPage> {
 
   // bool second = false;
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
-    LoginResponse user =
+    userResponse =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
     // String mudra = '5ae6b19666463d3518556653--022b92f1-946c-4e1b-ac6d-9978a7ecf4cc';
     // if (second == true) {
     //   mudra = user.mudra;
     // }
+    specificUserInfo = ApiResponse.fromJson(
+        await sharedPref.readData(Constants.specific_user_info));
+     userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
+
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
-      'mudra': user.mudra,
-      'supplierId': user.supplier.first.supplierId,
+      'mudra': userResponse.mudra,
+      'supplierId': userResponse.supplier.first.supplierId,
     };
 
     var response =
@@ -459,7 +466,7 @@ class DashboardState extends State<DashboardPage> {
               child: new IconButton(
                 icon: actionIcon,
                 onPressed: () {
-                  mixpanel.track(Events.TAP_DASHBOARD_SEARCH);
+                  mixpanel.track(Events.TAP_DASHBOARD_SEARCH, properties: userProperties);
                   mixpanel.flush();
                   Navigator.push(
                       context,
@@ -473,7 +480,7 @@ class DashboardState extends State<DashboardPage> {
         backgroundColor: buttonBlue,
         foregroundColor: Colors.white,
         onPressed: () {
-          mixpanel.track(Events.TAP_DASHBOARD_NEW_ORDER);
+          mixpanel.track(Events.TAP_DASHBOARD_NEW_ORDER, properties: userProperties);
           mixpanel.flush();
           Navigator.push(
               context,
@@ -718,7 +725,7 @@ class DashboardState extends State<DashboardPage> {
                                             child: InkWell(
                                               onTap: () {
                                                 mixpanel.track(Events
-                                                    .TAP_DASHBOARD_VIEW_DELIVERIES);
+                                                    .TAP_DASHBOARD_VIEW_DELIVERIES, properties: userProperties);
                                                 mixpanel.flush();
                                                 Navigator.push(
                                                     context,
@@ -1025,7 +1032,8 @@ class DashboardState extends State<DashboardPage> {
                     right: FlatButton(
                       onPressed: () {
                         print('View all orders tapped');
-                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS);
+
+                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS, properties: userProperties);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1299,7 +1307,7 @@ class DashboardState extends State<DashboardPage> {
   }
 
   moveToOrderDetailsPage(Orders element) {
-    mixpanel.track(Events.TAP_DASHBOARD_ORDER_FOR_DETAILS);
+    mixpanel.track(Events.TAP_DASHBOARD_ORDER_FOR_DETAILS, properties: userProperties);
     mixpanel.flush();
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
