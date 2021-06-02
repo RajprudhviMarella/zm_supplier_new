@@ -14,7 +14,7 @@ void main() async {
   Constants.setEnvironment(Environment.PROD);
   WidgetsFlutterBinding.ensureInitialized();
   await Intercom.initialize('lzmzad7p',
-      iosApiKey: '"ios_sdk-3089316353932af1f13250c1743f44f1df7db154',
+      iosApiKey: 'ios_sdk-3089316353932af1f13250c1743f44f1df7db154',
       androidApiKey: 'android_sdk-8489ca5c3a3f6865ef14e664df8dd2e738bdece4');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isLogged = false;
