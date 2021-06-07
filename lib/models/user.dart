@@ -17,6 +17,7 @@ class User {
     //this.outletFeatures,
     this.email,
     this.userId,
+    // this.goals
   });
 
   String status;
@@ -34,7 +35,7 @@ class User {
   //OutletFeatures outletFeatures;
   String email;
   String userId;
-
+// List<Goal> goals;
   factory User.fromJson(Map<String, dynamic> json) => User(
         status: json["status"],
         // company:
@@ -52,7 +53,9 @@ class User {
         //outletFeatures: OutletFeatures.fromJson(json["outletFeatures"]),
         email: json["email"],
         userId: json["userId"],
-      );
+   // goals: List<Goal>.from(json["goals"].map((x) => Goal.fromJson(x))),
+
+  );
 
   Map<String, dynamic> toJson() => {
         "status": status,
@@ -68,6 +71,28 @@ class User {
         //"outletFeatures": outletFeatures.toJson(),
         "email": email,
         "userId": userId,
+    // "goals": List<dynamic>.from(goals.map((x) => x.toJson())),
+
+  };
+}
+
+class Goal {
+  Goal({
+    this.period,
+    this.amount,
+  });
+
+  String period;
+  int amount;
+
+  factory Goal.fromJson(Map<String, dynamic> json) => Goal(
+        period: json["period"],
+        amount: json["amount"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "period": period,
+        "amount": amount,
       };
 }
 
@@ -204,6 +229,7 @@ class userData {
   String email;
   List<Supplier> supplier;
   String imageURL;
+  Goal goal;
 
   userData({
     this.fullName,
@@ -211,6 +237,7 @@ class userData {
     this.email,
     this.imageURL,
     this.supplier,
+    this.goal,
   });
 
   userData.fromJson(Map<String, dynamic> json) {
@@ -224,6 +251,9 @@ class userData {
         supplier.add(new Supplier.fromJson(v));
       });
     }
+
+    goal = json['goal'] != null ? new Goal.fromJson(json['goal']) : null;
+
   }
 
   Map<String, dynamic> toJson() {
@@ -235,7 +265,9 @@ class userData {
     if (this.supplier != null) {
       data['supplier'] = this.supplier.map((v) => v.toJson()).toList();
     }
-    return data;
+    if (this.goal != null) {
+      data['goal'] = this.goal.toJson();
+    }    return data;
   }
 }
 
@@ -282,5 +314,53 @@ class statusSuccessResponse {
 
   Map<String, dynamic> toJson() => {
         "status": status,
+      };
+}
+
+class UserGoals {
+  UserGoals({
+  this.path,
+  this.timestamp,
+  this.status,
+  this.message,
+  this.data,
+  });
+
+  String path;
+  DateTime timestamp;
+  int status;
+  String message;
+  goalData data;
+
+  factory UserGoals.fromJson(Map<String, dynamic> json) =>
+      UserGoals(
+        path: json["path"],
+        timestamp: DateTime.parse(json["timestamp"]),
+        status: json["status"],
+        message: json["message"],
+        data: goalData.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+    "path": path,
+    "timestamp": timestamp.toIso8601String(),
+    "status": status,
+    "message": message,
+    "data": data.toJson(),
+  };
+
+}
+
+class goalData {
+  goalData({this.goal});
+
+  Goal goal;
+
+  factory goalData.fromJson(Map<String, dynamic> json) => goalData(
+    goal: Goal.fromJson(json["goal"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+    "goal": goal.toJson(),
       };
 }

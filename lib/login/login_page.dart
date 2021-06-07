@@ -89,6 +89,7 @@ class _LoginPageState extends State<LoginPage> {
           sharedPref.saveData(Constants.USER_NAME, value.data.fullName);
           sharedPref.saveData(Constants.USER_EMAIL, value.data.email);
           sharedPref.saveData(Constants.USER_IMAGE_URL, value.data.imageURL);
+          sharedPref.saveData(Constants.USER_GOAL, value.data.goal);
           SharedPreferences prefs = await SharedPreferences.getInstance();
           isLogged = true;
           prefs.setBool(Constants.is_logged, isLogged);

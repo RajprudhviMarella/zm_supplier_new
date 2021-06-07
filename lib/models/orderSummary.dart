@@ -42,6 +42,8 @@ class SummaryData {
     this.totalSpendingLastMonth,
     this.totalSpendingLastTwoMonths,
     this.todayPendingDeliveries,
+    this.goalPercentage,
+    this.isGoalActive,
   });
 
   dynamic totalSpendingCurrWeek;
@@ -50,6 +52,8 @@ class SummaryData {
   dynamic totalSpendingLastMonth;
   dynamic totalSpendingLastTwoMonths;
   dynamic todayPendingDeliveries;
+  dynamic goalPercentage;
+  bool isGoalActive;
 
   factory SummaryData.fromJson(Map<String, dynamic> json) => SummaryData(
     totalSpendingCurrWeek: json["totalSpendingCurrWeek"],
@@ -58,6 +62,8 @@ class SummaryData {
     totalSpendingLastMonth: json["totalSpendingLastMonth"],
     totalSpendingLastTwoMonths: json["totalSpendingLastTwoMonths"],
     todayPendingDeliveries: json["todayPendingDeliveries"],
+    goalPercentage: json["goalPercentage"],
+    isGoalActive: json["isGoalActive"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -67,5 +73,7 @@ class SummaryData {
     "totalSpendingLastMonth": totalSpendingLastMonth,
     "totalSpendingLastTwoMonths": totalSpendingLastTwoMonths,
     "todayPendingDeliveries": todayPendingDeliveries,
+    "goalPercentage": goalPercentage,
+    "isGoalActive": isGoalActive,
   };
 }
