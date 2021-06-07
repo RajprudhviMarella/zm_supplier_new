@@ -55,6 +55,7 @@ class Constants {
   static const String USER_NAME = "USER_NAME";
   static const String USER_EMAIL = "USER_EMAIL";
   static const String USER_IMAGE_URL = "USER_IMAGE_URL";
+  static const String USER_GOAL = "USER_GOAL";
 
   static const String txt_incorrect_format = "Incorrect format";
   static const String txt_short_password = "New password is too short";

@@ -137,4 +137,8 @@ class URLEndPoints {
         "inventory/product/favourites";
   }
 
+  static get user_goals_url {
+    return Constants.ACCOUNT_MANAGEMENT_SERVER + "/account/user/goal";
+  }
+
 }

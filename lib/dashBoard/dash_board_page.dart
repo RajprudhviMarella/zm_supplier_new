@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/createOrder/outletSelection.dart';
@@ -22,6 +23,9 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
+import '../models/user.dart';
+import '../models/user.dart';
+import '../models/user.dart';
 import '../utils/color.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -79,7 +83,13 @@ class DashboardState extends State<DashboardPage> {
   bool isScrolled = false;
   bool isSubscribed = false;
   var refreshKey = GlobalKey<RefreshIndicatorState>();
+  String selectedGoalType;
+  final TextEditingController _controller = new TextEditingController();
 
+  bool didGoalSet = false;
+  Goal userGoals;
+  Future<Goal> futureGoals;
+  UserGoals userGoalData;
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
@@ -185,15 +195,27 @@ class DashboardState extends State<DashboardPage> {
     // }
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
+    userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
      userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
 
+
+     //  userGoals = specificUserInfo.data.goal;
+
+       if (didGoalSet) {
+         userGoals = userGoalData.data.goal;
+       }
+
+    selectedGoalType = userGoals.period;
+    _controller.text = userGoals.amount.toString();
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
       'mudra': userResponse.mudra,
       'supplierId': userResponse.supplier.first.supplierId,
+      'userId': userResponse.user.userId,
     };
 
+    print(URLEndPoints.order_summary_url);
     var response =
         await http.get(URLEndPoints.order_summary_url, headers: headers);
     if (response.statusCode == 200 ||
@@ -407,6 +429,61 @@ class DashboardState extends State<DashboardPage> {
     return arrayOrderList;
   }
 
+
+  Future<Goal> _retriveGoalStatus() async {
+
+    LoginResponse user =
+    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': user.mudra,
+      'supplierId': user.supplier.first.supplierId
+    };
+
+    var body = {
+      'period': selectedGoalType,
+      'amount': _controller.text,
+    };
+
+    Map<String, String> queryParams = {
+      'userId': user.user.userId,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.user_goals_url + '?' + queryString;
+    print("goals "+ url);
+
+    var response = await http.put(url, headers: headers, body: jsonEncode(body));
+
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      userGoalData = UserGoals.fromJson(json.decode(response.body));
+
+      print('goal set suceessfully');
+      print(userGoals.amount);
+      sharedPref.saveData(Constants.USER_GOAL, userGoalData.data.goal);
+      setState(() {
+        userGoals = userGoalData.data.goal;
+        orderSummaryData = getSummaryDataApiCalling();
+      });
+    } else {
+      print('failed get orders data');
+      if (response.statusCode == 401) {
+        callLoginApi(1);
+      }
+    }
+     userGoals = userGoalData.data.goal;
+
+    setState(() {
+      didGoalSet = true;
+    });
+    return userGoals;
+  }
+
   void showAlert(String title, String message) {
     BuildContext dialogContext;
     // set up the button
@@ -534,6 +611,47 @@ class DashboardState extends State<DashboardPage> {
 
     return null;
   }
+
+  checkGoalStatus(OrderSummaryResponse snapshot){
+    if (snapshot.data.isGoalActive == true) {
+      return percentIndicator();
+        } else {
+      return Padding(
+        padding: const EdgeInsets.only(
+                left: 220, top: 40, right: 20),
+        child: Container(
+          // alignment: Alignment.centerRight,
+          height: 48,
+          width: 120,
+          // color: Colors.yellow,
+
+          decoration: BoxDecoration(
+              color: greyText,
+              borderRadius: BorderRadius.all(
+                  Radius.circular(24))),
+
+          child: FlatButton(
+            onPressed: () {
+              print('set a goal tapped.');
+              setGoal();
+            },
+            color: faintGrey,
+            child: new Text(
+              "Set a goal",
+              style: TextStyle(
+                  color: buttonBlue,
+                  fontSize: 16,
+                  fontFamily: "SourceSansProSemiBold"),
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.circular(24)),
+          ),
+        ),
+      );
+    }
+  }
+
   Widget banner(context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 13),
@@ -678,39 +796,44 @@ class DashboardState extends State<DashboardPage> {
                                             ),
                                           ),
                                         ),
-                                        /*
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 240, top: 40, right: 20),
-                                      child: Container(
-                                        // alignment: Alignment.centerRight,
-                                        height: 48,
-                                        width: 120,
-                                        // color: Colors.yellow,
 
-                                        decoration: BoxDecoration(
-                                            color: greyText,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(24))),
-
-                                        child: FlatButton(
-                                          onPressed: () {
-                                            print('set a goal tapped.');
-                                          },
-                                          color: faintGrey,
-                                          child: new Text(
-                                            "Set a goal",
-                                            style: TextStyle(
-                                                color: buttonBlue,
-                                                fontSize: 16,
-                                                fontFamily: "SourceSansProSemiBold"),
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(24)),
-                                        ),
-                                      ),
-                                    ),*/
+                                    checkGoalStatus(snapshot.data),
+                                    // Padding(
+                                    //   padding: const EdgeInsets.only(
+                                    //       left: 220, top: 40, right: 20),
+                                    //
+                                    //    // child:checkGoalStatus(),
+                                    //   child: snapshot.data.data.isGoalActive == true  ? percentIndicator() :
+                                    //   Container(
+                                    //     // alignment: Alignment.centerRight,
+                                    //     height: 48,
+                                    //     width: 120,
+                                    //     // color: Colors.yellow,
+                                    //
+                                    //     decoration: BoxDecoration(
+                                    //         color: greyText,
+                                    //         borderRadius: BorderRadius.all(
+                                    //             Radius.circular(24))),
+                                    //
+                                    //     child: FlatButton(
+                                    //       onPressed: () {
+                                    //         print('set a goal tapped.');
+                                    //         setGoal();
+                                    //       },
+                                    //       color: faintGrey,
+                                    //       child: new Text(
+                                    //         "Set a goal",
+                                    //         style: TextStyle(
+                                    //             color: buttonBlue,
+                                    //             fontSize: 16,
+                                    //             fontFamily: "SourceSansProSemiBold"),
+                                    //       ),
+                                    //       shape: RoundedRectangleBorder(
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(24)),
+                                    //     ),
+                                    //   ),
+                                    // ),
 
                                         Padding(
                                             padding: const EdgeInsets.only(
@@ -839,6 +962,216 @@ class DashboardState extends State<DashboardPage> {
         ),
       );
     }
+  }
+
+  percentIndicator() {
+    print('percent indicator updated');
+    return GestureDetector(
+      onTap: (){
+        print('CircularPercentIndicator');
+        setGoal();
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 240, top: 20, right: 20),
+        child: CircularPercentIndicator(
+          radius: 80.0,
+          animation: true,
+          animationDuration: 1500,
+          lineWidth: 10.0,
+          percent: summaryData.data.goalPercentage / 100,
+          center: new Text(
+            summaryData.data.goalPercentage.toString() + "%",
+            style:
+            new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+          ),
+          circularStrokeCap: CircularStrokeCap.butt,
+          backgroundColor: faintGrey,
+          progressColor: graph_yellow,
+        ),
+      ),
+    );
+  }
+  setGoal() {
+
+    showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState)
+              {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 16.0, right: 16),
+                  child: Container(
+                    height: 360,
+                    child: Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 10,),
+                          Text("Set a goal", style: TextStyle(fontSize: 18,
+                              fontFamily: "SourceSansProBold",
+                              color: Colors.black),),
+                          SizedBox(height: 10,),
+                          Text(
+                              "Keep your sales objective in view by setting a target to achieve within a specific period",
+                              style: TextStyle(fontSize: 14,
+                                  fontFamily: "SourceSansProRegular",
+                                  color: Colors.black)),
+                          SizedBox(height: 10,),
+                          Divider(height: 1, thickness: 1,),
+                          SizedBox(height: 10,),
+                          Row(
+                            children: [
+                              Text("Period", style: TextStyle(fontSize: 14,
+                                  fontFamily: "SourceSansProSemiBold",
+                                  color: Colors.black)),
+                            ],
+                          ),
+
+                          SizedBox(height: 10,),
+                          Container(
+                            height: 60,
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedGoalType = "Weekly";
+                                      });
+                                    },
+                                    child: goalPeriod("Weekly")),
+                                SizedBox(width: 8,),
+                                GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedGoalType = "Monthly";
+                                      });
+                                    },
+                                    child: goalPeriod("Monthly")),
+                                SizedBox(width: 8,),
+                                GestureDetector(
+                                    onTap: () {
+                                      print('quarterly');
+                                      setState(() {
+                                        selectedGoalType = "Quarterly";
+                                      });
+                                    },
+                                    child: goalPeriod("Quarterly")),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 10,),
+                          Row(
+                            children: [
+                              Text("Amount to achieve", style: TextStyle(fontSize: 14,
+                                  fontFamily: "SourceSansProSemiBold",
+                                  color: Colors.black)),
+                            ],
+                          ),
+
+                          Row(
+                            children: [
+                              Text("\$", style: TextStyle(fontSize: 18,
+                                  fontFamily: "SourceSansProSemiBold",
+                                  color: Colors.black)),
+                              SizedBox(width: 10,),
+                              Flexible(
+                                child: TextField(
+                                  controller: _controller,
+                                  keyboardType: TextInputType.number,
+                                  maxLines: 1,
+
+                                  // autofocus: true,
+                                  cursorColor: Colors.blue,
+                                  decoration: InputDecoration(
+                                    hintText: '0',
+                                    hintStyle: TextStyle(fontSize: 30.0, color: grey_text),
+
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(10.0),
+                                      ),
+
+                                    ),
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+
+                                  ),
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 30.0,
+                                      fontFamily: "SourceSansProBold"),
+                                ),
+                              ),
+
+                              // SizedBox(height: 10,),
+                              // Divider(height: 1.5, thickness: 1.5,),
+                              // SizedBox(height: 10,),
+                            ],
+                          ),
+
+                          // SizedBox(height: 10,),
+                          Divider(height: 1, thickness: 1,),
+                          SizedBox(height: 20,),
+                          GestureDetector(
+                              onTap: () {
+
+              setState(() {
+                futureGoals = _retriveGoalStatus();
+
+              });
+                                print(_controller.text);
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                // padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                                // margin: EdgeInsets.only(
+                                //     top: 20.0, right: 20.0, left: 20.0),
+                                  height: 47.0,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                      color: buttonBlue,
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(30))),
+                                  child: Center(
+                                      child: Text(
+                                        "Save",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontFamily: "SourceSansProSemiBold"),
+                                      ))))
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+          );
+        });
+  }
+
+  Widget goalPeriod(String type) {
+    var width = (MediaQuery.of(context).size.width - 48) / 3;
+    return Container(
+      height: 60,
+      width: width,
+      decoration: BoxDecoration(
+        color: faintGrey,
+        borderRadius: BorderRadius.circular(10),
+        border: selectedGoalType == type ? Border.all(
+            width: 2, color: buttonBlue)
+            : Border.all(
+            width: 0,
+            color: Colors.transparent),
+      ),
+      child: Center(child: Text(type, style: TextStyle(fontSize: 16, fontFamily: "SourceSansProSemiBold", color: selectedGoalType == type ? buttonBlue : grey_text),)),
+    );
   }
 
   String outletPlaceholder(String name) {
