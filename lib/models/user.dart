@@ -91,7 +91,10 @@ class Goal {
       );
 
   Map<String, dynamic> toJson() => {
-        "period": period,
+    if (period != null)
+      "period": period,
+
+    if (amount != null)
         "amount": amount,
       };
 }
@@ -252,7 +255,9 @@ class userData {
       });
     }
 
-    goal = json['goal'] != null ? new Goal.fromJson(json['goal']) : null;
+    if (json["goal"] != null) {
+      goal = json['goal'] != null ? new Goal.fromJson(json['goal']) : null;
+    }
 
   }
 

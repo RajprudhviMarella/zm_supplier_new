@@ -305,7 +305,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       onTap: () => {}),
                 ),
 
-                if (order.isAcknowledged == null)
+                if (order.isAcknowledged == null || order.isAcknowledged == false)
                   GestureDetector(
                     onTap: () {
                       setState(() {

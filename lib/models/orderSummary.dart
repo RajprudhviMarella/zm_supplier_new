@@ -41,9 +41,11 @@ class SummaryData {
     this.totalSpendingCurrMonth,
     this.totalSpendingLastMonth,
     this.totalSpendingLastTwoMonths,
+    this.totalSpendingQuarterly,
     this.todayPendingDeliveries,
     this.goalPercentage,
     this.isGoalActive,
+    this.teamsSummary,
   });
 
   dynamic totalSpendingCurrWeek;
@@ -51,9 +53,12 @@ class SummaryData {
   dynamic totalSpendingCurrMonth;
   dynamic totalSpendingLastMonth;
   dynamic totalSpendingLastTwoMonths;
+  dynamic totalSpendingQuarterly;
   dynamic todayPendingDeliveries;
   dynamic goalPercentage;
   bool isGoalActive;
+  List<TeamsSummary> teamsSummary;
+
 
   factory SummaryData.fromJson(Map<String, dynamic> json) => SummaryData(
     totalSpendingCurrWeek: json["totalSpendingCurrWeek"],
@@ -61,9 +66,12 @@ class SummaryData {
     totalSpendingCurrMonth: json["totalSpendingCurrMonth"],
     totalSpendingLastMonth: json["totalSpendingLastMonth"],
     totalSpendingLastTwoMonths: json["totalSpendingLastTwoMonths"],
+    totalSpendingQuarterly: json["totalSpendingQuarterly"],
     todayPendingDeliveries: json["todayPendingDeliveries"],
     goalPercentage: json["goalPercentage"],
     isGoalActive: json["isGoalActive"],
+    teamsSummary: List<TeamsSummary>.from(json["teamsSummary"].map((x) => TeamsSummary.fromJson(x))),
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -72,8 +80,56 @@ class SummaryData {
     "totalSpendingCurrMonth": totalSpendingCurrMonth,
     "totalSpendingLastMonth": totalSpendingLastMonth,
     "totalSpendingLastTwoMonths": totalSpendingLastTwoMonths,
+    "totalSpendingQuarterly": totalSpendingQuarterly,
+    "todayPendingDeliveries": todayPendingDeliveries,
+    "goalPercentage": goalPercentage,
+    "isGoalActive": isGoalActive,
+    "teamsSummary": List<dynamic>.from(teamsSummary.map((x) => x.toJson())),
+
+  };
+}
+
+class TeamsSummary {
+  TeamsSummary({
+    this.teamId,
+    this.name,
+    this.totalSpendingCurrWeek,
+    this.totalSpendingCurrMonth,
+    this.totalSpendingQuarterly,
+    this.todayPendingDeliveries,
+    this.goalPercentage,
+    this.isGoalActive,
+  });
+
+  String teamId;
+  String name;
+  int totalSpendingCurrWeek;
+  int totalSpendingCurrMonth;
+  double totalSpendingQuarterly;
+  int todayPendingDeliveries;
+  int goalPercentage;
+  bool isGoalActive;
+
+  factory TeamsSummary.fromJson(Map<String, dynamic> json) => TeamsSummary(
+    teamId: json["teamId"],
+    name: json["name"],
+    totalSpendingCurrWeek: json["totalSpendingCurrWeek"],
+    totalSpendingCurrMonth: json["totalSpendingCurrMonth"],
+    totalSpendingQuarterly: json["totalSpendingQuarterly"].toDouble(),
+    todayPendingDeliveries: json["todayPendingDeliveries"],
+    goalPercentage: json["goalPercentage"],
+    isGoalActive: json["isGoalActive"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "teamId": teamId,
+    "name": name,
+    "totalSpendingCurrWeek": totalSpendingCurrWeek,
+    "totalSpendingCurrMonth": totalSpendingCurrMonth,
+    "totalSpendingQuarterly": totalSpendingQuarterly,
     "todayPendingDeliveries": todayPendingDeliveries,
     "goalPercentage": goalPercentage,
     "isGoalActive": isGoalActive,
   };
 }
+
