@@ -203,6 +203,7 @@ class ProductdetailsState extends State<Productdetails> {
         child: Column(
           children: [
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   "Sold per",
@@ -215,11 +216,12 @@ class ProductdetailsState extends State<Productdetails> {
                   Padding(
                     padding: const EdgeInsets.only(left: 80.0),
                     child: Container(
+                      // margin: EdgeInsets.symmetric(vertical: 1.0),
                         width: 100,
                     //  height: 200,
                     //     child: Flexible(
                           child: Text(uoms.join(", "),
-                              // maxLines: 2,
+                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: 16,
