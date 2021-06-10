@@ -420,7 +420,7 @@ class MarketListDesign extends State<MarketListPage>
               marketList.priceList[0].price.getDisplayValue() + " / ",
               style: TextStyle(
                 fontSize: 12.0,
-                color: greyText,
+                color: Colors.black,
                 fontFamily: "SourceSansProRegular",
               ),
             ),
@@ -429,9 +429,19 @@ class MarketListDesign extends State<MarketListPage>
               style: TextStyle(
                 fontSize: 12.0,
                 color: buttonBlue,
-                fontFamily: "SourceSansProRegular",
+                fontFamily: "SourceSansProSemiBold",
               ),
             ),
+            if (marketList.supplierProductCode != null &&
+                marketList.supplierProductCode.isNotEmpty)
+              Text(
+                "  •  " + marketList.supplierProductCode,
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: greyText,
+                  fontFamily: "SourceSansProRegular",
+                ),
+              ),
           ]),
           Align(
             alignment: Alignment.centerLeft,
@@ -1024,6 +1034,7 @@ class MarketListDesign extends State<MarketListPage>
     String queryString = Uri(queryParameters: queryParams).query;
     var requestUrl =
         URLEndPoints.retrieve_outlet_market_list + '?' + queryString;
+    print(requestUrl);
     http.Response response = await http.get(requestUrl, headers: headers);
     Map results = json.decode(response.body);
     marketList = OutletMarketBaseResponse.fromJson(results);
@@ -1308,8 +1319,15 @@ class MarketListDesign extends State<MarketListPage>
       } else {
         orderNote = false;
       }
-      events.mixpanel.track(Events.TAP_CREATE_DRAFT_ORDER, properties: {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, 'outletId': widget.outletId,
-        'outletName': widget.outletName, "notes": orderNote, "selectedDeliveryDate": selectedDate});
+      events.mixpanel.track(Events.TAP_CREATE_DRAFT_ORDER, properties: {
+        "userName": specificUserInfo.data.fullName,
+        "email": loginResponse.user.email,
+        "userId": loginResponse.user.userId,
+        'outletId': widget.outletId,
+        'outletName': widget.outletName,
+        "notes": orderNote,
+        "selectedDeliveryDate": selectedDate
+      });
       DartNotificationCenter.post(channel: Constants.draft_notifier);
       _hideLoader();
       Navigator.of(context).pop();
