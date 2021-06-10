@@ -217,7 +217,7 @@ class ProductdetailsState extends State<Productdetails> {
                     child: Container(
                         width: 100,
                     //  height: 200,
-                        child: Flexible(
+                    //     child: Flexible(
                           child: Text(uoms.join(", "),
                               // maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -226,7 +226,8 @@ class ProductdetailsState extends State<Productdetails> {
                                 fontFamily: 'SourceSansProRegular',
                                 color: Colors.black),
                           ),
-                        )),
+                        // )
+                        ),
                   )
               ],
             ),

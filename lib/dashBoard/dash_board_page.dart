@@ -211,8 +211,14 @@ class DashboardState extends State<DashboardPage> {
     // print(specificUserInfo.data.goal.period);
     // // _controller.text = userGoals.amount.toString();
     //
-    selectedGoalType = userGoals.period;
-    _controller.text = userGoals.amount.toString();
+    if (userGoals.period != null) {
+      selectedGoalType = userGoals.period;
+      tappedGoal = userGoals.period;
+    } else {
+      selectedGoalType = 'Monthly';
+      tappedGoal = 'Monthly';
+    }
+    _controller.text = userGoals.amount > 0 ? userGoals.amount.toString() : '';
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -634,7 +640,6 @@ class DashboardState extends State<DashboardPage> {
           // color: Colors.yellow,
 
           decoration: BoxDecoration(
-              color: greyText,
               borderRadius: BorderRadius.all(
                   Radius.circular(24))),
 
@@ -995,7 +1000,8 @@ class DashboardState extends State<DashboardPage> {
         userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
         tappedGoal = userGoals.period;
 
-        var formatter = NumberFormat('###,###,000');
+        var formatter = NumberFormat('###,###,###');
+        if (_controller.text != '')
         _controller.text = formatter.format(userGoals.amount).toString();
         setGoal();
       },
@@ -1033,11 +1039,11 @@ class DashboardState extends State<DashboardPage> {
                 return Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16),
                   child: Container(
-                    height: 360,
+                    height: 370,
                     child: Center(
                       child: Column(
                         children: [
-                          SizedBox(height: 10,),
+                          SizedBox(height: 15,),
                           Text("Set a goal", style: TextStyle(fontSize: 18,
                               fontFamily: "SourceSansProBold",
                               color: Colors.black),),
@@ -1047,7 +1053,7 @@ class DashboardState extends State<DashboardPage> {
                               style: TextStyle(fontSize: 14,
                                   fontFamily: "SourceSansProRegular",
                                   color: Colors.black)),
-                          SizedBox(height: 10,),
+                          SizedBox(height: 15,),
                           Divider(height: 1, thickness: 1,),
                           SizedBox(height: 10,),
                           Row(
