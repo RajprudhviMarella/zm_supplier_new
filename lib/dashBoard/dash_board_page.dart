@@ -636,7 +636,7 @@ class DashboardState extends State<DashboardPage> {
         child: Container(
           // alignment: Alignment.centerRight,
           height: 48,
-          width: 120,
+          width: 130,
           // color: Colors.yellow,
 
           decoration: BoxDecoration(
@@ -1410,12 +1410,12 @@ class DashboardState extends State<DashboardPage> {
                     right: FlatButton(
                       onPressed: () {
                         print('View all orders tapped');
-                        setGoal();
-                        // mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS, properties: userProperties);
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => ViewOrdersPage(null)));
+
+                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS, properties: userProperties);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ViewOrdersPage(null)));
                       },
                       child: Text(
                         'View all orders',

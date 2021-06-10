@@ -91,7 +91,15 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
       subCategoryBaseResponse = SubCategoryBaseResponse.fromJson(jsonMap);
       print("reposnedjfnf:" + json.encode(subCategoryBaseResponse));
       // subCategoryResponse =  json.decode(response.body)['data'];
-      categoriesDataList = subCategoryBaseResponse.data[0].children;
+        if (subCategoryBaseResponse.data[0].children != null) {
+          setState(() {
+            categoriesDataList = subCategoryBaseResponse.data[0].children;
+
+          });
+        } else {
+          categoriesDataList = [];
+        }
+
       print("categoryList:" + json.encode(categoriesDataList));
     } else {
       print('failed get categories');
@@ -107,7 +115,9 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
       backgroundColor: faintGrey,
       appBar: buildAppBar(context),
       body: ListView(
-        children: <Widget>[headers(), statusList(), button()],
+        children: <Widget>[headers(), statusList(),
+
+          button()],
       ),
     );
   }
@@ -281,23 +291,27 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
   }
 
   Widget button() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20.0, top: 100, right: 20),
-      child: Container(
-        height: 50,
-        child: RaisedButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
-          onPressed: () {
-            Navigator.of(context).pop(selectedStatus);
-          },
-          child: const Text('Save',
-              style:
-                  TextStyle(fontSize: 16, fontFamily: 'SorceSansProSemiBold')),
-          color: buttonBlue,
-          textColor: Colors.white,
+    if (categoriesDataList != null) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 20.0, top: 100, right: 20),
+        child: Container(
+          height: 50,
+          child: RaisedButton(
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+            onPressed: () {
+              Navigator.of(context).pop(selectedStatus);
+            },
+            child: const Text('Save',
+                style:
+                TextStyle(fontSize: 16, fontFamily: 'SorceSansProSemiBold')),
+            color: buttonBlue,
+            textColor: Colors.white,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 }
