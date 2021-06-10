@@ -99,7 +99,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
                       color: grey_text),
                   1.0,
                   Colors.black),
-              Headers(context, Constants.txt_support, 16.0),
+              Headers(context, Constants.txt_support, 18.0),
               menuItem(
                   context,
                   Constants.txt_help,
