@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -84,6 +85,7 @@ class DashboardState extends State<DashboardPage> {
   bool isSubscribed = false;
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   String selectedGoalType;
+  String tappedGoal;
   final TextEditingController _controller = new TextEditingController();
 
   bool didGoalSet = false;
@@ -119,7 +121,7 @@ class DashboardState extends State<DashboardPage> {
     print('init called');
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
-    ordersListYesterday = _retriveYesterdayOrders();
+   /// ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
     isSubscribed = true;
@@ -187,17 +189,15 @@ class DashboardState extends State<DashboardPage> {
 
   // bool second = false;
   Future<OrderSummaryResponse> getSummaryDataApiCalling() async {
+    print('summary api calling');
     userResponse =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
-    // String mudra = '5ae6b19666463d3518556653--022b92f1-946c-4e1b-ac6d-9978a7ecf4cc';
-    // if (second == true) {
-    //   mudra = user.mudra;
-    // }
+
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
-    userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
-     userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
-
+   userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
+     // userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
+    print('summary api calling1');
 
      //  userGoals = specificUserInfo.data.goal;
 
@@ -205,6 +205,12 @@ class DashboardState extends State<DashboardPage> {
          userGoals = userGoalData.data.goal;
        }
 
+    // print('summary api calling2');
+    // if (specificUserInfo.data.goal != null)
+    //   selectedGoalType = specificUserInfo.data.goal.period;
+    // print(specificUserInfo.data.goal.period);
+    // // _controller.text = userGoals.amount.toString();
+    //
     selectedGoalType = userGoals.period;
     _controller.text = userGoals.amount.toString();
     Map<String, String> headers = {
@@ -442,9 +448,10 @@ class DashboardState extends State<DashboardPage> {
       'supplierId': user.supplier.first.supplierId
     };
 
+    selectedGoalType = tappedGoal;
     var body = {
       'period': selectedGoalType,
-      'amount': _controller.text,
+      'amount': (_controller.text == '' ? 0 : _controller.text.replaceAll(",", "")),
     };
 
     Map<String, String> queryParams = {
@@ -455,6 +462,7 @@ class DashboardState extends State<DashboardPage> {
 
     var url = URLEndPoints.user_goals_url + '?' + queryString;
     print("goals "+ url);
+    print(body);
 
     var response = await http.put(url, headers: headers, body: jsonEncode(body));
 
@@ -464,7 +472,7 @@ class DashboardState extends State<DashboardPage> {
       userGoalData = UserGoals.fromJson(json.decode(response.body));
 
       print('goal set suceessfully');
-      print(userGoals.amount);
+      // print(userGoals.amount);
       sharedPref.saveData(Constants.USER_GOAL, userGoalData.data.goal);
       setState(() {
         userGoals = userGoalData.data.goal;
@@ -755,20 +763,8 @@ class DashboardState extends State<DashboardPage> {
                                                       alignment:
                                                           Alignment.topLeft,
                                                       child: new Text(
-                                                        currentIndex == 0
-                                                            ? '\$' +
-                                                                    snapshot
-                                                                        .data
-                                                                        .data
-                                                                        .totalSpendingCurrMonth
-                                                                        .toStringAsFixed(
-                                                                            2)
-                                                                        .replaceAllMapped(
-                                                                            reg,
-                                                                            (Match m) =>
-                                                                                '${m[1]},') ??
-                                                                ""
-                                                            : '',
+                                                          (currentIndex == 0)
+                                                            ? spendingsAmount(snapshot.data) : '',
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 30,
@@ -784,13 +780,14 @@ class DashboardState extends State<DashboardPage> {
                                                       alignment:
                                                           Alignment.topLeft,
                                                       child: new Text(
-                                                        "this month",
+                                                        spendingsPeriod(),
                                                         style: TextStyle(
                                                             color: greyText,
                                                             fontSize: 14,
                                                             fontFamily:
                                                                 "SourceSansProSemiBold"),
-                                                      )),
+                                                      )
+                                                  ),
                                                 ),
                                               ]),
                                             ),
@@ -914,6 +911,32 @@ class DashboardState extends State<DashboardPage> {
     );
   }
 
+  String spendingsAmount(OrderSummaryResponse snapshot) {
+    if (selectedGoalType == "Weekly") {
+      return ('\$' + snapshot.data.totalSpendingCurrWeek.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},'));
+    } else if (selectedGoalType == "Monthly") {
+      return ('\$' + snapshot.data.totalSpendingCurrMonth.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},'));
+    } else if (selectedGoalType == "Quarterly") {
+      return '\$' + snapshot.data.totalSpendingQuarterly.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},');
+    } else {
+      return '\$' + snapshot.data.totalSpendingCurrMonth.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},');
+    }
+  }
+
+
+  String spendingsPeriod() {
+    print(selectedGoalType);
+    if (selectedGoalType == "Weekly") {
+      return 'this week';
+    } else if (selectedGoalType == "Monthly") {
+      return 'this month';
+    } else if (selectedGoalType == "Quarterly") {
+      return 'this quarter';
+    } else {
+      return 'this month';
+    }
+  }
+
   Widget dots(context) {
     return Container(
       height: 20,
@@ -965,29 +988,34 @@ class DashboardState extends State<DashboardPage> {
   }
 
   percentIndicator() {
-    print('percent indicator updated');
+    //double a = summaryData.data.goalPercentage as double;
     return GestureDetector(
-      onTap: (){
+      onTap: () async {
         print('CircularPercentIndicator');
+        userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
+        tappedGoal = userGoals.period;
+
+        var formatter = NumberFormat('###,###,000');
+        _controller.text = formatter.format(userGoals.amount).toString();
         setGoal();
       },
       child: Padding(
         padding: const EdgeInsets.only(
-          left: 240, top: 20, right: 20),
+          left: 240, top: 15, right: 20),
         child: CircularPercentIndicator(
           radius: 80.0,
           animation: true,
           animationDuration: 1500,
-          lineWidth: 10.0,
-          percent: summaryData.data.goalPercentage / 100,
-          center: new Text(
-            summaryData.data.goalPercentage.toString() + "%",
+          lineWidth: 8.0,
+          percent: (summaryData.data.goalPercentage / 100) > 1 ? 1 : summaryData.data.goalPercentage / 100,
+          center: new Text(summaryData.data.goalPercentage > 100 ? "100%" :
+          summaryData.data.goalPercentage.toString() + "%",
             style:
-            new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+            new TextStyle(fontFamily: 'SourceSansProBold', fontSize: 16.0, color: buttonBlue),
           ),
           circularStrokeCap: CircularStrokeCap.butt,
           backgroundColor: faintGrey,
-          progressColor: graph_yellow,
+          progressColor: summaryData.data.goalPercentage > 100 ? lightGreen : graph_yellow,
         ),
       ),
     );
@@ -1015,7 +1043,7 @@ class DashboardState extends State<DashboardPage> {
                               color: Colors.black),),
                           SizedBox(height: 10,),
                           Text(
-                              "Keep your sales objective in view by setting a target to achieve within a specific period",
+                              "Keep your sales objective in view by setting a target to achieve within a specific period",textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 14,
                                   fontFamily: "SourceSansProRegular",
                                   color: Colors.black)),
@@ -1038,7 +1066,7 @@ class DashboardState extends State<DashboardPage> {
                                 GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        selectedGoalType = "Weekly";
+                                        tappedGoal = "Weekly";
                                       });
                                     },
                                     child: goalPeriod("Weekly")),
@@ -1046,7 +1074,7 @@ class DashboardState extends State<DashboardPage> {
                                 GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        selectedGoalType = "Monthly";
+                                        tappedGoal = "Monthly";
                                       });
                                     },
                                     child: goalPeriod("Monthly")),
@@ -1055,7 +1083,7 @@ class DashboardState extends State<DashboardPage> {
                                     onTap: () {
                                       print('quarterly');
                                       setState(() {
-                                        selectedGoalType = "Quarterly";
+                                        tappedGoal = "Quarterly";
                                       });
                                     },
                                     child: goalPeriod("Quarterly")),
@@ -1069,6 +1097,15 @@ class DashboardState extends State<DashboardPage> {
                               Text("Amount to achieve", style: TextStyle(fontSize: 14,
                                   fontFamily: "SourceSansProSemiBold",
                                   color: Colors.black)),
+                              Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  _controller.text = '';
+                                },
+                                child: Text("Remove amount", style: TextStyle(fontSize: 12,
+                                    fontFamily: "SourceSansProRegular",
+                                    color: buttonBlue)),
+                              ),
                             ],
                           ),
 
@@ -1082,6 +1119,7 @@ class DashboardState extends State<DashboardPage> {
                                 child: TextField(
                                   controller: _controller,
                                   keyboardType: TextInputType.number,
+                                  inputFormatters: [ThousandsSeparatorInputFormatter()],
                                   maxLines: 1,
 
                                   // autofocus: true,
@@ -1156,6 +1194,7 @@ class DashboardState extends State<DashboardPage> {
         });
   }
 
+
   Widget goalPeriod(String type) {
     var width = (MediaQuery.of(context).size.width - 48) / 3;
     return Container(
@@ -1164,13 +1203,13 @@ class DashboardState extends State<DashboardPage> {
       decoration: BoxDecoration(
         color: faintGrey,
         borderRadius: BorderRadius.circular(10),
-        border: selectedGoalType == type ? Border.all(
+        border: tappedGoal == type ? Border.all(
             width: 2, color: buttonBlue)
             : Border.all(
             width: 0,
             color: Colors.transparent),
       ),
-      child: Center(child: Text(type, style: TextStyle(fontSize: 16, fontFamily: "SourceSansProSemiBold", color: selectedGoalType == type ? buttonBlue : grey_text),)),
+      child: Center(child: Text(type, style: TextStyle(fontSize: 16, fontFamily: "SourceSansProSemiBold", color: tappedGoal == type ? buttonBlue : grey_text),)),
     );
   }
 
@@ -1365,12 +1404,12 @@ class DashboardState extends State<DashboardPage> {
                     right: FlatButton(
                       onPressed: () {
                         print('View all orders tapped');
-
-                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS, properties: userProperties);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ViewOrdersPage(null)));
+                        setGoal();
+                        // mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS, properties: userProperties);
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => ViewOrdersPage(null)));
                       },
                       child: Text(
                         'View all orders',
@@ -1647,4 +1686,51 @@ class DashboardState extends State<DashboardPage> {
   }
 
   RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+}
+
+
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  static const separator = ','; // Change this to '.' for other locales
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Short-circuit if the new value is empty
+    if (newValue.text.length == 0) {
+      return newValue.copyWith(text: '');
+    }
+
+    // Handle "deletion" of separator character
+    String oldValueText = oldValue.text.replaceAll(separator, '');
+    String newValueText = newValue.text.replaceAll(separator, '');
+
+    if (oldValue.text.endsWith(separator) &&
+        oldValue.text.length == newValue.text.length + 1) {
+      newValueText = newValueText.substring(0, newValueText.length - 1);
+    }
+
+    // Only process if the old value and new value are different
+    if (oldValueText != newValueText) {
+      int selectionIndex =
+          newValue.text.length - newValue.selection.extentOffset;
+      final chars = newValueText.split('');
+
+      String newString = '';
+      for (int i = chars.length - 1; i >= 0; i--) {
+        if ((chars.length - 1 - i) % 3 == 0 && i != chars.length - 1)
+          newString = separator + newString;
+        newString = chars[i] + newString;
+      }
+
+      return TextEditingValue(
+        text: newString.toString(),
+        selection: TextSelection.collapsed(
+          offset: newString.length - selectionIndex,
+        ),
+      );
+    }
+
+    // If the new value and old value are the same, just return as-is
+    return newValue;
+  }
 }
