@@ -197,6 +197,7 @@ class DashboardState extends State<DashboardPage> {
 
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
+    if (specificUserInfo.data.goal != null)
     userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
     // userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
     print('summary api calling1');
@@ -213,14 +214,18 @@ class DashboardState extends State<DashboardPage> {
     // print(specificUserInfo.data.goal.period);
     // // _controller.text = userGoals.amount.toString();
     //
-    if (userGoals.period != null) {
-      selectedGoalType = userGoals.period;
-      tappedGoal = userGoals.period;
-    } else {
-      selectedGoalType = 'Monthly';
-      tappedGoal = 'Monthly';
+    tappedGoal = 'Monthly';
+    if (specificUserInfo.data.goal != null) {
+      if (userGoals.period != null) {
+        selectedGoalType = userGoals.period;
+        tappedGoal = userGoals.period;
+      } else {
+        selectedGoalType = 'Monthly';
+        tappedGoal = 'Monthly';
+      }
+      _controller.text =
+      userGoals.amount > 0 ? userGoals.amount.toString() : '';
     }
-    _controller.text = userGoals.amount > 0 ? userGoals.amount.toString() : '';
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -236,7 +241,7 @@ class DashboardState extends State<DashboardPage> {
         response.statusCode == 201 ||
         response.statusCode == 202) {
       print(response.body);
-      print('Success response');
+      print('Success response123');
       summaryData = OrderSummaryResponse.fromJson(json.decode(response.body));
       return summaryData;
     } else {
@@ -482,6 +487,8 @@ class DashboardState extends State<DashboardPage> {
       print('goal set suceessfully');
       // print(userGoals.amount);
       sharedPref.saveData(Constants.USER_GOAL, userGoalData.data.goal);
+      specificUserInfo.data.goal = userGoalData.data.goal;
+      sharedPref.saveData(Constants.specific_user_info, specificUserInfo);
       setState(() {
         userGoals = userGoalData.data.goal;
         orderSummaryData = getSummaryDataApiCalling();
@@ -674,10 +681,12 @@ class DashboardState extends State<DashboardPage> {
       padding: const EdgeInsets.only(top: 10, bottom: 13),
       child: FutureBuilder<OrderSummaryResponse>(
           future: orderSummaryData,
-          builder: (context, AsyncSnapshot<OrderSummaryResponse> snapshot) {
+
+          builder: (BuildContext context, AsyncSnapshot<OrderSummaryResponse> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: Text(""));
             } else if (snapshot.hasError) {
+              print('data has error');
               return Center(child: Text('failed to load'));
             } else {
               return Container(
@@ -1064,7 +1073,7 @@ class DashboardState extends State<DashboardPage> {
                 padding: (Platform.isAndroid)
                     ? EdgeInsets.only(
                         bottom: MediaQuery.of(context).viewInsets.bottom)
-                    : EdgeInsets.fromLTRB(10, 15, 10, 15),
+                    : EdgeInsets.fromLTRB(0, 0, 0, 0),
                 color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16),
