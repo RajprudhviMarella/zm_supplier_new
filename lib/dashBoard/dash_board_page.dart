@@ -487,6 +487,8 @@ class DashboardState extends State<DashboardPage> {
       print('goal set suceessfully');
       // print(userGoals.amount);
       sharedPref.saveData(Constants.USER_GOAL, userGoalData.data.goal);
+      specificUserInfo.data.goal = userGoalData.data.goal;
+      sharedPref.saveData(Constants.specific_user_info, specificUserInfo);
       setState(() {
         userGoals = userGoalData.data.goal;
         orderSummaryData = getSummaryDataApiCalling();
