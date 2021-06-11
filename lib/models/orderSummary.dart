@@ -37,6 +37,7 @@ class OrderSummaryResponse {
 class SummaryData {
   SummaryData({
     this.totalSpendingCurrWeek,
+    this.totalSpendingCurrDay,
     this.totalSpendingLastWeek,
     this.totalSpendingCurrMonth,
     this.totalSpendingLastMonth,
@@ -49,6 +50,7 @@ class SummaryData {
   });
 
   dynamic totalSpendingCurrWeek;
+  dynamic totalSpendingCurrDay;
   dynamic totalSpendingLastWeek;
   dynamic totalSpendingCurrMonth;
   dynamic totalSpendingLastMonth;
@@ -62,6 +64,7 @@ class SummaryData {
 
   factory SummaryData.fromJson(Map<String, dynamic> json) => SummaryData(
     totalSpendingCurrWeek: json["totalSpendingCurrWeek"],
+    totalSpendingCurrDay: json["totalSpendingCurrDay"],
     totalSpendingLastWeek: json["totalSpendingLastWeek"],
     totalSpendingCurrMonth: json["totalSpendingCurrMonth"],
     totalSpendingLastMonth: json["totalSpendingLastMonth"],
@@ -76,6 +79,7 @@ class SummaryData {
 
   Map<String, dynamic> toJson() => {
     "totalSpendingCurrWeek": totalSpendingCurrWeek,
+    "totalSpendingCurrDay": totalSpendingCurrDay,
     "totalSpendingLastWeek": totalSpendingLastWeek,
     "totalSpendingCurrMonth": totalSpendingCurrMonth,
     "totalSpendingLastMonth": totalSpendingLastMonth,
@@ -103,11 +107,11 @@ class TeamsSummary {
 
   String teamId;
   String name;
-  int totalSpendingCurrWeek;
-  int totalSpendingCurrMonth;
-  double totalSpendingQuarterly;
-  int todayPendingDeliveries;
-  int goalPercentage;
+  dynamic totalSpendingCurrWeek;
+  dynamic totalSpendingCurrMonth;
+  dynamic totalSpendingQuarterly;
+  dynamic todayPendingDeliveries;
+  dynamic goalPercentage;
   bool isGoalActive;
 
   factory TeamsSummary.fromJson(Map<String, dynamic> json) => TeamsSummary(
