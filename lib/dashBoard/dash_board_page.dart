@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io' show Platform;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
@@ -92,6 +93,7 @@ class DashboardState extends State<DashboardPage> {
   Goal userGoals;
   Future<Goal> futureGoals;
   UserGoals userGoalData;
+
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
@@ -121,7 +123,8 @@ class DashboardState extends State<DashboardPage> {
     print('init called');
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
-   /// ordersListYesterday = _retriveYesterdayOrders();
+
+    /// ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
     isSubscribed = true;
@@ -145,10 +148,10 @@ class DashboardState extends State<DashboardPage> {
       observer: i,
       onNotification: (result) {
         setState(() {
-            print('acknowledge listener called with delay');
-            orderSummaryData = getSummaryDataApiCalling();
-            ordersListToday = _retriveTodayOrders();
-            ordersListYesterday = _retriveYesterdayOrders();
+          print('acknowledge listener called with delay');
+          orderSummaryData = getSummaryDataApiCalling();
+          ordersListToday = _retriveTodayOrders();
+          ordersListYesterday = _retriveYesterdayOrders();
         });
       },
     );
@@ -161,10 +164,9 @@ class DashboardState extends State<DashboardPage> {
     getSharedPreference();
 
     super.dispose();
-
   }
-  getSharedPreference() async {
 
+  getSharedPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var a = prefs.getBool(Constants.isFromReviewOrder);
     print('isSubscribed in dashboard');
@@ -195,15 +197,15 @@ class DashboardState extends State<DashboardPage> {
 
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
-   userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
-     // userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
+    userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
+    // userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
     print('summary api calling1');
 
-     //  userGoals = specificUserInfo.data.goal;
+    //  userGoals = specificUserInfo.data.goal;
 
-       if (didGoalSet) {
-         userGoals = userGoalData.data.goal;
-       }
+    if (didGoalSet) {
+      userGoals = userGoalData.data.goal;
+    }
 
     // print('summary api calling2');
     // if (specificUserInfo.data.goal != null)
@@ -441,11 +443,9 @@ class DashboardState extends State<DashboardPage> {
     return arrayOrderList;
   }
 
-
   Future<Goal> _retriveGoalStatus() async {
-
     LoginResponse user =
-    LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -457,7 +457,8 @@ class DashboardState extends State<DashboardPage> {
     selectedGoalType = tappedGoal;
     var body = {
       'period': selectedGoalType,
-      'amount': (_controller.text == '' ? 0 : _controller.text.replaceAll(",", "")),
+      'amount':
+          (_controller.text == '' ? 0 : _controller.text.replaceAll(",", "")),
     };
 
     Map<String, String> queryParams = {
@@ -467,10 +468,11 @@ class DashboardState extends State<DashboardPage> {
     String queryString = Uri(queryParameters: queryParams).query;
 
     var url = URLEndPoints.user_goals_url + '?' + queryString;
-    print("goals "+ url);
+    print("goals " + url);
     print(body);
 
-    var response = await http.put(url, headers: headers, body: jsonEncode(body));
+    var response =
+        await http.put(url, headers: headers, body: jsonEncode(body));
 
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
@@ -490,7 +492,7 @@ class DashboardState extends State<DashboardPage> {
         callLoginApi(1);
       }
     }
-     userGoals = userGoalData.data.goal;
+    userGoals = userGoalData.data.goal;
 
     setState(() {
       didGoalSet = true;
@@ -557,7 +559,8 @@ class DashboardState extends State<DashboardPage> {
               child: new IconButton(
                 icon: actionIcon,
                 onPressed: () {
-                  mixpanel.track(Events.TAP_DASHBOARD_SEARCH, properties: userProperties);
+                  mixpanel.track(Events.TAP_DASHBOARD_SEARCH,
+                      properties: userProperties);
                   mixpanel.flush();
                   Navigator.push(
                       context,
@@ -571,7 +574,8 @@ class DashboardState extends State<DashboardPage> {
         backgroundColor: buttonBlue,
         foregroundColor: Colors.white,
         onPressed: () {
-          mixpanel.track(Events.TAP_DASHBOARD_NEW_ORDER, properties: userProperties);
+          mixpanel.track(Events.TAP_DASHBOARD_NEW_ORDER,
+              properties: userProperties);
           mixpanel.flush();
           Navigator.push(
               context,
@@ -593,23 +597,26 @@ class DashboardState extends State<DashboardPage> {
         ),
       ),
       body: Container(
-        color: faintGrey,
-        child: RefreshIndicator( key: refreshKey,
-    child: ListView(
-          children: [
-            banner(context),
-            //dots(context),
+          color: faintGrey,
+          child: RefreshIndicator(
+              key: refreshKey,
+              child: ListView(
+                children: [
+                  banner(context),
+                  //dots(context),
 
-            draftHeader(),
-            // draftBannersList(),
-            Header(),
-          //  tabs(),
-           // list(),
-          ],
-        ), color: azul_blue, onRefresh: refreshList)
-      ),
+                  draftHeader(),
+                  // draftBannersList(),
+                  Header(),
+                  //  tabs(),
+                  // list(),
+                ],
+              ),
+              color: azul_blue,
+              onRefresh: refreshList)),
     );
   }
+
   Future<Null> refreshList() async {
     print("refreshing");
 
@@ -626,13 +633,12 @@ class DashboardState extends State<DashboardPage> {
     return null;
   }
 
-  checkGoalStatus(OrderSummaryResponse snapshot){
+  checkGoalStatus(OrderSummaryResponse snapshot) {
     if (snapshot.data.isGoalActive == true) {
       return percentIndicator();
-        } else {
+    } else {
       return Padding(
-        padding: const EdgeInsets.only(
-                left: 220, top: 40, right: 20),
+        padding: const EdgeInsets.only(left: 205, top: 40,right: 18),
         child: Container(
           // alignment: Alignment.centerRight,
           height: 48,
@@ -640,8 +646,7 @@ class DashboardState extends State<DashboardPage> {
           // color: Colors.yellow,
 
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                  Radius.circular(24))),
+              borderRadius: BorderRadius.all(Radius.circular(24))),
 
           child: FlatButton(
             onPressed: () {
@@ -656,9 +661,8 @@ class DashboardState extends State<DashboardPage> {
                   fontSize: 16,
                   fontFamily: "SourceSansProSemiBold"),
             ),
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.circular(24)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           ),
         ),
       );
@@ -768,8 +772,10 @@ class DashboardState extends State<DashboardPage> {
                                                       alignment:
                                                           Alignment.topLeft,
                                                       child: new Text(
-                                                          (currentIndex == 0)
-                                                            ? spendingsAmount(snapshot.data) : '',
+                                                        (currentIndex == 0)
+                                                            ? spendingsAmount(
+                                                                snapshot.data)
+                                                            : '',
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 30,
@@ -791,51 +797,50 @@ class DashboardState extends State<DashboardPage> {
                                                             fontSize: 14,
                                                             fontFamily:
                                                                 "SourceSansProSemiBold"),
-                                                      )
-                                                  ),
+                                                      )),
                                                 ),
                                               ]),
                                             ),
                                           ),
                                         ),
 
-                                    checkGoalStatus(snapshot.data),
-                                    // Padding(
-                                    //   padding: const EdgeInsets.only(
-                                    //       left: 220, top: 40, right: 20),
-                                    //
-                                    //    // child:checkGoalStatus(),
-                                    //   child: snapshot.data.data.isGoalActive == true  ? percentIndicator() :
-                                    //   Container(
-                                    //     // alignment: Alignment.centerRight,
-                                    //     height: 48,
-                                    //     width: 120,
-                                    //     // color: Colors.yellow,
-                                    //
-                                    //     decoration: BoxDecoration(
-                                    //         color: greyText,
-                                    //         borderRadius: BorderRadius.all(
-                                    //             Radius.circular(24))),
-                                    //
-                                    //     child: FlatButton(
-                                    //       onPressed: () {
-                                    //         print('set a goal tapped.');
-                                    //         setGoal();
-                                    //       },
-                                    //       color: faintGrey,
-                                    //       child: new Text(
-                                    //         "Set a goal",
-                                    //         style: TextStyle(
-                                    //             color: buttonBlue,
-                                    //             fontSize: 16,
-                                    //             fontFamily: "SourceSansProSemiBold"),
-                                    //       ),
-                                    //       shape: RoundedRectangleBorder(
-                                    //           borderRadius:
-                                    //               BorderRadius.circular(24)),
-                                    //     ),
-                                    //   ),
-                                    // ),
+                                        checkGoalStatus(snapshot.data),
+                                        // Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //       left: 220, top: 40, right: 20),
+                                        //
+                                        //    // child:checkGoalStatus(),
+                                        //   child: snapshot.data.data.isGoalActive == true  ? percentIndicator() :
+                                        //   Container(
+                                        //     // alignment: Alignment.centerRight,
+                                        //     height: 48,
+                                        //     width: 120,
+                                        //     // color: Colors.yellow,
+                                        //
+                                        //     decoration: BoxDecoration(
+                                        //         color: greyText,
+                                        //         borderRadius: BorderRadius.all(
+                                        //             Radius.circular(24))),
+                                        //
+                                        //     child: FlatButton(
+                                        //       onPressed: () {
+                                        //         print('set a goal tapped.');
+                                        //         setGoal();
+                                        //       },
+                                        //       color: faintGrey,
+                                        //       child: new Text(
+                                        //         "Set a goal",
+                                        //         style: TextStyle(
+                                        //             color: buttonBlue,
+                                        //             fontSize: 16,
+                                        //             fontFamily: "SourceSansProSemiBold"),
+                                        //       ),
+                                        //       shape: RoundedRectangleBorder(
+                                        //           borderRadius:
+                                        //               BorderRadius.circular(24)),
+                                        //     ),
+                                        //   ),
+                                        // ),
 
                                         Padding(
                                             padding: const EdgeInsets.only(
@@ -849,8 +854,10 @@ class DashboardState extends State<DashboardPage> {
                                                 left: 20, right: 10, top: 112),
                                             child: InkWell(
                                               onTap: () {
-                                                mixpanel.track(Events
-                                                    .TAP_DASHBOARD_VIEW_DELIVERIES, properties: userProperties);
+                                                mixpanel.track(
+                                                    Events
+                                                        .TAP_DASHBOARD_VIEW_DELIVERIES,
+                                                    properties: userProperties);
                                                 mixpanel.flush();
                                                 Navigator.push(
                                                     context,
@@ -918,16 +925,27 @@ class DashboardState extends State<DashboardPage> {
 
   String spendingsAmount(OrderSummaryResponse snapshot) {
     if (selectedGoalType == "Weekly") {
-      return ('\$' + snapshot.data.totalSpendingCurrWeek.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},'));
+      return ('\$' +
+          snapshot.data.totalSpendingCurrWeek
+              .toStringAsFixed(2)
+              .replaceAllMapped(reg, (Match m) => '${m[1]},'));
     } else if (selectedGoalType == "Monthly") {
-      return ('\$' + snapshot.data.totalSpendingCurrMonth.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},'));
+      return ('\$' +
+          snapshot.data.totalSpendingCurrMonth
+              .toStringAsFixed(2)
+              .replaceAllMapped(reg, (Match m) => '${m[1]},'));
     } else if (selectedGoalType == "Quarterly") {
-      return '\$' + snapshot.data.totalSpendingQuarterly.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},');
+      return '\$' +
+          snapshot.data.totalSpendingQuarterly
+              .toStringAsFixed(2)
+              .replaceAllMapped(reg, (Match m) => '${m[1]},');
     } else {
-      return '\$' + snapshot.data.totalSpendingCurrMonth.toStringAsFixed(2).replaceAllMapped(reg, (Match m) => '${m[1]},');
+      return '\$' +
+          snapshot.data.totalSpendingCurrMonth
+              .toStringAsFixed(2)
+              .replaceAllMapped(reg, (Match m) => '${m[1]},');
     }
   }
-
 
   String spendingsPeriod() {
     print(selectedGoalType);
@@ -997,74 +1015,107 @@ class DashboardState extends State<DashboardPage> {
     return GestureDetector(
       onTap: () async {
         print('CircularPercentIndicator');
-        userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
+        userGoals =
+            Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
         tappedGoal = userGoals.period;
 
         var formatter = NumberFormat('###,###,###');
         if (_controller.text != '')
-        _controller.text = formatter.format(userGoals.amount).toString();
+          _controller.text = formatter.format(userGoals.amount).toString();
         setGoal();
       },
       child: Padding(
-        padding: const EdgeInsets.only(
-          left: 240, top: 15, right: 20),
+        padding: const EdgeInsets.only(left: 240, top: 15, right: 20),
         child: CircularPercentIndicator(
           radius: 80.0,
           animation: true,
           animationDuration: 1500,
           lineWidth: 8.0,
-          percent: (summaryData.data.goalPercentage / 100) > 1 ? 1 : summaryData.data.goalPercentage / 100,
-          center: new Text(summaryData.data.goalPercentage > 100 ? "100%" :
-          summaryData.data.goalPercentage.toString() + "%",
-            style:
-            new TextStyle(fontFamily: 'SourceSansProBold', fontSize: 16.0, color: buttonBlue),
+          percent: (summaryData.data.goalPercentage / 100) > 1
+              ? 1
+              : summaryData.data.goalPercentage / 100,
+          center: new Text(
+            summaryData.data.goalPercentage > 100
+                ? "100%"
+                : summaryData.data.goalPercentage.toString() + "%",
+            style: new TextStyle(
+                fontFamily: 'SourceSansProBold',
+                fontSize: 16.0,
+                color: buttonBlue),
           ),
           circularStrokeCap: CircularStrokeCap.butt,
           backgroundColor: faintGrey,
-          progressColor: summaryData.data.goalPercentage > 100 ? lightGreen : graph_yellow,
+          progressColor:
+              summaryData.data.goalPercentage > 100 ? lightGreen : graph_yellow,
         ),
       ),
     );
   }
-  setGoal() {
 
+  setGoal() {
     showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
         builder: (context) {
-
           return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState)
-              {
-                return Padding(
+              builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Container(
+                padding: (Platform.isAndroid)
+                    ? EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom)
+                    : EdgeInsets.fromLTRB(10, 15, 10, 15),
+                color: Colors.white,
+                child: Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16),
                   child: Container(
                     height: 370,
                     child: Center(
                       child: Column(
                         children: [
-                          SizedBox(height: 15,),
-                          Text("Set a goal", style: TextStyle(fontSize: 18,
-                              fontFamily: "SourceSansProBold",
-                              color: Colors.black),),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 15,
+                          ),
                           Text(
-                              "Keep your sales objective in view by setting a target to achieve within a specific period",textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 14,
+                            "Set a goal",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: "SourceSansProBold",
+                                color: Colors.black),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                              "Keep your sales objective in view by setting a target to achieve within a specific period",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14,
                                   fontFamily: "SourceSansProRegular",
                                   color: Colors.black)),
-                          SizedBox(height: 15,),
-                          Divider(height: 1, thickness: 1,),
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Row(
                             children: [
-                              Text("Period", style: TextStyle(fontSize: 14,
-                                  fontFamily: "SourceSansProSemiBold",
-                                  color: Colors.black)),
+                              Text("Period",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: "SourceSansProSemiBold",
+                                      color: Colors.black)),
                             ],
                           ),
 
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Container(
                             height: 60,
                             child: Row(
@@ -1076,7 +1127,9 @@ class DashboardState extends State<DashboardPage> {
                                       });
                                     },
                                     child: goalPeriod("Weekly")),
-                                SizedBox(width: 8,),
+                                SizedBox(
+                                  width: 8,
+                                ),
                                 GestureDetector(
                                     onTap: () {
                                       setState(() {
@@ -1084,7 +1137,9 @@ class DashboardState extends State<DashboardPage> {
                                       });
                                     },
                                     child: goalPeriod("Monthly")),
-                                SizedBox(width: 8,),
+                                SizedBox(
+                                  width: 8,
+                                ),
                                 GestureDetector(
                                     onTap: () {
                                       print('quarterly');
@@ -1097,54 +1152,64 @@ class DashboardState extends State<DashboardPage> {
                             ),
                           ),
 
-                          SizedBox(height: 10,),
+                          SizedBox(
+                            height: 10,
+                          ),
                           Row(
                             children: [
-                              Text("Amount to achieve", style: TextStyle(fontSize: 14,
-                                  fontFamily: "SourceSansProSemiBold",
-                                  color: Colors.black)),
+                              Text("Amount to achieve",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: "SourceSansProSemiBold",
+                                      color: Colors.black)),
                               Spacer(),
                               GestureDetector(
                                 onTap: () {
                                   _controller.text = '';
                                 },
-                                child: Text("Remove amount", style: TextStyle(fontSize: 12,
-                                    fontFamily: "SourceSansProRegular",
-                                    color: buttonBlue)),
+                                child: Text("Remove amount",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: "SourceSansProRegular",
+                                        color: buttonBlue)),
                               ),
                             ],
                           ),
 
                           Row(
                             children: [
-                              Text("\$", style: TextStyle(fontSize: 18,
-                                  fontFamily: "SourceSansProSemiBold",
-                                  color: Colors.black)),
-                              SizedBox(width: 10,),
+                              Text("\$",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontFamily: "SourceSansProSemiBold",
+                                      color: Colors.black)),
+                              SizedBox(
+                                width: 10,
+                              ),
                               Flexible(
                                 child: TextField(
                                   controller: _controller,
                                   keyboardType: TextInputType.number,
-                                  inputFormatters: [ThousandsSeparatorInputFormatter()],
+                                  inputFormatters: [
+                                    ThousandsSeparatorInputFormatter()
+                                  ],
                                   maxLines: 1,
 
                                   // autofocus: true,
                                   cursorColor: Colors.blue,
                                   decoration: InputDecoration(
                                     hintText: '0',
-                                    hintStyle: TextStyle(fontSize: 30.0, color: grey_text),
-
+                                    hintStyle: TextStyle(
+                                        fontSize: 30.0, color: grey_text),
                                     border: new OutlineInputBorder(
                                       borderRadius: const BorderRadius.all(
                                         const Radius.circular(10.0),
                                       ),
-
                                     ),
                                     focusedBorder: InputBorder.none,
                                     enabledBorder: InputBorder.none,
                                     errorBorder: InputBorder.none,
                                     disabledBorder: InputBorder.none,
-
                                   ),
                                   style: TextStyle(
                                       color: Colors.black,
@@ -1160,46 +1225,49 @@ class DashboardState extends State<DashboardPage> {
                           ),
 
                           // SizedBox(height: 10,),
-                          Divider(height: 1, thickness: 1,),
-                          SizedBox(height: 20,),
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
                           GestureDetector(
                               onTap: () {
-
-              setState(() {
-                futureGoals = _retriveGoalStatus();
-
-              });
+                                setState(() {
+                                  futureGoals = _retriveGoalStatus();
+                                });
                                 print(_controller.text);
                                 Navigator.pop(context);
                               },
                               child: Container(
-                                // padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                                // margin: EdgeInsets.only(
-                                //     top: 20.0, right: 20.0, left: 20.0),
+                                  // padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                                  // margin: EdgeInsets.only(
+                                  //     top: 20.0, right: 20.0, left: 20.0),
                                   height: 47.0,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
                                       color: buttonBlue,
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(30))),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30))),
                                   child: Center(
                                       child: Text(
-                                        "Save",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontFamily: "SourceSansProSemiBold"),
-                                      ))))
+                                    "Save",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontFamily: "SourceSansProSemiBold"),
+                                  ))))
                         ],
                       ),
                     ),
                   ),
-                );
-              }
-          );
+                ),
+              ),
+            );
+          });
         });
   }
-
 
   Widget goalPeriod(String type) {
     var width = (MediaQuery.of(context).size.width - 48) / 3;
@@ -1209,13 +1277,18 @@ class DashboardState extends State<DashboardPage> {
       decoration: BoxDecoration(
         color: faintGrey,
         borderRadius: BorderRadius.circular(10),
-        border: tappedGoal == type ? Border.all(
-            width: 2, color: buttonBlue)
-            : Border.all(
-            width: 0,
-            color: Colors.transparent),
+        border: tappedGoal == type
+            ? Border.all(width: 2, color: buttonBlue)
+            : Border.all(width: 0, color: Colors.transparent),
       ),
-      child: Center(child: Text(type, style: TextStyle(fontSize: 16, fontFamily: "SourceSansProSemiBold", color: tappedGoal == type ? buttonBlue : grey_text),)),
+      child: Center(
+          child: Text(
+        type,
+        style: TextStyle(
+            fontSize: 16,
+            fontFamily: "SourceSansProSemiBold",
+            color: tappedGoal == type ? buttonBlue : grey_text),
+      )),
     );
   }
 
@@ -1241,7 +1314,8 @@ class DashboardState extends State<DashboardPage> {
                 header: Container(
                   color: faintGrey,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 10, right: 15),
+                    padding:
+                        const EdgeInsets.only(left: 16.0, top: 10, right: 15),
                     child: Container(
                       height: 30,
                       child: Row(
@@ -1411,7 +1485,8 @@ class DashboardState extends State<DashboardPage> {
                       onPressed: () {
                         print('View all orders tapped');
 
-                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS, properties: userProperties);
+                        mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS,
+                            properties: userProperties);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1504,8 +1579,11 @@ class DashboardState extends State<DashboardPage> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Padding(
                     padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                    child: Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,)));
-
+                    child: Center(
+                        child: SpinKitThreeBounce(
+                      color: Colors.blueAccent,
+                      size: 24,
+                    )));
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {
@@ -1685,7 +1763,8 @@ class DashboardState extends State<DashboardPage> {
   }
 
   moveToOrderDetailsPage(Orders element) {
-    mixpanel.track(Events.TAP_DASHBOARD_ORDER_FOR_DETAILS, properties: userProperties);
+    mixpanel.track(Events.TAP_DASHBOARD_ORDER_FOR_DETAILS,
+        properties: userProperties);
     mixpanel.flush();
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
@@ -1693,7 +1772,6 @@ class DashboardState extends State<DashboardPage> {
 
   RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 }
-
 
 class ThousandsSeparatorInputFormatter extends TextInputFormatter {
   static const separator = ','; // Change this to '.' for other locales

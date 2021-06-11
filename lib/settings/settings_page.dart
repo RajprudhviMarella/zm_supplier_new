@@ -95,7 +95,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
               menuItem(
                   context,
                   Constants.txt_catalogue,
-                  ImageIcon(AssetImage('assets/images/icon_help.png'),
+                  ImageIcon(AssetImage('assets/images/icon_view_cataloge.png'),
                       color: grey_text),
                   1.0,
                   Colors.black),
