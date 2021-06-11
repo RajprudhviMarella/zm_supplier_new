@@ -214,6 +214,7 @@ class DashboardState extends State<DashboardPage> {
     // print(specificUserInfo.data.goal.period);
     // // _controller.text = userGoals.amount.toString();
     //
+    tappedGoal = 'Monthly';
     if (specificUserInfo.data.goal != null) {
       if (userGoals.period != null) {
         selectedGoalType = userGoals.period;
