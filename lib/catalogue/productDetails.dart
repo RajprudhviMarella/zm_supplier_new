@@ -251,7 +251,7 @@ class ProductdetailsState extends State<Productdetails> {
 
   Widget shelfLife(CatalogueProducts pro) {
 
-    if (pro.directorySettings != null && pro.directorySettings.shelfLife.duration != null && pro.directorySettings.shelfLife.time != null) {
+    if (pro.directorySettings != null && pro.directorySettings.shelfLife != null && pro.directorySettings.shelfLife.duration != null && pro.directorySettings.shelfLife.time != null) {
       return Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: Container(
