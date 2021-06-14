@@ -644,33 +644,30 @@ class DashboardState extends State<DashboardPage> {
     if (snapshot.data.isGoalActive == true) {
       return percentIndicator();
     } else {
-      return Padding(
-        padding: const EdgeInsets.only(left: 205, top: 40,right: 18),
-        child: Container(
-          // alignment: Alignment.centerRight,
-          height: 48,
-          width: 130,
-          // color: Colors.yellow,
+      return Container(
+        // alignment: Alignment.centerRight,
+        height: 48,
+        width: MediaQuery.of(context).size.width > 375 ? 130 : 105,
+        // color: Colors.yellow,
 
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(24))),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(24))),
 
-          child: FlatButton(
-            onPressed: () {
-              print('set a goal tapped.');
-              setGoal();
-            },
-            color: faintGrey,
-            child: new Text(
-              "Set a goal",
-              style: TextStyle(
-                  color: buttonBlue,
-                  fontSize: 16,
-                  fontFamily: "SourceSansProSemiBold"),
-            ),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: FlatButton(
+          onPressed: () {
+            print('set a goal tapped.');
+            setGoal();
+          },
+          color: faintGrey,
+          child: new Text(
+            "Set a goal",
+            style: TextStyle(
+                color: buttonBlue,
+                fontSize: 16,
+                fontFamily: "SourceSansProSemiBold"),
           ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         ),
       );
     }
@@ -736,187 +733,141 @@ class DashboardState extends State<DashboardPage> {
                               //  height: 250.0,
                               child: Column(
                                 children: [
-                                  Container(
-                                    child: Stack(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ViewOrdersPage(null)));
-                                          },
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: Container(
-                                              color: Colors.white,
-                                              child: Column(children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 20, top: 15),
-                                                  child: Align(
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 13),
+                                    child: Container(
+                                      child: Row(children: [
+                                        Container(
+                                          child: Column(children: [
+
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ViewOrdersPage(null)));
+                                              },
+                                              child: Container(
+                                                color: Colors.white,
+                                                child: Column(
+                                                  // mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+
+                                                  Align(
                                                       alignment:
-                                                          Alignment.topLeft,
+                                                      Alignment.topLeft,
                                                       child: new Text(
                                                         currentIndex == 0
                                                             ? "Total orders"
-                                                                .toUpperCase()
+                                                            .toUpperCase()
                                                             : 'East coast team'
-                                                                .toUpperCase(),
+                                                            .toUpperCase(),
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 14,
                                                             fontFamily:
-                                                                "SourceSansProBold"),
+                                                            "SourceSansProBold"),
                                                       )),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 20, top: 0),
-                                                  child: Align(
+                                                  Align(
                                                       alignment:
-                                                          Alignment.topLeft,
+                                                      Alignment.topLeft,
                                                       child: new Text(
                                                         (currentIndex == 0)
                                                             ? spendingsAmount(
-                                                                snapshot.data)
+                                                            snapshot.data)
                                                             : '',
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 30,
                                                             fontFamily:
-                                                                "SourceSansProBold"),
+                                                            "SourceSansProBold"),
                                                       )),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 20, top: 0),
-                                                  child: Align(
+
+                                                  Align(
                                                       alignment:
-                                                          Alignment.topLeft,
+                                                      Alignment.topLeft,
                                                       child: new Text(
                                                         spendingsPeriod(),
                                                         style: TextStyle(
                                                             color: greyText,
                                                             fontSize: 14,
                                                             fontFamily:
-                                                                "SourceSansProSemiBold"),
+                                                            "SourceSansProSemiBold"),
                                                       )),
-                                                ),
-                                              ]),
-                                            ),
-                                          ),
-                                        ),
 
-                                        checkGoalStatus(snapshot.data),
-                                        // Padding(
-                                        //   padding: const EdgeInsets.only(
-                                        //       left: 220, top: 40, right: 20),
-                                        //
-                                        //    // child:checkGoalStatus(),
-                                        //   child: snapshot.data.data.isGoalActive == true  ? percentIndicator() :
-                                        //   Container(
-                                        //     // alignment: Alignment.centerRight,
-                                        //     height: 48,
-                                        //     width: 120,
-                                        //     // color: Colors.yellow,
-                                        //
-                                        //     decoration: BoxDecoration(
-                                        //         color: greyText,
-                                        //         borderRadius: BorderRadius.all(
-                                        //             Radius.circular(24))),
-                                        //
-                                        //     child: FlatButton(
-                                        //       onPressed: () {
-                                        //         print('set a goal tapped.');
-                                        //         setGoal();
-                                        //       },
-                                        //       color: faintGrey,
-                                        //       child: new Text(
-                                        //         "Set a goal",
-                                        //         style: TextStyle(
-                                        //             color: buttonBlue,
-                                        //             fontSize: 16,
-                                        //             fontFamily: "SourceSansProSemiBold"),
-                                        //       ),
-                                        //       shape: RoundedRectangleBorder(
-                                        //           borderRadius:
-                                        //               BorderRadius.circular(24)),
-                                        //     ),
-                                        //   ),
-                                        // ),
-
-                                        Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 20, right: 20, top: 108),
-                                            child: Container(
-                                              height: 1.5,
-                                              color: faintGrey,
-                                            )),
-                                        Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 20, right: 10, top: 112),
-                                            child: InkWell(
-                                              onTap: () {
-                                                mixpanel.track(
-                                                    Events
-                                                        .TAP_DASHBOARD_VIEW_DELIVERIES,
-                                                    properties: userProperties);
-                                                mixpanel.flush();
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            DeliveriesPage()));
-                                              },
-                                              child: Container(
-                                                height: 30,
-                                                //color: faintGrey,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      (snapshot.data.data
-                                                                  .todayPendingDeliveries >
-                                                              0)
-                                                          ? snapshot.data.data
-                                                                  .todayPendingDeliveries
-                                                                  .toString() +
-                                                              ' deliveries today'
-                                                          : 'No deliveries today',
-                                                      style: TextStyle(
-                                                          color: greyText,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                              "SourceSansProSemiBold"),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 10.0),
-                                                      child: Text(
-                                                        'View deliveries',
-                                                        style: TextStyle(
-                                                            color: buttonBlue,
-                                                            fontFamily:
-                                                                "SourceSansProRegular",
-                                                            fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                ],
                                                 ),
                                               ),
-                                            ))
-                                      ],
+                                            ),
+                                          ]),
+                                        ),
+
+                                        Spacer(),
+                                        checkGoalStatus(snapshot.data),
+                                      ]
+                                      ),
                                     ),
                                   ),
+
+                                  Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
+                                      child: Container(
+                                        height: 1.5,
+                                        color: faintGrey,
+                                      )),
+
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20, right: 20, top:3),
+                                    child: InkWell(
+                                      onTap: () {
+                                        mixpanel.track(
+                                            Events.TAP_DASHBOARD_VIEW_DELIVERIES,
+                                            properties: userProperties);
+                                        mixpanel.flush();
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DeliveriesPage()));
+                                      },
+                                      child: Container(
+                                        height: 30,
+                                        //color: faintGrey,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              (snapshot.data.data
+                                                          .todayPendingDeliveries >
+                                                      0)
+                                                  ? snapshot.data.data
+                                                          .todayPendingDeliveries
+                                                          .toString() +
+                                                      ' deliveries today'
+                                                  : 'No deliveries today',
+                                              style: TextStyle(
+                                                  color: greyText,
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      "SourceSansProSemiBold"),
+                                            ),
+                                            Text(
+                                              'View deliveries',
+                                              style: TextStyle(
+                                                  color: buttonBlue,
+                                                  fontFamily:
+                                                      "SourceSansProRegular",
+                                                  fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
                             );
@@ -1033,30 +984,27 @@ class DashboardState extends State<DashboardPage> {
           _controller.text = formatter.format(userGoals.amount).toString();
         setGoal();
       },
-      child: Padding(
-        padding: const EdgeInsets.only(left: 240, top: 15, right: 20),
-        child: CircularPercentIndicator(
-          radius: 80.0,
-          animation: true,
-          animationDuration: 1500,
-          lineWidth: 8.0,
-          percent: (summaryData.data.goalPercentage / 100) > 1
-              ? 1
-              : summaryData.data.goalPercentage / 100,
-          center: new Text(
-            summaryData.data.goalPercentage > 100
-                ? "100%"
-                : summaryData.data.goalPercentage.toString() + "%",
-            style: new TextStyle(
-                fontFamily: 'SourceSansProBold',
-                fontSize: 16.0,
-                color: buttonBlue),
-          ),
-          circularStrokeCap: CircularStrokeCap.butt,
-          backgroundColor: faintGrey,
-          progressColor:
-              summaryData.data.goalPercentage > 100 ? lightGreen : graph_yellow,
+      child: CircularPercentIndicator(
+        radius: 80.0,
+        animation: true,
+        animationDuration: 1500,
+        lineWidth: 8.0,
+        percent: (summaryData.data.goalPercentage / 100) > 1
+            ? 1
+            : summaryData.data.goalPercentage / 100,
+        center: new Text(
+          summaryData.data.goalPercentage > 100
+              ? "100%"
+              : summaryData.data.goalPercentage.toString() + "%",
+          style: new TextStyle(
+              fontFamily: 'SourceSansProBold',
+              fontSize: 16.0,
+              color: buttonBlue),
         ),
+        circularStrokeCap: CircularStrokeCap.butt,
+        backgroundColor: faintGrey,
+        progressColor:
+            summaryData.data.goalPercentage > 100 ? lightGreen : graph_yellow,
       ),
     );
   }
