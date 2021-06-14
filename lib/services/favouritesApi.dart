@@ -61,7 +61,10 @@ class FavouritesApi {
     var url = URLEndPoints.fav_sku_url + '?' + queryString;
 
     final body = jsonEncode([
-      skuFavourite
+      {
+        'sku': skuFavourite.sku,
+        'isFavourite': skuFavourite.isFavourite,
+      }
     ]);
 
     var response = await http.put(url, headers: headers, body: body);
