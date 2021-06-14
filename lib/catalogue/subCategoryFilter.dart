@@ -83,6 +83,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
     // var url = URLEndPoints.customers_report_data;
     print(headers);
     print(url);
+    List<Children> CategoriesList;
     var response = await http.get(url, headers: headers);
     if (response.statusCode == 200 ||
         response.statusCode == 201 ||
@@ -97,18 +98,42 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
       // subCategoryResponse =  json.decode(response.body)['data'];
         if (subCategoryBaseResponse.data[0].children != null) {
           setState(() {
-            categoriesDataList = subCategoryBaseResponse.data[0].children;
+            CategoriesList = [];//subCategoryBaseResponse.data[0].children;
 
           });
         } else {
-          categoriesDataList = [];
+          CategoriesList = [];
         }
 
-      print("categoryList:" + json.encode(categoriesDataList));
+      print("categoryList:" + json.encode(CategoriesList));
     } else {
       print('failed get categories');
     }
 
+    for (var i in subCategoryBaseResponse.data) {
+      if (i.children != null) {
+        i.children.forEachIndexed((e, f) {
+          print(e);
+          print(f);
+          if (e.name == 'Others') {
+            var a = i.name + "-" + "Others";
+            i.children[f].name = a;
+          }
+        });
+
+        CategoriesList += i.children;
+      } else {
+        var chil = Children();
+        chil.categoryId = i.categoryId;
+        chil.name = i.name;
+
+        CategoriesList.add(chil);
+      }
+    }
+    print(CategoriesList.length);
+    setState(() {
+      categoriesDataList = CategoriesList;
+    });
     return categoriesDataList;
   }
 
@@ -248,7 +273,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
   Widget button() {
     if (categoriesDataList != null) {
       return Padding(
-        padding: const EdgeInsets.only(left: 20.0, top: 100, right: 20),
+        padding: const EdgeInsets.only(left: 20.0, top: 100, right: 20, bottom: 20),
         child: Container(
           height: 50,
           child: RaisedButton(
@@ -268,5 +293,17 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
     } else {
       return Container();
     }
+  }
+}
+extension ExtendedIterable<E> on Iterable<E> {
+  /// Like Iterable<T>.map but callback have index as second argument
+  Iterable<T> mapIndexed<T>(T Function(E e, int i) f) {
+    var i = 0;
+    return map((e) => f(e, i++));
+  }
+
+  void forEachIndexed(void Function(E e, int i) f) {
+    var i = 0;
+    forEach((e) => f(e, i++));
   }
 }
