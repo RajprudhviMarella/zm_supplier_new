@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "745160769156",
+    "project_id": "zeemart-supplier",
+    "storage_bucket": "zeemart-supplier.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745160769156:android:bd81cce3b469145a444cd1",
+        "android_client_info": {
+          "package_name": "com.zeemart.zm_supplier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745160769156-pgs5b25a4rv571vosl45rad344lcjlje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjJlGO8imF17PUsLkpb-t8PFE2AUDF4SY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745160769156-pgs5b25a4rv571vosl45rad344lcjlje.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "745160769156-1ov6pk329slrl70prt2nc2mjmghhikft.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "asia.zeemart.supplier"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

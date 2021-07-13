@@ -55,6 +55,10 @@ dependencies:
   flutter_spinkit: ^4.1.2
   intercom_flutter: any
   percent_indicator: ^3.0.1
+  firebase_core: "^0.7.0"
+  firebase_messaging: "^8.0.0-dev.14"
+
+
 
 dev_dependencies:
   flutter_test:

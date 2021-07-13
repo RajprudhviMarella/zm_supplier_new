@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -28,6 +30,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   bool isLogged = false;
+  FirebaseMessaging messaging;
 
   bool isApiCallingProcess = false;
   String _email, _password;
@@ -64,7 +67,45 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    messaging = FirebaseMessaging.instance;
+    messaging.requestPermission();
+    messaging.getToken().then((value) {
+      print("token===>" + value);
+    });
+    Future<void> _messageHandler(RemoteMessage message) async {
+      print('background message ${message.notification.body}');
+    }
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      print(event.notification.body);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
     events.mixPanelEvents();
+  }
+
+  void initFirebase() {
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+    getTokenz() async {
+      String token = await _firebaseMessaging.getToken();
+      print(token);
+    }
+
+    Future<void> _messageHandler(RemoteMessage message) async {
+      print('background message ${message.notification.body}');
+    }
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      print(event.notification.body);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
+    getTokenz();
   }
 
   @override
