@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -94,6 +95,9 @@ class DashboardState extends State<DashboardPage> {
   Future<Goal> futureGoals;
   UserGoals userGoalData;
 
+  OrderDetailsResponse notifyOrderResponse;
+  Orders notifyOrder;
+
   _scrollListener() {
     setState(() {
       _scrollPosition = _scrollController.position.pixels;
@@ -130,6 +134,22 @@ class DashboardState extends State<DashboardPage> {
     isSubscribed = true;
     sharedPref.saveBool(Constants.is_Subscribed, isSubscribed);
     print(isSubscribed);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      print(event.notification.body);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!' + message.data.toString());
+      if (message != null && message.data != null) {
+        NotificationUri uri =
+            NotificationUri.fromJson(json.decode(message.data['uri']));
+        String orderId = uri.parameters.orderId;
+        print("OrderId" + uri.parameters.orderId);
+        goToOrderDetails(orderId);
+      }
+    });
+
     // DartNotificationCenter.registerChannel(channel: Constants.draft_notifier);
     DartNotificationCenter.subscribe(
       channel: Constants.draft_notifier,
@@ -155,6 +175,45 @@ class DashboardState extends State<DashboardPage> {
         });
       },
     );
+  }
+
+  goToOrderDetails(String orderId) async {
+    LoginResponse user =
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': user.mudra,
+      'supplierId': user.supplier.first.supplierId
+    };
+
+    Map<String, String> queryParams = {
+      'orderId': orderId,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.retrive_specific_order_details + '?' + queryString;
+    print(headers);
+    print(url);
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      // Map results = json.decode(response.body);
+      notifyOrderResponse =
+          OrderDetailsResponse.fromJson(json.decode(response.body));
+    } else {
+      print('failed get order detail');
+    }
+
+    notifyOrder = notifyOrderResponse.data;
+
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => OrderDetailsPage(notifyOrder)));
+
+    //return order;
   }
 
   @override
@@ -198,7 +257,7 @@ class DashboardState extends State<DashboardPage> {
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
     if (specificUserInfo.data.goal != null)
-    userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
+      userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
     // userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
     print('summary api calling1');
 
@@ -224,7 +283,7 @@ class DashboardState extends State<DashboardPage> {
         tappedGoal = 'Monthly';
       }
       _controller.text =
-      userGoals.amount > 0 ? userGoals.amount.toString() : '';
+          userGoals.amount > 0 ? userGoals.amount.toString() : '';
     }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -650,8 +709,8 @@ class DashboardState extends State<DashboardPage> {
         width: MediaQuery.of(context).size.width > 375 ? 130 : 105,
         // color: Colors.yellow,
 
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(24))),
+        decoration:
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(24))),
 
         child: FlatButton(
           onPressed: () {
@@ -678,8 +737,8 @@ class DashboardState extends State<DashboardPage> {
       padding: const EdgeInsets.only(top: 10, bottom: 13),
       child: FutureBuilder<OrderSummaryResponse>(
           future: orderSummaryData,
-
-          builder: (BuildContext context, AsyncSnapshot<OrderSummaryResponse> snapshot) {
+          builder: (BuildContext context,
+              AsyncSnapshot<OrderSummaryResponse> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: Text(""));
             } else if (snapshot.hasError) {
@@ -734,83 +793,81 @@ class DashboardState extends State<DashboardPage> {
                               child: Column(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 13),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        20, 20, 20, 13),
                                     child: Container(
                                       child: Row(children: [
                                         Container(
                                           child: Column(children: [
-
                                             GestureDetector(
                                               onTap: () {
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            ViewOrdersPage(null)));
+                                                            ViewOrdersPage(
+                                                                null)));
                                               },
                                               child: Container(
                                                 color: Colors.white,
                                                 child: Column(
                                                   // mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-
-                                                  Align(
-                                                      alignment:
-                                                      Alignment.topLeft,
-                                                      child: new Text(
-                                                        currentIndex == 0
-                                                            ? "Total orders"
-                                                            .toUpperCase()
-                                                            : 'East coast team'
-                                                            .toUpperCase(),
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                            "SourceSansProBold"),
-                                                      )),
-                                                  Align(
-                                                      alignment:
-                                                      Alignment.topLeft,
-                                                      child: new Text(
-                                                        (currentIndex == 0)
-                                                            ? spendingsAmount(
-                                                            snapshot.data)
-                                                            : '',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 30,
-                                                            fontFamily:
-                                                            "SourceSansProBold"),
-                                                      )),
-
-                                                  Align(
-                                                      alignment:
-                                                      Alignment.topLeft,
-                                                      child: new Text(
-                                                        spendingsPeriod(),
-                                                        style: TextStyle(
-                                                            color: greyText,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                            "SourceSansProSemiBold"),
-                                                      )),
-
-                                                ],
+                                                    Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: new Text(
+                                                          currentIndex == 0
+                                                              ? "Total orders"
+                                                                  .toUpperCase()
+                                                              : 'East coast team'
+                                                                  .toUpperCase(),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  "SourceSansProBold"),
+                                                        )),
+                                                    Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: new Text(
+                                                          (currentIndex == 0)
+                                                              ? spendingsAmount(
+                                                                  snapshot.data)
+                                                              : '',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 30,
+                                                              fontFamily:
+                                                                  "SourceSansProBold"),
+                                                        )),
+                                                    Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: new Text(
+                                                          spendingsPeriod(),
+                                                          style: TextStyle(
+                                                              color: greyText,
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  "SourceSansProSemiBold"),
+                                                        )),
+                                                  ],
                                                 ),
                                               ),
                                             ),
                                           ]),
                                         ),
-
                                         Spacer(),
                                         checkGoalStatus(snapshot.data),
-                                      ]
-                                      ),
+                                      ]),
                                     ),
                                   ),
-
                                   Padding(
                                       padding: const EdgeInsets.only(
                                           left: 20, right: 20),
@@ -818,13 +875,14 @@ class DashboardState extends State<DashboardPage> {
                                         height: 1.5,
                                         color: faintGrey,
                                       )),
-
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 20, right: 20, top:3),
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20, top: 3),
                                     child: InkWell(
                                       onTap: () {
                                         mixpanel.track(
-                                            Events.TAP_DASHBOARD_VIEW_DELIVERIES,
+                                            Events
+                                                .TAP_DASHBOARD_VIEW_DELIVERIES,
                                             properties: userProperties);
                                         mixpanel.flush();
                                         Navigator.push(

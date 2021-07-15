@@ -371,6 +371,10 @@ class Constants {
     return _config[_Config.AUTH_SERVER];
   }
 
+  static get NOTIFICATION_SERVER {
+    return _config[_Config.NOTIFICATION_SERVER];
+  }
+
   static get COMMON_SERVER {
     return _config[_Config.COMMON_SERVER];
   }
@@ -408,12 +412,13 @@ class SharedPref {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return json.decode(prefs.getString(key));
   }
+
   saveBool(String key, bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, true);
   }
 
-  static void  registerIntercomUser() async {
+  static void registerIntercomUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     LoginResponse loginResponse = LoginResponse.fromJson(
         json.decode(prefs.getString(Constants.login_Info)));
@@ -448,6 +453,7 @@ class _Config {
   static const INVOICE_SERVER = "INVOICE_SERVER";
   static const REPORT_SERVER = "REPORT_SERVER";
   static const COMMON_SERVER = "COMMON_SERVER";
+  static const NOTIFICATION_SERVER = "NOTIFICATION_SERVER";
 
   static Map<String, dynamic> debugConstants = {
     ORDER_MANAGEMENT_SERVER:
@@ -461,7 +467,9 @@ class _Config {
         "https://zm-staging-invoicemanagement.zeemart.asia/services/",
     REPORT_SERVER:
         "https://zm-staging-reportmanagementserv.zeemart.asia/services/",
-    COMMON_SERVER: "http://zm-staging-commonservices.zeemart.asia/services/"
+    COMMON_SERVER: "http://zm-staging-commonservices.zeemart.asia/services/",
+    NOTIFICATION_SERVER:
+        "http://zm-staging-notificationserv.zeemart.asia/services/"
   };
 
   static Map<String, dynamic> prodConstants = {
@@ -472,6 +480,7 @@ class _Config {
     INVENTORY_SERVER: "https://zm-inventorymanagement.zeemart.asia/services/",
     INVOICE_SERVER: "https://zm-invoicemanagement.zeemart.asia/services/",
     REPORT_SERVER: "https://zm-reportmanagementserv.zeemart.asia/services/",
-    COMMON_SERVER: "http://zm-commonservices.zeemart.asia/services/"
+    COMMON_SERVER: "http://zm-commonservices.zeemart.asia/services/",
+    NOTIFICATION_SERVER: "http://zm-notificationserv.zeemart.asia/services/"
   };
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intercom_flutter/intercom_flutter.dart';
 import 'package:zm_supplier/utils/constants.dart';
@@ -13,6 +14,7 @@ import 'utils/constants.dart';
 void main() async {
   Constants.setEnvironment(Environment.PROD);
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await Intercom.initialize('lzmzad7p',
       iosApiKey: 'ios_sdk-3089316353932af1f13250c1743f44f1df7db154',
       androidApiKey: 'android_sdk-8489ca5c3a3f6865ef14e664df8dd2e738bdece4');

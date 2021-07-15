@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'dart:io';
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -12,6 +13,7 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/catalogue/catalogue.dart';
 import 'package:zm_supplier/models/user.dart';
+import 'package:zm_supplier/services/authenticationApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
 import 'package:http/http.dart' as http;
@@ -48,6 +50,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   String _versioncode = "";
   String _image_Url = "";
   String supplierID = "";
+  String market = "";
   String supplierName = "";
   String mudra;
   NetworkImage _networkImage;
@@ -293,6 +296,18 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
     } catch (e) {}
   }
 
+  void unregisterToken() {
+    String token = '';
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value) {
+      token = value;
+    });
+    TokenAuthentication tokenAuthentication = new TokenAuthentication();
+    tokenAuthentication
+        .unregisterToken(supplierID, mudra, token, market)
+        .then((value) async {});
+  }
+
   void showAlert(context) {
     BuildContext dialogContext;
     // set up the button
@@ -413,6 +428,9 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         }
         if (user.data.supplier[0].supplierId != null) {
           supplierID = user.data.supplier[0].supplierId;
+        }
+        if (loginResponse.market != null) {
+          market = loginResponse.market;
         }
         if (user.data.supplier[0].supplierName != null) {
           supplierName = user.data.supplier[0].supplierName;

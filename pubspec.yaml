@@ -57,6 +57,7 @@ dependencies:
   percent_indicator: ^3.0.1
   firebase_core: "^0.7.0"
   firebase_messaging: "^8.0.0-dev.14"
+  flutter_local_notifications: ^4.0.0
 
 
 

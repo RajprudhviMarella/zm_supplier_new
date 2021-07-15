@@ -57,6 +57,8 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  String firebaseToken = '';
+
 //Initialize a button color variable
   Color btnColor = lightGreen.withOpacity(0.5);
 
@@ -70,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
     messaging = FirebaseMessaging.instance;
     messaging.requestPermission();
     messaging.getToken().then((value) {
+      firebaseToken = value;
       print("token===>" + value);
     });
     Future<void> _messageHandler(RemoteMessage message) async {
@@ -86,27 +89,27 @@ class _LoginPageState extends State<LoginPage> {
     events.mixPanelEvents();
   }
 
-  void initFirebase() {
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  // void initFirebase() {
+  //   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-    getTokenz() async {
-      String token = await _firebaseMessaging.getToken();
-      print(token);
-    }
+  //   getTokenz() async {
+  //     String token = await _firebaseMessaging.getToken();
+  //     print(token);
+  //   }
 
-    Future<void> _messageHandler(RemoteMessage message) async {
-      print('background message ${message.notification.body}');
-    }
+  //   Future<void> _messageHandler(RemoteMessage message) async {
+  //     print('background message ${message.notification.body}');
+  //   }
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      print("message recieved");
-      print(event.notification.body);
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Message clicked!');
-    });
-    getTokenz();
-  }
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+  //     print("message recieved");
+  //     print(event.notification.body);
+  //   });
+  //   FirebaseMessaging.onMessageOpenedApp.listen((message) {
+  //     print('Message clicked!');
+  //   });
+  //   getTokenz();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +123,15 @@ class _LoginPageState extends State<LoginPage> {
       LoginResponse user = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
       setState(() {
+        TokenAuthentication tokenAuthentication = new TokenAuthentication();
+
+        tokenAuthentication
+            .authenticateToken(user.supplier.first.supplierId, user.mudra,
+                user.user.userId, firebaseToken, user.market)
+            .then((value) async {
+          print('token response' + value.toString());
+        });
+
         getSpecificUser specificUser = new getSpecificUser();
 
         specificUser
