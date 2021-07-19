@@ -344,8 +344,9 @@ class Constants {
   // b82a8f3697de395f8a83ff6c3949947f
   static Future<Mixpanel> initMixPanel() async {
     //below is the project token from mixpanel.
-    Mixpanel mixPanel = await Mixpanel.init("727ea70267ae81d186a7365cc2befcf4",
-        optOutTrackingDefault: false);
+    Mixpanel mixPanel = await Mixpanel.init(_config[_Config.MIXPANEL_TOKEN],
+            optOutTrackingDefault: false);
+
     return mixPanel;
   }
 
@@ -449,6 +450,8 @@ class _Config {
   static const REPORT_SERVER = "REPORT_SERVER";
   static const COMMON_SERVER = "COMMON_SERVER";
 
+  static const MIXPANEL_TOKEN = "A";
+
   static Map<String, dynamic> debugConstants = {
     ORDER_MANAGEMENT_SERVER:
         "https://zm-staging-ordermanagementserv.zeemart.asia/services/",
@@ -461,7 +464,9 @@ class _Config {
         "https://zm-staging-invoicemanagement.zeemart.asia/services/",
     REPORT_SERVER:
         "https://zm-staging-reportmanagementserv.zeemart.asia/services/",
-    COMMON_SERVER: "http://zm-staging-commonservices.zeemart.asia/services/"
+    COMMON_SERVER: "http://zm-staging-commonservices.zeemart.asia/services/",
+
+    MIXPANEL_TOKEN: "727ea70267ae81d186a7365cc2befcf4"
   };
 
   static Map<String, dynamic> prodConstants = {
@@ -472,6 +477,8 @@ class _Config {
     INVENTORY_SERVER: "https://zm-inventorymanagement.zeemart.asia/services/",
     INVOICE_SERVER: "https://zm-invoicemanagement.zeemart.asia/services/",
     REPORT_SERVER: "https://zm-reportmanagementserv.zeemart.asia/services/",
-    COMMON_SERVER: "http://zm-commonservices.zeemart.asia/services/"
+    COMMON_SERVER: "http://zm-commonservices.zeemart.asia/services/",
+
+    MIXPANEL_TOKEN: "098cdda8acc6d1465f1f0ffae9d276b2"
   };
 }
