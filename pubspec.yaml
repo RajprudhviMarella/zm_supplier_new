@@ -55,6 +55,7 @@ dependencies:
   flutter_spinkit: ^4.1.2
   intercom_flutter: any
   percent_indicator: ^3.0.1
+  device_info: ^1.0.0
 
 dev_dependencies:
   flutter_test:
