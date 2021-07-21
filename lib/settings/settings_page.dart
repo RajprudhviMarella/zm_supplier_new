@@ -55,12 +55,17 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   String mudra;
   NetworkImage _networkImage;
   bool _isShowLoader = false;
-
+  String token = '';
   Constants events = Constants();
 
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    messaging.getToken().then((value) {
+      token = value;
+    });
+
     loadSharedPrefs();
     events.mixPanelEvents();
   }
@@ -297,11 +302,6 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   }
 
   void unregisterToken() {
-    String token = '';
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    messaging.getToken().then((value) {
-      token = value;
-    });
     TokenAuthentication tokenAuthentication = new TokenAuthentication();
     tokenAuthentication
         .unregisterToken(supplierID, mudra, token, market)
@@ -317,7 +317,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
         sendEvent(Events.TAP_SETTINGS_TAB_SIGN_OUT_CONFIRM);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs?.clear();
-
+        unregisterToken();
         Navigator.of(context).pushAndRemoveUntil(
             new MaterialPageRoute(builder: (context) => new LoginPage()),
             (route) => false);

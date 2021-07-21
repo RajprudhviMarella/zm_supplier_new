@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -34,6 +35,16 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:sticky_headers/sticky_headers.dart';
 import '../models/response.dart';
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    'This channel is used for important notifications.', // description
+    importance: Importance.high,
+    playSound: true);
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -136,12 +147,37 @@ class DashboardState extends State<DashboardPage> {
     print(isSubscribed);
 
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      RemoteNotification notification = event.notification;
+      AndroidNotification android = event.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                playSound: true,
+                icon: '@mipmap/ic_launcher_new_supplier_blue.png',
+              ),
+            ));
+      }
       print("message recieved");
       print(event.notification.body);
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Message clicked!' + message.data.toString());
-      if (message != null && message.data != null) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null) {
+        NotificationUri uri =
+            NotificationUri.fromJson(json.decode(message.data['uri']));
+        String orderId = uri.parameters.orderId;
+        print("OrderId" + uri.parameters.orderId);
+        goToOrderDetails(orderId);
+      } else if (message != null && message.data != null) {
         NotificationUri uri =
             NotificationUri.fromJson(json.decode(message.data['uri']));
         String orderId = uri.parameters.orderId;
