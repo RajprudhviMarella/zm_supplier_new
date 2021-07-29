@@ -687,7 +687,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                 //             color: greyText))),
                 Center(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
                         child: Text(order.outlet.outletName,
                             textAlign: TextAlign.center,
                             style: TextStyle(

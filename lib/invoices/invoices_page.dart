@@ -330,8 +330,7 @@ class InvoicesState extends State<InvoicesPage> {
                           child: Align(
                             alignment: Alignment.center,
                             child: Container(
-                              padding: EdgeInsets.only(
-                                  left: 10.0, top: 5.0, bottom: 5.0),
+                              padding: EdgeInsets.only(left: 15.0, top: 5.0),
                               height: 70.0,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),

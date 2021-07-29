@@ -335,7 +335,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
   Widget displaySearchedList(
       AsyncSnapshot<List<FavouriteOutletsList>> snapShot, int index) {
     return Card(
-        margin: EdgeInsets.only(top: 2.0),
+        margin: EdgeInsets.only(top: 0.5),
         child: Container(
             color: Colors.white,
             child: ListTile(

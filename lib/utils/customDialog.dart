@@ -48,6 +48,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Image(
                         image: AssetImage(widget.imageAssets),
