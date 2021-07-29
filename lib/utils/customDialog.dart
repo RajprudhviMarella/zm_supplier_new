@@ -58,6 +58,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                     ),
                     Text(
                       widget.title,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16,
                           color: Colors.black,

@@ -156,9 +156,7 @@ class SearchCustomersState extends State<SearchCustomersPage> {
     if (timeStamp > 0) {
       final birthday = DateTime.parse(readTimestamp(timeStamp));
       final date2 = DateTime.now();
-      final difference = date2
-          .difference(birthday)
-          .inDays;
+      final difference = date2.difference(birthday).inDays;
       return dispalyTime(difference);
     } else {
       return 'N/A';
@@ -287,7 +285,7 @@ class SearchCustomersState extends State<SearchCustomersPage> {
                 ),
               ),
               subtitle: Text(
-                        calculateTime(snapShot[index].lastOrdered),
+                calculateTime(snapShot[index].lastOrdered),
                 style: TextStyle(
                   fontSize: 12.0,
                   color: timeDiff(snapShot[index].lastOrdered),
@@ -314,8 +312,7 @@ class SearchCustomersState extends State<SearchCustomersPage> {
               onTap: () async {
                 var outletName = snapShot[index].outlet.outletName;
                 var outletId = snapShot[index].outlet.outletId;
-                var lastOrderd =
-                        calculateTime(snapShot[index].lastOrdered);
+                var lastOrderd = calculateTime(snapShot[index].lastOrdered);
                 var isStarred = snapShot[index].isFavourite;
                 print(snapShot[index].outlet.outletId);
                 final result = await Navigator.push(
@@ -340,8 +337,8 @@ class SearchCustomersState extends State<SearchCustomersPage> {
   Widget leadingImage(Customers img) {
     if (img.outlet.logoURL != null && img.outlet.logoURL.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               image: DecorationImage(

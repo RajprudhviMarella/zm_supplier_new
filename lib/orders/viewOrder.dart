@@ -361,8 +361,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
   Widget displayImage(Outlet outlet) {
     if (outlet != null && outlet.logoURL != null && outlet.logoURL.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
             child: Image.network(

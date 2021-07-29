@@ -1037,8 +1037,8 @@ class DashboardState extends State<DashboardPage> {
   Widget leadingImage(Orders order) {
     if (order.outlet.logoURL != null && order.outlet.logoURL.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
             child: Image.network(

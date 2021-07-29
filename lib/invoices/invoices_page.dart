@@ -65,11 +65,10 @@ class InvoicesState extends State<InvoicesPage> {
     super.initState();
 
     if (selectedFilters != null && selectedFilters != [])
-    selectedFilters = widget.selectedFilters;
+      selectedFilters = widget.selectedFilters;
     print(selectedFilters);
     events.mixPanelEvents();
     invoicesFuture = retriveInvoices();
-
   }
 
   Future<List<Invoices>> retriveInvoices() async {
@@ -105,8 +104,6 @@ class InvoicesState extends State<InvoicesPage> {
       invoices = [];
     }
 
-
-
     return invoices;
   }
 
@@ -119,7 +116,7 @@ class InvoicesState extends State<InvoicesPage> {
       floatingActionButton: Stack(
         children: [
           Container(
-            width: selectedFilters.length > 0 ? 150:130,
+            width: selectedFilters.length > 0 ? 150 : 130,
             child: new FloatingActionButton.extended(
               backgroundColor: buttonBlue,
               foregroundColor: Colors.white,
@@ -133,7 +130,6 @@ class InvoicesState extends State<InvoicesPage> {
                     MaterialPageRoute(
                         builder: (context) =>
                             new InvoicesFilterPage(selectedFilters)));
-
 
                 selectedFilters = result;
                 // isFilterApplied = true;
@@ -157,8 +153,7 @@ class InvoicesState extends State<InvoicesPage> {
       ),
       body: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        children: <Widget>[buildSearchBar(context),
-          invoicesList()],
+        children: <Widget>[buildSearchBar(context), invoicesList()],
       ),
     );
   }
@@ -229,75 +224,66 @@ class InvoicesState extends State<InvoicesPage> {
         onPressed: () => Navigator.of(context).pop(),
       ),
     );
-
-
   }
 
   Widget buildSearchBar(BuildContext context) {
     return Container(
-        // padding: EdgeInsets.all(5.0),
-       // color: Colors.white,
-        height: 60,
-        child: ListTile(
-
-          leading: null,
-          title: Container(
-            margin: EdgeInsets.only(top: 3, bottom: 15),
-            decoration: BoxDecoration(
-
+      // padding: EdgeInsets.all(5.0),
+      // color: Colors.white,
+      height: 60,
+      child: ListTile(
+        leading: null,
+        title: Container(
+          margin: EdgeInsets.only(top: 3, bottom: 15),
+          decoration: BoxDecoration(
+            color: keyLineGrey,
+            border: Border.all(
               color: keyLineGrey,
-              border: Border.all(
-                color: keyLineGrey,
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
-            child: TextField(
-              cursorColor: Colors.blue,
-              maxLines: null,
-              textInputAction: TextInputAction.go,
-              // controller: _controller,
-              // onSubmitted: searchOperation,
-              // autofocus: true,
-              // controller: _controller,
-              // onSubmitted: searchOperation,
-              style: new TextStyle(
-                color: Colors.black,
-              ),
-              onTap: () async {
-                
-                events.mixpanel.track(Events.TAP_INVOICES_SEARCH);
-                events.mixpanel.flush();
-                final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            new InvoicesSearchPage(outletId, outletName)));
-
-                print(result);
-                //  setState(() {
-
-                // });
-              },
-              decoration: new InputDecoration(
-                  border: InputBorder.none,
-                  prefixIcon: new Icon(Icons.search, color: Colors.grey),
-                  hintText: 'Search invoice number',
-                  hintStyle: new TextStyle(color: greyText, fontFamily: 'SourceSansProRegular', fontSize: 16)),
-              // onChanged: searchOperation,
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: TextField(
+            cursorColor: Colors.blue,
+            maxLines: null,
+            textInputAction: TextInputAction.go,
+            // controller: _controller,
+            // onSubmitted: searchOperation,
+            // autofocus: true,
+            // controller: _controller,
+            // onSubmitted: searchOperation,
+            style: new TextStyle(
+              color: Colors.black,
             ),
+            onTap: () async {
+              events.mixpanel.track(Events.TAP_INVOICES_SEARCH);
+              events.mixpanel.flush();
+              final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          new InvoicesSearchPage(outletId, outletName)));
+
+              print(result);
+              //  setState(() {
+
+              // });
+            },
+            decoration: new InputDecoration(
+                border: InputBorder.none,
+                prefixIcon: new Icon(Icons.search, color: Colors.grey),
+                hintText: 'Search invoice number',
+                hintStyle: new TextStyle(
+                    color: greyText,
+                    fontFamily: 'SourceSansProRegular',
+                    fontSize: 16)),
+            // onChanged: searchOperation,
           ),
         ),
+      ),
 
-        decoration: BoxDecoration(
-    boxShadow: <BoxShadow>[
-    BoxShadow(
-        color: faintGrey,
-        blurRadius: 6.0,
-        offset: Offset(0.0, 0.75)
-    )
-    ],
-    color: Colors.white
-    ),
+      decoration: BoxDecoration(boxShadow: <BoxShadow>[
+        BoxShadow(color: faintGrey, blurRadius: 6.0, offset: Offset(0.0, 0.75))
+      ], color: Colors.white),
     );
   }
 
@@ -318,155 +304,161 @@ class InvoicesState extends State<InvoicesPage> {
               // isPageLoading = false;
               return SizedBox(
                   height: MediaQuery.of(context).size.height - (height + 80),
-                  child: RefreshIndicator( key: refreshKey,
-                  child: GroupedListView<Invoices, DateTime>(
-                    // controller: controller,
+                  child: RefreshIndicator(
+                      key: refreshKey,
+                      child: GroupedListView<Invoices, DateTime>(
+                        // controller: controller,
 
-                    elements: snapShot.data,
-                    physics: BouncingScrollPhysics(),
-                    order: GroupedListOrder.DESC,
-                    groupComparator: (DateTime value1, DateTime value2) =>
-                        value1.compareTo(value2),
-                    groupBy: (Invoices element) => DateTime(
-                      element.getInvoiceDate().year,
-                      element.getInvoiceDate().month,
-                    ),
-                    itemComparator: (Invoices element1, Invoices element2) =>
-                        element1
-                            .getInvoiceDate()
-                            .compareTo(element2.getInvoiceDate()),
-                    floatingHeader: true,
-                    useStickyGroupSeparators: true,
-                    groupSeparatorBuilder: (DateTime element) => Container(
-                      height: 50,
-                      color: faintGrey,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: 10.0, top: 5.0, bottom: 5.0),
-                          height: 70.0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(children: <Widget>[
-                              Text(DateFormat('MMMM yyyy').format(element),
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.black,
-                                      fontFamily: "SourceSansProBold")),
-                            ]),
+                        elements: snapShot.data,
+                        physics: BouncingScrollPhysics(),
+                        order: GroupedListOrder.DESC,
+                        groupComparator: (DateTime value1, DateTime value2) =>
+                            value1.compareTo(value2),
+                        groupBy: (Invoices element) => DateTime(
+                          element.getInvoiceDate().year,
+                          element.getInvoiceDate().month,
+                        ),
+                        itemComparator:
+                            (Invoices element1, Invoices element2) => element1
+                                .getInvoiceDate()
+                                .compareTo(element2.getInvoiceDate()),
+                        floatingHeader: true,
+                        useStickyGroupSeparators: true,
+                        groupSeparatorBuilder: (DateTime element) => Container(
+                          height: 50,
+                          color: faintGrey,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  left: 10.0, top: 5.0, bottom: 5.0),
+                              height: 70.0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: <Widget>[
+                                  Text(DateFormat('MMMM yyyy').format(element),
+                                      style: TextStyle(
+                                          fontSize: 18.0,
+                                          color: Colors.black,
+                                          fontFamily: "SourceSansProBold")),
+                                ]),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    itemBuilder: (context, element) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            tileColor: Colors.white,
-                            onTap: () {
-                               moveToInvoiceDetailsPage(element);
-                            },
-                            // contentPadding: EdgeInsets.only(
-                            //     top: 10.0,
-                            //     bottom: 10.0,
-                            //     left: 15.0,
-                            //     right: 10.0),
-                            leading: leadingImage(element),
-                            title: Transform.translate(
-                              offset: Offset(-5, 0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-
-                                  Text(
-                                    element.outlet.outletName,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                      fontFamily: "SourceSansProSemiBold",
-                                    ),
-                                  ),
-                                  Text(
-                                      DateFormat('d MMM')
-                                          .format(element.getInvoiceDate()),
-                                      style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: greyText,
-                                          fontFamily: "SourceSansProRegular")),
-                                ],
-
-                              ),
-                            ),
-
-                            subtitle: Transform.translate(
-                              offset: Offset(-5, 0),
-                              child: Column(
-                                children: [
-                                  Row(children: <Widget>[
-                                    checkPaymentStatus(element),
-
-                                    Text(
-                                      " " + '#${element.invoiceNum}',
-                                      style: TextStyle(
-                                          color: greyText,
-                                          fontSize: 12.0,
-                                          fontFamily: "SourceSansProRegular"),
-                                    ),
-                                    Spacer(),
-                                  //  SizedBox(width: 5,),
-                                    Text(
-                                      totalAmount(element.totalCharge),
-                                      style: TextStyle(
-                                          color: isExpired(element) ? warningRed : Colors.black,
+                        itemBuilder: (context, element) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                tileColor: Colors.white,
+                                onTap: () {
+                                  moveToInvoiceDetailsPage(element);
+                                },
+                                // contentPadding: EdgeInsets.only(
+                                //     top: 10.0,
+                                //     bottom: 10.0,
+                                //     left: 15.0,
+                                //     right: 10.0),
+                                leading: leadingImage(element),
+                                title: Transform.translate(
+                                  offset: Offset(-5, 0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        element.outlet.outletName,
+                                        style: TextStyle(
                                           fontSize: 16.0,
-                                          fontFamily: "SourceSansProRegular"),
-                                    ),
-                                  ]),
+                                          color: Colors.black,
+                                          fontFamily: "SourceSansProSemiBold",
+                                        ),
+                                      ),
+                                      Text(
+                                          DateFormat('d MMM')
+                                              .format(element.getInvoiceDate()),
+                                          style: TextStyle(
+                                              fontSize: 12.0,
+                                              color: greyText,
+                                              fontFamily:
+                                                  "SourceSansProRegular")),
+                                    ],
+                                  ),
+                                ),
 
-                                  checkInvoiceStatus(element),
-                                  //Container(height: 20, color: Colors.yellow,)
-                                ],
+                                subtitle: Transform.translate(
+                                  offset: Offset(-5, 0),
+                                  child: Column(
+                                    children: [
+                                      Row(children: <Widget>[
+                                        checkPaymentStatus(element),
+
+                                        Text(
+                                          " " + '#${element.invoiceNum}',
+                                          style: TextStyle(
+                                              color: greyText,
+                                              fontSize: 12.0,
+                                              fontFamily:
+                                                  "SourceSansProRegular"),
+                                        ),
+                                        Spacer(),
+                                        //  SizedBox(width: 5,),
+                                        Text(
+                                          totalAmount(element.totalCharge),
+                                          style: TextStyle(
+                                              color: isExpired(element)
+                                                  ? warningRed
+                                                  : Colors.black,
+                                              fontSize: 16.0,
+                                              fontFamily:
+                                                  "SourceSansProRegular"),
+                                        ),
+                                      ]),
+
+                                      checkInvoiceStatus(element),
+                                      //Container(height: 20, color: Colors.yellow,)
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-
-                          ),
-
-                          Divider(
-                            height: 1.5,
-                            color: faintGrey,
-                          )
-
-                        ],
-                      );
-                    },
-                  ), color: azul_blue, onRefresh: refreshList));
+                              Divider(
+                                height: 1.5,
+                                color: faintGrey,
+                              )
+                            ],
+                          );
+                        },
+                      ),
+                      color: azul_blue,
+                      onRefresh: refreshList));
             } else {
               return Container(
-
-                height: MediaQuery.of(context).size.height - (height+150),
+                height: MediaQuery.of(context).size.height - (height + 150),
                 color: faintGrey,
-
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-
-                        Container(
-                          child: Image(
-                            image: new AssetImage('assets/images/no_orders_icon.png'),
-                            width: 70,
-                            height: 70,
-                            color: null,
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.center,
-                          ),
-                        ),
-                       // ImageIcon(AssetImage('assets/images/orders_icon.png')),
-                        SizedBox(height: 15),
-                        Text('No invoices', style: TextStyle(fontSize: 16, fontFamily: 'SourceSansProSemiBold'),),
-                      ],
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Image(
+                        image:
+                            new AssetImage('assets/images/no_orders_icon.png'),
+                        width: 70,
+                        height: 70,
+                        color: null,
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.center,
+                      ),
                     ),
+                    // ImageIcon(AssetImage('assets/images/orders_icon.png')),
+                    SizedBox(height: 15),
+                    Text(
+                      'No invoices',
+                      style: TextStyle(
+                          fontSize: 16, fontFamily: 'SourceSansProSemiBold'),
+                    ),
+                  ],
+                ),
               );
             }
           }
@@ -474,27 +466,27 @@ class InvoicesState extends State<InvoicesPage> {
   }
 
   Widget moveToInvoiceDetailsPage(Invoices inv) {
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-            new InvoiceDetailsPage(inv)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new InvoiceDetailsPage(inv)));
   }
 
   Widget checkPaymentStatus(Invoices inv) {
     if (inv.paymentStatus == 'Paid') {
-     return Text('Paid', style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProRegular', color: lightGreen),);
+      return Text(
+        'Paid',
+        style: TextStyle(
+            fontSize: 12,
+            fontFamily: 'SourceSansProRegular',
+            color: lightGreen),
+      );
     } else {
       if (inv.paymentDueDate != null) {
-        return Text('Due ' +
-            DateFormat('d MMM').format(
-                inv.getPaymentDueDate()),
+        return Text(
+            'Due ' + DateFormat('d MMM').format(inv.getPaymentDueDate()),
             style: TextStyle(
                 color: isExpired(inv) ? warningRed : Colors.black,
                 fontSize: 12.0,
-                fontFamily:
-                "SourceSansProRegular"));
+                fontFamily: "SourceSansProRegular"));
       } else {
         return Text('');
       }
@@ -502,7 +494,6 @@ class InvoicesState extends State<InvoicesPage> {
   }
 
   bool isExpired(Invoices inv) {
-
     if (inv.paymentStatus == 'Paid') {
       return false;
     }
@@ -559,17 +550,18 @@ class InvoicesState extends State<InvoicesPage> {
     }
   }
 
-
   Widget leadingImage(Invoices inv) {
     if (inv.outlet.logoURL != null && inv.outlet.logoURL.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
-            child: Image.network(inv.outlet.logoURL, fit: BoxFit.fill,),
-          )
-      );
+            child: Image.network(
+              inv.outlet.logoURL,
+              fit: BoxFit.fill,
+            ),
+          ));
     } else {
       return Container(
         height: 38,
@@ -587,7 +579,6 @@ class InvoicesState extends State<InvoicesPage> {
       );
     }
   }
-
 
   String outletPlaceholder(String name) {
     Constants value = Constants();

@@ -81,7 +81,11 @@ class CustomerState extends State<CustomersPage> {
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
-    userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId};
+    userProperties = {
+      "userName": specificUserInfo.data.fullName,
+      "email": userData.user.email,
+      "userId": userData.user.userId
+    };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -262,16 +266,19 @@ class CustomerState extends State<CustomersPage> {
         elevation: 0,
       ),
       body: Container(
-        color: faintGrey,
-        child:  RefreshIndicator( key: refreshKey,
-          child: ListView(children: [
-          buildSearchBar(context),
-          Headers(),
-          bannerList(),
-          spaceBanner(),
-          list()
-        ]),
-          color: azul_blue, onRefresh: refreshList,)),
+          color: faintGrey,
+          child: RefreshIndicator(
+            key: refreshKey,
+            child: ListView(children: [
+              buildSearchBar(context),
+              Headers(),
+              bannerList(),
+              spaceBanner(),
+              list()
+            ]),
+            color: azul_blue,
+            onRefresh: refreshList,
+          )),
     );
   }
 
@@ -282,13 +289,12 @@ class CustomerState extends State<CustomersPage> {
 
     setState(() {
       customersData = getCustomersReportApiCalling(false, true);
-      selectedCustomersDataFuture =
-          getCustomersListCalling(false, true);
+      selectedCustomersDataFuture = getCustomersListCalling(false, true);
     });
-
 
     return null;
   }
+
   Widget buildSearchBar(BuildContext context) {
     return Container(
         //padding: EdgeInsets.only(top: 5.0),
@@ -320,7 +326,8 @@ class CustomerState extends State<CustomersPage> {
                 color: Colors.black,
               ),
               onTap: () async {
-                events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_SEARCH, properties: userProperties);
+                events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_SEARCH,
+                    properties: userProperties);
                 events.mixpanel.flush();
                 Navigator.push(
                     context,
@@ -461,19 +468,27 @@ class CustomerState extends State<CustomersPage> {
                             selectedIndex = index;
                             if (index == 0) {
                               events.mixpanel.track(
-                                  Events.TAP_CUSTOMERS_TAB_ALL_OUTLETS_TAB, properties: userProperties);
+                                  Events.TAP_CUSTOMERS_TAB_ALL_OUTLETS_TAB,
+                                  properties: userProperties);
                             } else if (index == 1) {
                               events.mixpanel.track(
-                                  Events.TAP_CUSTOMERS_TAB_STARRED_OUTLETS_TAB, properties: userProperties);
+                                  Events.TAP_CUSTOMERS_TAB_STARRED_OUTLETS_TAB,
+                                  properties: userProperties);
                             } else if (index == 2) {
-                              events.mixpanel.track(Events
-                                  .TAP_CUSTOMERS_TAB_THIS_WEEK_OUTLETS_TAB, properties: userProperties);
+                              events.mixpanel.track(
+                                  Events
+                                      .TAP_CUSTOMERS_TAB_THIS_WEEK_OUTLETS_TAB,
+                                  properties: userProperties);
                             } else if (index == 3) {
-                              events.mixpanel.track(Events
-                                  .TAP_CUSTOMERS_TAB_LAST_WEEK_OUTLETS_TAB, properties: userProperties);
+                              events.mixpanel.track(
+                                  Events
+                                      .TAP_CUSTOMERS_TAB_LAST_WEEK_OUTLETS_TAB,
+                                  properties: userProperties);
                             } else {
-                              events.mixpanel.track(Events
-                                  .TAP_CUSTOMERS_TAB_NO_RECENT_ORDERED_OUTLETS_TAB, properties: userProperties);
+                              events.mixpanel.track(
+                                  Events
+                                      .TAP_CUSTOMERS_TAB_NO_RECENT_ORDERED_OUTLETS_TAB,
+                                  properties: userProperties);
                             }
                             events.mixpanel.flush();
                             var a = snapshot.data[index];
@@ -660,7 +675,9 @@ class CustomerState extends State<CustomersPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<CustomersData> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24));
+                return Center(
+                    child:
+                        SpinKitThreeBounce(color: Colors.blueAccent, size: 24));
                 // } else if (snapshot.hasError) {
                 //   return Center(child: Text('failed to load'));
               } else {
@@ -748,8 +765,9 @@ class CustomerState extends State<CustomersPage> {
                                 print(snapshot
                                     .data.outlets[index].outlet.outletId);
 
-                                events.mixpanel.track(Events
-                                    .TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS, properties: userProperties);
+                                events.mixpanel.track(
+                                    Events.TAP_CUSTOMERS_TAB_OUTLET_FOR_DETAILS,
+                                    properties: userProperties);
                                 events.mixpanel.flush();
                                 Navigator.push(
                                     context,
@@ -777,8 +795,8 @@ class CustomerState extends State<CustomersPage> {
   Widget leadingImage(Customers customer) {
     if (customer.outlet.logoURL != null && customer.outlet.logoURL.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
             child: Image.network(
@@ -805,7 +823,8 @@ class CustomerState extends State<CustomersPage> {
   }
 
   tapOnFavourite(int index, Customers customers) {
-    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_OUTLET_FAVOURITE, properties: userProperties);
+    events.mixpanel.track(Events.TAP_CUSTOMERS_TAB_OUTLET_FAVOURITE,
+        properties: userProperties);
     events.mixpanel.flush();
     if (customers.isFavourite) {
       setState(() {

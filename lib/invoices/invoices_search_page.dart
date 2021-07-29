@@ -287,7 +287,7 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
                 snapShot.data.isNotEmpty) {
               // isPageLoading = false;
               return SizedBox(
-                  height: MediaQuery.of(context).size.height-100,
+                  height: MediaQuery.of(context).size.height - 100,
                   child: GroupedListView<Invoices, DateTime>(
                     // controller: controller,
                     elements: snapShot.data,
@@ -326,7 +326,6 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
                       ),
                     ),
                     itemBuilder: (context, element) {
-
                       return Column(
                         children: [
                           ListTile(
@@ -362,7 +361,6 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
                             ),
 
                             subtitle: Row(children: <Widget>[
-
                               checkPaymentStatus(element),
                               Text(' #'),
                               RichText(
@@ -375,18 +373,18 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
                                       fontFamily: "SourceSansProRegular"),
                                 ),
                               ),
-
                               Spacer(),
                               Text(
                                 totalAmount(element.totalCharge),
                                 style: TextStyle(
-                                    color: isExpired(element) ? warningRed : Colors.black,
+                                    color: isExpired(element)
+                                        ? warningRed
+                                        : Colors.black,
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular"),
                               ),
                             ]),
                           ),
-
                           checkInvoiceStatus(element),
                           Divider(
                             height: 1.5,
@@ -397,43 +395,38 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
                     },
                   ));
             } else {
-              if (searchedString !=  null) {
-
-              return Container(
-
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height - (height + 150),
-                color: faintGrey,
-
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-
-                    Container(
-                      child: Image(
-                        image: new AssetImage(
-                            'assets/images/no_orders_icon.png'),
-                        width: 70,
-                        height: 70,
-                        color: null,
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.center,
+              if (searchedString != null) {
+                return Container(
+                  height: MediaQuery.of(context).size.height - (height + 150),
+                  color: faintGrey,
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        child: Image(
+                          image: new AssetImage(
+                              'assets/images/no_orders_icon.png'),
+                          width: 70,
+                          height: 70,
+                          color: null,
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.center,
+                        ),
                       ),
-                    ),
-                    // ImageIcon(AssetImage('assets/images/orders_icon.png')),
-                    SizedBox(height: 15),
-                    Text('No invoices', style: TextStyle(
-                        fontSize: 16, fontFamily: 'SourceSansProSemiBold'),),
-                  ],
-                ),
-              );
-            } else {
+                      // ImageIcon(AssetImage('assets/images/orders_icon.png')),
+                      SizedBox(height: 15),
+                      Text(
+                        'No invoices',
+                        style: TextStyle(
+                            fontSize: 16, fontFamily: 'SourceSansProSemiBold'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
                 return Container();
               }
-
             }
           }
         });
@@ -441,17 +434,21 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
 
   Widget checkPaymentStatus(Invoices inv) {
     if (inv.paymentStatus == 'Paid') {
-      return Text('Paid', style: TextStyle(fontSize: 12, fontFamily: 'SourceSansProRegular', color: lightGreen),);
+      return Text(
+        'Paid',
+        style: TextStyle(
+            fontSize: 12,
+            fontFamily: 'SourceSansProRegular',
+            color: lightGreen),
+      );
     } else {
       if (inv.paymentDueDate != null) {
-        return Text('Due ' +
-            DateFormat('d MMM').format(
-                inv.getPaymentDueDate()),
+        return Text(
+            'Due ' + DateFormat('d MMM').format(inv.getPaymentDueDate()),
             style: TextStyle(
                 color: isExpired(inv) ? warningRed : Colors.black,
                 fontSize: 12.0,
-                fontFamily:
-                "SourceSansProRegular"));
+                fontFamily: "SourceSansProRegular"));
       } else {
         return Text('');
       }
@@ -487,12 +484,12 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
                 width: 60,
                 child: Center(
                     child: Text(
-                      'VOIDED',
-                      style: TextStyle(
-                          fontSize: 10,
-                          fontFamily: 'SourceSansProSemiBold',
-                          color: Colors.white),
-                    )),
+                  'VOIDED',
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontFamily: 'SourceSansProSemiBold',
+                      color: Colors.white),
+                )),
                 decoration: BoxDecoration(
                     color: warningRed,
                     borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -517,8 +514,8 @@ class InvoicesSearchState extends State<InvoicesSearchPage> {
   Widget leadingImage(Invoices inv) {
     if (inv.outlet.logoURL != null && inv.outlet.logoURL.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               image: DecorationImage(

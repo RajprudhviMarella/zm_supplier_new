@@ -95,7 +95,7 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
 
   Widget buildAppBar(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(5.0),
+        padding: EdgeInsets.only(bottom: 5.0, top: 5.0),
         color: Colors.white,
         child: ListTile(
           leading: null,
@@ -112,7 +112,7 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
             child: TextField(
               cursorColor: Colors.blue,
               maxLines: null,
-              textInputAction: TextInputAction.go,
+              textInputAction: TextInputAction.search,
               controller: _controller,
               onSubmitted: searchOperation,
               autofocus: true,
@@ -259,20 +259,22 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                     fontFamily: "SourceSansProBold")),
                           ),
                           right: FlatButton(
-                            onPressed: () {
-                              setState(() {
-                                recentSearchList.clear();
-                                removeFromSharedPref();
-                              });
-                            },
-                            child: Text(
-                              'Clear',
-                              style: TextStyle(
-                                  color: buttonBlue,
-                                  fontFamily: "SourceSansProRegular",
-                                  fontSize: 12),
-                            ),
-                          )),
+                              onPressed: () {
+                                setState(() {
+                                  recentSearchList.clear();
+                                  removeFromSharedPref();
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 28),
+                                child: Text(
+                                  'Clear',
+                                  style: TextStyle(
+                                      color: buttonBlue,
+                                      fontFamily: "SourceSansProRegular",
+                                      fontSize: 12),
+                                ),
+                              ))),
                     ),
                   )
                 ],

@@ -298,7 +298,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                       Container(
                         height: 1,
                         color: faintGrey,
-                        margin: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                        margin: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 5.0),
                       ),
                       Row(
                         //mainAxisSize: MainAxisAlignment.start,
@@ -497,7 +497,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   }
 
   Widget spaceBanner(BuildContext context) {
-    return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 10));
+    return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0));
   }
 
   Widget skuDetails() {
@@ -867,7 +867,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   }
 
   openPdf(String url) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => PdfViewerPage(url)));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => PdfViewerPage(url)));
   }
 }

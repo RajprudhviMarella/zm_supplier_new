@@ -224,11 +224,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       new Spacer(),
                       RaisedButton(
                         child: Container(
-                            padding: EdgeInsets.only(left: 10.0),
                             height: 50,
                             child: Center(
                               child: Text(
                                 'Place order',
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontFamily: 'SourceSansProSemiBold',
@@ -1158,13 +1158,28 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           placeOrderResponse.status == 200 &&
           placeOrderResponse.data.status == "SUCCESS") {
         print('order placed');
-        if (createOrderModel.notes.isNotEmpty || createOrderModel.notes != null) {
+        if (createOrderModel.notes.isNotEmpty ||
+            createOrderModel.notes != null) {
           orderNotes = true;
         } else {
           orderNotes = false;
         }
-        userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, "outletId": widget.outletId, "outletName": widget.outletName, "notes": orderNotes, "orderId": widget.orderId,"itemCount": widget.marketList.length,"isAddonOrder": isAddonOrder, "supplierId": supplierID, "supplierName": supplierName,"selectedDeliveryDate": selectedDate};
-        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: userProperties);
+        userProperties = {
+          "userName": specificUserInfo.data.fullName,
+          "email": loginResponse.user.email,
+          "userId": loginResponse.user.userId,
+          "outletId": widget.outletId,
+          "outletName": widget.outletName,
+          "notes": orderNotes,
+          "orderId": widget.orderId,
+          "itemCount": widget.marketList.length,
+          "isAddonOrder": isAddonOrder,
+          "supplierId": supplierID,
+          "supplierName": supplierName,
+          "selectedDeliveryDate": selectedDate
+        };
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM,
+            properties: userProperties);
         events.mixpanel.flush();
         showSuccessDialog();
       } else {
@@ -1174,18 +1189,31 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       requestUrl = URLEndPoints.retrieve_orders + '?' + queryString;
       response = await http.post(requestUrl, headers: headers, body: msg);
       PlaceOrderResponse placeOrderResponse =
-      PlaceOrderResponse.fromJson(jsonDecode(response.body));
-      if (placeOrderResponse != null &&
-          placeOrderResponse.status == 200) {
-      //if (response != null && response.statusCode == 200) {
-        if (createOrderModel.notes.isNotEmpty || createOrderModel.notes != null) {
+          PlaceOrderResponse.fromJson(jsonDecode(response.body));
+      if (placeOrderResponse != null && placeOrderResponse.status == 200) {
+        //if (response != null && response.statusCode == 200) {
+        if (createOrderModel.notes.isNotEmpty ||
+            createOrderModel.notes != null) {
           orderNotes = true;
         } else {
           orderNotes = false;
         }
 
-        userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, "outletId": widget.outletId, "outletName": widget.outletName, "notes": orderNotes, "itemCount": widget.marketList.length,"isAddonOrder": isAddonOrder, "supplierId": supplierID, "supplierName": supplierName, "selectedDeliveryDate": selectedDate};
-        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM, properties: userProperties);
+        userProperties = {
+          "userName": specificUserInfo.data.fullName,
+          "email": loginResponse.user.email,
+          "userId": loginResponse.user.userId,
+          "outletId": widget.outletId,
+          "outletName": widget.outletName,
+          "notes": orderNotes,
+          "itemCount": widget.marketList.length,
+          "isAddonOrder": isAddonOrder,
+          "supplierId": supplierID,
+          "supplierName": supplierName,
+          "selectedDeliveryDate": selectedDate
+        };
+        events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CONFIRM,
+            properties: userProperties);
         events.mixpanel.flush();
         showSuccessDialog();
       } else {
