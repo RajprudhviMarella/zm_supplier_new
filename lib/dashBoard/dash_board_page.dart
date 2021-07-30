@@ -293,12 +293,10 @@ class DashboardState extends State<DashboardPage> {
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
     if (specificUserInfo.data.goal != null)
-      userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
-    // userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
+
+    userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
+    userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
     print('summary api calling1');
-
-    //  userGoals = specificUserInfo.data.goal;
-
     if (didGoalSet) {
       userGoals = userGoalData.data.goal;
     }
@@ -318,8 +316,11 @@ class DashboardState extends State<DashboardPage> {
         selectedGoalType = 'Monthly';
         tappedGoal = 'Monthly';
       }
-      _controller.text =
-          userGoals.amount > 0 ? userGoals.amount.toString() : '';
+
+      if (userGoals.amount != null) {
+        _controller.text =
+        userGoals.amount > 0 ? userGoals.amount.toString() : '';
+      }
     }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -751,6 +752,8 @@ class DashboardState extends State<DashboardPage> {
         child: FlatButton(
           onPressed: () {
             print('set a goal tapped.');
+            mixpanel.track(Events.TAP_DASHBOARD_SET_A_GOAL,
+                properties: userProperties);
             setGoal();
           },
           color: faintGrey,
@@ -837,6 +840,10 @@ class DashboardState extends State<DashboardPage> {
                                           child: Column(children: [
                                             GestureDetector(
                                               onTap: () {
+
+                                                mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS,
+                                                    properties: userProperties);
+
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -1068,6 +1075,8 @@ class DashboardState extends State<DashboardPage> {
     //double a = summaryData.data.goalPercentage as double;
     return GestureDetector(
       onTap: () async {
+        mixpanel.track(Events.TAP_DASHBOARD_GOAL_CHART,
+            properties: userProperties);
         print('CircularPercentIndicator');
         userGoals =
             Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
@@ -1535,7 +1544,6 @@ class DashboardState extends State<DashboardPage> {
                     right: FlatButton(
                       onPressed: () {
                         print('View all orders tapped');
-
                         mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS,
                             properties: userProperties);
                         Navigator.push(
