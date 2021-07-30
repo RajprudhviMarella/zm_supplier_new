@@ -1,3 +1,4 @@
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,6 +18,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/services.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -67,6 +70,48 @@ class _LoginPageState extends State<LoginPage> {
     events.mixPanelEvents();
   }
 
+  setUserProfilesToMixPanel(String name, String email) {
+    getDeviceDetails().then((path) {
+      print('deviceIDs');
+      print(path.toString());
+
+      events.mixpanel.track("create_alias",
+          properties: {
+            "distinct_id":  path.last,
+            "alias": "12345",
+            "token": "727ea70267ae81d186a7365cc2befcf4"
+          }
+      );
+      events.mixpanel.identify(path.last);
+      events.mixpanel.getPeople().set('name', name);
+      events.mixpanel.getPeople().set("email", email);
+    });
+  }
+
+  static Future<List<String>> getDeviceDetails() async {
+    String deviceName;
+    String deviceVersion;
+    String identifier;
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    try {
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        deviceName = build.model;
+        deviceVersion = build.version.toString();
+        identifier = build.androidId;  //UUID for Android
+      } else if (Platform.isIOS) {
+        var data = await deviceInfoPlugin.iosInfo;
+        deviceName = data.name;
+        deviceVersion = data.systemVersion;
+        identifier = data.identifierForVendor;  //UUID for iOS
+      }
+    } on PlatformException {
+      print('Failed to get platform version');
+    }
+
+//if (!mounted) return;
+    return [deviceName, deviceVersion, identifier];
+  }
   @override
   Widget build(BuildContext context) {
     void _toggle() {
@@ -94,6 +139,23 @@ class _LoginPageState extends State<LoginPage> {
           isLogged = true;
           prefs.setBool(Constants.is_logged, isLogged);
 
+         // set distinct id as userName
+         //  events.mixpanel.track("create_alias",
+         //      properties: {
+         //       // "distinct_id": value.data.fullName,
+         //        "alias": "12345",
+         //        "name": value.data.fullName,
+         //       "token": "727ea70267ae81d186a7365cc2befcf4"
+         //      }
+         //  );
+          // events.mixpanel.
+         // events.mixpanel.identify("4D011EE5-BE1B-4BE9-995A-88C5F6AEE044");
+         // events.mixpanel.getPeople().set('name', value.data.fullName,);
+
+         // events.mixpanel.registerSuperPropertiesOnce({'name': value.data.fullName, "email": value.data.email});
+         //  events.mixpanel.registerSuperProperties({'Name': value.data.fullName, 'Email': value.data.email});
+
+          setUserProfilesToMixPanel(value.data.fullName, value.data.email);
           events.mixpanel
               .track(Events.TAP_LOGIN, properties: {'email': _email});
           SharedPref.registerIntercomUser();
