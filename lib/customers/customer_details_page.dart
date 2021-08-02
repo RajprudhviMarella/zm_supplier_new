@@ -138,7 +138,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     String queryString = Uri(queryParameters: queryParams).query;
 
     var url = URLEndPoints.retrive_invoices_summary + '?' + queryString;
-     print(url);
+    print(url);
 
     print(headers);
     var response = await http.get(url, headers: headers);
@@ -158,7 +158,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   Future<List<Orders>> _retriveRecentOrders() async {
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
-    
+
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -173,7 +173,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     String queryString = Uri(queryParameters: queryParams).query;
 
     var url = URLEndPoints.retrive_paginated_orders_url + '?' + queryString;
-     print(url);
+    print(url);
 
     print(headers);
     var response = await http.get(url, headers: headers);
@@ -228,19 +228,21 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      key: globalKey,
-      backgroundColor: faintGrey,
-      appBar: buildAppBar(context),
-      body:  RefreshIndicator( key: refreshKey,
-      child: ListView(
-        children: <Widget>[
-          orderSummaryBanner(),
-          InvocesPanel(),
-          headers(context),
-          header(context),
-        ],
-      ), color: azul_blue, onRefresh: refreshList)
-    );
+        key: globalKey,
+        backgroundColor: faintGrey,
+        appBar: buildAppBar(context),
+        body: RefreshIndicator(
+            key: refreshKey,
+            child: ListView(
+              children: <Widget>[
+                orderSummaryBanner(),
+                InvocesPanel(),
+                headers(context),
+                header(context),
+              ],
+            ),
+            color: azul_blue,
+            onRefresh: refreshList));
   }
 
   Future<Null> refreshList() async {
@@ -255,9 +257,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
       invoicesSummaryData = _retriveInvoicesSummary();
     });
 
-
     return null;
   }
+
   Widget buildAppBar(BuildContext context) {
     return new AppBar(
         backgroundColor: faintGrey,
@@ -515,11 +517,15 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           color: buttonBlue,
                                           fontFamily: 'SourceSansProSemiBold'),
                                     ),
-                                    Text('\$' + snapshot.data.totalUnpaid.toStringAsFixed(2).replaceAllMapped(
-                                        reg,
-                                            (Match m) =>
-                                        '${m[1]},') ??
-                                        "",
+                                    Text(
+                                      '\$' +
+                                              snapshot.data.totalUnpaid
+                                                  .toStringAsFixed(2)
+                                                  .replaceAllMapped(
+                                                      reg,
+                                                      (Match m) =>
+                                                          '${m[1]},') ??
+                                          "",
                                       style: TextStyle(
                                           fontSize: 30,
                                           color: Colors.black,
@@ -565,11 +571,13 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                             },
                             child: Row(
                               children: [
-                                Text('\$' + snapshot.data.totalOverDue.toStringAsFixed(2).replaceAllMapped(
-                                    reg,
-                                        (Match m) =>
-                                    '${m[1]},') ??
-                                    "",
+                                Text(
+                                    '\$' +
+                                            snapshot.data.totalOverDue
+                                                .toStringAsFixed(2)
+                                                .replaceAllMapped(reg,
+                                                    (Match m) => '${m[1]},') ??
+                                        "",
                                     style: TextStyle(
                                         fontFamily: "SourceSansProBold",
                                         fontSize: 18,
@@ -658,9 +666,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
           ],
         ),
       ),
-      content: Container(
-       child: list()
-      ),
+      content: Container(child: list()),
     );
   }
 
@@ -703,7 +709,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   String displayAmount(Orders order) {
-    if (order.orderStatus == 'Void' || order.orderStatus == 'Cancelled' || order.orderStatus == 'Invoiced') {
+    if (order.orderStatus == 'Void' ||
+        order.orderStatus == 'Cancelled' ||
+        order.orderStatus == 'Invoiced') {
       return '';
     } else {
       return order.amount.total.getDisplayValue();
@@ -718,7 +726,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             builder:
                 (BuildContext context, AsyncSnapshot<List<Orders>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: SpinKitThreeBounce(color: Colors.blueAccent, size: 24,));
+                return Center(
+                    child: SpinKitThreeBounce(
+                  color: Colors.blueAccent,
+                  size: 24,
+                ));
               } else if (snapshot.hasError) {
                 return Center(child: Text('failed to load'));
               } else {
@@ -807,8 +819,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                     "Void")
                                                 ? 50
                                                 : 0,
-                                            margin: EdgeInsets.fromLTRB(
-                                                0, 0, 0, 0),
+                                            margin:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
 
                                             decoration: BoxDecoration(
                                                 color: warningRed,
@@ -838,7 +850,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 10, 0),
                                             decoration: BoxDecoration(
-                                                color: warningRed.withOpacity(0.5),
+                                                color:
+                                                    warningRed.withOpacity(0.5),
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(10))),
                                             child: Center(
@@ -871,7 +884,6 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                         "SourceSansProSemiBold")),
                                             // color: Colors.pink,
                                           ),
-
                                           Spacer(),
                                           Text(
                                               snapshot.data[index].amount.total
@@ -880,7 +892,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                                   fontSize: 16.0,
                                                   color: Colors.black,
                                                   fontFamily:
-                                                  "SourceSansProRegular")),
+                                                      "SourceSansProRegular")),
                                         ],
                                       ),
                                     ),
@@ -985,8 +997,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   Widget leadingImage(Orders img) {
     if (img.outlet.logoURL != null && img.outlet.logoURL.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
             child: Image.network(
@@ -1013,13 +1025,18 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   tapOnFavourite() {
-
     if (isStarred) {
       setState(() {
         isStarred = false;
-        userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "isFavourite": false};
+        userProperties = {
+          "userName": specificUserInfo.data.fullName,
+          "email": userData.user.email,
+          "userId": userData.user.userId,
+          "isFavourite": false
+        };
 
-        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE, properties: userProperties);
+        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE,
+            properties: userProperties);
         events.mixpanel.flush();
         globalKey.currentState
           ..showSnackBar(
@@ -1032,8 +1049,14 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     } else {
       setState(() {
         isStarred = true;
-        userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "isFavourite": true};
-        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE, properties: userProperties);
+        userProperties = {
+          "userName": specificUserInfo.data.fullName,
+          "email": userData.user.email,
+          "userId": userData.user.userId,
+          "isFavourite": true
+        };
+        events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE,
+            properties: userProperties);
         events.mixpanel.flush();
         globalKey.currentState.showSnackBar(
           SnackBar(
@@ -1179,7 +1202,6 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                 Container(
                   height: 40,
                   child: new ListTile(
-
                       title: new Text(
                         details.firstName,
                         style: TextStyle(
@@ -1192,7 +1214,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                   child: new ListTile(
                       title: new Text(details.email,
                           style: TextStyle(
-                              fontSize: 16, fontFamily: 'SourceSansProRegular')),
+                              fontSize: 16,
+                              fontFamily: 'SourceSansProRegular')),
                       onTap: () => {showActionSheet(details.email)}),
                 ),
                 Divider(
@@ -1232,21 +1255,18 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                           // SizedBox(
                           //   width: 10,
                           // ),
-                          Text(details.phone,
+                          Text(
+                            details.phone,
                             style: TextStyle(
                                 fontSize: 16,
                                 fontFamily: 'SourceSansProRegular'),
                           ),
-
                         ],
                       ),
-
                     ),
-                    onTap: () => {
-                              showActionSheetPhone(details.phone)
-                            },
+                    onTap: () => {showActionSheetPhone(details.phone)},
                   ),
-               Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 10)),
+                Padding(padding: EdgeInsets.fromLTRB(20, 0, 20, 10)),
               ],
             ),
           );

@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -31,6 +33,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   bool isLogged = false;
+  FirebaseMessaging messaging;
 
   bool isApiCallingProcess = false;
   String _email, _password;
@@ -57,6 +60,8 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  String firebaseToken = '';
+
 //Initialize a button color variable
   Color btnColor = lightGreen.withOpacity(0.5);
 
@@ -67,8 +72,26 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    messaging = FirebaseMessaging.instance;
+    messaging.requestPermission();
+    messaging.getToken().then((value) {
+      firebaseToken = value;
+      print("token===>" + value);
+    });
+    Future<void> _messageHandler(RemoteMessage message) async {
+      print('background message ${message.notification.body}');
+    }
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      print("message recieved");
+      print(event.notification.body);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('Message clicked!');
+    });
     events.mixPanelEvents();
   }
+
 
   setUserProfilesToMixPanel(String name, String email) {
     getDeviceDetails().then((path) {
@@ -124,6 +147,15 @@ class _LoginPageState extends State<LoginPage> {
       LoginResponse user = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
       setState(() {
+        TokenAuthentication tokenAuthentication = new TokenAuthentication();
+
+        tokenAuthentication
+            .authenticateToken(user.supplier.first.supplierId, user.mudra,
+                user.user.userId, firebaseToken, user.market)
+            .then((value) async {
+          print('token response' + value.toString());
+        });
+
         getSpecificUser specificUser = new getSpecificUser();
 
         specificUser

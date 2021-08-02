@@ -1241,7 +1241,8 @@ class MarketListDesign extends State<MarketListPage>
                         Navigator.pop(context);
                       },
                       child: Container(
-                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          padding: EdgeInsets.only(
+                              left: 20.0, right: 20.0, bottom: 20),
                           margin: EdgeInsets.only(
                               top: 20.0, right: 20.0, left: 20.0),
                           height: 47.0,

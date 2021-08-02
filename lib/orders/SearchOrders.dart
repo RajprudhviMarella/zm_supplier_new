@@ -274,16 +274,16 @@ class SearchOrderDesign extends State<SearchOrderPage>
   Widget displayImage(String Url) {
     if (Url != null && Url.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               image:
                   DecorationImage(fit: BoxFit.fill, image: NetworkImage(Url))));
     } else {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               image: DecorationImage(
@@ -345,9 +345,7 @@ class SearchOrderDesign extends State<SearchOrderPage>
   }
 
   moveToOrderDetailsPage(Orders element) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => new OrderDetailsPage(element)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => new OrderDetailsPage(element)));
   }
 }

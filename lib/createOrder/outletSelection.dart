@@ -135,9 +135,14 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
             onPressed: () {
               setState(() {
                 if (this.icon.icon == Icons.search) {
-                  userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId};
-                  events.mixpanel
-                      .track(Events.TAP_NEW_ORDER_SELECT_OUTLET_SEARCH, properties: userProperties);
+                  userProperties = {
+                    "userName": specificUserInfo.data.fullName,
+                    "email": loginResponse.user.email,
+                    "userId": loginResponse.user.userId
+                  };
+                  events.mixpanel.track(
+                      Events.TAP_NEW_ORDER_SELECT_OUTLET_SEARCH,
+                      properties: userProperties);
                   events.mixpanel.flush();
 
                   this.icon = new Icon(
@@ -294,8 +299,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
   Widget displayImage(Outlet outlet) {
     if (outlet != null && outlet.logoUrl != null && outlet.logoUrl.isNotEmpty) {
       return Container(
-          height: 40.0,
-          width: 40.0,
+          height: 38.0,
+          width: 38.0,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
             child: Image.network(
@@ -305,8 +310,8 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
           ));
     } else {
       return Container(
-        height: 38,
-        width: 38,
+        height: 40,
+        width: 40,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           color: Colors.blue.withOpacity(0.5),
@@ -330,7 +335,7 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
   Widget displaySearchedList(
       AsyncSnapshot<List<FavouriteOutletsList>> snapShot, int index) {
     return Card(
-        margin: EdgeInsets.only(top: 2.0),
+        margin: EdgeInsets.only(top: 0.5),
         child: Container(
             color: Colors.white,
             child: ListTile(
@@ -376,12 +381,15 @@ class OutletSelectionDesign extends State<OutletSelectionPage>
                   },
                 ),
                 onTap: () {
-                  userProperties = {"userName": specificUserInfo.data.fullName, "email": loginResponse.user.email, "userId": loginResponse.user.userId, 'outletId': snapShot.data[index].outlet.outletId,
-                    'outletName': snapShot.data[index].outlet.outletName};
-                  events.mixpanel
-                      .track(Events.TAP_NEW_ORDER_SELECT_OUTLET, properties: {
-
-                  });
+                  userProperties = {
+                    "userName": specificUserInfo.data.fullName,
+                    "email": loginResponse.user.email,
+                    "userId": loginResponse.user.userId,
+                    'outletId': snapShot.data[index].outlet.outletId,
+                    'outletName': snapShot.data[index].outlet.outletName
+                  };
+                  events.mixpanel.track(Events.TAP_NEW_ORDER_SELECT_OUTLET,
+                      properties: {});
                   events.mixpanel.flush();
                   Navigator.push(
                       context,

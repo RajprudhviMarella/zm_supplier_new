@@ -96,14 +96,13 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
       subCategoryBaseResponse = SubCategoryBaseResponse.fromJson(jsonMap);
       print("reposnedjfnf:" + json.encode(subCategoryBaseResponse));
       // subCategoryResponse =  json.decode(response.body)['data'];
-        if (subCategoryBaseResponse.data[0].children != null) {
-          setState(() {
-            CategoriesList = [];//subCategoryBaseResponse.data[0].children;
-
-          });
-        } else {
-          CategoriesList = [];
-        }
+      if (subCategoryBaseResponse.data[0].children != null) {
+        setState(() {
+          CategoriesList = []; //subCategoryBaseResponse.data[0].children;
+        });
+      } else {
+        CategoriesList = [];
+      }
 
       print("categoryList:" + json.encode(CategoriesList));
     } else {
@@ -144,10 +143,12 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
       backgroundColor: faintGrey,
       appBar: buildAppBar(context),
       body: ListView(
-        children: <Widget>[headers(), statusList(),
-
-          button()],
+        children: <Widget>[
+          headers(),
+          statusList(),
+        ],
       ),
+      bottomNavigationBar: button(),
     );
   }
 
@@ -273,18 +274,19 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
   Widget button() {
     if (categoriesDataList != null) {
       return Padding(
-        padding: const EdgeInsets.only(left: 20.0, top: 100, right: 20, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 20.0, top: 10, right: 20, bottom: 20),
         child: Container(
           height: 50,
           child: RaisedButton(
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0)),
             onPressed: () {
               Navigator.of(context).pop(selectedStatus);
             },
             child: const Text('Save',
-                style:
-                TextStyle(fontSize: 16, fontFamily: 'SorceSansProSemiBold')),
+                style: TextStyle(
+                    fontSize: 16, fontFamily: 'SorceSansProSemiBold')),
             color: buttonBlue,
             textColor: Colors.white,
           ),
@@ -295,6 +297,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
     }
   }
 }
+
 extension ExtendedIterable<E> on Iterable<E> {
   /// Like Iterable<T>.map but callback have index as second argument
   Iterable<T> mapIndexed<T>(T Function(E e, int i) f) {

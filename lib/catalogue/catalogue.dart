@@ -63,7 +63,7 @@ class CatalogueDesign extends State<Catalogue> {
     events.mixPanelEvents();
 
     categoriesData = getCategoriesAPI(false, false);
-    productsData = getCataloguesAPI(false, false, "","");
+    productsData = getCataloguesAPI(false, false, "", "");
     // productsData = getCatalogueApiCalling(false, false);
   }
 
@@ -108,8 +108,8 @@ class CatalogueDesign extends State<Catalogue> {
     return categoriesDataList;
   }
 
-  Future<List<CatalogueProducts>> getCataloguesAPI(
-      bool isUpdating, bool isFilterApplied, String categoryId, String subcategoryId) async {
+  Future<List<CatalogueProducts>> getCataloguesAPI(bool isUpdating,
+      bool isFilterApplied, String categoryId, String subcategoryId) async {
     catalogueBaseResponse = CatalogueBaseResponse();
     userData =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
@@ -248,7 +248,9 @@ class CatalogueDesign extends State<Catalogue> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => new SubCategoryFilterPage(
-                          selectedFilters, selectedCategory.categoryId,selectedSubcategoryIds)));
+                          selectedFilters,
+                          selectedCategory.categoryId,
+                          selectedSubcategoryIds)));
 
               selectedFilters = result;
 
@@ -261,8 +263,8 @@ class CatalogueDesign extends State<Catalogue> {
                 productsData = getCataloguesAPI(
                     false,
                     false,
-                    categoryResponse
-                        .data[selectedIndex].categoryId,ids.join(","));
+                    categoryResponse.data[selectedIndex].categoryId,
+                    ids.join(","));
                 // selectedCustomersDataFuture = selectedD(a);
               });
               // isFilterApplied = true;
@@ -279,7 +281,9 @@ class CatalogueDesign extends State<Catalogue> {
                 child: Text(
                   names,
                   style: TextStyle(
-                      fontSize: 14, fontFamily: "SourceSansProSemiBold",color: Colors.black),
+                      fontSize: 14,
+                      fontFamily: "SourceSansProSemiBold",
+                      color: Colors.black),
                 ),
               ),
             )));
@@ -296,7 +300,7 @@ class CatalogueDesign extends State<Catalogue> {
 
     setState(() {
       categoriesData = getCategoriesAPI(false, true);
-      productsData = getCataloguesAPI(false, false, "","");
+      productsData = getCataloguesAPI(false, false, "", "");
       // selectedCustomersDataFuture =
       //     getCustomersListCalling(false, true);
     });
@@ -308,7 +312,7 @@ class CatalogueDesign extends State<Catalogue> {
     return new AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
-        title: Text(Constants.txt_catalogue,
+        title: Text('Catalogue',
             style: TextStyle(
               color: Colors.black,
               fontFamily: "SourceSansProBold",
@@ -326,7 +330,7 @@ class CatalogueDesign extends State<Catalogue> {
         ),
         actions: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: const EdgeInsets.only(top: 5.0),
             child: new IconButton(
               icon: actionIcon,
               onPressed: () {
@@ -353,6 +357,7 @@ class CatalogueDesign extends State<Catalogue> {
             return SizedBox(
               height: 135,
               child: ListView.builder(
+                  padding: EdgeInsets.only(left: 10),
                   key: const PageStorageKey<String>('scrollPosition'),
                   itemCount: categoryResponse.data.length,
                   shrinkWrap: true,
@@ -377,8 +382,8 @@ class CatalogueDesign extends State<Catalogue> {
                             productsData = getCataloguesAPI(
                                 false,
                                 false,
-                                categoryResponse
-                                    .data[selectedIndex].categoryId,"");
+                                categoryResponse.data[selectedIndex].categoryId,
+                                "");
                             // selectedCustomersDataFuture = selectedD(a);
                           });
                         },
@@ -449,9 +454,7 @@ class CatalogueDesign extends State<Catalogue> {
       print(category.imageURL);
 
       return Container(
-        height: 60.0,
-        width: 60.0, child:  Image.network(category.imageURL)
-      );
+          height: 60.0, width: 60.0, child: Image.network(category.imageURL));
     } else {
       return Container(
         height: 60.0,
@@ -494,7 +497,10 @@ class CatalogueDesign extends State<Catalogue> {
           color: faintGrey.withOpacity(1),
         ),
         child: Center(
-          child: Image.asset('assets/images/icon_sku_placeholder.png', fit: BoxFit.fill,),
+          child: Image.asset(
+            'assets/images/icon_sku_placeholder.png',
+            fit: BoxFit.fill,
+          ),
         ),
       );
     }
@@ -546,13 +552,17 @@ class CatalogueDesign extends State<Catalogue> {
                                 child: ListView.builder(
                                     key: const PageStorageKey<String>(
                                         'scrollPosition'),
-                                    itemCount: (snapshot
-                                        .data[index].certifications == null) ? 0 : snapshot.data[index].certifications.length,
+                                    itemCount:
+                                        (snapshot.data[index].certifications ==
+                                                null)
+                                            ? 0
+                                            : snapshot.data[index]
+                                                .certifications.length,
                                     shrinkWrap: true,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder:
                                         (BuildContext context, int subIndex) {
-                                          bool first = -1 == (subIndex - 1);
+                                      bool first = -1 == (subIndex - 1);
                                       return Padding(
                                         padding: EdgeInsets.all(0),
                                         child: GestureDetector(
@@ -560,8 +570,10 @@ class CatalogueDesign extends State<Catalogue> {
                                           child: Row(
                                             children: [
                                               Padding(
-                                                  padding:first ?
-                                                  EdgeInsets.only(left: 0) : EdgeInsets.only(left: 10),
+                                                  padding: first
+                                                      ? EdgeInsets.only(left: 0)
+                                                      : EdgeInsets.only(
+                                                          left: 10),
                                                   child: Column(
                                                     children: [
                                                       Padding(
@@ -608,18 +620,19 @@ class CatalogueDesign extends State<Catalogue> {
                                           ),
                                     onPressed: () {
                                       print('tapped $index');
-                                      tapOnFavourite(index, snapshot.data[index]);
+                                      tapOnFavourite(
+                                          index, snapshot.data[index]);
                                     }),
                               ),
                               tileColor: Colors.white,
                               onTap: () async {
-                                showDialog(context: context,
-                                    builder: (BuildContext context){
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
                                       return Productdetails(
-                                       catalogueProducts: snapshot.data[index],
+                                        catalogueProducts: snapshot.data[index],
                                       );
-                                    }
-                                );
+                                    });
                               })),
                       Divider(
                         height: 1.5,
@@ -635,11 +648,9 @@ class CatalogueDesign extends State<Catalogue> {
   }
 
   tapOnFavourite(int index, CatalogueProducts products) {
-
     if (products.isFavourite) {
       setState(() {
         products.isFavourite = false;
-
       });
     } else {
       setState(() {
@@ -647,11 +658,12 @@ class CatalogueDesign extends State<Catalogue> {
       });
     }
 
-    SkuFavourite skuFavourite = SkuFavourite(products.sku, products.isFavourite);
+    SkuFavourite skuFavourite =
+        SkuFavourite(products.sku, products.isFavourite);
     FavouritesApi favourite = new FavouritesApi();
     favourite
-        .updateProductFavourite(userData.mudra, userData.supplier.first.supplierId,
-         skuFavourite)
+        .updateProductFavourite(
+            userData.mudra, userData.supplier.first.supplierId, skuFavourite)
         .then((value) async {
       // getCustomersReportApiCalling(true, false);
       // getCustomersListCalling(true, false);
@@ -704,15 +716,17 @@ class CatalogueDesign extends State<Catalogue> {
     }
 
     return Container(
-      height: 23,
-      width: 23,
+      height: 25,
+      width: 25,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         color: color.withOpacity(1),
       ),
       child: Center(
+          child: Padding(
+        padding: EdgeInsets.all(3.0),
         child: Image.asset(assetName),
-      ),
+      )),
     );
   }
 }

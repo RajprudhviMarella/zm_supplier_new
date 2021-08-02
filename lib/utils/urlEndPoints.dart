@@ -5,6 +5,10 @@ class URLEndPoints {
     return Constants.AUTH_SERVER + "supplier/login";
   }
 
+  static get register_device_url {
+    return Constants.NOTIFICATION_SERVER + "notification/devices";
+  }
+
   static get get_specific_user_url {
     return Constants.ACCOUNT_MANAGEMENT_SERVER + "account/supplier";
   }
@@ -124,8 +128,7 @@ class URLEndPoints {
   }
 
   static get retrieve_catalogue {
-    return Constants.INVENTORY_SERVER +
-        "inventory/products";
+    return Constants.INVENTORY_SERVER + "inventory/products";
   }
 
   static get retrieve_subCategories {
@@ -133,12 +136,10 @@ class URLEndPoints {
   }
 
   static get fav_sku_url {
-    return Constants.INVENTORY_SERVER +
-        "inventory/product/favourites";
+    return Constants.INVENTORY_SERVER + "inventory/product/favourites";
   }
 
   static get user_goals_url {
     return Constants.ACCOUNT_MANAGEMENT_SERVER + "/account/user/goal";
   }
-
 }

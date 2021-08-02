@@ -26,6 +26,11 @@ class InvoiceDetailsPage extends StatefulWidget {
 }
 
 class InvoiceDetailsState extends State<InvoiceDetailsPage> {
+  Widget appBarTitle = new Text(
+    'Invoice details',
+    style: new TextStyle(
+        color: Colors.black, fontFamily: "SourceSansProBold", fontSize: 18.0),
+  );
   Invoices invoice;
 
   SharedPref sharedPref = SharedPref();
@@ -147,28 +152,19 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   }
 
   Widget buildAppBar(BuildContext context) {
-    return PreferredSize(
-      child: Container(
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-            color: faintGrey,
-            offset: Offset(0, 2.0),
-            blurRadius: 4.0,
-          )
-        ]),
-        child: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          title: Text(
-            'Invoice details',
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontFamily: 'SourceSansProBold'),
-          ),
+    return new AppBar(
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor: Colors.white,
+      bottomOpacity: 0.0,
+      elevation: 0.0,
+      leading: Container(
+        padding: EdgeInsets.only(right: 12.0),
+        child: IconButton(
+          icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      preferredSize: Size.fromHeight(kToolbarHeight),
     );
   }
 
@@ -189,9 +185,16 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                 child: Container(
                   height: 260,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    color: Colors.white,
-                  ),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ]),
                   child: Column(
                     children: [
                       SizedBox(height: 20),
@@ -298,7 +301,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                       Container(
                         height: 1,
                         color: faintGrey,
-                        margin: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                        margin: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 5.0),
                       ),
                       Row(
                         //mainAxisSize: MainAxisAlignment.start,
@@ -497,7 +500,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   }
 
   Widget spaceBanner(BuildContext context) {
-    return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 10));
+    return Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0));
   }
 
   Widget skuDetails() {
@@ -867,7 +870,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   }
 
   openPdf(String url) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => PdfViewerPage(url)));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => PdfViewerPage(url)));
   }
 }

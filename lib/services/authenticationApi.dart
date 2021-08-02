@@ -48,7 +48,7 @@ class Authentication {
 
 class getSpecificUser {
   Future<ApiResponse> retriveSpecificUser(
-      String supplierId, String mudra,String userID) async {
+      String supplierId, String mudra, String userID) async {
     Map<String, String> queryParams = {'userId': userID};
     var userModel = null;
     String queryString = Uri(queryParameters: queryParams).query;
@@ -61,7 +61,8 @@ class getSpecificUser {
     };
 
     print(headers);
-    var requestUrl = URLEndPoints.get_specific_user_login_url + '?' + queryString;
+    var requestUrl =
+        URLEndPoints.get_specific_user_login_url + '?' + queryString;
     print(requestUrl);
     try {
       var response = await http.get(requestUrl, headers: headers);
@@ -80,5 +81,94 @@ class getSpecificUser {
       // return userModel;
     }
     return userModel;
+  }
+}
+
+class TokenAuthentication {
+  Future<TokenApiResponse> authenticateToken(String supplierId, String mudra,
+      String userID, String token, String market) async {
+    var authModel = TokenApiResponse();
+
+    var client = http.Client();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierId
+    };
+
+    final msg = jsonEncode({
+      'deviceToken': token,
+      'userId': userID,
+      'platform': 'GCM',
+      'market': market,
+      'appName': 'supplier'
+    });
+
+    print(headers);
+    print(msg);
+    print(URLEndPoints.register_device_url);
+    //try {
+    //    await client
+    //        .post(URLEndPoints.login_url, headers: headers, body: msg)
+    //        .then((response) {
+    var response = await client.post(URLEndPoints.register_device_url,
+        headers: headers, body: msg);
+    print(response.toString());
+    if (response.statusCode == 200) {
+      print(response.body);
+      print('Success response');
+      var jsonString = response.body;
+      var jsonMap = json.decode(response.body);
+      print(jsonMap.toString());
+      authModel = TokenApiResponse.fromJson(json.decode(response.body));
+      return authModel;
+    } else {
+      return authModel;
+      throw Exception('Failed to registred token');
+    }
+  }
+
+  Future<TokenApiResponse> unregisterToken(
+      String supplierId, String mudra, String token, String market) async {
+    var authModel = TokenApiResponse();
+
+    var client = http.Client();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': mudra,
+      'supplierId': supplierId
+    };
+
+    final msg = jsonEncode({
+      'deviceToken': token,
+      'platform': 'GCM',
+      'market': market,
+      'appName': 'supplier'
+    });
+
+    print(headers);
+    print(msg);
+    print(URLEndPoints.register_device_url);
+    //try {
+    //    await client
+    //        .post(URLEndPoints.login_url, headers: headers, body: msg)
+    //        .then((response) {
+    var response = await client.post(URLEndPoints.register_device_url,
+        headers: headers, body: msg);
+    print(response.toString());
+    if (response.statusCode == 200) {
+      print(response.body);
+      print('Success response');
+      var jsonString = response.body;
+      var jsonMap = json.decode(response.body);
+      print(jsonMap.toString());
+      authModel = TokenApiResponse.fromJson(json.decode(response.body));
+      return authModel;
+    } else {
+      return authModel;
+      throw Exception('Failed to registred token');
+    }
   }
 }
