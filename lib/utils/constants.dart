@@ -363,6 +363,11 @@ class Constants {
     }
   }
 
+
+  static get MIXPANEL_EVENTS_TOKEN {
+    return _config[_Config.MIXPANEL_TOKEN];
+  }
+
   static get ORDER_MANAGEMENT_SERVER {
     return _config[_Config.ORDER_MANAGEMENT_SERVER];
   }

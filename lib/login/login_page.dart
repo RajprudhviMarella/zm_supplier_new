@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
           properties: {
             "distinct_id":  path.last,
             "alias": "12345",
-            "token": "727ea70267ae81d186a7365cc2befcf4"
+            "token": Constants.MIXPANEL_EVENTS_TOKEN
           }
       );
       events.mixpanel.identify(path.last);
