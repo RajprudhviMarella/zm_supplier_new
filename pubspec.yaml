@@ -131,6 +131,7 @@ flutter:
     - assets/images/icon_sku_placeholder.png
     - assets/images/cat_icon_all.png
     - assets/images/icon_view_cataloge.png
+    - assets/images/ic_launcher_new_supplier_blue.png
     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
