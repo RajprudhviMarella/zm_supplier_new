@@ -135,6 +135,12 @@ class DashboardState extends State<DashboardPage> {
     super.initState();
     mixPanelEvents();
 
+    var androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher_new_supplier_blue');
+    var initSetttings = InitializationSettings(android: androidSettings);
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: onClickNotification);
+
     print('init called');
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
@@ -149,6 +155,9 @@ class DashboardState extends State<DashboardPage> {
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       RemoteNotification notification = event.notification;
       AndroidNotification android = event.notification?.android;
+      NotificationUri uri =
+          NotificationUri.fromJson(json.decode(event.data['uri']));
+      String orderId = uri.parameters.orderId;
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
@@ -160,13 +169,15 @@ class DashboardState extends State<DashboardPage> {
                 channel.name,
                 channel.description,
                 playSound: true,
-                icon: '@mipmap/ic_launcher_new_supplier_blue.png',
+                icon: '@mipmap/ic_launcher_new_supplier_blue',
               ),
-            ));
+            ),
+            payload: orderId);
       }
       print("message recieved");
       print(event.notification.body);
     });
+
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Message clicked!' + message.data.toString());
       RemoteNotification notification = message.notification;
@@ -211,6 +222,17 @@ class DashboardState extends State<DashboardPage> {
         });
       },
     );
+  }
+
+  Future onClickNotification(String orderId) async {
+    // final body = json.decode(payload);
+    // print(body.toString());
+    // print(body['uri']);
+    // NotificationUri uri = NotificationUri.fromJson(body['uri']);
+    // String orderId = uri.parameters.orderId;
+    // print("OrderId" + uri.parameters.orderId);
+    goToOrderDetails(orderId);
+    // print("URI===> " + uri.toString());
   }
 
   goToOrderDetails(String orderId) async {
