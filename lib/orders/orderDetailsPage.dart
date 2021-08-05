@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:zm_supplier/createOrder/market_list_page.dart';
 import 'package:zm_supplier/models/ordersResponseList.dart';
+import 'package:zm_supplier/models/response.dart';
 import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/services/ordersApi.dart';
 import 'package:zm_supplier/utils/color.dart';
@@ -63,6 +64,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
 
   String selectedReason = 'Other reason';
   Constants events = Constants();
+  dynamic userProperties;
+  ApiResponse specificUserInfo;
 
   @override
   void initState() {
@@ -84,6 +87,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
+      specificUserInfo = ApiResponse.fromJson(
+          await sharedPref.readData(Constants.specific_user_info));
+
       setState(() {
         userData = loginResponse;
         if (loginResponse.mudra != null) {
@@ -93,6 +99,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
           // ordersList = callRetreiveOrdersAPI();
         }
+        if (specificUserInfo.data != null)
+          userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId};
+
       });
     } catch (Exception) {
       // do something
@@ -408,6 +417,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   acknowledgeOrder() {
+    userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "orderId": order.orderId,"supplierId": order.supplier.supplierId, "supplierName": order.supplier.supplierName,"selectedDeliveryDate": order.timeDelivered};
+    events.mixpanel.track(Events.TAP_ORDER_DETAILS_ACKNOWLEDGE_ORDER, properties: userProperties);
     OrderApi acknowledge = new OrderApi();
     acknowledge
         .acknowledgeOrder(
@@ -639,6 +650,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   voidOrder(String reason) {
+    userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "orderId": order.orderId,"supplierId": order.supplier.supplierId, "supplierName": order.supplier.supplierName,"selectedDeliveryDate": order.timeDelivered};
+    events.mixpanel.track(Events.TAP_ORDER_DETAILS_VOID_ORDER, properties: userProperties);
     OrderApi reject = OrderApi();
 
     reject
