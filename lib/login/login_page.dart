@@ -93,22 +93,17 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 
-  setUserProfilesToMixPanel(String name, String email) {
-    getDeviceDetails().then((path) {
-      print('deviceIDs');
-      print(path.toString());
-
+  setUserProfilesToMixPanel(String userId, String name, String email) {
       events.mixpanel.track("create_alias",
           properties: {
-            "distinct_id":  path.last,
+            "distinct_id":  userId,
             "alias": "12345",
             "token": Constants.MIXPANEL_EVENTS_TOKEN
           }
       );
-      events.mixpanel.identify(path.last);
+      events.mixpanel.identify(userId);
       events.mixpanel.getPeople().set('name', name);
       events.mixpanel.getPeople().set("email", email);
-    });
   }
 
   static Future<List<String>> getDeviceDetails() async {
@@ -187,7 +182,8 @@ class _LoginPageState extends State<LoginPage> {
          // events.mixpanel.registerSuperPropertiesOnce({'name': value.data.fullName, "email": value.data.email});
          //  events.mixpanel.registerSuperProperties({'Name': value.data.fullName, 'Email': value.data.email});
 
-          setUserProfilesToMixPanel(value.data.fullName, value.data.email);
+          setUserProfilesToMixPanel(user.user.userId, value.data.fullName, value.data.email);
+
           events.mixpanel
               .track(Events.TAP_LOGIN, properties: {'email': _email});
           SharedPref.registerIntercomUser();
