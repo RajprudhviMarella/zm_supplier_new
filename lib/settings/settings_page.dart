@@ -85,12 +85,33 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: new AppBar(
+          toolbarHeight: 60,
+          centerTitle: false,
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: const EdgeInsets.only(top: 1.0),
+            child: Row(
+              children: [
+                Text(
+                  Constants.txt_account,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "SourceSansProBold",
+                      fontSize: 30),
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+          ),
+          backgroundColor: faintGrey,
+          elevation: 0,
+        ),
         backgroundColor: faintGrey,
         body: ModalProgressHUD(
           inAsyncCall: _isShowLoader,
           child: ListView(
             children: <Widget>[
-              Headers(context, Constants.txt_account, 30.0),
               profileView(context),
               menuItem(
                   context,
