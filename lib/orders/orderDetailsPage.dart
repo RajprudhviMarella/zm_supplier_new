@@ -116,7 +116,19 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
       appBar: buildAppBar(context),
       bottomNavigationBar: Container(
           height: 80.0,
-          color: Colors.white,
+          decoration: BoxDecoration(
+            color: Colors.white,
+
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 5,
+                blurRadius: 5,
+                offset: Offset(
+                    0, 3), // changes position of shadow
+              ),
+            ],
+          ),
           child: Center(
               child: Container(
                   height: 50,
@@ -143,13 +155,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         style: TextStyle(
                             fontSize: 16,
                             fontFamily: 'SourceSansProSemiBold',
-                            color: azul_blue),
+                            color: azul_blue,letterSpacing: 0),
                       ),
-                      icon: Icon(
-                        Icons.repeat_one_rounded,
-                        size: 22,
-                        color: buttonBlue,
-                      ),
+                      icon: Image.asset('assets/images/Repeat-blue.png',width: 22, height: 22,),
                       elevation: 0,
                     ),
                     new Spacer(),
@@ -167,7 +175,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                           style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'SourceSansProSemiBold',
-                              color: Colors.white),
+                              color: Colors.white,letterSpacing: 0),
                         ),
                         elevation: 0,
                       ),
@@ -218,9 +226,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     return new AppBar(
         centerTitle: true,
         title: appBarTitle,
+        shadowColor: Colors.grey.withOpacity(0.2),//faintGrey,
         backgroundColor: Colors.white,
         bottomOpacity: 0.0,
-        elevation: 0.0,
+        elevation: 3,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_outlined, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
@@ -240,7 +249,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   Widget isAcknowledged() {
     if (order.isAcknowledged != null && order.isAcknowledged) {
       return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -275,7 +284,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -679,14 +688,28 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   Widget banner(BuildContext context) {
     return new Container(
       padding:
-          new EdgeInsets.only(top: 10, left: 10.0, bottom: 8.0, right: 10.0),
+          new EdgeInsets.only(top: 10, left: 10.0, bottom: 15.0, right: 10.0),
       decoration: new BoxDecoration(color: faintGrey),
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          new Card(
-            child: new Column(
+      child: Container(
+        decoration: new BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(
+                  0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            new Column(
               children: <Widget>[
                 Center(child: isAcknowledged()),
 
@@ -716,60 +739,62 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                 Constants.OrderStatusColor(order),
                 Center(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                         child: Text('', style: TextStyle(fontSize: 4)))),
               ],
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget deliveryBanner(BuildContext context) {
     return new Container(
+
       padding: new EdgeInsets.only(top: 0, left: 0.0, bottom: 0.0, right: 0.0),
-      decoration: new BoxDecoration(color: faintGrey),
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          new Card(
-            child: new Column(
+      decoration: new BoxDecoration(color: Colors.white),
+      child: Container(
+        color: Colors.white,
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            Container(
+                decoration: BoxDecoration(
+                  color: faintGrey,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),),
+                margin: EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 15.0),
+                // color: faintGrey,
+                height: 40.0,
+                width: 40.0,
+                child: Center(child: Image.asset('assets/images/icon_delivery_truck.png',fit: BoxFit.cover,width: 20,height: 20,))
+            ),
+            new Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.fromLTRB(20.0, 10.0, 10.0, 5.0),
-                      color: faintGrey,
-                      height: 26.0,
-                      width: 26.0,
-                      child: ImageIcon(
-                          AssetImage('assets/images/icon_delivery_truck.png')),
-                    ),
-                    Text(order.getDeliveryDay(),
-                        style: TextStyle(
-                            color: grey_text,
-                            fontSize: 12.0,
-                            fontFamily: "SourceSansProRegular")),
-                  ]),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text("                ",
+                  Container(
+                    // color:Colors.orange,
+                    height: 35,
+                    child: Row(children: <Widget>[
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: Text(order.getDeliveryDay(),
                             style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18.0,
-                                fontFamily: "SourceSansProBold")),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                          child: Text(order.getDeliveryDateMonthYear(),
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16.0,
-                                  fontFamily: "SourceSansProBold")),
-                        ),
-                      ]),
+                                color: grey_text,
+                                fontSize: 12.0,
+                                fontFamily: "SourceSansProRegular")),
+                      ),
+                    ]),
+                  ),
+
+                  Text(order.getDeliveryDateMonthYear(),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18.0,
+                          fontFamily: "SourceSansProBold")),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 5)),
                   if (order.deliveryInstruction != null &&
                       order.deliveryInstruction.isNotEmpty)
@@ -799,9 +824,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                             Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 0)),
                           ]),
                     ),
-                ]),
-          )
-        ],
+                ])
+          ],
+        ),
       ),
     );
   }
@@ -814,7 +839,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         width: MediaQuery.of(context).size.width,
         color: faintGrey,
         child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
             child: Text('$count items',
                 style: TextStyle(
                     fontSize: 18,
@@ -835,12 +860,13 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     return new Card(
       margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
       color: yellow,
+      elevation: 0,
       child: new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(children: <Widget>[
-              Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-              Text("       Notes or Special request",
+              Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 10)),
+              Text("       NOTES OR SPECIAL REQUEST",
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 10.0,
@@ -871,7 +897,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
         itemBuilder: (context, index) {
           return Container(
             color: Colors.white,
-            padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
             child: new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -882,20 +908,33 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            LeftRightAlign(
-                                left: Text(products[index].productName,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProBold")),
-                                right: Text(
-                                    products[index].quantity.toString() +
-                                        " " +
-                                        products[index].unitSizeAlias.shortName,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16.0,
-                                        fontFamily: "SourceSansProRegular"))),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                              children: [
+                                Expanded(
+                                  child: Text(products[index].productName,
+                                    // textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16.0,
+                                                fontFamily: "SourceSansProSemiBold"),),
+                                ),
+
+                                Container(width: 20,),
+                                Text(
+                                          products[index].quantity.toString() +
+                                              " " +
+                                              products[index].unitSizeAlias.shortName,textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16.0,
+                                              fontFamily: "SourceSansProRegular")),
+
+                              ],
+                            ),
                             Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 0)),
                             Row(children: <Widget>[
                               Text(products[index].totalPrice.getDisplayValue(),
@@ -910,16 +949,17 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         new Card(
                           margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                           color: faintGrey,
+                          elevation: 0,
                           child: new Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Row(children: <Widget>[
                                   Padding(
                                       padding:
-                                          EdgeInsets.fromLTRB(0, 15, 0, 10)),
+                                          EdgeInsets.fromLTRB(0, 20, 0, 10)),
                                   Container(
                                     margin: EdgeInsets.only(left: 15),
-                                    child: Text("Special notes",
+                                    child: Text("SPECIAL NOTES",
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 10.0,
@@ -943,7 +983,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                     padding: EdgeInsets.fromLTRB(20, 5, 20, 5)),
                               ]),
                         ),
-                      Divider(color: greyText)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0,10,0,0),
+                        child: Divider(color: faintGrey, thickness: 2,),
+                      )
                     ]),
               ],
             ),
@@ -959,7 +1002,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   Widget smallSpaceBanner(BuildContext context) {
-    return Padding(padding: EdgeInsets.fromLTRB(10, 5, 10, 5));
+    return Padding(padding: EdgeInsets.fromLTRB(10, 10, 10, 10));
   }
 
   Widget priceDetails(BuildContext context) {
@@ -994,7 +1037,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         )
                       ])
                     ]),
-                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 5)),
+                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
                 if (order.promoCode != null && order.promoCode.isNotEmpty)
                   Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1039,7 +1082,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                           )
                         ])
                       ]),
-                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 5)),
+                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10)),
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -1060,7 +1103,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       ])
                     ]),
                 Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-                Divider(color: greyText),
+                Divider(color: faintGrey, thickness: 2,),
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -1082,7 +1125,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       ])
                     ]),
               ]),
-          Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 20)),
+          Padding(padding: EdgeInsets.fromLTRB(20, 5, 20, 15)),
         ],
       ),
     );
@@ -1100,54 +1143,64 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           if (order.createdBy != null &&
               order.createdBy.id != userData.user.userId)
             Expanded(
+                child: SizedBox(
+                  height: 50,
+                  child: RaisedButton(
+
+                      color: Colors.white,
+
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0)),
+                      onPressed: () {
+                        events.mixpanel.track(Events.TAP_ORDER_DETAILS_CONTACT);
+                        events.mixpanel.flush();
+                        _newTaskModalBottomSheet(context);
+                      },
+                      elevation: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          ImageIcon(AssetImage('assets/images/icon_phone.png'),
+                              color: buttonBlue),
+                          Text(
+                            ' Contact',
+                            style: TextStyle(
+                                color: buttonBlue,
+                                fontSize: 16.0,
+                                fontFamily: "SourceSansProSemiBold"),
+                          ),
+                        ],
+                      )),
+                )),
+          Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
+          Expanded(
+              child: SizedBox(
+                height: 50,
                 child: RaisedButton(
                     color: Colors.white,
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30.0)),
                     onPressed: () {
-                      events.mixpanel.track(Events.TAP_ORDER_DETAILS_CONTACT);
+                      events.mixpanel.track(Events.TAP_ORDER_DETAILS_VIEW_AS_PDF);
                       events.mixpanel.flush();
-                      _newTaskModalBottomSheet(context);
+                      openPdf(context);
                     },
+                    elevation: 0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        ImageIcon(AssetImage('assets/images/icon_phone.png'),
+                        ImageIcon(AssetImage('assets/images/icon_view_pdf.png'),
                             color: buttonBlue),
                         Text(
-                          ' Contact',
+                          ' View as PDF',
                           style: TextStyle(
                               color: buttonBlue,
                               fontSize: 16.0,
                               fontFamily: "SourceSansProSemiBold"),
                         ),
                       ],
-                    ))),
-          Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
-          Expanded(
-              child: RaisedButton(
-                  color: Colors.white,
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30.0)),
-                  onPressed: () {
-                    events.mixpanel.track(Events.TAP_ORDER_DETAILS_VIEW_AS_PDF);
-                    events.mixpanel.flush();
-                    openPdf(context);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ImageIcon(AssetImage('assets/images/icon_view_pdf.png'),
-                          color: buttonBlue),
-                      Text(
-                        ' View as PDF',
-                        style: TextStyle(
-                            color: buttonBlue,
-                            fontSize: 16.0,
-                            fontFamily: "SourceSansProSemiBold"),
-                      ),
-                    ],
-                  )))
+                    )),
+              ))
         ],
       ),
     );
