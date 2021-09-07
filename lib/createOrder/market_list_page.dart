@@ -395,8 +395,11 @@ class MarketListDesign extends State<MarketListPage>
                             if (_controller.text.isEmpty) {
                               return displaySearchedList(snapShot, index);
                             } else if (snapShot.data[index].productName
-                                .toLowerCase()
-                                .contains(_controller.text)) {
+                                    .toLowerCase()
+                                    .contains(_controller.text) ||
+                                snapShot.data[index].supplierProductCode
+                                    .toLowerCase()
+                                    .contains(_controller.text)) {
                               return displaySearchedList(snapShot, index);
                             } else {
                               return Container();
@@ -435,13 +438,32 @@ class MarketListDesign extends State<MarketListPage>
             if (marketList.supplierProductCode != null &&
                 marketList.supplierProductCode.isNotEmpty)
               Text(
-                "  •  " + marketList.supplierProductCode,
+                "  •  ",
                 style: TextStyle(
                   fontSize: 12.0,
                   color: greyText,
                   fontFamily: "SourceSansProRegular",
                 ),
               ),
+            RichText(
+              text: TextSpan(
+                children: highlightOccurrences(
+                    marketList.supplierProductCode, _controller.text, true),
+                style: TextStyle(
+                    fontSize: 12.0,
+                    color: greyText,
+                    fontFamily: "SourceSansProRegular"),
+              ),
+            ),
+
+            // Text(
+            //   "  •  " + marketList.supplierProductCode,
+            //   style: TextStyle(
+            //     fontSize: 12.0,
+            //     color: greyText,
+            //     fontFamily: "SourceSansProRegular",
+            //   ),
+            // ),
           ]),
           Align(
             alignment: Alignment.centerLeft,
@@ -963,7 +985,9 @@ class MarketListDesign extends State<MarketListPage>
                   title: RichText(
                     text: TextSpan(
                       children: highlightOccurrences(
-                          snapShot.data[index].productName, _controller.text),
+                          snapShot.data[index].productName,
+                          _controller.text,
+                          false),
                       style: TextStyle(
                           fontSize: 16.0,
                           color: Colors.black,
@@ -975,7 +999,8 @@ class MarketListDesign extends State<MarketListPage>
     );
   }
 
-  List<TextSpan> highlightOccurrences(String source, String query) {
+  List<TextSpan> highlightOccurrences(
+      String source, String query, bool isProductCode) {
     if (query == null ||
         query.isEmpty ||
         !source.toLowerCase().contains(query.toLowerCase())) {
@@ -984,7 +1009,13 @@ class MarketListDesign extends State<MarketListPage>
     final matches = query.toLowerCase().allMatches(source.toLowerCase());
 
     int lastMatchEnd = 0;
+    var size = 16.0;
+    var fontFamily = "SourceSansProSemiBold";
 
+    if (isProductCode == true) {
+      size = 12.0;
+      fontFamily = "SourceSansProRegular";
+    }
     final List<TextSpan> children = [];
     for (var i = 0; i < matches.length; i++) {
       final match = matches.elementAt(i);
@@ -997,10 +1028,8 @@ class MarketListDesign extends State<MarketListPage>
 
       children.add(TextSpan(
         text: source.substring(match.start, match.end),
-        style: TextStyle(
-            fontSize: 16.0,
-            color: chartBlue,
-            fontFamily: "SourceSansProSemiBold"),
+        style:
+            TextStyle(fontSize: size, color: chartBlue, fontFamily: fontFamily),
       ));
 
       if (i == matches.length - 1 && match.end != source.length) {
@@ -1298,6 +1327,12 @@ class MarketListDesign extends State<MarketListPage>
         productslist.add(products);
       }
     createOrderModel.products = productslist;
+
+    if (productslist.isEmpty) {
+      _hideLoader();
+      Navigator.of(context).pop();
+      return;
+    }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
