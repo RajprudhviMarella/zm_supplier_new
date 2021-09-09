@@ -25,3 +25,4 @@ Color sandal = Color(0xfffff6de);
 Color litGreen = Color(0xffe5fff1);
 Color thickGreen = Color(0xff00b654);
 Color graph_yellow = Color(0xfffdca40);
+Color orange_thick = Color(0xffff8038);

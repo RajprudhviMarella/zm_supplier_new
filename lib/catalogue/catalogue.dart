@@ -628,6 +628,7 @@ class CatalogueDesign extends State<Catalogue> {
                               onTap: () async {
                                 showDialog(
                                     context: context,
+                                    barrierDismissible: true,
                                     builder: (BuildContext context) {
                                       return Productdetails(
                                         catalogueProducts: snapshot.data[index],

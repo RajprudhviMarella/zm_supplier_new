@@ -25,9 +25,7 @@ class ProductdetailsState extends State<Productdetails> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      insetPadding: EdgeInsets.zero,
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: contentBox(context),
@@ -35,15 +33,17 @@ class ProductdetailsState extends State<Productdetails> {
   }
 
   contentBox(context) {
-    return Stack(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(left: 20, top: 25, right: 20, bottom: 20),
+          padding: EdgeInsets.only(left: 20, top: 0, right: 0, bottom: 5),
           margin: EdgeInsets.only(top: 5),
           decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10), topLeft: Radius.circular(10)),
               boxShadow: [
                 BoxShadow(
                     color: Colors.black, offset: Offset(0, 3), blurRadius: 10),
@@ -57,13 +57,15 @@ class ProductdetailsState extends State<Productdetails> {
                 Row(
                   children: [
                     Expanded(
+                        child: Container(
+                      margin: EdgeInsets.fromLTRB(0, 10, 0, 3),
                       child: Text(
                         widget.catalogueProducts.productName,
                         style: TextStyle(
                             fontSize: 18, fontFamily: "SourceSansProBold"),
                         textAlign: TextAlign.left,
                       ),
-                    ),
+                    )),
                   ],
                 ),
                 Row(
@@ -169,7 +171,7 @@ class ProductdetailsState extends State<Productdetails> {
                   ),
                   if (pro.countryOfOrigin != null)
                     Padding(
-                      padding: const EdgeInsets.only(left: 30.0),
+                      padding: const EdgeInsets.only(left: 25.0),
                       child: Container(
                           child: Text(
                         pro.countryOfOrigin,
@@ -229,7 +231,7 @@ class ProductdetailsState extends State<Productdetails> {
                   padding: const EdgeInsets.only(left: 80.0),
                   child: Container(
                     // margin: EdgeInsets.symmetric(vertical: 1.0),
-                    width: 100,
+                    width: 170,
                     //  height: 200,
                     //     child: Flexible(
                     child: Text(
@@ -287,7 +289,7 @@ class ProductdetailsState extends State<Productdetails> {
                       pro.directorySettings.shelfLife.duration != null &&
                       pro.directorySettings.shelfLife.time != null)
                     Padding(
-                      padding: const EdgeInsets.only(left: 80.0),
+                      padding: const EdgeInsets.only(left: 78.0),
                       child: Container(
                           child: Text(
                         pro.directorySettings.shelfLife.time +
@@ -341,7 +343,7 @@ class ProductdetailsState extends State<Productdetails> {
                   if (pro.directorySettings != null &&
                       pro.directorySettings.condition != null)
                     Padding(
-                      padding: const EdgeInsets.only(left: 75.0),
+                      padding: const EdgeInsets.only(left: 70.0),
                       child: Container(
                           child: Text(
                         pro.directorySettings.condition,
@@ -384,7 +386,7 @@ class ProductdetailsState extends State<Productdetails> {
       return Container(
           height: 375,
           width: 375,
-          margin: EdgeInsets.fromLTRB(5, 15, 5, 15),
+          margin: EdgeInsets.fromLTRB(5, 15, 15, 5),
           child: Image.network(
             url,
             fit: BoxFit.fill,
@@ -407,46 +409,57 @@ class ProductdetailsState extends State<Productdetails> {
   Widget displayCertImage(String certName) {
     var assetName = 'assets/images/cert_vegan.png';
     Color color = Colors.blue;
+    Color textColor = Colors.black;
 
     if (certName == 'Halal') {
       assetName = 'assets/images/cert_halal.png';
       color = litGreen;
+      textColor = thickGreen;
     }
     if (certName == 'Vegetarian') {
       assetName = 'assets/images/cert_vegetarian.png';
       color = litGreen;
+      textColor = thickGreen;
     }
     if (certName == 'Organic') {
       assetName = 'assets/images/cert_organic.png';
       color = litGreen;
+      textColor = thickGreen;
     }
     if (certName == 'Vegan') {
       assetName = 'assets/images/cert_vegan.png';
       color = litGreen;
+      textColor = thickGreen;
     }
     if (certName == 'Gluten-free') {
       assetName = 'assets/images/cert_gluten.png';
       color = sandal;
+      textColor = orange_thick;
     }
     if (certName == 'Kosher') {
       assetName = 'assets/images/cert_halal.png';
       color = sandal;
+      textColor = orange_thick;
     }
     if (certName == 'FDA') {
       assetName = 'assets/images/cert_fda.png';
       color = Colors.blue;
+      textColor = Colors.white;
     }
     if (certName == 'Fairtrade') {
       assetName = 'assets/images/cert_fairtrade.png';
       color = sandal;
+      textColor = orange_thick;
     }
     if (certName == 'GMP') {
       assetName = 'assets/images/cert_gmp.png';
       color = Colors.blue;
+      textColor = Colors.white;
     }
     if (certName == 'HAACP') {
       assetName = 'assets/images/cert_haacp.png';
       color = Colors.blue;
+      textColor = Colors.white;
     }
 
     return Padding(
@@ -477,7 +490,7 @@ class ProductdetailsState extends State<Productdetails> {
               style: TextStyle(
                   fontFamily: 'SourceSansProSemiBold',
                   fontSize: 14,
-                  color: Colors.black),
+                  color: textColor),
             ),
           ),
         ]),
