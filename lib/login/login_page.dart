@@ -239,6 +239,12 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           height: height,
           width: width,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/login_bg.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
           child: SingleChildScrollView(
             reverse: true,
             child: Column(
@@ -253,14 +259,17 @@ class _LoginPageState extends State<LoginPage> {
 
                   child: Stack(
                     children: <Widget>[
-                      Image.asset(
-                        'assets/images/img_welcome_salmon.png',
-                        fit: BoxFit.cover,
-                        // height: height,//double.infinity,
-                        // width: width,//double.infinity,
-                        height: double.infinity,
-                        width: double.infinity,
-                      ),
+
+                  Center(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(40, 80, 40, 10),
+                  child: Image.asset(
+                    'assets/images/visual.png',
+                    fit: BoxFit.fill,
+                    // height: height,//double.infinity,
+                    // width: width,//double.infinity,
+                  ),
+                ),),
 
                       // FadeInImage(
                       //   placeholder: AssetImage("assets/images/blackdot.png"),
@@ -300,8 +309,8 @@ class _LoginPageState extends State<LoginPage> {
                       Text(
                         'Welcome back',
                         style: TextStyle(
-                            fontSize: 25,
-                            color: Colors.black,
+                            fontSize: 30,
+                            color: Colors.white,
                             fontFamily: "SourceSansProBold"),
                       ),
                     ],
@@ -332,9 +341,9 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       //  controller: emailController,
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           height: 1.5,
-                          fontFamily: "SourceSansProRegular"),
+                          fontFamily: "SourceSansProRegular", color: Colors.white),
                       //cursorColor: Color(0xff999999),
 
                       decoration: InputDecoration(
@@ -343,16 +352,17 @@ class _LoginPageState extends State<LoginPage> {
                           hintText: 'Email',
                           hintStyle: TextStyle(
                               fontSize: 16,
-                              color: greyText,
+                              color: Colors.white.withOpacity(0.5),
                               fontFamily: "SourceSansProRegular"),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: greyText,
+                              color: Colors.white.withOpacity(0.5),
                               width: 0.5,
+
                             ),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: buttonBlue))),
+                              borderSide: BorderSide(color: Colors.white))),
                     ),
                   ),
                 ),
@@ -384,9 +394,9 @@ class _LoginPageState extends State<LoginPage> {
                       // obscureText: true,
 
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           height: 1.5,
-                          fontFamily: "SourceSansProRegular"),
+                          fontFamily: "SourceSansProRegular", color: Colors.white),
 
                       //  cursorColor: Color(0xff999999),
                       decoration: InputDecoration(
@@ -397,23 +407,23 @@ class _LoginPageState extends State<LoginPage> {
                                   ? Icons.visibility_off
                                   : Icons.visibility_rounded,
                               size: 22.0,
-                              color: Colors.grey,
+                              color: Colors.white,
                             ),
                           ),
                           hintText: 'Password',
                           //  suffixIcon: Icon(Icons.visibility_off),
                           hintStyle: TextStyle(
                               fontSize: 16,
-                              color: greyText,
+                              color: Colors.white.withOpacity(0.5),
                               fontFamily: "SourceSansProRegular"),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: greyText,
+                              color: Colors.white.withOpacity(0.5),
                               width: 0.5,
                             ),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: buttonBlue))),
+                              borderSide: BorderSide(color: Colors.white))),
                     ),
                   ),
                 ),
@@ -442,7 +452,7 @@ class _LoginPageState extends State<LoginPage> {
                             'Forgot password?',
                             style: TextStyle(
                                 fontSize: 14,
-                                color: buttonBlue,
+                                color: Colors.white,
                                 fontFamily: "SourceSansProRegular"),
                           ),
                         ]),
@@ -458,10 +468,10 @@ class _LoginPageState extends State<LoginPage> {
                   height: 48,
                   padding: EdgeInsets.only(left: 20, right: 20),
                   child: FlatButton(
-                    disabledColor: lightGreen.withOpacity(0.5),
+                    disabledColor: Colors.white.withOpacity(0.5),
                     color: (isEmailFilled && isPasswordFilled)
-                        ? lightGreen
-                        : lightGreen.withOpacity(0.5),
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.5),
                     onPressed: isEmailFilled && isPasswordFilled
                         ? () {
                             FocusScope.of(context).unfocus();
@@ -475,7 +485,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       'Log in',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: buttonBlue,
                           fontSize: 16,
                           fontFamily: "SourceSansProSemiBold"),
                     ),
