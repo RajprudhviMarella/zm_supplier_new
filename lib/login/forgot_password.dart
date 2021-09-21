@@ -134,6 +134,12 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
         child: Container(
           height: height,
           width: width,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/login_bg.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
           child: SingleChildScrollView(
             // physics: ClampingScrollPhysics(),
 
@@ -156,14 +162,25 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
 
                     child: Stack(
                       children: <Widget>[
-                        FadeInImage(
-                          placeholder: AssetImage("assets/images/blackdot.png"),
-                          image: AssetImage(
-                              "assets/images/img_welcome_salmon.png"),
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                          width: double.infinity,
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(40, 80, 40, 10),
+                            child: Image.asset(
+                              'assets/images/visual.png',
+                              fit: BoxFit.fill,
+                              // height: height,//double.infinity,
+                              // width: width,//double.infinity,
+                            ),
+                          ),
                         ),
+                        // FadeInImage(
+                        //   placeholder: AssetImage("assets/images/blackdot.png"),
+                        //   image: AssetImage(
+                        //       "assets/images/img_welcome_salmon.png"),
+                        //   fit: BoxFit.cover,
+                        //   height: double.infinity,
+                        //   width: double.infinity,
+                        // ),
                         Padding(
                           padding: const EdgeInsets.only(left: 20, top: 40),
                           child: Image.asset(
@@ -195,8 +212,8 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                         Text(
                           'Reset password',
                           style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.black,
+                              fontSize: 30,
+                              color: Colors.white,
                               fontFamily: "SourceSansProBold"),
                         ),
                       ],
@@ -234,16 +251,16 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                           hintText: 'Email',
                           hintStyle: TextStyle(
                               fontSize: 16,
-                              color: greyText,
+                              color: Colors.white.withOpacity(0.5),
                               fontFamily: "SourceSansProRegular"),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: greyText,
+                              color: Colors.white.withOpacity(0.5),
                               width: 0.5,
                             ),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: buttonBlue))),
+                              borderSide: BorderSide(color: Colors.white))),
                     ),
                   ),
                   SizedBox(
@@ -268,7 +285,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                               'Back to login',
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: buttonBlue,
+                                  color: Colors.white,
                                   fontFamily: "SourceSansProRegular"),
                             ),
                           ]),
@@ -288,10 +305,10 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                     height: 48,
                     padding: EdgeInsets.only(left: 20, right: 20),
                     child: FlatButton(
-                      disabledColor: buttonBlue.withOpacity(0.5),
+                      disabledColor: Colors.white.withOpacity(0.5),
                       color: (isEmailFilled)
-                          ? buttonBlue
-                          : buttonBlue.withOpacity(0.5),
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.5),
                       onPressed: isEmailFilled
                           ? () {
                               validator();
@@ -300,7 +317,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                       child: Text(
                         'Request password reset',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: buttonBlue.withOpacity(0.5),
                             fontSize: 16,
                             fontFamily: "SourceSansProSemiBold"),
                       ),
