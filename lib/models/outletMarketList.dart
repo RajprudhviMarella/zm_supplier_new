@@ -42,10 +42,11 @@ class OutletMarketResponse {
   int currentPageNumber;
   List<OutletMarketList> data;
 
-  OutletMarketResponse({this.numberOfPages,
-    this.numberOfRecords,
-    this.currentPageNumber,
-    this.data});
+  OutletMarketResponse(
+      {this.numberOfPages,
+      this.numberOfRecords,
+      this.currentPageNumber,
+      this.data});
 
   OutletMarketResponse.fromJson(Map<String, dynamic> json) {
     numberOfPages = json['numberOfPages'];
@@ -105,34 +106,35 @@ class OutletMarketList {
   var quantity;
   bool isSelected = false;
 
-  OutletMarketList({this.dateCreated,
-    this.dateUpdated,
-    this.timeUpdated,
-    this.createdBy,
-    this.updatedBy,
-    this.status,
-    this.sku,
-    this.outletId,
-    this.supplierId,
-    this.productName,
-    this.supplierProductCode,
-    this.categoryPath,
-    this.categoryTags,
-    this.description,
-    this.images,
-    this.priceList,
-    this.isFavourite,
-    this.timeCreated,
-    this.tags,
-    this.certifications,
-    this.timePriceUpdated,
-    this.bgColor,
-    this.txtColor,
-    this.quantity,
-    this.skuNotes,
-    this.txtSize,
-    this.isSelected,
-    this.selectedQuantity});
+  OutletMarketList(
+      {this.dateCreated,
+      this.dateUpdated,
+      this.timeUpdated,
+      this.createdBy,
+      this.updatedBy,
+      this.status,
+      this.sku,
+      this.outletId,
+      this.supplierId,
+      this.productName,
+      this.supplierProductCode,
+      this.categoryPath,
+      this.categoryTags,
+      this.description,
+      this.images,
+      this.priceList,
+      this.isFavourite,
+      this.timeCreated,
+      this.tags,
+      this.certifications,
+      this.timePriceUpdated,
+      this.bgColor,
+      this.txtColor,
+      this.quantity,
+      this.skuNotes,
+      this.txtSize,
+      this.isSelected,
+      this.selectedQuantity});
 
   OutletMarketList.fromJson(Map<String, dynamic> json) {
     dateCreated = json['dateCreated'];
@@ -304,7 +306,20 @@ class Price {
   var amountV1;
   int amount;
 
-  double getAmount() {
+  // double getAmount() {
+  //   if (amountV1 == null) {
+  //     return 0.0;
+  //   } else {
+  //     return amountV1.toDouble();
+  //   }
+  // }
+
+  // String getDisplayValue() {
+  //   var amt = getAmount().toStringAsFixed(2);
+  //   return "\$$amt";
+  // }
+
+  dynamic getAmount() {
     if (amountV1 == null) {
       return 0.0;
     } else {
@@ -312,9 +327,32 @@ class Price {
     }
   }
 
-  String getDisplayValue() {
-    var amt = getAmount().toStringAsFixed(2);
-    return "\$$amt";
+  String getDisplayValue(String currencyCode) {
+    dynamic amt;
+    if (currencyCode == 'Rp') {
+      amt = getAmountAmt();
+    } else {
+      amt = getAmount();
+    }
+    return amt.toString();
+  }
+
+  String getDisplayValueAmt(String currencyCode) {
+    dynamic amt;
+    if (currencyCode == 'Rp') {
+      amt = getAmountAmt();
+    } else {
+      amt = getAmount();
+    }
+    return amt.toString();
+  }
+
+  dynamic getAmountAmt() {
+    if (amountV1 == null) {
+      return 0.0;
+    } else {
+      return amountV1;
+    }
   }
 
   Price({this.currencyCode, this.amountV1, this.amount});

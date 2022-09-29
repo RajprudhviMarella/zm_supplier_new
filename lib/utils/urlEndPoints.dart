@@ -45,6 +45,10 @@ class URLEndPoints {
     return Constants.ORDER_MANAGEMENT_SERVER + "orders/po/draft/edit/place";
   }
 
+  static get validate_add_on_order {
+    return Constants.ORDER_MANAGEMENT_SERVER + "orders/po/validate/addOn";
+  }
+
   static get create_draft_orders {
     return Constants.ORDER_MANAGEMENT_SERVER + "orders/po/draft";
   }

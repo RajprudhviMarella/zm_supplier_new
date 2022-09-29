@@ -37,6 +37,7 @@ class SearchOrderDesign extends State<SearchOrderPage>
   int pageSize = 50;
   ScrollController controller;
   String searchedString;
+  String currencyCode;
 
   @override
   void initState() {
@@ -57,6 +58,16 @@ class SearchOrderDesign extends State<SearchOrderPage>
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
+      String market = await sharedPref.readData(Constants.USER_MARKET);
+      if (market != null) {
+        if (market == 'id') {
+          currencyCode = 'Rp';
+        } else {
+          currencyCode = '\$';
+        }
+      } else {
+        currencyCode = '\$';
+      }
       setState(() {
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
@@ -247,7 +258,9 @@ class SearchOrderDesign extends State<SearchOrderPage>
                                       ]),
                                 ),
                                 trailing: Text(
-                                    element.amount.total.getDisplayValue(),
+                                    currencyCode +
+                                        element.amount.total
+                                            .getDisplayValue(currencyCode),
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         color: Colors.black,

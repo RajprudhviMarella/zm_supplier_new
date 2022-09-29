@@ -51,6 +51,7 @@ class Constants {
   static const String login_Info = "loginInfo";
   static const String recent_search_info_Info = "recentSearchCatalogueInfo";
   static const String PASSWORD_ENCRYPTED = "PASSWORD_ENCRYPTED";
+  static const String USER_MARKET = "USER_MARKET";
   static const String specific_user_info = "specificUserInfo";
   static const String USER_NAME = "USER_NAME";
   static const String USER_EMAIL = "USER_EMAIL";
@@ -345,7 +346,7 @@ class Constants {
   static Future<Mixpanel> initMixPanel() async {
     //below is the project token from mixpanel.
     Mixpanel mixPanel = await Mixpanel.init(_config[_Config.MIXPANEL_TOKEN],
-            optOutTrackingDefault: false);
+        optOutTrackingDefault: false);
 
     return mixPanel;
   }
@@ -362,7 +363,6 @@ class Constants {
         break;
     }
   }
-
 
   static get MIXPANEL_EVENTS_TOKEN {
     return _config[_Config.MIXPANEL_TOKEN];
@@ -493,4 +493,32 @@ class _Config {
     NOTIFICATION_SERVER: "http://zm-notificationserv.zeemart.asia/services/",
     MIXPANEL_TOKEN: "098cdda8acc6d1465f1f0ffae9d276b2"
   };
+}
+
+class CurrencyCodeString {
+  getCurrency() {
+    SharedPref sharedPref = SharedPref();
+    String userMaket = sharedPref.readData(Constants.USER_MARKET);
+    if (userMaket != null) {
+      if (userMaket == 'id') {
+        return 'Rp';
+      } else {
+        return '\$';
+      }
+    } else {
+      return '\$';
+    }
+  }
+}
+
+class SharedPrefUtils {
+  static saveStr(String key, String message) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString(key, message);
+  }
+
+  static readPrefStr(String key) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString(key);
+  }
 }
