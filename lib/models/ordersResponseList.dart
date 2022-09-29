@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zm_supplier/models/unitSizeAlias.dart';
+import 'package:zm_supplier/utils/constants.dart';
 
 class OrdersBaseResponse {
   OrdersBaseResponse({
@@ -98,12 +99,13 @@ class Orders {
 
   bool isAddOn;
   String linkedOrder;
+  List<String> addOns;
   bool isAcknowledged;
 
   String getTimeDelivered() {
     if (timeDelivered != null) {
       DateTime dateTime =
-      new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
+          new DateTime.fromMillisecondsSinceEpoch(this.timeDelivered * 1000);
       return DateFormat('EEE d MMM').format(dateTime);
     }
     return '';
@@ -186,6 +188,7 @@ class Orders {
       this.isAddOn,
       this.linkedOrder,
       this.isAcknowledged,
+      this.addOns,
       this.pdfURL});
 
   Orders.fromJson(Map<String, dynamic> json) {
@@ -255,6 +258,9 @@ class Orders {
     isAddOn = json["isAddOn"];
     linkedOrder = json['linkedOrder'];
     isAcknowledged = json['isAcknowledged'];
+    addOns = json["addOns"] == null
+        ? null
+        : List<String>.from(json["addOns"].map((x) => x));
   }
 
   Map<String, dynamic> toJson() {
@@ -315,6 +321,7 @@ class Orders {
     data['isAddOn'] = this.isAddOn;
     data['linkedOrder'] = this.linkedOrder;
     data['isAcknowledged'] = this.isAcknowledged;
+    data['addOns'] = List<dynamic>.from(this.addOns.map((x) => x));
     return data;
   }
 }
@@ -760,9 +767,32 @@ class DeliveryFee {
     }
   }
 
-  String getDisplayValue() {
-    dynamic amt = getAmount();
-    return "\$$amt";
+  String getDisplayValue(String currencyCode) {
+    dynamic amt;
+    if (currencyCode == 'Rp') {
+      amt = getAmountAmt();
+    } else {
+      amt = getAmount();
+    }
+    return amt.toString();
+  }
+
+  String getDisplayValueAmt(String currencyCode) {
+    dynamic amt;
+    if (currencyCode == 'Rp') {
+      amt = getAmountAmt();
+    } else {
+      amt = getAmount();
+    }
+    return amt.toString();
+  }
+
+  dynamic getAmountAmt() {
+    if (amountV1 == null) {
+      return 0.0;
+    } else {
+      return amountV1;
+    }
   }
 
   DeliveryFee({this.currencyCode, this.amount, this.amountV1});
@@ -873,5 +903,51 @@ class OrderDetailsResponse {
         "status": status,
         "message": message,
         "data": data.toJson(),
+      };
+}
+
+class ValidateAddOnOrderResponse {
+  ValidateAddOnOrderResponse({
+    this.path,
+    this.timestamp,
+    this.status,
+    this.message,
+    this.data,
+  });
+
+  String path;
+  DateTime timestamp;
+  int status;
+  String message;
+  ValidateAddOnOrderData data;
+
+  factory ValidateAddOnOrderResponse.fromJson(Map<String, dynamic> json) =>
+      ValidateAddOnOrderResponse(
+        path: json["path"],
+        timestamp: DateTime.parse(json["timestamp"]),
+        status: json["status"],
+        message: json["message"],
+        data: ValidateAddOnOrderData.fromJson(json["data"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "path": path,
+        "timestamp": timestamp.toIso8601String(),
+        "status": status,
+        "message": message,
+        "data": data.toJson(),
+      };
+}
+
+class ValidateAddOnOrderData {
+  ValidateAddOnOrderData({this.isAddOn});
+
+  bool isAddOn;
+
+  factory ValidateAddOnOrderData.fromJson(Map<String, dynamic> json) =>
+      ValidateAddOnOrderData(isAddOn: json["isAddOn"]);
+
+  Map<String, dynamic> toJson() => {
+        "isAddOn": isAddOn,
       };
 }

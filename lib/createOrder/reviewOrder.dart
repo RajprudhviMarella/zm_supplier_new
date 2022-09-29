@@ -7,6 +7,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/home/home_page.dart';
 import 'package:zm_supplier/models/createOrderModel.dart';
+import 'package:zm_supplier/models/ordersResponseList.dart';
 import 'package:zm_supplier/models/outletMarketList.dart';
 import 'package:zm_supplier/models/placeOrderResponse.dart';
 import 'package:zm_supplier/models/response.dart';
@@ -70,6 +71,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
 
   ReviewOrderDesign(this.lstDeliveryDates);
 
+  Future<ValidateAddOnOrderData> addOnOrderData;
+
   Constants events = Constants();
   TextInputType keyboard;
   TextInputFormatter regExp;
@@ -79,6 +82,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
   ApiResponse specificUserInfo;
   dynamic userProperties;
   LoginResponse loginResponse;
+  String currencyCode;
 
   @override
   void initState() {
@@ -109,6 +113,41 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     });
   }
 
+  Future<ValidateAddOnOrderData> getAddOnOrderResponse() async {
+    var ordersModel = ValidateAddOnOrderResponse();
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      // 'mudra': mudra,
+      'Ragasiyam': 'Ragasiyam',
+      'supplierId': supplierID
+    };
+    print(headers);
+    Map<String, String> queryParams = {
+      'supplierId': supplierID,
+      'outletId': widget.outletId,
+      'timeDelivered': selectedDate.toString(),
+      'orderType': 'Single'
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+    var requestUrl = URLEndPoints.validate_add_on_order + '?' + queryString;
+    print(requestUrl);
+    var response = await http.get(requestUrl, headers: headers);
+    print(response.body);
+    var jsonMap = json.decode(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      ordersModel = ValidateAddOnOrderResponse.fromJson(jsonMap);
+      isAddonOrder = ordersModel.data.isAddOn;
+      print(isAddonOrder);
+      setState(() {
+        calculatePrice();
+      });
+      return ordersModel.data;
+    }
+  }
+
   void _hideLoader() {
     setState(() {
       _isShowLoader = false;
@@ -123,6 +162,16 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           await sharedPref.readData(Constants.login_Info));
       specificUserInfo = ApiResponse.fromJson(
           await sharedPref.readData(Constants.specific_user_info));
+      String market = await sharedPref.readData(Constants.USER_MARKET);
+      if (market != null) {
+        if (market == 'id') {
+          currencyCode = 'Rp';
+        } else {
+          currencyCode = '\$';
+        }
+      } else {
+        currencyCode = '\$';
+      }
 
       setState(() {
         if (loginResponse.mudra != null) {
@@ -132,6 +181,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
           supplierID = loginResponse.user.supplier.elementAt(0).supplierId;
           supplierName = loginResponse.user.supplier.elementAt(0).supplierName;
         }
+        addOnOrderData = getAddOnOrderResponse();
       });
     } catch (Exception) {}
   }
@@ -210,9 +260,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               Container(
                                 margin: EdgeInsets.only(left: 2),
                                 child: Text(
-                                  NumberFormat.simpleCurrency()
-                                      .format(totalPrice)
-                                      .toString(),
+                                  currencyCode + totalPrice.toString(),
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontFamily: 'SourceSansProBold',
@@ -275,6 +323,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                     displayList(context),
                     Headers("Notes / special requests"),
                     EditNotes(),
+                    if (isAddonOrder == true) showAddOnOrder(context),
                     priceDetails(context)
                   ],
                 ))));
@@ -294,6 +343,81 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     );
   }
 
+  Widget showAddOnOrder(BuildContext context) {
+    return GestureDetector(
+        onTap: () {
+          print("Click event on Container");
+          addOnOrderInfo(context);
+        },
+        child: Container(
+            color: faintGrey,
+            margin: EdgeInsets.only(top: 2.0),
+            padding: EdgeInsets.only(
+                left: 15.0, right: 20.0, top: 15.0, bottom: 10.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(children: <Widget>[
+                    Icon(
+                      Icons.info,
+                      color: buttonBlue,
+                      size: 24,
+                    ),
+                    Text(' This is an ',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "SourceSansProRegular",
+                            color: Colors.black)),
+                    Text('add-on order.',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "SourceSansProBold",
+                            color: Colors.black)),
+                    Spacer(),
+                    Text('What are add-on orders?',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "SourceSansProRegular",
+                            color: buttonBlue)),
+                  ]),
+                ])));
+  }
+
+  void addOnOrderInfo(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            height: 150,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // Padding(padding: EdgeInsets.fromLTRB(15, 5, 0, 0)),
+
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Text("Related orders with same delivery date",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "SourceSansProSemiBold",
+                          fontSize: 16)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+                  child: Text(
+                      "If there’s already an order placed for a delivery date, subsequent orders for the same date are treated as add-on orders. Settings for minimum order value and delivery fee will be ignored in add-on orders.",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "SourceSansProSemiRegular",
+                          fontSize: 14)),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
   calculatePrice() {
     double totalPriceCentAllItems = 0.0;
     for (var i = 0; i < widget.marketList.length; i++) {
@@ -303,6 +427,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       totalPriceCentAllItems = totalPriceCentAllItems + doubleTotalPriceCent;
     }
     totalSkusPrice = totalPriceCentAllItems;
+
     if (lstDeliveryDates[0].deliveryFeePolicy.type == "APPLY_FEE" &&
         !isAddonOrder) {
       if (lstDeliveryDates[0].deliveryFeePolicy.condition ==
@@ -365,9 +490,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
                             right: Text(
-                                NumberFormat.simpleCurrency()
-                                    .format(totalSkusPrice)
-                                    .toString(),
+                                currencyCode + totalSkusPrice.toString(),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -409,9 +532,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  NumberFormat.simpleCurrency()
-                                      .format(totalDeliveryPrice)
-                                      .toString(),
+                                  currencyCode + totalDeliveryPrice.toString(),
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
@@ -436,10 +557,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     color: greyText,
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
-                            right: Text(
-                                NumberFormat.simpleCurrency()
-                                    .format(totalGstPrice)
-                                    .toString(),
+                            right: Text(currencyCode + totalGstPrice.toString(),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -1078,7 +1196,9 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         child: Column(children: <Widget>[
           Row(children: <Widget>[
             Text(
-              marketList.priceList[0].price.getDisplayValue() + " / ",
+              currencyCode +
+                  marketList.priceList[0].price.getDisplayValue(currencyCode) +
+                  " / ",
               style: TextStyle(
                 fontSize: 12.0,
                 color: greyText,
@@ -1489,6 +1609,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                         }
                       }
                     }
+                    addOnOrderData = getAddOnOrderResponse();
                   });
                 },
                 child: contianer,

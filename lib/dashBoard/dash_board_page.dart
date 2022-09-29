@@ -108,6 +108,7 @@ class DashboardState extends State<DashboardPage> {
 
   OrderDetailsResponse notifyOrderResponse;
   Orders notifyOrder;
+  String currencyCode;
 
   _scrollListener() {
     setState(() {
@@ -311,13 +312,26 @@ class DashboardState extends State<DashboardPage> {
     print('summary api calling');
     userResponse =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+    String market = await sharedPref.readData(Constants.USER_MARKET);
+    if (market != null) {
+      if (market == 'id') {
+        currencyCode = 'Rp';
+      } else {
+        currencyCode = '\$';
+      }
+    } else {
+      currencyCode = '\$';
+    }
 
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
     if (specificUserInfo.data.goal != null)
-
-    userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
-    userProperties = {"userName": specificUserInfo.data.fullName, "email": userResponse.user.email, "userId": userResponse.user.userId};
+      userGoals = Goal.fromJson(await sharedPref.readData(Constants.USER_GOAL));
+    userProperties = {
+      "userName": specificUserInfo.data.fullName,
+      "email": userResponse.user.email,
+      "userId": userResponse.user.userId
+    };
     print('summary api calling1');
     if (didGoalSet) {
       userGoals = userGoalData.data.goal;
@@ -341,7 +355,7 @@ class DashboardState extends State<DashboardPage> {
 
       if (userGoals.amount != null) {
         _controller.text =
-        userGoals.amount > 0 ? userGoals.amount.toString() : '';
+            userGoals.amount > 0 ? userGoals.amount.toString() : '';
       }
     }
     Map<String, String> headers = {
@@ -862,8 +876,9 @@ class DashboardState extends State<DashboardPage> {
                                           child: Column(children: [
                                             GestureDetector(
                                               onTap: () {
-
-                                                mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS,
+                                                mixpanel.track(
+                                                    Events
+                                                        .TAP_DASHBOARD_VIEW_ORDERS,
                                                     properties: userProperties);
 
                                                 Navigator.push(
@@ -1008,25 +1023,13 @@ class DashboardState extends State<DashboardPage> {
 
   String spendingsAmount(OrderSummaryResponse snapshot) {
     if (selectedGoalType == "Weekly") {
-      return ('\$' +
-          snapshot.data.totalSpendingCurrWeek
-              .toStringAsFixed(2)
-              .replaceAllMapped(reg, (Match m) => '${m[1]},'));
+      return (currencyCode + snapshot.data.totalSpendingCurrWeek.toString());
     } else if (selectedGoalType == "Monthly") {
-      return ('\$' +
-          snapshot.data.totalSpendingCurrMonth
-              .toStringAsFixed(2)
-              .replaceAllMapped(reg, (Match m) => '${m[1]},'));
+      return (currencyCode + snapshot.data.totalSpendingCurrMonth.toString());
     } else if (selectedGoalType == "Quarterly") {
-      return '\$' +
-          snapshot.data.totalSpendingQuarterly
-              .toStringAsFixed(2)
-              .replaceAllMapped(reg, (Match m) => '${m[1]},');
+      return currencyCode + snapshot.data.totalSpendingQuarterly.toString();
     } else {
-      return '\$' +
-          snapshot.data.totalSpendingCurrMonth
-              .toStringAsFixed(2)
-              .replaceAllMapped(reg, (Match m) => '${m[1]},');
+      return currencyCode + snapshot.data.totalSpendingCurrMonth.toString();
     }
   }
 
@@ -1742,14 +1745,11 @@ class DashboardState extends State<DashboardPage> {
                                           ),
                                         Spacer(),
                                         Text(
-                                            '\$' +
-                                                snapshot.data[index].amount
-                                                    .total.amountV1
-                                                    .toStringAsFixed(2)
-                                                    .replaceAllMapped(
-                                                        reg,
-                                                        (Match m) =>
-                                                            '${m[1]},'),
+                                            currencyCode +
+                                                snapshot
+                                                    .data[index].amount.total
+                                                    .getDisplayValue(
+                                                        currencyCode),
                                             textAlign: TextAlign.end,
                                             style: TextStyle(
                                                 fontSize: 16,

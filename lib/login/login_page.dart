@@ -92,18 +92,15 @@ class _LoginPageState extends State<LoginPage> {
     events.mixPanelEvents();
   }
 
-
   setUserProfilesToMixPanel(String userId, String name, String email) {
-      events.mixpanel.track("create_alias",
-          properties: {
-            "distinct_id":  userId,
-            "alias": "12345",
-            "token": Constants.MIXPANEL_EVENTS_TOKEN
-          }
-      );
-      events.mixpanel.identify(userId);
-      events.mixpanel.getPeople().set('name', name);
-      events.mixpanel.getPeople().set("email", email);
+    events.mixpanel.track("create_alias", properties: {
+      "distinct_id": userId,
+      "alias": "12345",
+      "token": Constants.MIXPANEL_EVENTS_TOKEN
+    });
+    events.mixpanel.identify(userId);
+    events.mixpanel.getPeople().set('name', name);
+    events.mixpanel.getPeople().set("email", email);
   }
 
   static Future<List<String>> getDeviceDetails() async {
@@ -116,12 +113,12 @@ class _LoginPageState extends State<LoginPage> {
         var build = await deviceInfoPlugin.androidInfo;
         deviceName = build.model;
         deviceVersion = build.version.toString();
-        identifier = build.androidId;  //UUID for Android
+        identifier = build.androidId; //UUID for Android
       } else if (Platform.isIOS) {
         var data = await deviceInfoPlugin.iosInfo;
         deviceName = data.name;
         deviceVersion = data.systemVersion;
-        identifier = data.identifierForVendor;  //UUID for iOS
+        identifier = data.identifierForVendor; //UUID for iOS
       }
     } on PlatformException {
       print('Failed to get platform version');
@@ -130,6 +127,7 @@ class _LoginPageState extends State<LoginPage> {
 //if (!mounted) return;
     return [deviceName, deviceVersion, identifier];
   }
+
   @override
   Widget build(BuildContext context) {
     void _toggle() {
@@ -166,23 +164,24 @@ class _LoginPageState extends State<LoginPage> {
           isLogged = true;
           prefs.setBool(Constants.is_logged, isLogged);
 
-         // set distinct id as userName
-         //  events.mixpanel.track("create_alias",
-         //      properties: {
-         //       // "distinct_id": value.data.fullName,
-         //        "alias": "12345",
-         //        "name": value.data.fullName,
-         //       "token": "727ea70267ae81d186a7365cc2befcf4"
-         //      }
-         //  );
+          // set distinct id as userName
+          //  events.mixpanel.track("create_alias",
+          //      properties: {
+          //       // "distinct_id": value.data.fullName,
+          //        "alias": "12345",
+          //        "name": value.data.fullName,
+          //       "token": "727ea70267ae81d186a7365cc2befcf4"
+          //      }
+          //  );
           // events.mixpanel.
-         // events.mixpanel.identify("4D011EE5-BE1B-4BE9-995A-88C5F6AEE044");
-         // events.mixpanel.getPeople().set('name', value.data.fullName,);
+          // events.mixpanel.identify("4D011EE5-BE1B-4BE9-995A-88C5F6AEE044");
+          // events.mixpanel.getPeople().set('name', value.data.fullName,);
 
-         // events.mixpanel.registerSuperPropertiesOnce({'name': value.data.fullName, "email": value.data.email});
-         //  events.mixpanel.registerSuperProperties({'Name': value.data.fullName, 'Email': value.data.email});
+          // events.mixpanel.registerSuperPropertiesOnce({'name': value.data.fullName, "email": value.data.email});
+          //  events.mixpanel.registerSuperProperties({'Name': value.data.fullName, 'Email': value.data.email});
 
-          setUserProfilesToMixPanel(user.user.userId, value.data.fullName, value.data.email);
+          setUserProfilesToMixPanel(
+              user.user.userId, value.data.fullName, value.data.email);
 
           events.mixpanel
               .track(Events.TAP_LOGIN, properties: {'email': _email});
@@ -214,6 +213,7 @@ class _LoginPageState extends State<LoginPage> {
           //save login data
           sharedPref.saveData(Constants.login_Info, value);
           sharedPref.saveData(Constants.PASSWORD_ENCRYPTED, _password);
+          sharedPref.saveData(Constants.USER_MARKET, value.market);
           getUserDetails();
         } else {
           _hideLoader();
@@ -259,17 +259,17 @@ class _LoginPageState extends State<LoginPage> {
 
                   child: Stack(
                     children: <Widget>[
-
-                  Center(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 80, 40, 10),
-                  child: Image.asset(
-                    'assets/images/visual.png',
-                    fit: BoxFit.fill,
-                    // height: height,//double.infinity,
-                    // width: width,//double.infinity,
-                  ),
-                ),),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(40, 80, 40, 10),
+                          child: Image.asset(
+                            'assets/images/visual.png',
+                            fit: BoxFit.fill,
+                            // height: height,//double.infinity,
+                            // width: width,//double.infinity,
+                          ),
+                        ),
+                      ),
 
                       // FadeInImage(
                       //   placeholder: AssetImage("assets/images/blackdot.png"),
@@ -343,7 +343,8 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           fontSize: 16,
                           height: 1.5,
-                          fontFamily: "SourceSansProRegular", color: Colors.white),
+                          fontFamily: "SourceSansProRegular",
+                          color: Colors.white),
                       //cursorColor: Color(0xff999999),
 
                       decoration: InputDecoration(
@@ -358,7 +359,6 @@ class _LoginPageState extends State<LoginPage> {
                             borderSide: BorderSide(
                               color: Colors.white.withOpacity(0.5),
                               width: 0.5,
-
                             ),
                           ),
                           focusedBorder: UnderlineInputBorder(
@@ -396,7 +396,8 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           fontSize: 16,
                           height: 1.5,
-                          fontFamily: "SourceSansProRegular", color: Colors.white),
+                          fontFamily: "SourceSansProRegular",
+                          color: Colors.white),
 
                       //  cursorColor: Color(0xff999999),
                       decoration: InputDecoration(

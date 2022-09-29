@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,9 +17,11 @@ import 'package:flutter/rendering.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/pdfViewerPage.dart';
 import 'package:zm_supplier/utils/customDialog.dart';
+import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'dart:math' as math;
 
 import 'package:zm_supplier/utils/webview.dart';
+import 'package:http/http.dart' as http;
 
 import '../utils/color.dart';
 import 'orderActivityPage.dart';
@@ -61,11 +65,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   ScrollController controller;
   String searchedString;
   LoginResponse userData;
+  OrderDetailsResponse notifyOrderResponse;
+  Orders notifyOrder;
 
   String selectedReason = 'Other reason';
   Constants events = Constants();
   dynamic userProperties;
   ApiResponse specificUserInfo;
+  String currencyCode;
 
   @override
   void initState() {
@@ -89,6 +96,16 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           await sharedPref.readData(Constants.login_Info));
       specificUserInfo = ApiResponse.fromJson(
           await sharedPref.readData(Constants.specific_user_info));
+      String market = await sharedPref.readData(Constants.USER_MARKET);
+      if (market != null) {
+        if (market == 'id') {
+          currencyCode = 'Rp';
+        } else {
+          currencyCode = '\$';
+        }
+      } else {
+        currencyCode = '\$';
+      }
 
       setState(() {
         userData = loginResponse;
@@ -100,8 +117,11 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           // ordersList = callRetreiveOrdersAPI();
         }
         if (specificUserInfo.data != null)
-          userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId};
-
+          userProperties = {
+            "userName": specificUserInfo.data.fullName,
+            "email": userData.user.email,
+            "userId": userData.user.userId
+          };
       });
     } catch (Exception) {
       // do something
@@ -118,14 +138,12 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           height: 80.0,
           decoration: BoxDecoration(
             color: Colors.white,
-
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.2),
                 spreadRadius: 5,
                 blurRadius: 5,
-                offset: Offset(
-                    0, 3), // changes position of shadow
+                offset: Offset(0, 3), // changes position of shadow
               ),
             ],
           ),
@@ -155,9 +173,14 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                         style: TextStyle(
                             fontSize: 16,
                             fontFamily: 'SourceSansProSemiBold',
-                            color: azul_blue,letterSpacing: 0),
+                            color: azul_blue,
+                            letterSpacing: 0),
                       ),
-                      icon: Image.asset('assets/images/Repeat-blue.png',width: 22, height: 22,),
+                      icon: Image.asset(
+                        'assets/images/Repeat-blue.png',
+                        width: 22,
+                        height: 22,
+                      ),
                       elevation: 0,
                     ),
                     new Spacer(),
@@ -175,7 +198,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                           style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'SourceSansProSemiBold',
-                              color: Colors.white,letterSpacing: 0),
+                              color: Colors.white,
+                              letterSpacing: 0),
                         ),
                         elevation: 0,
                       ),
@@ -226,7 +250,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     return new AppBar(
         centerTitle: true,
         title: appBarTitle,
-        shadowColor: Colors.grey.withOpacity(0.2),//faintGrey,
+        shadowColor: Colors.grey.withOpacity(0.2), //faintGrey,
         backgroundColor: Colors.white,
         bottomOpacity: 0.0,
         elevation: 3,
@@ -383,13 +407,22 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                           SizedBox(
                             width: 10,
                           ),
-                          Text(
-                            'Void order',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'SourceSansProRegular',
-                                color: warningRed),
-                          ),
+                          if (order.addOns != null && order.addOns.length > 0)
+                            Text(
+                              'Void this and linked orders',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'SourceSansProRegular',
+                                  color: warningRed),
+                            )
+                          else
+                            Text(
+                              'Void order',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'SourceSansProRegular',
+                                  color: warningRed),
+                            ),
                         ],
                       ),
                     ),
@@ -426,8 +459,17 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   acknowledgeOrder() {
-    userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "orderId": order.orderId,"supplierId": order.supplier.supplierId, "supplierName": order.supplier.supplierName,"selectedDeliveryDate": order.timeDelivered};
-    events.mixpanel.track(Events.TAP_ORDER_DETAILS_ACKNOWLEDGE_ORDER, properties: userProperties);
+    userProperties = {
+      "userName": specificUserInfo.data.fullName,
+      "email": userData.user.email,
+      "userId": userData.user.userId,
+      "orderId": order.orderId,
+      "supplierId": order.supplier.supplierId,
+      "supplierName": order.supplier.supplierName,
+      "selectedDeliveryDate": order.timeDelivered
+    };
+    events.mixpanel.track(Events.TAP_ORDER_DETAILS_ACKNOWLEDGE_ORDER,
+        properties: userProperties);
     OrderApi acknowledge = new OrderApi();
     acknowledge
         .acknowledgeOrder(
@@ -659,8 +701,17 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
   }
 
   voidOrder(String reason) {
-    userProperties = {"userName": specificUserInfo.data.fullName, "email": userData.user.email, "userId": userData.user.userId, "orderId": order.orderId,"supplierId": order.supplier.supplierId, "supplierName": order.supplier.supplierName,"selectedDeliveryDate": order.timeDelivered};
-    events.mixpanel.track(Events.TAP_ORDER_DETAILS_VOID_ORDER, properties: userProperties);
+    userProperties = {
+      "userName": specificUserInfo.data.fullName,
+      "email": userData.user.email,
+      "userId": userData.user.userId,
+      "orderId": order.orderId,
+      "supplierId": order.supplier.supplierId,
+      "supplierName": order.supplier.supplierName,
+      "selectedDeliveryDate": order.timeDelivered
+    };
+    events.mixpanel
+        .track(Events.TAP_ORDER_DETAILS_VOID_ORDER, properties: userProperties);
     OrderApi reject = OrderApi();
 
     reject
@@ -695,13 +746,11 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10)),
           boxShadow: [
-
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
               spreadRadius: 2,
               blurRadius: 5,
-              offset: Offset(
-                  0, 3), // changes position of shadow
+              offset: Offset(0, 3), // changes position of shadow
             ),
           ],
         ),
@@ -739,8 +788,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                 Constants.OrderStatusColor(order),
                 Center(
                     child: Container(
-                        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                         child: Text('', style: TextStyle(fontSize: 4)))),
+                Center(child: linkedOrder()),
               ],
             )
           ],
@@ -749,9 +799,104 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     );
   }
 
+  // ignore: missing_return
+  Widget linkedOrder() {
+    print(order.addOns);
+    if (order.linkedOrder != null && order.linkedOrder.isNotEmpty)
+      return GestureDetector(
+          onTap: () {
+            print("Click event on Container");
+            // addOnOrderInfo(context);
+
+            goToOrderDetails(order.linkedOrder);
+          },
+          child: Container(
+              color: Colors.white,
+              margin: EdgeInsets.only(top: 2.0),
+              padding: EdgeInsets.only(
+                  left: 0.0, right: 0.0, top: 0.0, bottom: 10.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Divider(
+                      height: 3,
+                      thickness: 2,
+                      indent: 0,
+                      endIndent: 0,
+                      color: faintGrey,
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 30.0, top: 10),
+                        child: Row(children: <Widget>[
+                          Image.asset(
+                            'assets/images/icon_linked.png',
+                            width: 18,
+                            height: 18,
+                          ),
+                          Text(' Linked to',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: "SourceSansProRegular",
+                                  color: Colors.grey)),
+                          Padding(
+                              padding: const EdgeInsets.only(left: 35.0),
+                              child: Text('Order #',
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: "SourceSansProBold",
+                                      color: buttonBlue))),
+                          Text(order.linkedOrder,
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: "SourceSansProBold",
+                                  color: buttonBlue)),
+                        ])),
+                  ])));
+  }
+
+  goToOrderDetails(String orderId) async {
+    LoginResponse user =
+        LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'authType': 'Zeemart',
+      'mudra': user.mudra,
+      'supplierId': user.supplier.first.supplierId
+    };
+
+    Map<String, String> queryParams = {
+      'orderId': orderId,
+    };
+
+    String queryString = Uri(queryParameters: queryParams).query;
+
+    var url = URLEndPoints.retrive_specific_order_details + '?' + queryString;
+    print(headers);
+    print(url);
+    var response = await http.get(url, headers: headers);
+    if (response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 202) {
+      // Map results = json.decode(response.body);
+      notifyOrderResponse =
+          OrderDetailsResponse.fromJson(json.decode(response.body));
+    } else {
+      print('failed get order detail');
+    }
+
+    notifyOrder = notifyOrderResponse.data;
+
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => OrderDetailsPage(notifyOrder)));
+
+    //return order;
+  }
+
   Widget deliveryBanner(BuildContext context) {
     return new Container(
-
       padding: new EdgeInsets.only(top: 0, left: 0.0, bottom: 0.0, right: 0.0),
       decoration: new BoxDecoration(color: Colors.white),
       child: Container(
@@ -760,17 +905,22 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-
             Container(
                 decoration: BoxDecoration(
                   color: faintGrey,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),),
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                ),
                 margin: EdgeInsets.fromLTRB(15.0, 15.0, 10.0, 15.0),
                 // color: faintGrey,
                 height: 40.0,
                 width: 40.0,
-                child: Center(child: Image.asset('assets/images/icon_delivery_truck.png',fit: BoxFit.cover,width: 20,height: 20,))
-            ),
+                child: Center(
+                    child: Image.asset(
+                  'assets/images/icon_delivery_truck.png',
+                  fit: BoxFit.cover,
+                  width: 20,
+                  height: 20,
+                ))),
             new Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -778,7 +928,6 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                     // color:Colors.orange,
                     height: 35,
                     child: Row(children: <Widget>[
-
                       Padding(
                         padding: const EdgeInsets.only(top: 12.0),
                         child: Text(order.getDeliveryDay(),
@@ -789,7 +938,6 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       ),
                     ]),
                   ),
-
                   Text(order.getDeliveryDateMonthYear(),
                       style: TextStyle(
                           color: Colors.black,
@@ -908,36 +1056,41 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
-
                               children: [
                                 Expanded(
-                                  child: Text(products[index].productName,
+                                  child: Text(
+                                    products[index].productName,
                                     // textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16.0,
-                                                fontFamily: "SourceSansProSemiBold"),),
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16.0,
+                                        fontFamily: "SourceSansProSemiBold"),
+                                  ),
                                 ),
-
-                                Container(width: 20,),
+                                Container(
+                                  width: 20,
+                                ),
                                 Text(
-                                          products[index].quantity.toString() +
-                                              " " +
-                                              products[index].unitSizeAlias.shortName,textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16.0,
-                                              fontFamily: "SourceSansProRegular")),
-
+                                    products[index].quantity.toString() +
+                                        " " +
+                                        products[index].unitSizeAlias.shortName,
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16.0,
+                                        fontFamily: "SourceSansProRegular")),
                               ],
                             ),
                             Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 0)),
                             Row(children: <Widget>[
-                              Text(products[index].totalPrice.getDisplayValue(),
+                              Text(
+                                  currencyCode +
+                                      products[index]
+                                          .totalPrice
+                                          .getDisplayValue(currencyCode),
                                   style: TextStyle(
                                       color: grey_text,
                                       fontSize: 12.0,
@@ -984,8 +1137,11 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                               ]),
                         ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(0,10,0,0),
-                        child: Divider(color: faintGrey, thickness: 2,),
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        child: Divider(
+                          color: faintGrey,
+                          thickness: 2,
+                        ),
                       )
                     ]),
               ],
@@ -1029,7 +1185,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  order.amount.subTotal.getDisplayValue(),
+                                  currencyCode +
+                                      order.amount.subTotal
+                                          .getDisplayValue(currencyCode),
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
@@ -1051,8 +1209,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                         fontSize: 16.0,
                                         fontFamily: "SourceSansProRegular")),
                                 right: Text(
-                                    getAmountDisplayValue(
-                                        order.amount.subTotal.amountV1),
+                                    currencyCode +
+                                        order.amount.subTotal
+                                            .getDisplayValue(currencyCode),
                                     style: TextStyle(
                                         color: Colors.green,
                                         fontSize: 16.0,
@@ -1074,7 +1233,9 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                         fontSize: 16.0,
                                         fontFamily: "SourceSansProRegular")),
                                 right: Text(
-                                    order.amount.deliveryFee.getDisplayValue(),
+                                    currencyCode +
+                                        order.amount.deliveryFee
+                                            .getDisplayValue(currencyCode),
                                     style: TextStyle(
                                         color: greyText,
                                         fontSize: 16.0,
@@ -1094,7 +1255,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                       color: greyText,
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
-                              right: Text(order.amount.gst.getDisplayValue(),
+                              right: Text(
+                                  currencyCode +
+                                      order.amount.gst
+                                          .getDisplayValue(currencyCode),
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
@@ -1103,7 +1267,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       ])
                     ]),
                 Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
-                Divider(color: faintGrey, thickness: 2,),
+                Divider(
+                  color: faintGrey,
+                  thickness: 2,
+                ),
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -1116,7 +1283,10 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                       color: Colors.black,
                                       fontSize: 18.0,
                                       fontFamily: "SourceSansProBold")),
-                              right: Text(order.amount.total.getDisplayValue(),
+                              right: Text(
+                                  currencyCode +
+                                      order.amount.total
+                                          .getDisplayValue(currencyCode),
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 18.0,
@@ -1131,8 +1301,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
     );
   }
 
-  String getAmountDisplayValue(var amount) {
-    return "\$$amount";
+  String getAmountDisplayValue(var amount, String currencyCode) {
+    return currencyCode + "\$amount";
   }
 
   Widget contactDetails(BuildContext context) {
@@ -1144,63 +1314,61 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
               order.createdBy.id != userData.user.userId)
             Expanded(
                 child: SizedBox(
-                  height: 50,
-                  child: RaisedButton(
-
-                      color: Colors.white,
-
-                      shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(30.0)),
-                      onPressed: () {
-                        events.mixpanel.track(Events.TAP_ORDER_DETAILS_CONTACT);
-                        events.mixpanel.flush();
-                        _newTaskModalBottomSheet(context);
-                      },
-                      elevation: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          ImageIcon(AssetImage('assets/images/icon_phone.png'),
-                              color: buttonBlue),
-                          Text(
-                            ' Contact',
-                            style: TextStyle(
-                                color: buttonBlue,
-                                fontSize: 16.0,
-                                fontFamily: "SourceSansProSemiBold"),
-                          ),
-                        ],
-                      )),
-                )),
+              height: 50,
+              child: RaisedButton(
+                  color: Colors.white,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0)),
+                  onPressed: () {
+                    events.mixpanel.track(Events.TAP_ORDER_DETAILS_CONTACT);
+                    events.mixpanel.flush();
+                    _newTaskModalBottomSheet(context);
+                  },
+                  elevation: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ImageIcon(AssetImage('assets/images/icon_phone.png'),
+                          color: buttonBlue),
+                      Text(
+                        ' Contact',
+                        style: TextStyle(
+                            color: buttonBlue,
+                            fontSize: 16.0,
+                            fontFamily: "SourceSansProSemiBold"),
+                      ),
+                    ],
+                  )),
+            )),
           Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
           Expanded(
               child: SizedBox(
-                height: 50,
-                child: RaisedButton(
-                    color: Colors.white,
-                    shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30.0)),
-                    onPressed: () {
-                      events.mixpanel.track(Events.TAP_ORDER_DETAILS_VIEW_AS_PDF);
-                      events.mixpanel.flush();
-                      openPdf(context);
-                    },
-                    elevation: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ImageIcon(AssetImage('assets/images/icon_view_pdf.png'),
-                            color: buttonBlue),
-                        Text(
-                          ' View as PDF',
-                          style: TextStyle(
-                              color: buttonBlue,
-                              fontSize: 16.0,
-                              fontFamily: "SourceSansProSemiBold"),
-                        ),
-                      ],
-                    )),
-              ))
+            height: 50,
+            child: RaisedButton(
+                color: Colors.white,
+                shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0)),
+                onPressed: () {
+                  events.mixpanel.track(Events.TAP_ORDER_DETAILS_VIEW_AS_PDF);
+                  events.mixpanel.flush();
+                  openPdf(context);
+                },
+                elevation: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ImageIcon(AssetImage('assets/images/icon_view_pdf.png'),
+                        color: buttonBlue),
+                    Text(
+                      ' View as PDF',
+                      style: TextStyle(
+                          color: buttonBlue,
+                          fontSize: 16.0,
+                          fontFamily: "SourceSansProSemiBold"),
+                    ),
+                  ],
+                )),
+          ))
         ],
       ),
     );

@@ -67,6 +67,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
 
   Mixpanel mixpanel;
 
+  String currencyCode;
+
   void mixPanelEvents() async {
     mixpanel = await Constants.initMixPanel();
   }
@@ -93,7 +95,17 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
     try {
       LoginResponse loginResponse = LoginResponse.fromJson(
           await sharedPref.readData(Constants.login_Info));
+      String market = await sharedPref.readData(Constants.USER_MARKET);
       setState(() {
+        if (market != null) {
+          if (market == 'id') {
+            currencyCode = 'Rp';
+          } else {
+            currencyCode = '\$';
+          }
+        } else {
+          currencyCode = '\$';
+        }
         if (loginResponse.mudra != null) {
           mudra = loginResponse.mudra;
         }
@@ -315,8 +327,10 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
                                                 MainAxisAlignment.end,
                                             children: <Widget>[
                                               Text(
-                                                  element.amount.total
-                                                      .getDisplayValue(),
+                                                  currencyCode +
+                                                      element.amount.total
+                                                          .getDisplayValueAmt(
+                                                              currencyCode),
                                                   style: TextStyle(
                                                       fontSize: 16.0,
                                                       color: Colors.black,

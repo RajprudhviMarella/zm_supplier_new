@@ -67,6 +67,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
   SharedPref sharedPref = SharedPref();
   LoginResponse userData;
+  String currencyCode;
 
   CustomerDetailsState(
       this.outletName, this.outletId, this.lastOrderd, this.isStarred);
@@ -91,6 +92,17 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
 
     specificUserInfo = ApiResponse.fromJson(
         await sharedPref.readData(Constants.specific_user_info));
+
+    String market = await sharedPref.readData(Constants.USER_MARKET);
+    if (market != null) {
+      if (market == 'id') {
+        currencyCode = 'Rp';
+      } else {
+        currencyCode = '\$';
+      }
+    } else {
+      currencyCode = '\$';
+    }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'authType': 'Zeemart',
@@ -329,11 +341,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                             ),
                           ),
                           Text(
-                            '\$' +
+                            currencyCode +
                                     snapshot.data.totalSpendingCurrMonth
-                                        .toStringAsFixed(2)
-                                        .replaceAllMapped(
-                                            reg, (Match m) => '${m[1]},') ??
+                                        .toString() ??
                                 "",
                             style: TextStyle(
                                 color: Colors.black,
@@ -364,14 +374,10 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           fontFamily: 'SourceSansProRegular'),
                                     ),
                                     Text(
-                                      '\$' +
+                                      currencyCode +
                                               snapshot
                                                   .data.totalSpendingLastMonth
-                                                  .toStringAsFixed(2)
-                                                  .replaceAllMapped(
-                                                      reg,
-                                                      (Match m) =>
-                                                          '${m[1]},') ??
+                                                  .toString() ??
                                           "",
                                       style: TextStyle(
                                           color: Colors.black,
@@ -390,14 +396,10 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           fontFamily: 'SourceSansProRegular'),
                                     ),
                                     Text(
-                                      '\$' +
+                                      currencyCode +
                                               snapshot.data
                                                   .totalSpendingLastTwoMonths
-                                                  .toStringAsFixed(2)
-                                                  .replaceAllMapped(
-                                                      reg,
-                                                      (Match m) =>
-                                                          '${m[1]},') ??
+                                                  .toString() ??
                                           "",
                                       style: TextStyle(
                                           color: Colors.black,
@@ -518,13 +520,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           fontFamily: 'SourceSansProSemiBold'),
                                     ),
                                     Text(
-                                      '\$' +
+                                      currencyCode +
                                               snapshot.data.totalUnpaid
-                                                  .toStringAsFixed(2)
-                                                  .replaceAllMapped(
-                                                      reg,
-                                                      (Match m) =>
-                                                          '${m[1]},') ??
+                                                  .toString() ??
                                           "",
                                       style: TextStyle(
                                           fontSize: 30,
@@ -572,11 +570,9 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                             child: Row(
                               children: [
                                 Text(
-                                    '\$' +
+                                    currencyCode +
                                             snapshot.data.totalOverDue
-                                                .toStringAsFixed(2)
-                                                .replaceAllMapped(reg,
-                                                    (Match m) => '${m[1]},') ??
+                                                .toString() ??
                                         "",
                                     style: TextStyle(
                                         fontFamily: "SourceSansProBold",
@@ -714,7 +710,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
         order.orderStatus == 'Invoiced') {
       return '';
     } else {
-      return order.amount.total.getDisplayValue();
+      return currencyCode + order.amount.total.getDisplayValue(currencyCode);
     }
   }
 
@@ -886,8 +882,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           ),
                                           Spacer(),
                                           Text(
-                                              snapshot.data[index].amount.total
-                                                  .getDisplayValue(),
+                                              currencyCode +
+                                                  snapshot
+                                                      .data[index].amount.total
+                                                      .getDisplayValue(
+                                                          currencyCode),
                                               style: TextStyle(
                                                   fontSize: 16.0,
                                                   color: Colors.black,

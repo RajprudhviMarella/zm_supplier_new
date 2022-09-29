@@ -73,6 +73,7 @@ class MarketListDesign extends State<MarketListPage>
   String cutOffDate = "";
   LoginResponse loginResponse;
   ApiResponse specificUserInfo;
+  String currencyCode;
 
   @override
   void initState() {
@@ -89,6 +90,16 @@ class MarketListDesign extends State<MarketListPage>
           await sharedPref.readData(Constants.login_Info));
       specificUserInfo = ApiResponse.fromJson(
           await sharedPref.readData(Constants.specific_user_info));
+      String market = await sharedPref.readData(Constants.USER_MARKET);
+      if (market != null) {
+        if (market == 'id') {
+          currencyCode = 'Rp';
+        } else {
+          currencyCode = '\$';
+        }
+      } else {
+        currencyCode = '\$';
+      }
 
       setState(() {
         if (loginResponse.mudra != null) {
@@ -420,7 +431,9 @@ class MarketListDesign extends State<MarketListPage>
         child: Column(children: <Widget>[
           Row(children: <Widget>[
             Text(
-              marketList.priceList[0].price.getDisplayValue() + " / ",
+              currencyCode +
+                  marketList.priceList[0].price.getDisplayValue(currencyCode) +
+                  " / ",
               style: TextStyle(
                 fontSize: 12.0,
                 color: Colors.black,
@@ -1411,6 +1424,7 @@ class MarketListDesign extends State<MarketListPage>
 
   Future<void> moveToReviewOrdersScreen() async {
     // start the SecondScreen and wait for it to finish with a result
+    print('===>' + lstDeliveryDates[0].deliveryFeePolicy.condition);
     final result = await Navigator.push(
         context,
         MaterialPageRoute(

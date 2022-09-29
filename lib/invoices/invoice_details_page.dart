@@ -44,6 +44,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   String pdfUrl;
 
   Constants events = Constants();
+  String currencyCode;
 
   @override
   void initState() {
@@ -57,6 +58,16 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
   Future<InvoiceDetails> retriveInvoiceDetails() async {
     LoginResponse user =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+    String market = await sharedPref.readData(Constants.USER_MARKET);
+    if (market != null) {
+      if (market == 'id') {
+        currencyCode = 'Rp';
+      } else {
+        currencyCode = '\$';
+      }
+    } else {
+      currencyCode = '\$';
+    }
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -447,49 +458,33 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
   Widget checkNotes(InvoiceDetails inv) {
     if (inv.notes != null && inv.notes != "") {
-      return Container(
-        height: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          color: notesyellow,
-        ),
-        margin: EdgeInsets.all(15),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    'NOTES',
+      return new Card(
+        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        color: yellow,
+        elevation: 0,
+        child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(children: <Widget>[
+                Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 10)),
+                Text("       Notes",
                     style: TextStyle(
-                        fontSize: 10, fontFamily: 'SourceSansProBold'),
-                  ),
+                        color: Colors.black,
+                        fontSize: 10.0,
+                        fontFamily: "SourceSansProBold")),
+              ]),
+              Row(children: <Widget>[
+                Padding(padding: EdgeInsets.fromLTRB(0, 5, 15, 0)),
+                Expanded(
+                  child: Text(inv.notes,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14.0,
+                          fontFamily: "SourceSansProRegular")),
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    inv.notes,
-                    style: TextStyle(
-                        fontSize: 14, fontFamily: 'SourceSansProRegular'),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
+              ]),
+              Padding(padding: EdgeInsets.fromLTRB(10, 5, 20, 5)),
+            ]),
       );
     } else {
       return Container(
@@ -576,7 +571,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
 
   String getAmountDisplayValue(DeliveryFee amount) {
     if (amount != null) {
-      return amount.getDisplayValue();
+      return currencyCode + amount.getDisplayValue(currencyCode);
     } else {
       return '';
     }
