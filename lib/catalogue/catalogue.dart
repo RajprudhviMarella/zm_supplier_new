@@ -42,7 +42,7 @@ class CatalogueDesign extends State<Catalogue> {
   int pageNum = 1;
   bool isPageLoading = false;
   int totalNumberOfPages = 0;
-  int pageSize = 50;
+  int pageSize = 0;
   ScrollController controller;
 
   bool isAllSelected = true;
@@ -126,6 +126,7 @@ class CatalogueDesign extends State<Catalogue> {
       "sortOrder": "ASC",
       'pageNumber': pageNum.toString(),
       'pageSize': pageSize.toString(),
+      'status': "Active"
     };
 
     if (categoryId.isNotEmpty) {

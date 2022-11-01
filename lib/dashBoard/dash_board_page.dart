@@ -316,6 +316,8 @@ class DashboardState extends State<DashboardPage> {
     if (market != null) {
       if (market == 'id') {
         currencyCode = 'Rp';
+      } else if (market == 'au') {
+        currencyCode = 'A\$';
       } else {
         currencyCode = '\$';
       }

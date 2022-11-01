@@ -100,6 +100,8 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
         if (market != null) {
           if (market == 'id') {
             currencyCode = 'Rp';
+          } else if (market == 'au') {
+            currencyCode = 'A\$';
           } else {
             currencyCode = '\$';
           }

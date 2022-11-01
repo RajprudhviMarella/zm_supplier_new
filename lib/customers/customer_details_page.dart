@@ -97,6 +97,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
     if (market != null) {
       if (market == 'id') {
         currencyCode = 'Rp';
+      } else if (market == 'au') {
+        currencyCode = 'A\$';
       } else {
         currencyCode = '\$';
       }

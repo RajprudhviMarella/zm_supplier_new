@@ -94,6 +94,8 @@ class MarketListDesign extends State<MarketListPage>
       if (market != null) {
         if (market == 'id') {
           currencyCode = 'Rp';
+        } else if (market == 'au') {
+          currencyCode = 'A\$';
         } else {
           currencyCode = '\$';
         }
@@ -1424,7 +1426,6 @@ class MarketListDesign extends State<MarketListPage>
 
   Future<void> moveToReviewOrdersScreen() async {
     // start the SecondScreen and wait for it to finish with a result
-    print('===>' + lstDeliveryDates[0].deliveryFeePolicy.condition);
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
