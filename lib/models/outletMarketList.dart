@@ -334,7 +334,7 @@ class Price {
     } else {
       amt = getAmount();
     }
-    return amt.toString();
+    return amt.toStringAsFixed(2);
   }
 
   String getDisplayValueAmt(String currencyCode) {
@@ -344,7 +344,7 @@ class Price {
     } else {
       amt = getAmount();
     }
-    return amt.toString();
+    return amt.toStringAsFixed(2);
   }
 
   dynamic getAmountAmt() {

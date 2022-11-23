@@ -125,8 +125,8 @@ class CatalogueDesign extends State<Catalogue> {
       'sortBy': "productName",
       "sortOrder": "ASC",
       'pageNumber': pageNum.toString(),
-      'pageSize': pageSize.toString(),
-      'status': "Active"
+      // 'pageSize': pageSize.toString(),
+      'status': "visible"
     };
 
     if (categoryId.isNotEmpty) {

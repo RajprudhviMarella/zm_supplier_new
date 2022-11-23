@@ -261,7 +261,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               Container(
                                 margin: EdgeInsets.only(left: 2),
                                 child: Text(
-                                  currencyCode + totalPrice.toString(),
+                                  currencyCode + totalPrice.toStringAsFixed(2),
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontFamily: 'SourceSansProBold',
@@ -491,7 +491,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
                             right: Text(
-                                currencyCode + totalSkusPrice.toString(),
+                                currencyCode +
+                                    totalSkusPrice.toStringAsFixed(2),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -533,7 +534,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  currencyCode + totalDeliveryPrice.toString(),
+                                  currencyCode +
+                                      totalDeliveryPrice.toStringAsFixed(2),
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
@@ -558,7 +560,8 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     color: greyText,
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
-                            right: Text(currencyCode + totalGstPrice.toString(),
+                            right: Text(
+                                currencyCode + totalGstPrice.toStringAsFixed(2),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
