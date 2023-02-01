@@ -789,9 +789,11 @@ class DeliveryFee {
 
   dynamic getAmountAmt() {
     if (amountV1 == null) {
-      return 0.0;
+      return 0;
     } else {
-      return amountV1;
+      return amountV1
+          .toStringAsFixed(0)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
     }
   }
 

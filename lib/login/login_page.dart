@@ -486,7 +486,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       'Log in',
                       style: TextStyle(
-                          color: buttonBlue.withOpacity(0.5),
+                          color: buttonBlue,
                           fontSize: 16,
                           fontFamily: "SourceSansProSemiBold"),
                     ),

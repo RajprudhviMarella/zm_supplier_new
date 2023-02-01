@@ -1021,13 +1021,13 @@ class DashboardState extends State<DashboardPage> {
 
   String spendingsAmount(OrderSummaryResponse snapshot) {
     if (selectedGoalType == "Weekly") {
-      return (currencyCode + snapshot.data.totalSpendingCurrWeek.toString());
+      return (currencyCode + getAmount(currencyCode, snapshot.data.totalSpendingCurrWeek));
     } else if (selectedGoalType == "Monthly") {
-      return (currencyCode + snapshot.data.totalSpendingCurrMonth.toString());
+      return (currencyCode + getAmount(currencyCode, snapshot.data.totalSpendingCurrMonth));
     } else if (selectedGoalType == "Quarterly") {
-      return currencyCode + snapshot.data.totalSpendingQuarterly.toString();
+      return currencyCode + getAmount(currencyCode, snapshot.data.totalSpendingQuarterly);
     } else {
-      return currencyCode + snapshot.data.totalSpendingCurrMonth.toString();
+      return currencyCode + getAmount(currencyCode, snapshot.data.totalSpendingCurrMonth);
     }
   }
 
@@ -1146,10 +1146,8 @@ class DashboardState extends State<DashboardPage> {
               builder: (BuildContext context, StateSetter setState) {
             return SingleChildScrollView(
               child: Container(
-                padding: (Platform.isAndroid)
-                    ? EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom)
-                    : EdgeInsets.fromLTRB(0, 0, 0, 0),
+                padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
                 color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0, right: 16),
@@ -1852,6 +1850,18 @@ class DashboardState extends State<DashboardPage> {
   }
 
   RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
+  String getAmount(String currencyCode, dynamic amount) {
+    if (currencyCode == 'Rp') {
+      return amount
+          .toStringAsFixed(0)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    } else {
+      return amount
+          .toStringAsFixed(2)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    }
+  }
 }
 
 class ThousandsSeparatorInputFormatter extends TextInputFormatter {

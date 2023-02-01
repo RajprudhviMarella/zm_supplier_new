@@ -59,6 +59,7 @@ class InvoicesState extends State<InvoicesPage> {
 
   Constants events = Constants();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
+  String currencyCode;
 
   @override
   void initState() {
@@ -74,6 +75,18 @@ class InvoicesState extends State<InvoicesPage> {
   Future<List<Invoices>> retriveInvoices() async {
     LoginResponse user =
         LoginResponse.fromJson(await sharedPref.readData(Constants.login_Info));
+    String market = await sharedPref.readData(Constants.USER_MARKET);
+    if (market != null) {
+      if (market == 'id') {
+        currencyCode = 'Rp';
+      } else if (market == 'au') {
+        currencyCode = 'A\$';
+      } else {
+        currencyCode = '\$';
+      }
+    } else {
+      currencyCode = '\$';
+    }
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -543,7 +556,7 @@ class InvoicesState extends State<InvoicesPage> {
 
   String totalAmount(TotalCharge value) {
     if (value != null) {
-      return value.getDisplayValue();
+      return currencyCode + getAmount(currencyCode, value.amountV1);
     } else {
       return '';
     }
@@ -585,5 +598,19 @@ class InvoicesState extends State<InvoicesPage> {
     Constants value = Constants();
     var placeholder = value.getInitialWords(name);
     return placeholder;
+  }
+  
+  RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
+  String getAmount(String currencyCode, double amount) {
+    if (currencyCode == 'Rp') {
+      return amount
+          .toStringAsFixed(0)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    } else {
+      return amount
+          .toStringAsFixed(2)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    }
   }
 }

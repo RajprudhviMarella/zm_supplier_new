@@ -331,25 +331,17 @@ class Price {
     dynamic amt;
     if (currencyCode == 'Rp') {
       amt = getAmountAmt();
+      return amt.toStringAsFixed(0);
     } else {
       amt = getAmount();
     }
     return amt.toStringAsFixed(2);
   }
 
-  String getDisplayValueAmt(String currencyCode) {
-    dynamic amt;
-    if (currencyCode == 'Rp') {
-      amt = getAmountAmt();
-    } else {
-      amt = getAmount();
-    }
-    return amt.toStringAsFixed(2);
-  }
 
   dynamic getAmountAmt() {
     if (amountV1 == null) {
-      return 0.0;
+      return 0;
     } else {
       return amountV1;
     }

@@ -575,10 +575,9 @@ class MarketListDesign extends State<MarketListPage>
                     builder: (BuildContext context, StateSetter setStates) {
                   return SingleChildScrollView(
                       child: Container(
-                    padding: (Platform.isAndroid)
-                        ? EdgeInsets.only(
+                    padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom)
-                        : EdgeInsets.fromLTRB(10, 15, 10, 15),
+                        ,
                     color: Colors.white,
                     child: Center(
                       child: Column(

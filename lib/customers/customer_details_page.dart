@@ -343,10 +343,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                             ),
                           ),
                           Text(
-                            currencyCode +
-                                    snapshot.data.totalSpendingCurrMonth
-                                        .toString() ??
-                                "",
+                            currencyCode + getAmount(currencyCode, snapshot.data.totalSpendingCurrMonth),
                             style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 30,
@@ -376,11 +373,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           fontFamily: 'SourceSansProRegular'),
                                     ),
                                     Text(
-                                      currencyCode +
-                                              snapshot
-                                                  .data.totalSpendingLastMonth
-                                                  .toString() ??
-                                          "",
+                                      currencyCode + getAmount(currencyCode, snapshot.data.totalSpendingLastMonth)
+                                              ,
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 18,
@@ -398,11 +392,8 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           fontFamily: 'SourceSansProRegular'),
                                     ),
                                     Text(
-                                      currencyCode +
-                                              snapshot.data
-                                                  .totalSpendingLastTwoMonths
-                                                  .toString() ??
-                                          "",
+                                      currencyCode + getAmount(currencyCode, snapshot.data.totalSpendingLastTwoMonths)
+                                             ,
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 18,
@@ -522,10 +513,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                           fontFamily: 'SourceSansProSemiBold'),
                                     ),
                                     Text(
-                                      currencyCode +
-                                              snapshot.data.totalUnpaid
-                                                  .toString() ??
-                                          "",
+                                      currencyCode + getAmount(currencyCode, snapshot.data.totalUnpaid),
                                       style: TextStyle(
                                           fontSize: 30,
                                           color: Colors.black,
@@ -572,10 +560,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                             child: Row(
                               children: [
                                 Text(
-                                    currencyCode +
-                                            snapshot.data.totalOverDue
-                                                .toString() ??
-                                        "",
+                                    currencyCode + getAmount(currencyCode, snapshot.data.totalOverDue),
                                     style: TextStyle(
                                         fontFamily: "SourceSansProBold",
                                         fontSize: 18,
@@ -786,7 +771,11 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                                             maxLines: 1),
                                       ),
                                       Spacer(),
-                                      Text(displayAmount(snapshot.data[index])),
+                                      Text(displayAmount(snapshot.data[index]), style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontFamily:
+                                          "SourceSansProRegular",
+                                          color: Colors.black)),
                                     ],
                                   ),
                                   Padding(
@@ -1346,4 +1335,16 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
   }
 
   RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
+  String getAmount(String currencyCode, dynamic amount) {
+    if (currencyCode == 'Rp') {
+      return amount
+          .toStringAsFixed(0)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    } else {
+      return amount
+          .toStringAsFixed(2)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    }
+  }
 }

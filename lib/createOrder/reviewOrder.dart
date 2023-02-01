@@ -261,7 +261,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               Container(
                                 margin: EdgeInsets.only(left: 2),
                                 child: Text(
-                                  currencyCode + totalPrice.toStringAsFixed(2),
+                                  currencyCode + getAmount(currencyCode, totalPrice),
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontFamily: 'SourceSansProBold',
@@ -366,19 +366,19 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                     ),
                     Text(' This is an ',
                         style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 12,
                             fontFamily: "SourceSansProRegular",
                             color: Colors.black)),
                     Text('add-on order.',
                         style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 12,
                             fontFamily: "SourceSansProBold",
                             color: Colors.black)),
                     Spacer(),
                     Text('What are add-on orders?',
                         textAlign: TextAlign.end,
                         style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 12,
                             fontFamily: "SourceSansProRegular",
                             color: buttonBlue)),
                   ]),
@@ -410,7 +410,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       "If there’s already an order placed for a delivery date, subsequent orders for the same date are treated as add-on orders. Settings for minimum order value and delivery fee will be ignored in add-on orders.",
                       style: TextStyle(
                           color: Colors.black,
-                          fontFamily: "SourceSansProSemiRegular",
+                          fontFamily: "SourceSansProRegular",
                           fontSize: 14)),
                 )
               ],
@@ -492,7 +492,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     fontFamily: "SourceSansProRegular")),
                             right: Text(
                                 currencyCode +
-                                    totalSkusPrice.toStringAsFixed(2),
+                                    getAmount(currencyCode, totalSkusPrice),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -534,8 +534,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                       fontSize: 16.0,
                                       fontFamily: "SourceSansProRegular")),
                               right: Text(
-                                  currencyCode +
-                                      totalDeliveryPrice.toStringAsFixed(2),
+                                  currencyCode + getAmount(currencyCode, totalDeliveryPrice),
                                   style: TextStyle(
                                       color: greyText,
                                       fontSize: 16.0,
@@ -561,7 +560,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                     fontSize: 16.0,
                                     fontFamily: "SourceSansProRegular")),
                             right: Text(
-                                currencyCode + totalGstPrice.toStringAsFixed(2),
+                                currencyCode + getAmount(currencyCode, totalGstPrice),
                                 style: TextStyle(
                                     color: greyText,
                                     fontSize: 16.0,
@@ -688,12 +687,11 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                             (BuildContext context, StateSetter setStates) {
                           return SingleChildScrollView(
                               child: Container(
-                            padding: (Platform.isAndroid)
-                                ? EdgeInsets.only(
+                            padding: EdgeInsets.only(
                                     bottom: MediaQuery.of(context)
                                         .viewInsets
                                         .bottom)
-                                : EdgeInsets.fromLTRB(10, 15, 10, 15),
+                                ,
                             color: Colors.white,
                             child: Center(
                               child: Column(
@@ -1647,5 +1645,19 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
         }).then((value) {
       moveToDashBoard();
     });
+  }
+
+  RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+
+  String getAmount(String currencyCode, dynamic amount) {
+    if (currencyCode == 'Rp') {
+      return amount
+          .toStringAsFixed(0)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    } else {
+      return amount
+          .toStringAsFixed(2)
+          .replaceAllMapped(reg, (Match m) => '${m[1]},');
+    }
   }
 }
