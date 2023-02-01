@@ -392,17 +392,19 @@ class ViewOrdersDesign extends State<ViewOrdersPage>
             ),
           ));
     } else {
+      String firstLetter = outlet.outletName[0];
+      LogoNameandColor logoNameandColor = Constants().getColorForName(firstLetter);
       return Container(
         height: 38,
         width: 38,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          color: Colors.blue.withOpacity(0.5),
+          color: logoNameandColor.backgroundColor,
         ),
         child: Center(
           child: Text(
             outletPlaceholder(outlet.outletName),
-            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold", color: logoNameandColor.textColor),
           ),
         ),
       );

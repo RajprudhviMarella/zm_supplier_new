@@ -468,7 +468,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: width,
                   height: 48,
                   padding: EdgeInsets.only(left: 20, right: 20),
-                  child: FlatButton(
+                  child: MaterialButton(
                     disabledColor: Colors.white.withOpacity(0.5),
                     color: (isEmailFilled && isPasswordFilled)
                         ? Colors.white
@@ -541,7 +541,7 @@ class _LoginPageState extends State<LoginPage> {
 
 void showAlert(context) {
   // set up the button
-  Widget okButton = FlatButton(
+  Widget okButton = MaterialButton(
     child: Text(Constants.txt_ok),
     onPressed: () {
       //  Navigator.pop(context);

@@ -26,6 +26,7 @@ class ProductdetailsState extends State<Productdetails> {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: EdgeInsets.zero,
+      alignment: Alignment.topCenter,
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: contentBox(context),

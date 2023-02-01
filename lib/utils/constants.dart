@@ -12,6 +12,7 @@ import 'package:zm_supplier/models/user.dart';
 
 import 'color.dart';
 import 'urlEndPoints.dart';
+import '../utils/color.dart';
 
 /**
  * Created by RajPrudhviMarella on 11/Feb/2021.
@@ -401,6 +402,51 @@ class Constants {
   static get REPORT_SERVER {
     return _config[_Config.REPORT_SERVER];
   }
+
+  LogoNameandColor getColorForName(String name) {
+    LogoNameandColor logoNameandColor = LogoNameandColor();
+    String firstLetter = name.toUpperCase();
+
+    if (firstLetter == "A" || firstLetter == "B" || firstLetter == "C" || firstLetter == "D") {
+      logoNameandColor.backgroundColor = lightRed;
+      logoNameandColor.textColor = logoRed;
+      return logoNameandColor;
+    } else if (firstLetter == "E" || firstLetter == "F" || firstLetter == "G" || firstLetter == "H") {
+      logoNameandColor.backgroundColor = thickGreen1;
+      logoNameandColor.textColor = logoGreen;
+      return logoNameandColor;
+    } else if (firstLetter == "I" || firstLetter == "J" || firstLetter == "K" || firstLetter == "L") {
+      logoNameandColor.backgroundColor = lightBlue;
+      logoNameandColor.textColor = logoBlue;
+      return logoNameandColor;
+    } else if (firstLetter == "M" || firstLetter == "N" || firstLetter == "O" || firstLetter == "P") {
+      logoNameandColor.backgroundColor = lightYellow;
+      logoNameandColor.textColor = logoYellow;
+      return logoNameandColor;
+    } else if (firstLetter == "Q" || firstLetter == "R" || firstLetter == "S" || firstLetter == "T") {
+      logoNameandColor.backgroundColor = lightPurple;
+      logoNameandColor.textColor = logoPurple;
+      return logoNameandColor;
+    } else if (firstLetter == "U" || firstLetter == "V" || firstLetter == "W" || firstLetter == "X") {
+      logoNameandColor.backgroundColor = lightLightGreen;
+      logoNameandColor.textColor = logoLightGreen;
+      return logoNameandColor;
+    } else if (firstLetter == "Y" || firstLetter == "Z") {
+      logoNameandColor.backgroundColor = lightOrange;
+      logoNameandColor.textColor = logoOrange;
+      return logoNameandColor;
+    } else {
+      logoNameandColor.backgroundColor = lightBrown;
+      logoNameandColor.textColor = logoBrown;
+      return logoNameandColor;
+    }
+
+  }
+}
+
+class LogoNameandColor {
+  Color backgroundColor;
+  Color textColor;
 }
 
 class SharedPref {

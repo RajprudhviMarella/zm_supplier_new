@@ -365,7 +365,7 @@ class SearchCustomersState extends State<SearchCustomersPage> {
     if (customers.isFavourite) {
       setState(() {
         customers.isFavourite = false;
-        globalKey.currentState.showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Removed from starred'),
             duration: Duration(seconds: 1),
@@ -376,7 +376,7 @@ class SearchCustomersState extends State<SearchCustomersPage> {
       setState(() {
         customers.isFavourite = true;
 
-        globalKey.currentState.showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Added to starred'),
             duration: Duration(seconds: 1),

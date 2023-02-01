@@ -706,7 +706,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
                         Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
                         if (snapshot.data.others != null &&
                             snapshot.data.others.charge.amountV1 != null &&
-                            snapshot.data.others.name != "")
+                            snapshot.data.others.name != null)
                           Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
@@ -821,7 +821,7 @@ class InvoiceDetailsState extends State<InvoiceDetailsPage> {
             Expanded(
                 child: ButtonTheme(
               height: 50,
-              child: RaisedButton(
+              child: MaterialButton(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25.0)),

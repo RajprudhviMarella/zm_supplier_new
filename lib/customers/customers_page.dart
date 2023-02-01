@@ -368,7 +368,7 @@ class CustomerState extends State<CustomersPage> {
                   ),
                   right: Container(
                     height: 35,
-                    child: new RaisedButton(
+                    child: new MaterialButton(
                       elevation: 0,
                       color: Colors.transparent,
                       onPressed: () {
@@ -805,17 +805,19 @@ class CustomerState extends State<CustomersPage> {
             ),
           ));
     } else {
+      String firstLetter = customer.outlet.outletName[0];
+      LogoNameandColor logoNameandColor = Constants().getColorForName(firstLetter);
       return Container(
         height: 38,
         width: 38,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          color: Colors.blue.withOpacity(0.5),
+          color: logoNameandColor.backgroundColor,
         ),
         child: Center(
           child: Text(
             outletPlaceholder(customer.outlet.outletName),
-            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold", color: logoNameandColor.textColor),
           ),
         ),
       );
@@ -829,7 +831,7 @@ class CustomerState extends State<CustomersPage> {
     if (customers.isFavourite) {
       setState(() {
         customers.isFavourite = false;
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Removed from starred'),
             duration: Duration(seconds: 1),
@@ -840,7 +842,7 @@ class CustomerState extends State<CustomersPage> {
       setState(() {
         customers.isFavourite = true;
 
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Added to starred'),
             duration: Duration(seconds: 1),

@@ -151,7 +151,7 @@ class InvoicesFilterState extends State<InvoicesFilterPage> {
       padding: const EdgeInsets.only(left: 20.0, top: 300, right: 20),
       child: Container(
         height: 50,
-        child: RaisedButton(
+        child: MaterialButton(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
           onPressed: () {

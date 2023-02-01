@@ -258,7 +258,7 @@ class SearchCatalogueDesign extends State<SearchCataloguePage>
                                     fontSize: 18.0,
                                     fontFamily: "SourceSansProBold")),
                           ),
-                          right: FlatButton(
+                          right: MaterialButton(
                               onPressed: () {
                                 setState(() {
                                   recentSearchList.clear();

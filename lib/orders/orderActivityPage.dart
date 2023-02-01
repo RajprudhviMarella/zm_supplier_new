@@ -180,8 +180,7 @@ class ActivityState extends State<OrderActivityPage> {
             //  ]);
 
             return Stepper(
-                controlsBuilder: (BuildContext context,
-                    {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+                  controlsBuilder: (BuildContext context, ControlsDetails controls) {
                   return Row(
                     children: <Widget>[
                       Container(

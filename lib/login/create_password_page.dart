@@ -379,7 +379,7 @@ class CreatePasswordState extends State<CreatePassword> {
 
   void showAlert(String status, String message) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
         child: Text(Constants.txt_ok),
         onPressed: () {
           // Navigator.pop(context);
@@ -410,7 +410,7 @@ class CreatePasswordState extends State<CreatePassword> {
 
   void showErrorAlert(String status, String message) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
         child: Text(Constants.txt_ok),
         onPressed: () {
           // Navigator.pop(context);

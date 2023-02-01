@@ -180,7 +180,7 @@ class MarketListDesign extends State<MarketListPage>
                         elevation: 0,
                       ),
                       new Spacer(),
-                      RaisedButton(
+                      MaterialButton(
                         child: Container(
                           padding: EdgeInsets.only(left: 7.0, right: 7.0),
                           height: 50,
@@ -229,7 +229,7 @@ class MarketListDesign extends State<MarketListPage>
                             moveToReviewOrdersScreen();
                             print(jsonEncode(selectedMarketList));
                           } else {
-                            globalKey.currentState.showSnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
                                     Text('Please select at least one product'),
@@ -712,7 +712,7 @@ class MarketListDesign extends State<MarketListPage>
                                     height: 75.0,
                                     child: TextFormField(
                                         autofocus: true,
-                                        autovalidate: true,
+                                        // autovalidate: true,
                                         validator: (value) => (value != null &&
                                                 value.isNotEmpty &&
                                                 double.parse(
@@ -886,7 +886,7 @@ class MarketListDesign extends State<MarketListPage>
                                 top: 20.0, right: 10.0, left: 10.0),
                             height: 47.0,
                             width: MediaQuery.of(context).size.width,
-                            child: FlatButton(
+                            child: MaterialButton(
                               disabledColor: faintGrey,
                               color: (isValid) ? buttonBlue : faintGrey,
                               onPressed: isValid

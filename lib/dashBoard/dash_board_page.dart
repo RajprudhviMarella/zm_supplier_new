@@ -6,7 +6,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dart_notification_center/dart_notification_center.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -27,9 +26,6 @@ import 'package:zm_supplier/utils/constants.dart';
 import 'package:zm_supplier/models/orderSummary.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
-import '../models/user.dart';
-import '../models/user.dart';
-import '../models/user.dart';
 import '../utils/color.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -644,7 +640,7 @@ class DashboardState extends State<DashboardPage> {
   void showAlert(String title, String message) {
     BuildContext dialogContext;
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
       child: Text(Constants.txt_ok),
       onPressed: () async {
         // Navigator.pop(context);
@@ -787,7 +783,7 @@ class DashboardState extends State<DashboardPage> {
         decoration:
             BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(24))),
 
-        child: FlatButton(
+        child: MaterialButton(
           onPressed: () {
             print('set a goal tapped.');
             mixpanel.track(Events.TAP_DASHBOARD_SET_A_GOAL,
@@ -1081,17 +1077,19 @@ class DashboardState extends State<DashboardPage> {
             ),
           ));
     } else {
+      String firstLetter = order.outlet.outletName[0];
+      LogoNameandColor logoNameandColor = Constants().getColorForName(firstLetter);
       return Container(
         height: 38,
         width: 38,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          color: Colors.blue.withOpacity(0.5),
+          color: logoNameandColor.backgroundColor,
         ),
         child: Center(
           child: Text(
             outletPlaceholder(order.outlet.outletName),
-            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold", color: logoNameandColor.textColor),
           ),
         ),
       );
@@ -1568,7 +1566,7 @@ class DashboardState extends State<DashboardPage> {
                               fontSize: 18.0,
                               fontFamily: "SourceSansProBold")),
                     ),
-                    right: FlatButton(
+                    right: MaterialButton(
                       onPressed: () {
                         print('View all orders tapped');
                         mixpanel.track(Events.TAP_DASHBOARD_VIEW_ORDERS,

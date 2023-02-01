@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:simple_pdf_viewer/simple_pdf_viewer.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewContainer extends StatefulWidget {
@@ -60,8 +61,8 @@ class _WebViewContainerState extends State<WebViewContainer> {
 
   Widget displayWebView() {
     if (isPdf) {
-      return SimplePdfViewerWidget(
-        initialUrl: _url,
+      return SfPdfViewer.network(
+       _url,
       );
     } else {
       return WebView(

@@ -342,7 +342,7 @@ class _VerificationCodeState extends State<VerificationCode> {
                   width: width,
                   height: 48,
                   padding: EdgeInsets.only(left: 26, right: 26),
-                  child: FlatButton(
+                  child: MaterialButton(
                     disabledColor: buttonBlue.withOpacity(0.5),
                     color: (isCodeValid && isFilledOTP)
                         ? buttonBlue
@@ -380,7 +380,7 @@ class _VerificationCodeState extends State<VerificationCode> {
 
 void showAlert(context) {
   // set up the button
-  Widget okButton = FlatButton(
+  Widget okButton = MaterialButton(
     child: Text(Constants.txt_ok),
     onPressed: () {
       //  Navigator.pop(context);

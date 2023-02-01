@@ -271,7 +271,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                             ]),
                       ),
                       new Spacer(),
-                      RaisedButton(
+                      MaterialButton(
                         child: Container(
                             height: 50,
                             child: Center(
@@ -298,7 +298,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                               widget.marketList.isNotEmpty) {
                             showAlert(context);
                           } else {
-                            globalKey.currentState.showSnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
                                     Text('Please select atlease one product'),
@@ -634,7 +634,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       }
                       keyboard = TextInputType.numberWithOptions(
                           signed: false, decimal: true);
-                      regExp = WhitelistingTextInputFormatter(
+                      regExp = FilteringTextInputFormatter(
                           RegExp(r'^\d+\.?\d{0,2}'));
                     } else {
                       if (widget.marketList[index].quantity != null &&
@@ -851,7 +851,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                             height: 75.0,
                                             child: TextFormField(
                                                 autofocus: false,
-                                                autovalidate: true,
+                                                autovalidateMode: AutovalidateMode.always,
                                                 validator: (value) => (value !=
                                                             null &&
                                                         value.isNotEmpty &&
@@ -1049,7 +1049,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                                         top: 20.0, right: 10.0, left: 10.0),
                                     height: 47.0,
                                     width: MediaQuery.of(context).size.width,
-                                    child: FlatButton(
+                                    child: MaterialButton(
                                       disabledColor: faintGrey,
                                       color: (isValid) ? buttonBlue : faintGrey,
                                       onPressed: isValid
@@ -1399,7 +1399,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     FocusScope.of(context).unfocus();
     BuildContext dialogContext;
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
       child: Text(Constants.txt_ok),
       onPressed: () {
         Navigator.pop(dialogContext);
@@ -1407,7 +1407,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       },
     );
     // set up the button
-    Widget btnCancel = FlatButton(
+    Widget btnCancel = MaterialButton(
       child: Text(Constants.txt_cancel),
       onPressed: () {
         events.mixpanel.track(Events.TAP_ORDER_REVIEW_PLACE_ORDER_CANCEL);
@@ -1436,7 +1436,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
     FocusScope.of(context).unfocus();
     BuildContext dialogContext;
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
       child: Text(Constants.txt_ok),
       onPressed: () {
         Navigator.pop(dialogContext);
@@ -1448,7 +1448,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
       },
     );
     // set up the button
-    Widget btnCancel = FlatButton(
+    Widget btnCancel = MaterialButton(
       child: Text(Constants.txt_cancel),
       onPressed: () {
         Navigator.pop(dialogContext);

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:keyboard_visibility/keyboard_visibility.dart';
+// import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 
@@ -47,12 +47,12 @@ class ChangePasswordDesign extends State<ChangePassword>
     loadSharedPrefs();
 
     events.mixPanelEvents();
-    KeyboardVisibilityNotification().addNewListener(
-      onHide: () {
-      print("hello");
-      FocusScope.of(context).unfocus();
-      },
-    );
+    // KeyboardVisibilityNotification().addNewListener(
+    //   onHide: () {
+    //   print("hello");
+    //   FocusScope.of(context).unfocus();
+    //   },
+    // );
   }
 
   @override
@@ -454,7 +454,7 @@ class ChangePasswordDesign extends State<ChangePassword>
   void showAlert(context) {
     BuildContext dialogContext;
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
       child: Text(Constants.txt_ok),
       onPressed: () async {
         Navigator.pop(context);
@@ -489,7 +489,7 @@ class ChangePasswordDesign extends State<ChangePassword>
 
   void showErrorAlert(context, String status) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
       child: Text(Constants.txt_ok),
       onPressed: () {
         Navigator.pop(context);

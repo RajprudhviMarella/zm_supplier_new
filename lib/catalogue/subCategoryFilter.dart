@@ -278,7 +278,7 @@ class SubCategoryFilterState extends State<SubCategoryFilterPage> {
             const EdgeInsets.only(left: 20.0, top: 10, right: 20, bottom: 20),
         child: Container(
           height: 50,
-          child: RaisedButton(
+          child: MaterialButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)),
             onPressed: () {

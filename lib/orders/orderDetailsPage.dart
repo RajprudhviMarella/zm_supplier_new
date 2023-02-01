@@ -1317,7 +1317,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
             Expanded(
                 child: SizedBox(
               height: 50,
-              child: RaisedButton(
+              child: MaterialButton(
                   color: Colors.white,
                   shape: new RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(30.0)),
@@ -1346,7 +1346,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
           Expanded(
               child: SizedBox(
             height: 50,
-            child: RaisedButton(
+            child: MaterialButton(
                 color: Colors.white,
                 shape: new RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30.0)),

@@ -304,7 +304,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                     width: width,
                     height: 48,
                     padding: EdgeInsets.only(left: 20, right: 20),
-                    child: FlatButton(
+                    child: MaterialButton(
                       disabledColor: Colors.white.withOpacity(0.5),
                       color: (isEmailFilled)
                           ? Colors.white
@@ -343,7 +343,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
 
 void showAlert(context) {
   // set up the button
-  Widget okButton = FlatButton(
+  Widget okButton = MaterialButton(
     child: Text(Constants.txt_ok),
     onPressed: () {
       Navigator.of(context, rootNavigator: true).pop();

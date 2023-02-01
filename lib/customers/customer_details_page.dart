@@ -634,7 +634,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                   fontFamily: "SourceSansProBold",
                   fontSize: 18,
                 )),
-            new RaisedButton(
+            new MaterialButton(
               color: Colors.transparent,
               elevation: 0,
               onPressed: () {
@@ -1008,17 +1008,19 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
             ),
           ));
     } else {
+      String firstLetter = img.outlet.outletName[0];
+      LogoNameandColor logoNameandColor = Constants().getColorForName(firstLetter);
       return Container(
         height: 38,
         width: 38,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          color: Colors.blue.withOpacity(0.5),
+          color: logoNameandColor.backgroundColor,
         ),
         child: Center(
           child: Text(
             outletPlaceholder(img.outlet.outletName),
-            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold"),
+            style: TextStyle(fontSize: 14, fontFamily: "SourceSansProSemiBold", color: logoNameandColor.textColor),
           ),
         ),
       );
@@ -1039,8 +1041,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
         events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE,
             properties: userProperties);
         events.mixpanel.flush();
-        globalKey.currentState
-          ..showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Removed from starred'),
               duration: Duration(seconds: 1),
@@ -1059,7 +1060,7 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
         events.mixpanel.track(Events.TAP_CUSTOMERS_OUTLET_DETAILS_FAVOURITE,
             properties: userProperties);
         events.mixpanel.flush();
-        globalKey.currentState.showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Added to starred'),
             duration: Duration(seconds: 1),

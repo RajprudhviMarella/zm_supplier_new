@@ -332,7 +332,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
   void showAlert(context) {
     BuildContext dialogContext;
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = MaterialButton(
       child: Text(Constants.txt_ok),
       onPressed: () async {
         sendEvent(Events.TAP_SETTINGS_TAB_SIGN_OUT_CONFIRM);
@@ -345,7 +345,7 @@ class SettingsDesign extends State<SettingsPage> with TickerProviderStateMixin {
       },
     );
     // set up the button
-    Widget btnCancel = FlatButton(
+    Widget btnCancel = MaterialButton(
       child: Text(Constants.txt_cancel),
       onPressed: () {
         sendEvent(Events.TAP_SETTINGS_TAB_SIGN_OUT_CANCEL);
