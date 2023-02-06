@@ -517,11 +517,8 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
               builder: (BuildContext context, StateSetter setState) {
             return SingleChildScrollView(
                 child: Container(
-              padding: (Platform.isAndroid)
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom)
-                  : EdgeInsets.only(
-                      top: 15.0, right: 10.0, left: 10.0, bottom: 15.0),
+              padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
               color: Colors.white,
               child: Center(
                 child: Column(

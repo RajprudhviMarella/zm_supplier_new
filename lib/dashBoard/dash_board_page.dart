@@ -142,7 +142,7 @@ class DashboardState extends State<DashboardPage> {
     orderSummaryData = getSummaryDataApiCalling();
     ordersListToday = _retriveTodayOrders();
 
-    /// ordersListYesterday = _retriveYesterdayOrders();
+    ordersListYesterday = _retriveYesterdayOrders();
     draftOrdersFuture = getDraftOrders();
 
     isSubscribed = true;

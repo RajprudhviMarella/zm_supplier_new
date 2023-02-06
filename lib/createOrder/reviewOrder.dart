@@ -634,7 +634,7 @@ class ReviewOrderDesign extends State<ReviewOrderPage>
                       keyboard = TextInputType.numberWithOptions(
                           signed: false, decimal: true);
                       regExp = FilteringTextInputFormatter(
-                          RegExp(r'^\d+\.?\d{0,2}'));
+                          RegExp(r'^\d+\.?\d{0,2}'), allow: true);
                     } else {
                       if (widget.marketList[index].quantity != null &&
                           widget.marketList[index].quantity != 0) {

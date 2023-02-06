@@ -1218,10 +1218,9 @@ class MarketListDesign extends State<MarketListPage>
         builder: (context) {
           return SingleChildScrollView(
               child: Container(
-            padding: (Platform.isAndroid)
-                ? EdgeInsets.only(
+            padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom)
-                : EdgeInsets.fromLTRB(10, 15, 10, 15),
+                ,
             color: Colors.white,
             child: Center(
               child: Column(
@@ -1293,13 +1292,15 @@ class MarketListDesign extends State<MarketListPage>
                           decoration: BoxDecoration(
                               color: buttonBlue,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(30))),
+                                  BorderRadius.all(Radius.circular(23.5))),
                           child: Center(
                               child: Text(
                             "Done",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
+                                
                                 fontFamily: "SourceSansProSemiBold"),
                           ))))
                 ],

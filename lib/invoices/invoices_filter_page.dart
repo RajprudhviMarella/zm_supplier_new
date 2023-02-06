@@ -34,14 +34,18 @@ class InvoicesFilterState extends State<InvoicesFilterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return WillPopScope(
+                onWillPop: () async {
+                  Navigator.of(context).pop(selectedStatus);
+                  return false;
+                }, child: new Scaffold(
       //  key: globalKey,
       backgroundColor: faintGrey,
       appBar: buildAppBar(context),
-      body: ListView(
+      body:  ListView(
         children: <Widget>[headers(), statusList(), button()],
       ),
-    );
+    ));
   }
 
   Widget buildAppBar(BuildContext context) {
