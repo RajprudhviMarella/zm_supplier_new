@@ -725,195 +725,83 @@ class CustomerDetailsState extends State<CustomerDetailsPage> {
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return new Column(children: <Widget>[
-                        ListTile(
-                            title: Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
-                              child: Text(
-                                snapshot.data[index].outlet.outletName,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: "SourceSansProSemiBold"),
-                              ),
-                            ),
-                            //  isThreeLine: true,
-
-                            subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 0),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      ImageIcon(
-                                        AssetImage(
-                                            "assets/images/Truck-black.png"),
-                                        size: 14,
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        readTimestamp(
-                                            snapshot.data[index].timeDelivered),
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: "SourceSansProRegular",
-                                            color: Colors.black),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Flexible(
-                                        child: Text(
-                                            snapshot.data[index].orderId,
-                                            style: TextStyle(
-                                                fontSize: 12.0,
-                                                fontFamily:
-                                                    "SourceSansProRegular",
-                                                color: greyText),
-                                            maxLines: 1),
-                                      ),
-                                      Spacer(),
-                                      Text(displayAmount(snapshot.data[index]), style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontFamily:
-                                          "SourceSansProRegular",
-                                          color: Colors.black)),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 2.0, bottom: 10),
-                                    child: Container(
-                                      height:
-                                          (snapshot.data[index].orderStatus ==
-                                                      "Void" ||
-                                                  snapshot.data[index]
-                                                          .orderStatus ==
-                                                      "Cancelled" ||
-                                                  snapshot.data[index]
-                                                          .orderStatus ==
-                                                      "Invoiced")
-                                              ? 20
-                                              : 0,
-                                      //  margin: EdgeInsets.symmetric(horizontal: 5.0),
-
-                                      // color: Colors.blue,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: (snapshot.data[index]
-                                                        .orderStatus ==
-                                                    "Void")
-                                                ? 50
-                                                : 0,
-                                            margin:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-
-                                            decoration: BoxDecoration(
-                                                color: warningRed,
-                                                // border: Border.all(
-                                                //   color: Colors.red[500],
-                                                // ),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10))),
-                                            child: Center(
-                                              child: Text(
-                                                '  Voided  '.toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10,
-                                                    fontFamily:
-                                                        "SourceSansProSemiBold"),
-                                              ),
-                                            ),
-                                            //  color: Colors.grey,
+                      return new Column(children: <Widget>[Card(
+                                margin: EdgeInsets.only(top: 0.5),
+                                child: Container(
+                                    color: Colors.white,
+                                    child: ListTile(
+                                        onTap: () {
+                                          moveToOrderDetailsPage(snapshot.data[index]);
+                                        },
+                                        contentPadding: EdgeInsets.only(
+                                            top: 10.0,
+                                            bottom: 10.0,
+                                            left: 15.0,
+                                            right: 10.0),
+                                        leading: leadingImage(snapshot.data[index]),
+                                        title: Text(
+                                          snapshot.data[index].outlet.outletName,
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: Colors.black,
+                                            fontFamily: "SourceSansProSemiBold",
                                           ),
-                                          Container(
-                                            width: (snapshot.data[index]
-                                                        .orderStatus ==
-                                                    "Cancelled")
-                                                ? 70
-                                                : 0,
-                                            margin: EdgeInsets.fromLTRB(
-                                                0, 0, 10, 0),
-                                            decoration: BoxDecoration(
-                                                color:
-                                                    warningRed.withOpacity(0.5),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10))),
-                                            child: Center(
-                                              child: Text(
-                                                '  cancelled  '.toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10,
-                                                    fontFamily:
-                                                        "SourceSansProSemiBold"),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: (snapshot.data[index]
-                                                        .orderStatus ==
-                                                    "Invoiced")
-                                                ? 50
-                                                : 0,
-                                            decoration: BoxDecoration(
-                                                color: lightGreen,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10))),
-                                            child: Text(
-                                                '  Invoiced  '.toUpperCase(),
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        "SourceSansProSemiBold")),
-                                            // color: Colors.pink,
-                                          ),
-                                          Spacer(),
-                                          Text(
-                                              currencyCode +
-                                                  snapshot
-                                                      .data[index].amount.total
-                                                      .getDisplayValue(
-                                                          currencyCode),
-                                              style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  color: Colors.black,
-                                                  fontFamily:
-                                                      "SourceSansProRegular")),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // trailing: Column(
-                            //   mainAxisAlignment: MainAxisAlignment.center,
-                            //   crossAxisAlignment: CrossAxisAlignment.center,
-                            //   children: [
-                            //     Text(
-                            //         snapshot.data[index].amount.total
-                            //             .getDisplayValue(),
-                            //         style: TextStyle(
-                            //             fontSize: 16.0,
-                            //             color: Colors.black,
-                            //             fontFamily: "SourceSansProRegular")),
-                            //   ],
-                            // ),
+                                        ),
+                                        // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-                            //profile.imgUrl == null) ? AssetImage('images/user-avatar.png') : NetworkImage(profile.imgUrl)
-                            leading: leadingImage(snapshot.data[index]),
-                            tileColor: Colors.white,
-                            onTap: () {
-                              moveToOrderDetailsPage(snapshot.data[index]);
-                            }),
-                        Divider(
-                          height: 1.5,
-                          color: faintGrey,
-                        ),
+                                        subtitle: Container(
+                                          margin: EdgeInsets.only(top: 2.0),
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Row(children: <Widget>[
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 2.0),
+                                                    height: 14.0,
+                                                    width: 14.0,
+                                                    child: ImageIcon(AssetImage(
+                                                        'assets/images/truck.png')),
+                                                  ),
+                                                  Text(
+                                                      " " +
+                                                          snapshot.data[index]
+                                                              .getTimeDelivered(),
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 12.0,
+                                                          fontFamily:
+                                                              "SourceSansProRegular")),
+                                                  Text(
+                                                    " " +
+                                                        '# ${snapshot.data[index].orderId}',
+                                                    style: TextStyle(
+                                                        color: greyText,
+                                                        fontSize: 12.0,
+                                                        fontFamily:
+                                                            "SourceSansProRegular"),
+                                                  ),
+                                                ]),
+                                                Constants.OrderStatusColor(
+                                                    snapshot.data[index]),
+                                              ]),
+                                        ),
+                                        trailing: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              Text(
+                                                  currencyCode +
+                                                      snapshot.data[index].amount.total
+                                                          .getDisplayValueAmt(
+                                                              currencyCode),
+                                                  style: TextStyle(
+                                                      fontSize: 16.0,
+                                                      color: Colors.black,
+                                                      fontFamily:
+                                                          "SourceSansProRegular")),
+                                            ])))),
                       ]);
                     },
                   );

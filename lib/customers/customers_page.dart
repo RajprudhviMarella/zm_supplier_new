@@ -716,13 +716,13 @@ class CustomerState extends State<CustomersPage> {
                                       children: [
                                         Text(
                                           calculateTime(snapshot
-                                              .data.outlets[index].lastOrdered),
+                                              .data.outlets[index].lastOrdered ?? 0),
                                           style: TextStyle(
                                               fontSize: 12,
                                               fontFamily:
                                                   'SourceSansProRegular',
                                               color: timeDiff(snapshot.data
-                                                  .outlets[index].lastOrdered)),
+                                                  .outlets[index].lastOrdered ?? 0)),
                                         ),
                                       ],
                                     )),

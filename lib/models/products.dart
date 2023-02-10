@@ -198,7 +198,7 @@ class ChargeBy {
 
   factory ChargeBy.fromJson(Map<String, dynamic> json) => ChargeBy(
     unitSize: json["unitSize"],
-    unitSizeAlias: UnitSizeAlias.fromJson(json["unitSizeAlias"]),
+    unitSizeAlias: json["unitSizeAlias"] == null ? null : UnitSizeAlias.fromJson(json["unitSizeAlias"]),
   );
 
   Map<String, dynamic> toJson() => {

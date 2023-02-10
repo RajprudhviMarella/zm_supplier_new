@@ -12,18 +12,13 @@ import 'package:zm_supplier/models/user.dart';
 import 'package:zm_supplier/services/ordersApi.dart';
 import 'package:zm_supplier/utils/color.dart';
 import 'package:zm_supplier/utils/constants.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:zm_supplier/utils/eventsList.dart';
 import 'package:zm_supplier/utils/pdfViewerPage.dart';
 import 'package:zm_supplier/utils/customDialog.dart';
 import 'package:zm_supplier/utils/urlEndPoints.dart';
 import 'dart:math' as math;
-
-import 'package:zm_supplier/utils/webview.dart';
 import 'package:http/http.dart' as http;
-
-import '../utils/color.dart';
 import 'orderActivityPage.dart';
 import 'dart:io' show Platform;
 
@@ -186,8 +181,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                       elevation: 0,
                     ),
                     new Spacer(),
-                    if (order.isAcknowledged == null ||
-                        order.orderStatus != 'Void')
+                    if ((order.isAcknowledged == null && order.isAcknowledged == false) || order.orderStatus != 'Void')
                       FloatingActionButton.extended(
                         heroTag: "btn2",
                         backgroundColor: azul_blue,
@@ -518,7 +512,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
             return SingleChildScrollView(
                 child: Container(
               padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
               color: Colors.white,
               child: Center(
                 child: Column(
@@ -838,7 +832,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                   fontFamily: "SourceSansProRegular",
                                   color: Colors.grey)),
                           Padding(
-                              padding: const EdgeInsets.only(left: 35.0),
+                              padding: const EdgeInsets.only(left: 45.0),
                               child: Text('Order #',
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
@@ -853,6 +847,60 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                   color: buttonBlue)),
                         ])),
                   ])));
+    else if (order.addOns != null && order.addOns.isNotEmpty) {
+      return Container(
+          color: Colors.white,
+          margin: EdgeInsets.only(top: 2.0),
+          padding:
+              EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 10.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Divider(
+                  height: 3,
+                  thickness: 2,
+                  indent: 0,
+                  endIndent: 0,
+                  color: faintGrey,
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(left: 30.0, top: 10),
+                    child: Row(children: <Widget>[
+                      Image.asset(
+                        'assets/images/icon_linked.png',
+                        width: 18,
+                        height: 18,
+                      ),
+                      Text(' Linked to',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: "SourceSansProRegular",
+                              color: Colors.grey)),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 45.0),
+                      ),
+                      Container(
+                          child: Column(
+                        children: List.generate(order.addOns.length, (index) {
+                          return GestureDetector(
+                              onTap: () {
+                                goToOrderDetails(order.addOns[index]);
+                              },
+                              child: Padding(
+                                  padding: EdgeInsets.only(bottom: 3),
+                                  child: Text(
+                                      'Order #' +
+                                          order.addOns[index].toString(),
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: "SourceSansProBold",
+                                          color: buttonBlue))));
+                        }),
+                      ))
+                    ])),
+              ]));
+    }
   }
 
   goToOrderDetails(String orderId) async {
@@ -1075,7 +1123,7 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
                                 Text(
                                     products[index].quantity.toString() +
                                         " " +
-                                        products[index].unitSizeAlias.shortName,
+                                        getUnitSize(products[index]),
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                         color: Colors.black,
@@ -1158,6 +1206,13 @@ class OrderDetailsDesign extends State<OrderDetailsPage>
 
   Widget smallSpaceBanner(BuildContext context) {
     return Padding(padding: EdgeInsets.fromLTRB(10, 10, 10, 10));
+  }
+
+  String getUnitSize(Products product) {
+      if (product.unitSizeAlias != null && product.unitSizeAlias.shortName != null) {
+        return product.unitSizeAlias.shortName;
+      }
+      return product.unitSize ?? "";
   }
 
   Widget priceDetails(BuildContext context) {

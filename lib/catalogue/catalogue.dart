@@ -96,11 +96,12 @@ class CatalogueDesign extends State<Catalogue> {
         response.statusCode == 201 ||
         response.statusCode == 202) {
       // print(response.body);
-      print('Success response');
+      
 
       categoryResponse = CategoryResponse.fromJson(json.decode(response.body));
       addAllCategory();
       categoriesDataList = categoryResponse.data;
+      print('Success response');
     } else {
       print('failed get categories');
     }
@@ -353,6 +354,7 @@ class CatalogueDesign extends State<Catalogue> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container();
           } else if (snapshot.hasError) {
+            print( 'error' + snapshot.error.toString());
             return Center(child: Text('failed to load'));
           } else {
             return SizedBox(
@@ -422,7 +424,7 @@ class CatalogueDesign extends State<Catalogue> {
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                snapshot.data[index].name,
+                                                snapshot.data[index].name ?? "",
                                                 style: TextStyle(
                                                   fontSize: 11,
                                                   fontFamily:
@@ -452,7 +454,6 @@ class CatalogueDesign extends State<Catalogue> {
     if (category != null &&
         category.imageURL != null &&
         category.imageURL.isNotEmpty) {
-      print(category.imageURL);
 
       return Container(
           height: 60.0, width: 60.0, child: Image.network(category.imageURL));
@@ -524,9 +525,10 @@ class CatalogueDesign extends State<Catalogue> {
                 return Center(
                     child:
                         SpinKitThreeBounce(color: Colors.blueAccent, size: 24));
-                // } else if (snapshot.hasError) {
-                //   return Center(child: Text('failed to load'));
-              } else {
+                } else if (snapshot.hasError) {
+                  print( 'error list ' + snapshot.error.toString());
+                  return Center(child: Text('failed to load'));
+              } else  {
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -542,7 +544,7 @@ class CatalogueDesign extends State<Catalogue> {
                               title: Padding(
                                 padding: const EdgeInsets.only(top: 10.0),
                                 child: Text(
-                                  snapshot.data[index].productName,
+                                  snapshot.data[index].productName ?? "",
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontFamily: "SourceSansProSemiBold"),

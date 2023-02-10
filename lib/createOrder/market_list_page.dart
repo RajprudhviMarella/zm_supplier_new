@@ -671,6 +671,8 @@ class MarketListDesign extends State<MarketListPage>
                                         if (counter > 0) this.counter--;
                                         _textEditingController.text =
                                             counter.toString();
+                                            _textEditingController.selection =
+                                            TextSelection.fromPosition(TextPosition(offset: counter.toString().length));
                                         _txtSkuNotesEditController.text =
                                             snapShot.data[index].skuNotes
                                                 .toString();
@@ -814,6 +816,8 @@ class MarketListDesign extends State<MarketListPage>
                                         this.counter++;
                                         _textEditingController.text =
                                             counter.toString();
+                                            _textEditingController.selection =
+                                            TextSelection.fromPosition(TextPosition(offset: counter.toString().length));
                                         setStates(() {
                                           if (counter > 0 &&
                                               counter >
